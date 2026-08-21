@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this formalization, please cite it as below."
+title: "Superdiffusion: a Lean 4 formalization of superdiffusion and anomalous regularization in self-similar random incompressible flows"
+abstract: >-
+  A machine-checked Lean 4 / mathlib formalization of the PDE theory of
+  superdiffusion in self-similar random incompressible flows: the
+  superdiffusive asymptotics of the effective diffusivity, the
+  renormalization of the generator (Theorem B), and the anomalous
+  large-scale regularity theory (Theorem C), built on the public
+  CoarseGraining homogenization library.  The development contains no sorry
+  and no custom axiom.
+type: software
+authors:
+  - family-names: Armstrong
+    given-names: Scott
+  - family-names: Kuusi
+    given-names: Tuomo
+keywords:
+  - Lean
+  - mathlib
+  - formal verification
+  - superdiffusion
+  - stochastic homogenization
+  - partial differential equations
+license: Apache-2.0
+# TODO: set repository-code to the public URL and add the Zenodo DOI at release.
+repository-code: "https://github.com/scottnarmstrong/Superdiffusion"
+references:
+  - type: article
+    title: "Superdiffusion and anomalous regularization in self-similar random incompressible flows"
+    authors:
+      - family-names: Armstrong
+        given-names: Scott
+      - family-names: Bou-Rabee
+        given-names: Ahmed
+      - family-names: Kuusi
+        given-names: Tuomo
+    url: "https://arxiv.org/abs/2601.22142"
+    identifiers:
+      - type: other
+        value: "arXiv:2601.22142"
+    notes: "The paper formalized by this repository."

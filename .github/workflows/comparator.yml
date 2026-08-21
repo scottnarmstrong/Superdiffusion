@@ -1,0 +1,164 @@
+name: Comparator audit
+
+# Runs the official leanprover/comparator on both Audit/<X> pairs: for each
+# pair it checks that Solution proves a statement whose full dependency
+# closure matches Challenge's, uses only the permitted axioms, and is
+# accepted by BOTH the Lean kernel (replay) and the independent nanoda
+# kernel (enable_nanoda flipped on for the CI run only).
+#
+# Mathlib olean artifacts come from `lake exe cache get`; the CoarseGraining
+# dependency and the project build are cached between runs.  The FIRST run on
+# an empty cache builds everything and may take several hours.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: comparator-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  COMPARATOR_REV: "5756749"      # leanprover/comparator commit
+  LEAN4EXPORT_REV: "v4.26.0"     # MUST match ./lean-toolchain
+  NANODA_REV: "6ae1f0c"          # ammkrn/nanoda_lib commit
+  LANDRUN_REV: "811cfff"         # Zouuup/landrun commit (v0.1.18)
+
+jobs:
+  comparator:
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+
+      # Provision the toolchain and mathlib EXACTLY as the CI workflow does
+      # (the same action, the same cache), so the lake build artifacts the two
+      # workflows exchange through their shared cache keys replay instead of
+      # being invalidated by a divergent mathlib context.
+      - name: Set up Lean and Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+
+      # Restore/save are split so the save runs even when a later step fails,
+      # banking completed modules.  The CI workflow's cache is a valid
+      # fallback: both workflows cache the same paths.
+      - name: Restore project and dependency build artifacts
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/CoarseGraining/.lake/build
+          key: lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Build the library and the audit surfaces
+        run: lake build Audit
+
+      - name: Restore verification tools
+        id: tools-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/tools
+          key: cmp-tools-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}
+
+      - name: Build comparator
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/leanprover/comparator ~/tools/comparator
+          git -C ~/tools/comparator checkout "$COMPARATOR_REV"
+          cd ~/tools/comparator && lake build
+
+      - name: Build lean4export (toolchain-matched)
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/leanprover/lean4export ~/tools/lean4export
+          git -C ~/tools/lean4export checkout "$LEAN4EXPORT_REV"
+          test "$(cat ~/tools/lean4export/lean-toolchain)" = "$(cat lean-toolchain)" \
+            || { echo "lean4export toolchain does not match project toolchain"; exit 1; }
+          cd ~/tools/lean4export && lake build
+
+      - name: Set up Go (for landrun)
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Build landrun (static)
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/Zouuup/landrun ~/tools/landrun-src
+          git -C ~/tools/landrun-src checkout "$LANDRUN_REV"
+          mkdir -p ~/tools/bin
+          cd ~/tools/landrun-src && CGO_ENABLED=0 go build -o ~/tools/bin/landrun ./cmd/landrun
+
+      - name: Build nanoda
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        run: |
+          command -v rustup >/dev/null || {
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal --default-toolchain none
+            . "$HOME/.cargo/env"
+          }
+          export PATH="$HOME/.cargo/bin:$PATH"
+          rustup toolchain install stable --profile minimal
+          git clone https://github.com/ammkrn/nanoda_lib ~/tools/nanoda_lib
+          git -C ~/tools/nanoda_lib checkout "$NANODA_REV"
+          cd ~/tools/nanoda_lib && PATH="$HOME/.cargo/bin:$PATH" cargo +stable build --release
+
+      - name: Enable the nanoda kernel check (CI-only, on the workspace copy)
+        run: |
+          sed -i 's/"enable_nanoda": false/"enable_nanoda": true/' Audit/*/comparator.json
+
+      - name: Run the comparator on both pairs
+        run: |
+          set -euo pipefail
+          # Resolve the tool paths from the runner's real home, never a
+          # hard-coded hosted-runner location.
+          export COMPARATOR_LANDRUN="$HOME/tools/bin/landrun"
+          export COMPARATOR_LEAN4EXPORT="$HOME/tools/lean4export/.lake/build/bin/lean4export"
+          export COMPARATOR_NANODA="$HOME/tools/nanoda_lib/target/release/nanoda_bin"
+          fail=0
+          for X in GeneratorRenormalization AnomalousRegularity; do
+            echo "::group::$X"
+            if lake env ~/tools/comparator/.lake/build/bin/comparator "Audit/$X/comparator.json" \
+                 | tee "/tmp/comparator-$X.log" \
+               && grep -q "Your solution is okay!" "/tmp/comparator-$X.log"; then
+              echo "$X: OK"
+            else
+              echo "$X: FAILED"
+              fail=1
+            fi
+            echo "::endgroup::"
+          done
+          exit "$fail"
+
+      - name: Save project and dependency build artifacts
+        if: always() && steps.cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/CoarseGraining/.lake/build
+          key: lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Save verification tools
+        if: always() && steps.tools-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/tools
+          key: cmp-tools-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}
+
+      - name: Upload comparator logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparator-logs
+          path: /tmp/comparator-*.log

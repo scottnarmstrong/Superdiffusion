@@ -1,0 +1,13 @@
+{
+  "challenge_module": "Audit.AnomalousRegularity.Challenge",
+  "solution_module": "Audit.AnomalousRegularity.Solution",
+  "theorem_names": [
+    "Algsuperdiff.StatementAudit.AnomalousRegularity.anomalous_regularity"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

@@ -1,0 +1,13 @@
+{
+  "challenge_module": "Audit.GeneratorRenormalization.Challenge",
+  "solution_module": "Audit.GeneratorRenormalization.Solution",
+  "theorem_names": [
+    "Algsuperdiff.StatementAudit.GeneratorRenormalization.generator_renormalization"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

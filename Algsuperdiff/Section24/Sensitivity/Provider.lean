@@ -1,0 +1,102 @@
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.Aggregation
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.BMatrix
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.Closure
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.CubeEllipticity
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.CubeGaugePath
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.CubeJSensitivity
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.CubePotentialDh
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.CubeTermA
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.CubeWitness
+import Algsuperdiff.Section24.Sensitivity.Provider.BigLambda.PathODE
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Adjoint.H10Witness
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.BesovPairing
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.EnergyBridge
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.GaugeBridge
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.Skeleton
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.SplitIdentity
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Besov.Perturbation
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Besov.Product
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.AdjointResponse
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.BesovCongr
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.BoundProvider
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.ConstantBesov
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.DepthDowngrade
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.EllipticityOrdered
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.GradientSplit
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.InputBC
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.TransposeGauge
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.InputA
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.UnitCubeValue
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.VectorMemLp
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.VectorPerturbation
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.DivFreePairing
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz.Assembly
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz.MatrixNorms
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz.Mollification
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz.UnitCube
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.SkewCancellation
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.UnitCubeWeakIBP
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.WeakDivergence
+import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.WeakIBP
+import Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge.Bridge
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.Bootstrap
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.Closure
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.CrudeBound
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.CubeBound
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.CubeFieldData
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.CubeRatio
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.CubeTermBC
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.WitnessBudget
+import Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.Closure
+import Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.CubeGauge
+import Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.CubeRatio
+import Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.CubeScaling
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.DescendantBridge
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.Engine
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.PathGronwall
+import Algsuperdiff.Section24.Sensitivity.Provider.Lambda.Spine
+import Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge.NormalizedLoading
+import Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge.ResponseSubadditivity
+import Algsuperdiff.Section24.Sensitivity.Provider.Mesoscale.LambdaAssembly
+import Algsuperdiff.Section24.Sensitivity.Provider.Mesoscale.LoadNormalization
+import Algsuperdiff.Section24.Sensitivity.Provider.Mesoscale.Patching
+import Algsuperdiff.Section24.Sensitivity.Provider.Mesoscale.ScaleSelection
+import Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.DescendantRatio
+import Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.DiscreteCompounding
+import Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.GeometricResummation
+import Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.UnitCubeTransfer
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.Bounds
+import Algsuperdiff.Section24.Sensitivity.Provider.Response.Closure
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.Aggregation
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.Closure
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.CubeDhPQ
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.CubeSensitivity
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.CubeShaking
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.CubeWitnessPQ
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.MesoscaleArithmetic
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.Provider
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.TermARefined
+import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.ValueLipschitz
+import Algsuperdiff.Section24.Sensitivity.Provider.Response.PathDerivative
+import Algsuperdiff.Section24.Sensitivity.Provider.Response.PathGauge
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.Closure
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.Continuity
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.Convexity
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.Densities
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.DerivativeBridge
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.DhIdentification
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.MuExpansion
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.PairingBounds
+import Algsuperdiff.Section24.Sensitivity.Provider.Path.PointwiseExpansion
+import Algsuperdiff.Section24.Sensitivity.Provider.Shaking.LambdaShaking
+
+/-!
+# Section 2.4 sensitivity provider aggregate
+
+Build-reachability aggregate for the sensitivity provider modules, so the
+build compiles them and maintains their oleans.
+
+This module exists only for build reachability. It never imports
+`Algsuperdiff.Section24.Sensitivity.Vocabulary` or a frozen sensitivity
+anchor, and no provider module imports this aggregate.
+-/

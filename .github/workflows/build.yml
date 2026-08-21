@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+
+      # Install the toolchain from `lean-toolchain` and fetch the Mathlib cache.
+      # The CoarseGraining dependency has no cache service and is built from
+      # source on the first run; project build artifacts are cached between
+      # runs to keep subsequent CI times reasonable.
+      - name: Set up Lean and Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+
+      # Restore/save are split so the save runs even when a later step fails:
+      # a failed or interrupted build still banks its completed modules, and
+      # the next run replays them instead of rebuilding from scratch.  The
+      # comparator workflow's cache is a valid fallback (same cached paths).
+      - name: Restore project and dependency build artifacts
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/CoarseGraining/.lake/build
+          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Enforce warning-free production build
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee production-build.log
+          if grep -iE '^warning:|^info:|declaration uses .sorry' production-build.log; then
+            echo "Production build emitted a warning."
+            exit 1
+          fi
+
+      # Build the axiom audit and check its `#print axioms` output: the three
+      # main theorems must depend on exactly the standard mathlib axioms.
+      # `#print axioms` reports as `info:` lines, so the gate exempts exactly
+      # the expected standard-axiom shape and fails on any other output.
+      - name: Axiom audit
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build Algsuperdiff.Meta.AxiomsAudit 2>&1 | tee axioms-audit.log
+          if grep -iE '^warning:|declaration uses .sorry' axioms-audit.log; then
+            echo "Axiom audit build emitted a warning."
+            exit 1
+          fi
+          if grep -iE '^info:' axioms-audit.log \
+               | grep -vF 'depends on axioms: [propext, Classical.choice, Quot.sound]'; then
+            echo "Axiom audit emitted unexpected output."
+            exit 1
+          fi
+          count=$(grep -cF 'depends on axioms: [propext, Classical.choice, Quot.sound]' axioms-audit.log)
+          if [ "$count" -ne 3 ]; then
+            echo "Expected exactly 3 standard-axiom reports, saw $count."
+            exit 1
+          fi
+          grep -F 'depends on axioms' axioms-audit.log
+
+      - name: Save project and dependency build artifacts
+        if: always() && steps.cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/CoarseGraining/.lake/build
+          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
