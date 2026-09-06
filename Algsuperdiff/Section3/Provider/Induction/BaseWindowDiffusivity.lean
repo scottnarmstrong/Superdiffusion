@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section3.InductionState
 import Algsuperdiff.Section3.Provider.Base.PlateauLandmarks
@@ -172,16 +172,5 @@ theorem inductionState_diffusivity_of_le_mStar (M : ABKModel d) {m0 : ℤ}
             (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (m : ℝ)))
             (M.nu ^ 2) :=
   fun m hm => inductionState_diffusivity_le_mStar M m (hm.trans hm0)
-
-/- **Compile-time shape assertion — mathematically vacuous.**
-
-If the public's statement ever drifted from the frozen conjunct, this line
-would stop compiling.  It is deliberately unused, and it supplies no
-mathematical content whatsoever. -/
-example (M : ABKModel d) {m0 : ℤ}
-    (hm0 : m0 ≤ mStar M) {E : {E : ℝ // 1 ≤ E}}
-    (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 E) :
-    Algsuperdiff.Frozen.Section3.inductionState M m0 E :=
-  ⟨inductionState_diffusivity_of_le_mStar M hm0, hS.2⟩
 
 end Algsuperdiff.Section3.Provider.Induction

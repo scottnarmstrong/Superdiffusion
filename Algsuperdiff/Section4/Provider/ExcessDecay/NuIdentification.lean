@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.AntisymmetricShiftCutoff
 import Algsuperdiff.Section4.Support.FluxCorrectedRepresentative
@@ -71,33 +71,6 @@ variable {d : ℕ}
 
 /-! ## 1. The symmetric part is invisible on the diagonal -/
 
-/-- The matrix decomposes into its symmetric and skew parts. -/
-private theorem symmPart_add_skewPart (A : Mat d) : symmPart A + skewPart A = A := by
-  ext i j
-  simp only [symmPart, skewPart, Matrix.add_apply]
-  ring
-
-private theorem vecDot_add_right (v w w' : Vec d) :
-    vecDot v (w + w') = vecDot v w + vecDot v w' := by
-  simp only [vecDot, Pi.add_apply, mul_add, Finset.sum_add_distrib]
-
-/-- **The symmetric part is invisible on the diagonal.**  For every matrix `A` and
-vector `v`, `v · symm(A) v = v · A v`: the skew part contributes nothing to a
-quadratic form.  This is the identity behind the manuscript's silent passage
-between `⨍ ∇u · a ∇u` and CoarseGraining's symmetric-part energy. -/
-theorem vecDot_matVecMul_symmPart_self (A : Mat d) (v : Vec d) :
-    vecDot v (matVecMul (symmPart A) v) = vecDot v (matVecMul A v) := by
-  have hzero : vecDot v (matVecMul (skewPart A) v) = 0 := by
-    rw [vecDot_comm v (matVecMul (skewPart A) v)]
-    exact vecDot_matVecMul_self_eq_zero_of_skew (matTranspose_skewPart A) v
-  calc
-    vecDot v (matVecMul (symmPart A) v) =
-        vecDot v (matVecMul (symmPart A) v) + vecDot v (matVecMul (skewPart A) v) := by
-          rw [hzero, add_zero]
-    _ = vecDot v (matVecMul (symmPart A + skewPart A) v) := by
-          rw [add_matVecMul, vecDot_add_right]
-    _ = vecDot v (matVecMul A v) := by rw [symmPart_add_skewPart]
-
 /-! ## 2. The general identification -/
 
 private theorem volumeAverage_const_mul (V : Set (Vec d)) (c : ℝ) (f : Vec d → ℝ) :
@@ -139,25 +112,6 @@ theorem localizedCoeffEnergyValue_eq_mul_of_symmPart_eq {U : Ch02.Domain d}
       fun x : Vec d => nu * vecNormSq (u.grad x) from funext hpt]
   exact volumeAverage_const_mul V nu _
 
-/-- The same identification read on the *raw* (unsymmetrized) energy density,
-which is the manuscript's own `⨍_V ∇u · a ∇u`. -/
-theorem volumeAverage_vecDot_matVecMul_eq_mul_of_symmPart_eq {U : Ch02.Domain d}
-    (V : Set (Vec d)) (a : Ch02.CoeffOn U) (u : H1Function (U : Set (Vec d)))
-    (nu : ℝ) (hsymm : ∀ x : Vec d, symmPart (a.toCoeffField x) = nu • (1 : Mat d)) :
-    normalizedSetAverage V
-        (fun x => vecDot (u.grad x) (matVecMul (a.toCoeffField x) (u.grad x))) =
-      nu * normalizedSetAverage V (fun x => vecNormSq (u.grad x)) := by
-  have hpt : ∀ x : Vec d,
-      vecDot (u.grad x) (matVecMul (a.toCoeffField x) (u.grad x)) =
-        vecDot (u.grad x) (matVecMul (symmPart (a.toCoeffField x)) (u.grad x)) :=
-    fun x => (vecDot_matVecMul_symmPart_self (a.toCoeffField x) (u.grad x)).symm
-  rw [show (fun x : Vec d =>
-        vecDot (u.grad x) (matVecMul (a.toCoeffField x) (u.grad x))) =
-      fun x : Vec d =>
-        vecDot (u.grad x) (matVecMul (symmPart (a.toCoeffField x)) (u.grad x)) from
-    funext hpt]
-  exact localizedCoeffEnergyValue_eq_mul_of_symmPart_eq V a u nu hsymm
-
 /-! ## 3. The identification at the flux-corrected family -/
 
 /-- **The `ν`-identification at the shifted field.**
@@ -178,26 +132,6 @@ theorem localizedCoeffEnergyValue_fluxCorrectedCoeffFamily_eq (M : ABKModel d)
     exact congrFun (Support.fluxCorrectedRegField_toFun M L k Q omega) x
   rw [hfield]
   exact symmPart_fluxCorrectedField_eq M L k Q omega x
-
-/-- The two inequalities the §4.3 chain needs, both from the identity. -/
-theorem le_localizedCoeffEnergyValue_fluxCorrectedCoeffFamily (M : ABKModel d)
-    (L k : ℤ) (Q R : TriadicCube d) (omega : Cutoff.CutoffSample d)
-    (V : Set (Vec d))
-    (u : H1Function (Ch02.cubeDomain R : Set (Vec d))) :
-    (M.nu : ℝ) * normalizedSetAverage V (fun x => vecNormSq (u.grad x)) ≤
-      localizedCoeffEnergyValue V
-        ((Support.fluxCorrectedCoeffFamily M L k Q omega).coeffOn R) u :=
-  le_of_eq
-    (localizedCoeffEnergyValue_fluxCorrectedCoeffFamily_eq M L k Q R omega V u).symm
-
-theorem localizedCoeffEnergyValue_fluxCorrectedCoeffFamily_le (M : ABKModel d)
-    (L k : ℤ) (Q R : TriadicCube d) (omega : Cutoff.CutoffSample d)
-    (V : Set (Vec d))
-    (u : H1Function (Ch02.cubeDomain R : Set (Vec d))) :
-    localizedCoeffEnergyValue V
-        ((Support.fluxCorrectedCoeffFamily M L k Q omega).coeffOn R) u ≤
-      (M.nu : ℝ) * normalizedSetAverage V (fun x => vecNormSq (u.grad x)) :=
-  le_of_eq (localizedCoeffEnergyValue_fluxCorrectedCoeffFamily_eq M L k Q R omega V u)
 
 /-! ## 4. The printed `ν^{1/2}‖∇u‖` form -/
 

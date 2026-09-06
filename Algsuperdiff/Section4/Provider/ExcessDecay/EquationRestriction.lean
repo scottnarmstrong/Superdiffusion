@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CaccioppoliInteriorGeometry
 import Algsuperdiff.Section4.Provider.ExcessDecay.EquationRestrictionZeroExtension
@@ -110,65 +110,7 @@ theorem isDivFormWeakSolutionOn_restrict {W V : Set (Vec d)}
       h (h10ExtendToSuperset phi hV.measurableSet hVW)
     _ = -∫ x in V, vecDot (g x) (phi.toH1Function.grad x) ∂volume := by rw [hforcing]
 
-/-! ## 3. The anchor's window: the interior gate -/
-
-/-- A translated origin cube is open. -/
-theorem isOpen_image_add_openCubeSet (z : Vec d) (k : ℤ) :
-    IsOpen ((fun y => z + y) '' openCubeSet (originCube d k)) := by
-  rw [← openCubeAtScale_eq_image_add z k]
-  exact isOpen_openCubeAtScale z k
-
-/-- **The anchor's equation on the parent window.**
-
-Under the frozen theorem's own frontier-empty gate at the centre `z ∈ □_m`, the
-`□_m` equation restricts to `z + □_k`: the gate gives the inclusion, and the
-restriction is the general theorem above. -/
-theorem isDivFormWeakSolutionOn_translateWindow_of_frontier_inter_empty {m k : ℤ}
-    {z : Vec d} {a : CoeffField d} {u : H1Function (openCubeSet (originCube d m))}
-    {g : Vec d → Vec d} (hz : z ∈ openCubeSet (originCube d m))
-    (hfr : ((fun y => z + y) '' openCubeSet (originCube d k)) ∩
-        frontier (openCubeSet (originCube d m)) = ∅)
-    (h : Support.IsDivFormWeakSolutionOn a (openCubeSet (originCube d m)) u g) :
-    Support.IsDivFormWeakSolutionOn a
-      ((fun y => z + y) '' openCubeSet (originCube d k))
-      (u.restrict (isOpen_image_add_openCubeSet z k)
-        (image_add_openCubeSet_subset_of_frontier_inter_empty hz hfr)) g :=
-  isDivFormWeakSolutionOn_restrict (isOpen_image_add_openCubeSet z k)
-    (image_add_openCubeSet_subset_of_frontier_inter_empty hz hfr) h
-
-/-- The same restriction driven by a bare inclusion, for callers that already
-have `z + □_k ⊆ □_m` (for example from the nesting `k ≤ m` at `z = 0`, or from a
-geometry binder). -/
-theorem isDivFormWeakSolutionOn_translateWindow_of_subset {m k : ℤ} {z : Vec d}
-    {a : CoeffField d} {u : H1Function (openCubeSet (originCube d m))}
-    {g : Vec d → Vec d}
-    (hsub : (fun y => z + y) '' openCubeSet (originCube d k) ⊆
-      openCubeSet (originCube d m))
-    (h : Support.IsDivFormWeakSolutionOn a (openCubeSet (originCube d m)) u g) :
-    Support.IsDivFormWeakSolutionOn a
-      ((fun y => z + y) '' openCubeSet (originCube d k))
-      (u.restrict (isOpen_image_add_openCubeSet z k) hsub) g :=
-  isDivFormWeakSolutionOn_restrict (isOpen_image_add_openCubeSet z k) hsub h
-
 /-! ## 4. The convention bridge to CoarseGraining's cube predicate -/
-
-/-- **`IsDivFormWeakSolutionOn ⟹ IsForcedEquation`, at the negated forcing.**
-The two predicates carry the same equation in opposite `∇·g` conventions. -/
-theorem isForcedEquation_of_isDivFormWeakSolutionOn {Q : TriadicCube d}
-    {a : CoeffFamily d} {u : H1Function (Ch02.cubeDomain Q : Set (Vec d))}
-    {g : Vec d → Vec d}
-    (h : Support.IsDivFormWeakSolutionOn ((a.coeffOn Q).toCoeffField)
-      (Ch02.cubeDomain Q : Set (Vec d)) u (fun x => -g x)) :
-    IsForcedEquation Q a u g := by
-  intro phi
-  have hneg : ∀ x : Vec d,
-      vecDot (-g x) (phi.toH1Function.grad x) =
-        -vecDot (g x) (phi.toH1Function.grad x) := by
-    intro x
-    simp only [vecDot, Pi.neg_apply, neg_mul, Finset.sum_neg_distrib]
-  rw [h phi, show (fun x : Vec d => vecDot (-g x) (phi.toH1Function.grad x)) =
-      fun x : Vec d => -vecDot (g x) (phi.toH1Function.grad x) from funext hneg,
-    MeasureTheory.integral_neg, neg_neg]
 
 /-- **The forcing-sign variant** consumed by the translated-frame assembly: an
 unnegated `IsDivFormWeakSolutionOn` datum produces CoarseGraining's predicate
@@ -194,22 +136,6 @@ theorem isForcedEquation_neg_of_isDivFormWeakSolutionOn {Q : TriadicCube d}
     _ = ∫ x in (Ch02.cubeDomain Q : Set (Vec d)),
           vecDot ((fun y : Vec d => -g y) x) (phi.toH1Function.grad x) ∂volume := by
         rw [hneg, MeasureTheory.integral_neg]
-
-/-- The converse bridge. -/
-theorem isDivFormWeakSolutionOn_of_isForcedEquation {Q : TriadicCube d}
-    {a : CoeffFamily d} {u : H1Function (Ch02.cubeDomain Q : Set (Vec d))}
-    {g : Vec d → Vec d} (h : IsForcedEquation Q a u g) :
-    Support.IsDivFormWeakSolutionOn ((a.coeffOn Q).toCoeffField)
-      (Ch02.cubeDomain Q : Set (Vec d)) u (fun x => -g x) := by
-  intro phi
-  have hneg : ∀ x : Vec d,
-      vecDot (-g x) (phi.toH1Function.grad x) =
-        -vecDot (g x) (phi.toH1Function.grad x) := by
-    intro x
-    simp only [vecDot, Pi.neg_apply, neg_mul, Finset.sum_neg_distrib]
-  rw [h phi, show (fun x : Vec d => vecDot (-g x) (phi.toH1Function.grad x)) =
-      fun x : Vec d => -vecDot (g x) (phi.toH1Function.grad x) from funext hneg,
-    MeasureTheory.integral_neg, neg_neg]
 
 end
 

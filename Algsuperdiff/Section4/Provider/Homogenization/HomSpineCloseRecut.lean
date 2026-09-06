@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepThreeCoarse
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepFourEnergy
@@ -12,34 +12,14 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomFinitePSource
 
 ## What this module is
 
-Two re-cuts of statements, needed because the frozen root's clause bodies carry
-GENERAL data `(K_g, K_h^∞, K_h)` while the Step-2/Step-3 chain was cut at the
-special data `(1, 0, 1)`.
+The re-cut of the printed energy slot, needed because what Step 2b delivers is
+weighted rather than uniform in the depth index.
 
-### (a) The data-general Step-2 majorant
+### (a) The energy slot at the `s₁ = s/4` pin — A MEASURED PRINT DEFECT
 
-`HomStepThreeCoarse.homStepTwoMajorant Cr Xfac Eq σ̄ m` carries the bracket
-`σ̄^{-1/2}3^{m/2} + σ̄^{1/2}3^{m/2}`, which is EXACTLY the `energyBracket σ̄
-3^{m/2} 1 0 1` (`homStepTwoMajorant_eq_data`).  Replacing the `(1,0,1)` by the
-root's own `(K_g, K_h^∞, K_h)` gives `homStepTwoMajorantData`, and the two
-printed brackets are related by the identity
-
-```text
-  √σ̄ · energyBracket σ̄ … / σ̄  =  dataBracket σ̄ …      (`sqrt_mul_energyBracket_div`)
-```
-
-i.e. the introduction's energy display bracket divided by `σ̄` and re-weighted
-by `√σ̄` is the introduction's homogenization estimate bracket — the (C3)
-bracket.  Nothing is approximated: `sqrt_mul_energyBracket_div` is an equality,
-and it is exactly the arithmetic Step 3a performs silently when it divides the
-display by `σ̄_m`.
-
-### (c) The energy slot at the `s₁ = s/4` pin — A MEASURED PRINT DEFECT
-
-The `coarseGrainingEnergyPartial_le_of_bound` feeds the printed `ℓ^p` energy
-slot from a UNIFORM bound `Gen R ≤ S`.  What Step 2b actually delivers is a
+The printed `ℓ^p` energy slot is fed from a UNIFORM bound `Gen R ≤ S`.  What Step 2b actually delivers is a
 WEIGHTED bound: at the §4.5 parameter web the family bound `F j z ≤
-K·3^{(1-α)(m-j)}` (the `stepTwoLocal_sectionFive` / `HomStepTwoLocal`) grows
+K·3^{(1-α)(m-j)}` (the Step-2b local family) grows
 like `3^{a i}` in the depth index `i = (m-n)+i` with
 
 ```text
@@ -50,9 +30,7 @@ The printed weight of the energy slot is `3^{-(s-s₁)p i}`.  So the summand is
 `3^{-((s-s₁)-a)p i}` and the slot converges **iff `s₁ < s - a = s/2`**.  The
 manuscript's `s₁ = s/2` is EXACTLY the borderline: `(s - s₁) - a = 0`, every
 summand is the same, the partial sums grow linearly in `N`, and NO `S`-bound
-survives.  This is machine-visible in `stepTwo_weightGap_borderline` (the
-`s₁ = s/2` gap is `0`) and `stepTwo_weightGap_quarterPin` (the `s₁ = s/4` gap
-is `s/4 > 0`).
+survives.  The `s₁ = s/2` gap is `0`, while the `s₁ = s/4` gap is `s/4 > 0`.
 
 The choice below is free at the hypothesis level and stays inside the printed
 range `s₁ ∈ (0,s)` of the source proposition itself — it is a choice the printed
@@ -72,7 +50,7 @@ displayed constant and nothing else.
 ### (b) THE `ν` VERSUS `σ̄` SEAM — NOTED, NOT CONVERTED
 
 The printed energy slot sums `‖σ^{1/2}∇u‖_{L̲²(z+□_k)}^p` (transcribed in
-`HomFinitePSource`), while Step 2b's family (`HomStepTwoLocal`) is the
+`HomFinitePSource`), while Step 2b's family is the
 manuscript's `ν^{1/2}‖∇u‖_{L̲²(z+□_j)}`.  The printed `σ` of the energy slot
 is UNSUBSCRIPTED and therefore ambiguous between
 
@@ -83,8 +61,8 @@ is UNSUBSCRIPTED and therefore ambiguous between
   into the slot would require a `ν ↔ σ̄` conversion.
 
 This module refuses the second reading and performs NO conversion: the per-cube
-energy `Gen` is left ABSTRACT in every statement below (as it is in
-`GeneralCoarseGrainingFiniteP`), so the caller pins it, and the units doctrine
+energy `Gen` is left ABSTRACT in every statement below (as it is in the
+transcribed printed proposition), so the caller pins it, and the units doctrine
 is not touched anywhere in this file.  The seam is reported, not crossed.
 -/
 
@@ -98,111 +76,11 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## 1. The data-general Step-2 majorant -/
-
-/-- **The Step-2 majorant at GENERAL data.**
-
-`homStepTwoMajorant` with the printed bracket `σ̄^{-1/2}3^{m/2} +
-σ̄^{1/2}3^{m/2}` replaced by the `energyBracket σ̄ pow K_g K_h^∞ K_h`.  The
-special case is `homStepTwoMajorant_eq_data` below. -/
-def homStepTwoMajorantData (Cr Xfac Eq sigma pow Kg KhInf Kh : ℝ) : ℝ :=
-  Cr * Xfac * (1 + Eq) * energyBracket sigma pow Kg KhInf Kh
-
-/-- The majorant IS the data-general one at the data `(K_g, K_h^∞, K_h)
-= (1, 0, 1)` and `pow = 3^{m/2}`.  No inequality is spent. -/
-theorem homStepTwoMajorant_eq_data (Cr Xfac Eq sigma : ℝ) (m : ℤ) :
-    homStepTwoMajorant Cr Xfac Eq sigma m =
-      homStepTwoMajorantData Cr Xfac Eq sigma ((3 : ℝ) ^ ((m : ℝ) / 2)) 1 0 1 := by
-  rw [homStepTwoMajorant, homStepTwoMajorantData, energyBracket]
-  ring
-
-theorem homStepTwoMajorantData_nonneg {Cr Xfac Eq sigma pow Kg KhInf Kh : ℝ}
-    (hCr : 0 ≤ Cr) (hXfac : 0 ≤ Xfac) (hEq : 0 ≤ Eq) (hpow : 0 ≤ pow) (hKg : 0 ≤ Kg)
-    (hKhInf : 0 ≤ KhInf) (hKh : 0 ≤ Kh) :
-    0 ≤ homStepTwoMajorantData Cr Xfac Eq sigma pow Kg KhInf Kh := by
-  have h1 : (0 : ℝ) ≤ Real.sqrt sigma⁻¹ * pow * Kg :=
-    mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hpow) hKg
-  have h2 : (0 : ℝ) ≤ Real.sqrt sigma * (KhInf + pow * Kh) :=
-    mul_nonneg (Real.sqrt_nonneg _) (by
-      have := mul_nonneg hpow hKh
-      linarith only [hKhInf, this])
-  have hbr : (0 : ℝ) ≤ energyBracket sigma pow Kg KhInf Kh := by
-    rw [energyBracket]
-    linarith only [h1, h2]
-  rw [homStepTwoMajorantData]
-  exact mul_nonneg (mul_nonneg (mul_nonneg hCr hXfac) (by linarith only [hEq])) hbr
-
-/-- **THE BRACKET IDENTITY, exact** (the hand-verified step, formalized).
-
-`√σ̄ · (e.intro.energies bracket) / σ̄  =  (e.intro.homogenization.estimate
-bracket)`.  This is Step 3a's silent division by `σ̄_m` combined with the
-`√σ̄`-weight the Proposition's first term carries: the two printed brackets are
-the same object up to this exact factor, and no inequality is spent. -/
-theorem sqrt_mul_energyBracket_div (sigma pow Kg KhInf Kh : ℝ) (hsig : 0 < sigma) :
-    Real.sqrt sigma * energyBracket sigma pow Kg KhInf Kh / sigma =
-      dataBracket sigma pow Kg KhInf Kh := by
-  have hkey : Real.sqrt sigma * dataBracket sigma pow Kg KhInf Kh =
-      energyBracket sigma pow Kg KhInf Kh :=
-    sqrt_mul_dataBracket sigma pow Kg KhInf Kh hsig
-  have hsq : Real.sqrt sigma * Real.sqrt sigma = sigma :=
-    Real.mul_self_sqrt (le_of_lt hsig)
-  have hprod : Real.sqrt sigma * energyBracket sigma pow Kg KhInf Kh =
-      sigma * dataBracket sigma pow Kg KhInf Kh := by
-    rw [← hkey, ← mul_assoc, hsq]
-  rw [hprod, mul_comm, mul_div_assoc, div_self (ne_of_gt hsig), mul_one]
-
-/-- The Step-3a `σ̄` bookkeeping at GENERAL data: `√σ̄ ·
-(data-general majorant)` is the printed `σ̄ · dataBracket` form. -/
-theorem sqrt_mul_homStepTwoMajorantData (Cr Xfac Eq : ℝ) {sigma : ℝ} (hsig : 0 < sigma)
-    (pow Kg KhInf Kh : ℝ) :
-    Real.sqrt sigma * homStepTwoMajorantData Cr Xfac Eq sigma pow Kg KhInf Kh =
-      Cr * Xfac * (1 + Eq) * (sigma * dataBracket sigma pow Kg KhInf Kh) := by
-  have hkey : Real.sqrt sigma * dataBracket sigma pow Kg KhInf Kh =
-      energyBracket sigma pow Kg KhInf Kh :=
-    sqrt_mul_dataBracket sigma pow Kg KhInf Kh hsig
-  have hsq : Real.sqrt sigma * Real.sqrt sigma = sigma :=
-    Real.mul_self_sqrt (le_of_lt hsig)
-  have hprod : Real.sqrt sigma * energyBracket sigma pow Kg KhInf Kh =
-      sigma * dataBracket sigma pow Kg KhInf Kh := by
-    rw [← hkey, ← mul_assoc, hsq]
-  rw [homStepTwoMajorantData]
-  calc Real.sqrt sigma * (Cr * Xfac * (1 + Eq) * energyBracket sigma pow Kg KhInf Kh)
-      = Cr * Xfac * (1 + Eq) *
-          (Real.sqrt sigma * energyBracket sigma pow Kg KhInf Kh) := by ring
-    _ = Cr * Xfac * (1 + Eq) * (sigma * dataBracket sigma pow Kg KhInf Kh) := by
-        rw [hprod]
-
-/-! ## 2. The `s₁` weight gap: the borderline and the pin -/
-
-/-- **The `s₁ = s/2` BORDERLINE, displayed.**  The printed energy weight
-`3^{-(s-s₁)p i}` and the Step-2b growth `3^{(1-α) i} = 3^{(s/2) i}` cancel
-EXACTLY at the manuscript's `s₁ = s/2`: the gap `(s - s₁) - s/2` is zero, so the
-`ℓ^p` slot's summands do not decay and no `S`-bound survives the partial
-sums. -/
-theorem stepTwo_weightGap_borderline (s : ℝ) : (s - s / 2) - s / 2 = 0 := by ring
-
-/-- **The `s₁ = s/4` PIN, displayed.**  The same gap at `s₁ = s/4` is `s/4 > 0`,
-so the slot converges.  `s/4 ∈ (0,s)` is inside the printed range of `s₁` in
-the general coarse-graining proposition itself, so this is a choice the source offers, not a
-statement change. -/
-theorem stepTwo_weightGap_quarterPin {s : ℝ} (hs : 0 < s) :
-    (s - s / 4) - s / 2 = s / 4 ∧ 0 < (s - s / 4) - s / 2 := by
-  refine ⟨by ring, ?_⟩
-  have h : (s - s / 4) - s / 2 = s / 4 := by ring
-  rw [h]
-  linarith only [hs]
-
-/-- `s/4` lies in the printed range `(0, s)` of `s₁`. -/
-theorem quarterPin_mem_printedRange {s : ℝ} (hs : 0 < s) : 0 < s / 4 ∧ s / 4 < s := by
-  constructor
-  · linarith only [hs]
-  · linarith only [hs]
-
 /-! ## 3. The energy slot from a WEIGHTED Step-2b family bound -/
 
 /-- **The finite-`p` energy slot from the WEIGHTED Step-2b datum.**
 
-The `coarseGrainingEnergyPartial_le_of_bound` asks for a UNIFORM per-cube bound
+The unweighted form of the slot bound asks for a UNIFORM per-cube bound
 `Gen R ≤ S`.  What Step 2b delivers is `Gen R ≤ S·3^{a i}` at depth `jn + i`.
 As long as the printed weight strictly dominates that growth (`a < w`, i.e. `s₁
 < s - (1-α)`), the slot is still bounded by `S` times an explicit geometric
@@ -293,8 +171,8 @@ theorem coarseGrainingEnergyPartial_le_of_weightedBound {Q : TriadicCube d}
 The Step-2b family grows like `3^{(s/2) i}` (the §4.5 web's `1 - α = s/2`), the
 printed weight at `s₁ = s/4` is `3^{-(3s/4)p i}`, and the gap is `s/4 > 0`.
 This is the instance of `coarseGrainingEnergyPartial_le_of_weightedBound` the
-Step-3/Step-4 chain consumes; the printed `s₁ = s/2` would give gap `0`
-(`stepTwo_weightGap_borderline`) and no bound. -/
+Step-3/Step-4 chain consumes; the printed `s₁ = s/2` would give gap `0` and no
+bound. -/
 theorem coarseGrainingEnergyPartial_le_at_quarterPin {Q : TriadicCube d}
     {p s S : ℝ} {jn N : ℕ} {Gen : TriadicCube d → ℝ}
     (hp : 0 < p) (hs : 0 < s) (hS : 0 ≤ S)

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section4.AnomalousRegularity
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineResidueCore
@@ -11,36 +11,17 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSpineResidueCore
 
 ## What this file supplies
 
-Two things.
+`exists_regularity_minimalScale` — the Theorem-C export re-shaped at the §4.5
+parameter web: at `α:= homAlpha M = 1 - s/2` the minimal scale `X_m(α)` exists
+with a tail at ONE model-independent constant `C⋆ ≥ 1`, together with the per-`ω`
+energy-density display.  This produces exactly the `htail` hypothesis of the
+§4.5 spine's close step (the `Cst` slot) plus the display the residual step
+consumes.  It is UNCONDITIONAL.
 
-1. `exists_regularity_minimalScale` — the Theorem-C export re-shaped at
-   the §4.5 parameter web: at `α:= homAlpha M = 1 - s/2` the minimal scale
-   `X_m(α)` exists with a tail at ONE model-independent constant `C⋆ ≥ 1`,
-   together with the per-`ω` energy-density display.  This produces exactly the
-   `htail` hypothesis of `HomSpineInstallPins.homogenization_spine_close_of_recutCore`
-   (the `Cst` slot) plus the display the residual step consumes.  It is
-   UNCONDITIONAL.
-
-   Two arithmetic facts carry it: the printed observation in the paper that
-   `α ∈ (0, 1 - C₀ γ^{1/2}]` for small `γ` (`homAlpha_le_one_sub` here, off
-   `absLog_mul_sqrt_le`), and the monotonicity of the printed tail profile in
-   its own constant (`regTail_mono_const`).
-
-2. `generator_renormalization_provider_of_core` — the FULL body of the frozen
-   `generator_renormalization`, byte-transcribed, proved from the spine
-   endpoint, (1), and ONE named residual hypothesis `SpineCoreOfRegularity`;
-   `generator_renormalization_provider_final_of_core` adds the degenerate-`d`
-   wrapper so the binder prefix is the frozen root's own.
-
-## The residue, named exactly
-
-`SpineCoreOfRegularity` is: *given the Theorem-C display at `α = homAlpha M`
-and its minimal scale `X`, the §4.5 bundle core holds a.e. at `Y:=
-3^{(1-α)X}`*.  Unfolding `HomSpineResidueCore.spineDatumRecutCore_of_supply`,
-what that still asks for is `RecutCoreSupply` (the energy slot `hSbound`, the
-multiscale coarse-graining clause, and the two `𝓔` dominations), `hfin` and
-`hKabs`.  Nothing else of Theorem B is open: everything above the residue is
-proved here.
+Two arithmetic facts carry it: the printed observation in the paper that
+`α ∈ (0, 1 - C₀ γ^{1/2}]` for small `γ` (`homAlpha_le_one_sub` here, off
+`absLog_mul_sqrt_le`), and the monotonicity of the printed tail profile in its
+own constant (`regTail_mono_const`).
 -/
 
 open Algsuperdiff.Section3
@@ -184,8 +165,7 @@ and every scale `m` the minimal scale `X` exists, is measurable, has the
 spine's own tail profile at `C⋆`, and carries the per-`ω` energy-density
 display.
 
-`htail` of `homogenization_spine_close_of_recutCore` is exactly the second
-conjunct. -/
+`htail` of the §4.5 spine's close step is exactly the second conjunct. -/
 theorem exists_regularity_minimalScale (d : ℕ) (cstar : ℝ) (hcstar : 0 < cstar) :
     ∃ Cst Creg gamma0 : ℝ, 1 ≤ Cst ∧ 0 < Creg ∧ 0 < gamma0 ∧
       ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
@@ -227,169 +207,6 @@ theorem exists_regularity_minimalScale (d : ℕ) (cstar : ℝ) (hcstar : 0 < cst
   · filter_upwards [hXdisp] with omega hom
     intro L hL u h g Kg Kh hsol hKg hKh hKhsup hgrad x hx n hn hX
     exact hom L hL u h g Kg Kh hsol hKg hKh hKhsup hgrad x hx n hn hX
-
-/-! ## 4. THE RESIDUE -/
-
-/-- **THE ONE REMAINING OBLIGATION OF THEOREM B.**
-
-*From the Theorem-C display at the §4.5 web, the §4.5 bundle core.*
-
-By `HomSpineResidueCore.spineDatumRecutCore_of_supply` this is exactly
-`RecutCoreSupply` (the Step-2 energy slot `hSbound`, the multiscale
-coarse-graining clause, and the two `𝓔` dominations of the carrier seam)
-together with `hfin` and `hKabs`.
-
-THIS IS A HYPOTHESIS.  It is not proved in this file. -/
-def SpineCoreOfRegularity (d : ℕ) [NeZero d] (hd : 2 ≤ d) (cstar Cgap Kabs : ℝ) : Prop :=
-  ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ 1 / 81 →
-    ∀ (hs : 0 < homS M) (m : ℤ) (Creg : ℝ), 0 < Creg →
-      ∀ X : Cutoff.CutoffSample d → ℕ∞, Measurable X →
-        (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          RegularityDisplayAt M Creg (homAlpha M) m X omega) →
-        ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          SpineDatumRecutCore M Cgap (homMinimalScaleFactor (1 - homAlpha M) X) m hs
-            ((Annealed.sigmaBar M m : ℝ)) (Annealed.sigmaBar M m).2 Kabs
-            (recutExponent d (le_trans (by norm_num) hd)) recutOrderTop omega
-
-/-! ## 5. THE PROVIDER -/
-
-/-- **The frozen `generator_renormalization` body, at `2 ≤ d`.**
-
-Byte-transcribed from the frozen statement, proved from
-`HomSpineInstallPins.homogenization_spine_close_of_recutCore`,
-`exists_regularity_minimalScale`, and the residue.  The frozen root's extra
-`HasGradientOn` binder is introduced and discarded: the spine
-endpoint proves the display without it, so the frozen conclusion holds a
-fortiori. -/
-theorem generator_renormalization_provider_of_core (d : ℕ) [NeZero d] (hd : 2 ≤ d)
-    (cstar : ℝ) (hcstar : 0 < cstar) {Cgap Kabs : ℝ} (hCgap : 0 ≤ Cgap)
-    (hKabs : 0 ≤ Kabs) (hcore : SpineCoreOfRegularity d hd cstar Cgap Kabs) :
-    ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
-      ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
-        ∀ m : ℤ, ∃ sigmaBarM : ℝ, 0 < sigmaBarM ∧
-          |sigmaBarM -
-              Real.sqrt (M.nu ^ (2 : ℕ) +
-                cstar * M.gamma⁻¹ * Real.rpow (3 : ℝ) (2 * M.gamma * (m : ℝ)))| ≤
-            C * Real.sqrt M.gamma * |Real.log M.gamma| * sigmaBarM ∧
-          ∃ EB : Cutoff.CutoffSample d → ℝ,
-            (∀ omega, 0 ≤ EB omega) ∧ Measurable EB ∧
-            (∀ p : ℝ, 1 ≤ p → p ≤ C⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹ →
-              (∫⁻ omega, ENNReal.ofReal (EB omega) ^ p
-                  ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                ENNReal.ofReal
-                    (C * (Real.sqrt p + Real.sqrt |Real.log M.gamma|) *
-                      Real.sqrt M.gamma * Real.log M.gamma ^ (2 : ℕ)) ^ p) ∧
-            ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-              ∀ L : ℤ, m ≤ L →
-                ∀ (u v h : H1Function (openCubeSet (originCube d m)))
-                  (g : Vec d → Vec d) (Kg Kh KhInf : ℝ),
-                  IsDirichletSolutionOn
-                      (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-                      (originCube d m) u h g →
-                  IsDirichletSolutionOn
-                      (fun _ => sigmaBarM • (1 : Mat d)) (originCube d m) v h g →
-                  HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kg g →
-                  HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kh h.grad →
-                  (∀ x ∈ openCubeSet (originCube d m), ‖h.grad x‖ ≤ KhInf) →
-                  HasGradientOn (openCubeSet (originCube d m)) h.toFun h.grad →
-                  (∀ᵐ x ∂(volume.restrict (openCubeSet (originCube d m))),
-                      Real.rpow (3 : ℝ) (-(m : ℝ)) * |u.toFun x - v.toFun x| ≤
-                        EB omega *
-                          (sigmaBarM⁻¹ * Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kg +
-                            (KhInf + Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh))) ∧
-                    |volumeAverage (openCubeSet (originCube d m))
-                          (fun y => M.nu * vecNormSq (u.grad y)) -
-                        volumeAverage (openCubeSet (originCube d m))
-                          (fun y => sigmaBarM * vecNormSq (v.grad y))| ≤
-                      EB omega *
-                        (Real.sqrt sigmaBarM⁻¹ * Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kg +
-                            Real.sqrt sigmaBarM *
-                              (KhInf + Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh)) ^
-                          (2 : ℕ) := by
-  obtain ⟨Cst, Creg, g1, hCst, hCreg, hg1, hreg⟩ :=
-    exists_regularity_minimalScale d cstar hcstar
-  obtain ⟨g0, C, hg0, hC, hend⟩ :=
-    homogenization_spine_close_of_recutCore d hd cstar hcstar (Cst := Cst)
-      (Cgap := Cgap) (Kabs := Kabs) hCst hCgap hKabs
-  refine ⟨min g0 (min g1 (1 / 81)), C,
-    lt_min hg0 (lt_min hg1 (by norm_num)), hC, ?_⟩
-  intro M hcs hgamma m
-  have hgpos : 0 < M.gamma := M.shellPrefix.gamma_pos
-  have hg_end : M.gamma ≤ g0 := le_trans hgamma (min_le_left _ _)
-  have hg_reg : M.gamma ≤ g1 :=
-    le_trans hgamma (le_trans (min_le_right _ _) (min_le_left _ _))
-  have hg_81 : M.gamma ≤ 1 / 81 :=
-    le_trans hgamma (le_trans (min_le_right _ _) (min_le_right _ _))
-  have hL4 : 4 ≤ |Real.log M.gamma| := four_le_absLog hgpos hg_81
-  have hs : 0 < homS M := homS_pos (by linarith only [hL4])
-  obtain ⟨X, hXmeas, hXtail, hXdisp⟩ := hreg M hcs hg_reg m
-  obtain ⟨sigmaBarM, hsig, hdiff, EB, hEB0, hEBmeas, hEBmom, hEBae⟩ :=
-    hend M hcs hg_end X hXmeas hXtail hs m
-      (hcore M hcs hg_81 hs m Creg hCreg X hXmeas hXdisp)
-  refine ⟨sigmaBarM, hsig, hdiff, EB, hEB0, hEBmeas, hEBmom, ?_⟩
-  filter_upwards [hEBae] with omega hom
-  intro L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf _hgrad
-  exact hom L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf
-
-/-- **The frozen `generator_renormalization` body at the frozen prefix.**
-
-The degenerate-`d` wrapper: the frozen root carries no dimension binder and no
-`NeZero`, so `d ∈ {0, 1}` is covered separately.  `ABKModel d` already forces
-`2 ≤ d` (`ShellLawPrefix.dimension`), so the low-dimensional branch is vacuous —
-the same honest wrapper used for Theorem C. -/
-theorem generator_renormalization_provider_final_of_core (d : ℕ) (cstar : ℝ)
-    (hcstar : 0 < cstar) {Cgap Kabs : ℝ} (hCgap : 0 ≤ Cgap) (hKabs : 0 ≤ Kabs)
-    (hcore : ∀ (hd : 2 ≤ d) (inst : NeZero d),
-      @SpineCoreOfRegularity d inst hd cstar Cgap Kabs) :
-    ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
-      ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
-        ∀ m : ℤ, ∃ sigmaBarM : ℝ, 0 < sigmaBarM ∧
-          |sigmaBarM -
-              Real.sqrt (M.nu ^ (2 : ℕ) +
-                cstar * M.gamma⁻¹ * Real.rpow (3 : ℝ) (2 * M.gamma * (m : ℝ)))| ≤
-            C * Real.sqrt M.gamma * |Real.log M.gamma| * sigmaBarM ∧
-          ∃ EB : Cutoff.CutoffSample d → ℝ,
-            (∀ omega, 0 ≤ EB omega) ∧ Measurable EB ∧
-            (∀ p : ℝ, 1 ≤ p → p ≤ C⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹ →
-              (∫⁻ omega, ENNReal.ofReal (EB omega) ^ p
-                  ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                ENNReal.ofReal
-                    (C * (Real.sqrt p + Real.sqrt |Real.log M.gamma|) *
-                      Real.sqrt M.gamma * Real.log M.gamma ^ (2 : ℕ)) ^ p) ∧
-            ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-              ∀ L : ℤ, m ≤ L →
-                ∀ (u v h : H1Function (openCubeSet (originCube d m)))
-                  (g : Vec d → Vec d) (Kg Kh KhInf : ℝ),
-                  IsDirichletSolutionOn
-                      (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-                      (originCube d m) u h g →
-                  IsDirichletSolutionOn
-                      (fun _ => sigmaBarM • (1 : Mat d)) (originCube d m) v h g →
-                  HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kg g →
-                  HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kh h.grad →
-                  (∀ x ∈ openCubeSet (originCube d m), ‖h.grad x‖ ≤ KhInf) →
-                  HasGradientOn (openCubeSet (originCube d m)) h.toFun h.grad →
-                  (∀ᵐ x ∂(volume.restrict (openCubeSet (originCube d m))),
-                      Real.rpow (3 : ℝ) (-(m : ℝ)) * |u.toFun x - v.toFun x| ≤
-                        EB omega *
-                          (sigmaBarM⁻¹ * Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kg +
-                            (KhInf + Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh))) ∧
-                    |volumeAverage (openCubeSet (originCube d m))
-                          (fun y => M.nu * vecNormSq (u.grad y)) -
-                        volumeAverage (openCubeSet (originCube d m))
-                          (fun y => sigmaBarM * vecNormSq (v.grad y))| ≤
-                      EB omega *
-                        (Real.sqrt sigmaBarM⁻¹ * Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kg +
-                            Real.sqrt sigmaBarM *
-                              (KhInf + Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh)) ^
-                          (2 : ℕ) := by
-  by_cases hd : 2 ≤ d
-  · haveI inst : NeZero d := ⟨by omega⟩
-    exact generator_renormalization_provider_of_core d hd cstar hcstar hCgap hKabs
-      (hcore hd inst)
-  · refine ⟨1, 1, one_pos, one_pos, ?_⟩
-    intro M _hcs _hgamma _m
-    exact absurd M.shellPrefix.dimension hd
 
 end
 

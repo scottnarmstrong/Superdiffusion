@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2Moments
 import Algsuperdiff.Section4.Provider.Proportion.RowSumFinite
@@ -27,9 +27,9 @@ This module supplies the conversion, exactly as `RowSumFinite` does for the
 4. `XrowE_le_XrowTwoE` — on the good set the one-sided row sits below the
    two-sided one (the inequality is in the manuscript's favour: the `j > m` rows
    are nonnegative).
-5. `lt_Yk_of_notMem_eventG2` / `hreduce_eventG2` — the `hreduce` slot of the
-   Appendix-D concentration interface, entered through `G2Score`'s exact event
-   characterization.
+5. `lt_Yk_of_notMem_eventG2` — the deterministic half of the `hreduce` slot of
+   the Appendix-D concentration interface, entered through `G2Score`'s exact
+   event characterization.
 
 Everything is a first-moment computation; **no** Borel--Cantelli is used, and the
 null set is paid for by `RowSumFinite.measure_scaleProp_le_of_null_enlargement`.
@@ -466,23 +466,6 @@ theorem lt_Yk_of_notMem_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) {ep D 
     calc ep ^ 2 < (s : ℝ) * (XrowTwoE M s m omega).toReal := hreal
       _ = (XrowTwoE M s m omega).toReal * (s : ℝ) := by ring
   exact mul_lt_mul_of_pos_left hstep (inv_pos.2 hD)
-
-/-- **The `hreduce` slot of the `𝒢₂` concentration assembly, for the enlarged
-family.**  `hthr` is the lane's threshold identification: the Appendix-D level
-`9 s'^{-1}C_⋆^{1/p}θ^{-1/p}` at `s' = ¼s` must sit below `D^{-1}ε²s^{-1}`. -/
-theorem hreduce_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) {ep p theta D : ℝ}
-    (hD : 0 < D)
-    (hthr : 9 * ((s : ℝ) / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)
-      ≤ D⁻¹ * (ep ^ 2 / (s : ℝ)))
-    (m : ℤ) (_hm : 0 ≤ m) (omega : Cutoff.CutoffSample d)
-    (homega : omega ∈ (Support.eventG2 M m s ep ∪ (goodRowSetG2 M s)ᶜ)ᶜ) :
-    9 * ((s : ℝ) / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)
-      < Yk (xcalArray M s D) ((s : ℝ) / 4) m omega := by
-  have h1 : omega ∉ Support.eventG2 M m s ep := fun hc => homega (Or.inl hc)
-  have h2 : omega ∈ goodRowSetG2 M s := by
-    by_contra hc
-    exact homega (Or.inr hc)
-  exact lt_of_le_of_lt hthr (lt_Yk_of_notMem_eventG2 M s hD m h2 h1)
 
 end
 

@@ -1,14 +1,14 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdBridgeFolds
 
 /-!
 # The one-step off the anchor's interior clause (two legs only)
 
-`excessDecay_oneStep_interior_anchored` consumes the anchor's general clause,
+The anchored interior one-step consumes the anchor's general clause,
 which keeps the `∇h` terms because the boundary regime needs them.  On the
 interior branch those terms are dead weight, and worse: the flat ungated leg
 `C s^{-6} 3^{n-2} ‖∇h‖_{L̲²}` has **no decay in `n`**, so its window sum is
@@ -73,7 +73,7 @@ variable {d : ℕ}
 
 /-! ## 1. The two-leg `B.toReal` expansion -/
 
-/-- The two-leg twin of `EdAssemblyLegs.toReal_ofReal_mul_bracket_add_three_le`: the interior
+/-- The two-leg twin of the four-leg `B.toReal` expansion: the interior
 clause's display has no in-bracket companion and no `∇h` legs.  Unconditional. -/
 theorem toReal_ofReal_mul_add_two_le {c₁ c₂ : ℝ} (X Y : ℝ≥0∞) (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂) :
     (ENNReal.ofReal c₁ * X + ENNReal.ofReal c₂ * Y).toReal ≤ c₁ * X.toReal + c₂ * Y.toReal := by
@@ -171,7 +171,7 @@ theorem excessDecay_oneStep_interior_of_pathwiseBound [NeZero d] (hd : d ≠ 0) 
 /-- **The anchor's frontier-empty (interior) clause, at the one-step window
 choice.**
 
-Same instantiation as `EdAssemblyAnchor.exists_oneStepAnchorBound` — anchor
+Same instantiation as the harmonic-approximation anchor bound — anchor
 index `n-2`, anchor centre the clamped `wellPlacedCentre x m (n-2)`, both
 geometric obligations discharged — but the second conjunct is taken.  Its event, its
 flux representative and its display window all read at `n - 2 + 2 = n`, and it

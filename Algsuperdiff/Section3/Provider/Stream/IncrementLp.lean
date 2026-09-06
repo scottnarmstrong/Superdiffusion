@@ -76,10 +76,9 @@ status claim:
   `matrixOperatorNorm_le_matrixFrobeniusNorm`.)
 * The resulting `Gamma_{2/p}` scale is `e · (gammaMomentConst 2 · C_d ·
   min{gamma^{-1/2},(m-n)^{1/2}} 3^{gamma m})^p · p^{p/2}` — NOTE the
-  `gammaMomentConst 2 = 2e` inside the `p`-th power (; the first version of
-  this line understated the scale).  This implies the printed `(Cp)^{p/2}
-  min{.}^p 3^{gamma p m}` with the source's generic `C` read as `C:= e^2 · (2e
-  · C_d)^2` (`C^{p/2} ≥ e·(2e·C_d)^p` for all `p ≥ 1`), a `p`-uniform
+  `gammaMomentConst 2 = 2e` inside the `p`-th power.  This implies the printed
+  `(Cp)^{p/2} min{.}^p 3^{gamma p m}` with the source's generic `C` read as
+  `C:= e^2 · (2e · C_d)^2` (`C^{p/2} ≥ e·(2e·C_d)^p` for all `p ≥ 1`), a `p`-uniform
   dimension-only constant.  `C_d` is the proved amplitude of `e.k.ell.upscales`
   (`streamPointScale`).
 * No relation between `l` and `m` is used: `e.kmn.bounds` is stated in the

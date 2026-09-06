@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BesovBridge
 import Algsuperdiff.Section4.Provider.Regularity.StepFourSeminormComparisons
@@ -136,35 +136,6 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
           Real.rpow (3 : ℝ) ((j : ℝ) / 2) := by rw [hsum]
     _ = besovGagliardoConstant d * stepFourGagliardoConst d stepSevenCgS *
           (Real.rpow (3 : ℝ) ((j : ℝ) / 2) * Khol) := by ring
-
-/-- **The `dataB` field of `RootClauseBPayload`, produced.**
-
-`besovTranslated_neg_le_holder` at `j = m-1`, followed by the one inequality of
-the whole chain, `3^{(m-1)/2} ≤ 3^{m/2}`. -/
-theorem rootClauseB_dataB [NeZero d] {m : ℤ} {z : Vec d} {gsrc : Vec d → Vec d}
-    {Khol : ℝ} (hz : z ∈ openCubeSet (originCube d (m - 1))) (hKhol : 0 ≤ Khol)
-    (hgHol : Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
-      (1 / 2) Khol gsrc)
-    (hgL2 : MemLp gsrc 2
-      (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
-    (hgW : MemLp (Gagliardo.gagliardoKernel stepOneS 2 gsrc) 2
-      (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m)))) :
-    scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (m - 1))
-        stepSevenCgS (fun y => -gsrc (y + z)) ≤
-      rootClauseBDataBConst d * edFinalDataOscG Khol m := by
-  have hmain := besovTranslated_neg_le_holder (m := m) (j := m - 1) hz (le_refl _)
-    hKhol hgHol hgL2 hgW
-  have hcast : (((m - 1 : ℤ)) : ℝ) = (m : ℝ) - 1 := by push_cast; ring
-  rw [hcast] at hmain
-  refine le_trans hmain ?_
-  rw [edFinalDataOscG]
-  have hmono : Real.rpow (3 : ℝ) (((m : ℝ) - 1) / 2) ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [le_refl (m : ℝ)])
-  have hstep : Real.rpow (3 : ℝ) (((m : ℝ) - 1) / 2) * Khol ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Khol :=
-    mul_le_mul_of_nonneg_right hmono hKhol
-  exact mul_le_mul_of_nonneg_left hstep (rootClauseBDataBConst_nonneg d)
 
 end
 

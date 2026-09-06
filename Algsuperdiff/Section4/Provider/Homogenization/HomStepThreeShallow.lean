@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepThreeCoarse
 import Homogenization.Sobolev.Fractional.EuclideanWspLocalization
@@ -37,11 +37,10 @@ at most a maximum.  Hence:
       ⟹  ⨍_Q |∇u|² ≤ B,
 ```
 
-`cubeAverage_le_of_descendants`, with `homShallowDepth` naming the depth at
-which the descendants sit.  Consequently the shallow-range display holds with
+`cubeAverage_le_of_descendants`, at the depth where the descendants sit.  Consequently the shallow-range display holds with
 the SAME constant as the deep-range one, i.e. the printed
 `3^{(1-α)X_m(α)} 3^{(1-α)(m-j)}` is not merely sufficient but generous by the
-factor `3^{(1-α)(m-j)} ≥ 1` (`shallowRange_of_deepRange`).
+factor `3^{(1-α)(m-j)} ≥ 1`.
 
 ## What this module does NOT do — the two named identifications
 
@@ -120,44 +119,6 @@ theorem cubeAverage_le_of_descendants (Q : TriadicCube d) (j : ℕ)
   have hid := descendantsENNAverage_lintegral_normalizedCubeMeasure_eq Q j f
   rw [← hid]
   exact descendantsENNAverage_le_of_forall_le Q j hdeep
-
-/-- The depth at which a shallow cube of scale `j` meets the deep scale
-`m - X`: the manuscript's own `j - (m - X_m(α))`. -/
-def homShallowDepth (m X j : ℤ) : ℕ := (j - (m - X)).toNat
-
-theorem homShallowDepth_scale {m X j : ℤ} (Q : TriadicCube d) (hQ : Q.scale = j)
-    {R : TriadicCube d} (hR : R ∈ descendantsAtDepth Q (homShallowDepth m X j))
-    (hj : m - X ≤ j) : R.scale = m - X := by
-  have h := scale_eq_sub_of_mem_descendantsAtDepth hR
-  rw [h, hQ, homShallowDepth]
-  omega
-
-/-- **The shallow range costs nothing.**
-
-If the deep-range display holds at every descendant with majorant `B`, then the
-shallow cube obeys the SAME bound `B`; a fortiori it obeys the printed `B ·
-3^{(1-α)(m-j)}`, whose extra factor is `≥ 1`.  Together with the
-`hence_holds_on_deep_range` this is exactly the manuscript's "Hence", at the
-printed constant — via route (a), which the manuscript does not write. -/
-theorem shallowRange_of_deepRange (Q : TriadicCube d) (j : ℕ)
-    (f : Vec d → ℝ≥0∞) {B : ℝ≥0∞} {alpha : ℝ} {m jj : ℤ}
-    (halpha : alpha ≤ 1) (hjm : jj ≤ m)
-    (hdeep : ∀ R ∈ descendantsAtDepth Q j,
-      (∫⁻ x, f x ∂normalizedCubeMeasure R) ≤ B) :
-    (∫⁻ x, f x ∂normalizedCubeMeasure Q) ≤
-      B * ENNReal.ofReal ((3 : ℝ) ^ ((1 - alpha) * ((m : ℝ) - (jj : ℝ)))) := by
-  refine (cubeAverage_le_of_descendants Q j f hdeep).trans ?_
-  have hone : (1 : ℝ) ≤ (3 : ℝ) ^ ((1 - alpha) * ((m : ℝ) - (jj : ℝ))) := by
-    refine Real.one_le_rpow (by norm_num) ?_
-    have hj : (jj : ℝ) ≤ (m : ℝ) := by exact_mod_cast hjm
-    exact mul_nonneg (by linarith only [halpha]) (by linarith only [hj])
-  have hE : (1 : ℝ≥0∞) ≤
-      ENNReal.ofReal ((3 : ℝ) ^ ((1 - alpha) * ((m : ℝ) - (jj : ℝ)))) := by
-    rw [← ENNReal.ofReal_one]
-    exact ENNReal.ofReal_le_ofReal hone
-  calc B = B * 1 := (mul_one B).symm
-    _ ≤ B * ENNReal.ofReal ((3 : ℝ) ^ ((1 - alpha) * ((m : ℝ) - (jj : ℝ)))) :=
-        mul_le_mul' le_rfl hE
 
 end
 

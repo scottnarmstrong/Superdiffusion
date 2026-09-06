@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.ShiftedG2Lane
 import Algsuperdiff.Section4.Provider.Proportion.G2SharpArith
@@ -76,8 +76,8 @@ variable {d : ℕ}
 
 /-! ## 1. The endpoint at the `θ`-free threshold -/
 
-/-- This is `ShiftedG2Lane.exists_ratioTail_eventG2_of_range_shift` with its
-existential threshold `∃ ε₀ > 0, ∀ ε ≥ ε₀` replaced by the named condition
+/-- This is the shifted `𝒢₂` lane endpoint with its existential threshold
+`∃ ε₀ > 0, ∀ ε ≥ ε₀` replaced by the named condition
 
 ```
 0 < ε   and   g2ThresholdSharp d r C M s θ c₁ ≤ ε² ,
@@ -493,7 +493,7 @@ both functions of `d` alone (once the lane's range `r(d)`, its constant `C(d)`
 and the level divisor `N` are fixed).  There is **no residual clause in
 `θ` or `s`**.
 
-This is the resolution of consult item 9 on the `𝒢₂` side: the proved
+This resolves the `𝒢₂` side: the proved
 `G2Threshold.g2Threshold_le_of_anchor` needed `g2AnchorConst d r · s ≤ C_aθ`,
 which the verified consumer refutes as `θ → 0`; the log-quantile reading
 removes it entirely. -/

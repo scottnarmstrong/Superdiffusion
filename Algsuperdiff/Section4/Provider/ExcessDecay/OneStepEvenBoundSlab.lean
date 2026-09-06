@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionWindow
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionVolume
@@ -103,24 +103,6 @@ theorem windowHi_eq_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d}
     windowHi x m k j = x j + (1 / 2 : ℝ) * (3 : ℝ) ^ k :=
   windowHi_of_not_meetsUpperFace (hother j hji).1
 
-/-- The met `i`-edge is longer than half the triadic side. -/
-theorem half_lt_window_edge {x : Vec d} {m k : ℤ} {i : Fin d}
-    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k < m)
-    (hup : MeetsUpperFace x m k i) :
-    (1 / 2 : ℝ) * (3 : ℝ) ^ k < windowHi x m k i - windowLo x m k i := by
-  have hxi : x i < (1 / 2 : ℝ) * (3 : ℝ) ^ m :=
-    (mem_openCubeSet_originCube_iff.mp hx i).2
-  rw [windowHi_of_meetsUpperFace hup, windowLo_eq_of_meetsUpperFace hkm hup]
-  linarith only [hxi]
-
-/-- The met `i`-edge is at most the full triadic side. -/
-theorem window_edge_le {x : Vec d} {m k : ℤ} {i : Fin d}
-    (hkm : k < m) (hup : MeetsUpperFace x m k i) :
-    windowHi x m k i - windowLo x m k i ≤ (3 : ℝ) ^ k := by
-  have hup' : (1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ x i + (1 / 2 : ℝ) * (3 : ℝ) ^ k := hup
-  rw [windowHi_of_meetsUpperFace hup, windowLo_eq_of_meetsUpperFace hkm hup]
-  linarith only [hup']
-
 /-- In the one-met-face regime **no** lower face is met, so the partial reflection never
 moves a lower endpoint. -/
 theorem reflectedLo_eq {x : Vec d} {m k : ℤ} {i : Fin d} (hkm : k < m)
@@ -212,10 +194,6 @@ theorem taylorHi_self {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ} :
 theorem taylorHi_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ} (hji : j ≠ i) :
     taylorHi x m k i delta j = x j + (3 : ℝ) ^ k / 4 := if_neg hji
 
-/-- The deep slab and the Taylor box share their lower corner. -/
-theorem deepLo_eq_taylorLo (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) :
-    deepLo x m k i delta = taylorLo x m k i delta := rfl
-
 /-! ## 3. Nondegeneracy -/
 
 theorem slabLo_lt_slabHi {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
@@ -236,16 +214,6 @@ theorem deepLo_lt_deepHi {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
   · rw [hji, deepLo_self, deepHi_self]
     linarith only [hdelta]
   · rw [deepLo_of_ne hji, deepHi_of_ne hji]
-    linarith only [hw]
-
-theorem taylorLo_lt_taylorHi {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
-    (hdelta : 0 < delta) (j : Fin d) :
-    taylorLo x m k i delta j < taylorHi x m k i delta j := by
-  have hw : (0 : ℝ) < (3 : ℝ) ^ k := zpow_pos (by norm_num) _
-  by_cases hji : j = i
-  · rw [hji, taylorLo_self, taylorHi_self]
-    linarith only [hdelta]
-  · rw [taylorLo_of_ne hji, taylorHi_of_ne hji]
     linarith only [hw]
 
 theorem windowLo_lt_windowHi {x : Vec d} {m k : ℤ} {i : Fin d}

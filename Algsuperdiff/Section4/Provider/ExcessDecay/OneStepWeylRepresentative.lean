@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepWeylKernel
 
@@ -74,9 +74,6 @@ variable {d : ℕ}
 /-- The `ε`-inner region of `U`: the points whose closed sup-metric `ε`-ball lies inside `U`. -/
 def innerRegion (U : Set (Vec d)) (eps : ℝ) : Set (Vec d) :=
   {p : Vec d | closedBall p eps ⊆ U}
-
-theorem mem_innerRegion_iff {U : Set (Vec d)} {eps : ℝ} {p : Vec d} :
-    p ∈ innerRegion U eps ↔ closedBall p eps ⊆ U := Iff.rfl
 
 theorem self_mem_of_mem_innerRegion {U : Set (Vec d)} {eps : ℝ} (heps : 0 ≤ eps) {p : Vec d}
     (hp : p ∈ innerRegion U eps) : p ∈ U :=

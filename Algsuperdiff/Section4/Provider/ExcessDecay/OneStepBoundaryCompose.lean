@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepCornerSeam
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryComposeGlue
@@ -95,75 +95,6 @@ open scoped ENNReal
 noncomputable section
 
 variable {d : ℕ}
-
-/-- **The one-step excess-decay contraction on the boundary branch, at every met
-configuration, with the Schauder slot discharged, no boundary-datum
-leg and no affine-minimizer hypothesis.**
-
-The competitor is odd about every met face at every point of the doubled window
-and classically harmonic there; the window meets at least one face of `∂□_m`,
-in either orientation, with an arbitrary met set otherwise.  The binders
-`_hmem`/`_hB`/`_hharm` and the model, scale and window parameters are
-transcribed verbatim from
-`OneStepConditional.excessDecay_oneStep_of_harmonicApprox`. -/
-theorem excessDecay_oneStep_boundary_metSet_of_harmonicApprox (d : ℕ) [NeZero d]
-    (hd : d ≠ 0) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ {m n : ℤ} {k : ℕ} (_hk : 3 ≤ k) {M : ABKModel d} {s : ℝ}
-      (hs : 0 < s) (_hs1 : s ≤ 1) {delta : ℝ} (_hdelta1 : delta ≤ 1) {x z : Vec d}
-      {i : Fin d} (_hx : x ∈ openCubeSet (originCube d m)) (_hnm : n - 1 ≤ m)
-      (_hmn : n - 2 < m)
-      (_hmet : MeetsUpperFace x m (n - 2) i ∨ MeetsLowerFace x m (n - 2) i)
-      {u v : Vec d → ℝ}
-      (_hu : MemLp u 2 (volume.restrict (truncatedWindow x m n)))
-      (_hv : MemLp v 2 (volume.restrict (truncatedWindow x m n)))
-      (_hvR : MemLp v 2 (volume.restrict (reflectedWindow x m (n - 2))))
-      (_huv : MemLp (fun y => u y - v y) 2
-        (volume.restrict (movedReplacementCube x m n)))
-      (_hupv : ∀ l : Fin d, MeetsUpperFace x m (n - 2) l →
-        ∀ y ∈ reflectedWindow x m (n - 2),
-          v (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) l y) = -v y)
-      (_hlowv : ∀ l : Fin d, MeetsLowerFace x m (n - 2) l →
-        ∀ y ∈ reflectedWindow x m (n - 2),
-          v (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) l y) = -v y)
-      (_hharmclass : HarmonicOnNhd
-        (v ∘ (Schauder.toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((Schauder.toEuc : Vec d → EuclideanSpace ℝ (Fin d)) ''
-          reflectedWindow x m (n - 2)))
-      {omega : Cutoff.CutoffSample d}
-      (_hmem : omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-        (Support.cgEllipLowerConstant d) (n - 2 + 3) z ⟨s / 8, by linarith only [hs]⟩
-        (s / 8 * Real.sqrt delta))
-      {B : ℝ≥0∞} (_hB : B ≠ ⊤)
-      (_hharm : Set.indicator
-        (Algsuperdiff.Frozen.Section4.goodEventAt M (Support.cgEllipLowerConstant d)
-          (n - 2 + 3) z ⟨s / 8, by linarith only [hs]⟩ (1 / 2))
-        (fun _omega' =>
-          MeasureTheory.eLpNorm (fun y => u y - v y) 2
-            (Support.normalizedVolumeMeasureOn
-              ((fun y => wellPlacedCentre x m (n - 2) + y) ''
-                openCubeSet (originCube d (n - 2)))))
-        omega ≤ B),
-      affineExcess (truncatedWindow x m (n - (k : ℤ))) u
-        ≤ taylorContractionConst d * C * windowRatioConst d 2
-              * ((3 : ℝ) ^ (-(k : ℤ))) ^ (1 / 2 : ℝ)
-              * affineExcess (truncatedWindow x m n) u
-          + triangleRemainderConst d C k
-              * ((3 : ℝ) ^ (-n)
-                * (Real.sqrt (((3 : ℝ) ^ (2 : ℤ)) ^ d) * B.toReal)) := by
-  obtain ⟨C, hC0, hC⟩ := Schauder.exists_gradientHolder_boundary_metSet d hd
-  refine ⟨C, hC0, ?_⟩
-  intro m n k hk M s hs hs1 delta hdelta1 x z i hx hnm hmn hmet u v hu hv hvR huv
-    hupv hlowv hharmclass omega hmem B hB hharm
-  have hvU : MemLp v 2 (volume.restrict (truncatedWindow x m (n - 2))) :=
-    hvR.mono_measure
-      (Measure.restrict_mono (truncatedWindow_subset_reflectedWindow x m (n - 2)) le_rfl)
-  obtain ⟨c, A, hmin⟩ :=
-    Schauder.exists_isAffineMinimizer_shifted_truncatedWindow hx (by omega) hvU
-  obtain ⟨K, hK, hint, hgrad, hhol, hschauder⟩ :=
-    hC m n x i v c A hx hmn hmet hupv hlowv hharmclass hvR hmin
-  have hmain := excessDecay_oneStep_of_harmonicApprox hd hk hs hs1 hdelta1 hx hnm hu hv
-    huv hmem hB hharm hK hC0 hint hgrad hhol (Kh := 0) (by linarith only [hschauder])
-  simpa using hmain
 
 end
 

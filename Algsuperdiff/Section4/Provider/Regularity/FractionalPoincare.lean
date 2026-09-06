@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.NormalizedL2
 
@@ -279,25 +279,6 @@ theorem eLpNorm_sub_integral_le_normalizedGagliardoESeminormOn
           * normalizedGagliardoESeminormOn W s f := by rw [hconst]
 
 /-! ## 6. The development's average carriers -/
-
-/-- The recurring caller shape: on a window of finite volume the frozen
-surface's `MemLp · 2` binder supplies the integrability side condition. -/
-theorem integrable_of_memLp_two {E : Type*} [NormedAddCommGroup E]
-    {W : Set (Vec d)} (hWtop : volume W ≠ ⊤) {f : Vec d → E}
-    (hf : MemLp f 2 (volume.restrict W)) : Integrable f (volume.restrict W) := by
-  haveI : IsFiniteMeasure (volume.restrict W) := by
-    refine ⟨?_⟩
-    rw [Measure.restrict_apply_univ]
-    exact lt_top_iff_ne_top.2 hWtop
-  exact hf.integrable (by norm_num)
-
-/-- The abstract average against `normalizedVolumeMeasureOn W` **is**
-CoarseGraining's `volumeAverage` on scalars.  No integrability is needed. -/
-theorem integral_normalizedVolumeMeasureOn_eq_volumeAverage (W : Set (Vec d))
-    (f : Vec d → ℝ) :
-    ∫ y, f y ∂(normalizedVolumeMeasureOn W) = volumeAverage W f := by
-  rw [normalizedVolumeMeasureOn_def, integral_smul_measure, volumeAverage,
-    ENNReal.toReal_inv, smul_eq_mul]
 
 /-- The abstract average against `normalizedVolumeMeasureOn W` **is**
 CoarseGraining's `volumeAverageVec` on vector fields integrable on `W`. -/

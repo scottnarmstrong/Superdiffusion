@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridStabilityGrid
 import Homogenization.Geometry.CubeMetric
@@ -61,8 +61,7 @@ countable subadditivity consumes.
 
 * `exists_maximalCubeIn_mem` — every point of a bounded open set lies in a
   maximal grid cube of that set.
-* `pairwiseDisjoint_maximalCubes`, `iUnion_maximalCubes_eq` — the exact
-  partition.
+* `iUnion_maximalCubes_eq` — the exact partition.
 * `scale_le_of_maximalCubeIn_offGridCube` — the selected scales are `≤ k`.
 * `volume_iUnion_maximalCubesAtScale_toReal_le` — the packing count with the
   explicit constant `2d`.
@@ -104,9 +103,6 @@ def maximalCubes (V : Set (Vec d)) : Set (TriadicCube d) :=
 def maximalCubesAtScale (V : Set (Vec d)) (m : ℤ) : Set (TriadicCube d) :=
   {Q | MaximalCubeIn V Q ∧ Q.scale = m}
 
-theorem maximalCubesAtScale_subset (V : Set (Vec d)) (m : ℤ) :
-    maximalCubesAtScale V m ⊆ maximalCubes V := fun _ hQ => hQ.1
-
 /-! ## 2. The off-grid cube is open, and has the volume of its shape cube -/
 
 theorem isOpen_offGridCube (w : Vec d) (P : TriadicCube d) :
@@ -133,8 +129,6 @@ theorem volume_offGridCube_ne_top (w : Vec d) (P : TriadicCube d) :
 /-! ## 3. Existence of a maximal cube through every point -/
 
 variable [NeZero d]
-
-private theorem dpos : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
 
 /-- A grid cube contained in the off-grid cube has scale at most the shape
 cube's scale: its volume cannot exceed the volume of the off-grid cube. -/
@@ -228,12 +222,6 @@ theorem disjoint_cubeSet_of_maximalCubeIn {V : Set (Vec d)} {Q R : TriadicCube d
   rcases le_total Q.scale R.scale with hle | hle
   · exact hne (key hQ hR hle hxQ hxR)
   · exact hne (key hR hQ hle hxR hxQ).symm
-
-omit [NeZero d] in
-theorem pairwiseDisjoint_maximalCubes (V : Set (Vec d)) :
-    (maximalCubes V).PairwiseDisjoint cubeSet := by
-  intro Q hQ R hR hne
-  exact disjoint_cubeSet_of_maximalCubeIn hQ hR hne
 
 /-- **The maximal cubes tile the off-grid cube exactly** — not merely up to a
 null set. -/

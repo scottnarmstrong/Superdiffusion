@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2Locality
 import Algsuperdiff.Section4.Probability.AnnulusRDependent
@@ -39,9 +39,8 @@ Both legs are therefore **measurable functions of the single variable
 built from the two `Γ`-witnesses of the induction bound would fail it: those
 witnesses are supplied by the Section 3 anchor as bare existentials and carry
 no locality whatsoever.  With the clamp, the joint claim is a one-line
-push-forward of the `r`-dependence of `annularKick`
-(`iIndepFun_kickLegPair_of_rDependent`), which is itself a one-line consequence
-of the proved bridge `Section4.Probability.rDependent_of_annulusLocalSigma`.
+push-forward of the `r`-dependence of `annularKick`, which is itself a one-line
+consequence of the proved bridge `Section4.Probability.rDependent_of_annulusLocalSigma`.
 The threshold that makes the two clamped legs carry the manuscript's `Γ₂` and
 `Γ_{1/2}` amplitudes is chosen in `KickTails.lean`; nothing in this file
 depends on its value, so `lam` is a free real parameter throughout.
@@ -289,27 +288,6 @@ theorem kickLegHigh_nonneg (M : ABKModel d) (s : {s : ℝ // 0 < s}) (lam : ℝ)
   simp only [kickLegHigh]
   linarith only [h]
 
-/-- The overshoot exceeds a positive level exactly when the sum exceeds the
-level shifted by the threshold.  This is the identity the `Γ_{1/2}` tail of the
-high leg is computed through. -/
-theorem kickLegHigh_lt_iff (M : ABKModel d) (s : {s : ℝ // 0 < s}) (lam : ℝ) (j : ℤ)
-    {c : ℝ} (hc : 0 ≤ c) (omega : Cutoff.CutoffSample d) :
-    c < kickLegHigh M s lam j omega ↔ lam + c < annularKick M s j omega := by
-  simp only [kickLegHigh]
-  rcases le_total (annularKick M s j omega) lam with hle | hle
-  · rw [min_eq_left hle]
-    constructor
-    · intro h
-      exact absurd h (by simp only [sub_self]; exact not_lt.2 hc)
-    · intro h
-      exact absurd h (not_lt.2 (le_trans hle (by linarith only [hc])))
-  · rw [min_eq_right hle]
-    constructor
-    · intro h
-      linarith only [h]
-    · intro h
-      linarith only [h]
-
 theorem measurable_kickLegLow (M : ABKModel d) (s : {s : ℝ // 0 < s}) (lam : ℝ)
     (j : ℤ) : Measurable (kickLegLow M s lam j) :=
   (measurable_annularKick M s j).min measurable_const
@@ -318,55 +296,6 @@ theorem measurable_kickLegHigh (M : ABKModel d) (s : {s : ℝ // 0 < s}) (lam : 
     (j : ℤ) : Measurable (kickLegHigh M s lam j) :=
   (measurable_annularKick M s j).sub
     ((measurable_annularKick M s j).min measurable_const)
-
-theorem measurable_kickLegLow_annulusRegion_local (M : ABKModel d)
-    (s : {s : ℝ // 0 < s}) (lam : ℝ) (j : ℤ) :
-    Measurable[Cutoff.cutoffSampleLocalSigma M (j - 2) (annulusRegion d j)]
-      (kickLegLow M s lam j) :=
-  (measurable_annularKick_annulusRegion_local M s j).min measurable_const
-
-theorem measurable_kickLegHigh_annulusRegion_local (M : ABKModel d)
-    (s : {s : ℝ // 0 < s}) (lam : ℝ) (j : ℤ) :
-    Measurable[Cutoff.cutoffSampleLocalSigma M (j - 2) (annulusRegion d j)]
-      (kickLegHigh M s lam j) :=
-  (measurable_annularKick_annulusRegion_local M s j).sub
-    ((measurable_annularKick_annulusRegion_local M s j).min measurable_const)
-
-/-! ### The independence of the legs -/
-
-theorem rDependent_kickLegLow (M : ABKModel d) (s : {s : ℝ // 0 < s}) (lam : ℝ)
-    {r : ℕ} (h : Algsuperdiff.Probability.RDependent (Cutoff.cutoffSampleLaw M).toMeasure
-      (fun j => annularKick M s j) r) :
-    Algsuperdiff.Probability.RDependent (Cutoff.cutoffSampleLaw M).toMeasure
-      (fun j => kickLegLow M s lam j) r :=
-  h.comp (fun _ x => min x lam) fun _ => measurable_id.min measurable_const
-
-theorem rDependent_kickLegHigh (M : ABKModel d) (s : {s : ℝ // 0 < s}) (lam : ℝ)
-    {r : ℕ} (h : Algsuperdiff.Probability.RDependent (Cutoff.cutoffSampleLaw M).toMeasure
-      (fun j => annularKick M s j) r) :
-    Algsuperdiff.Probability.RDependent (Cutoff.cutoffSampleLaw M).toMeasure
-      (fun j => kickLegHigh M s lam j) r :=
-  h.comp (fun _ x => x - min x lam)
-    fun _ => measurable_id.sub (measurable_id.min measurable_const)
-
-/-- **, in its printed joint form.**  "For each `i, i' ∈ {1,2}`, the random
-variables `X_j^{(i)}` and `X_{j'}^{(i')}` are independent for `|j − j'| > r`":
-the `ℝ × ℝ`-valued family `j ↦ (X_j^{(1)}, X_j^{(2)})` is independent along any
-`r`-separated finite index set.  Both legs are measurable functions of the same
-local variable `annularKick_j`, so this is a single push-forward — the joint
-claim needs no further input than the scalar `r`-dependence. -/
-theorem iIndepFun_kickLegPair_of_rDependent (M : ABKModel d) (s : {s : ℝ // 0 < s})
-    (lam : ℝ) {r : ℕ}
-    (h : Algsuperdiff.Probability.RDependent (Cutoff.cutoffSampleLaw M).toMeasure
-      (fun j => annularKick M s j) r)
-    (t : Finset ℤ) (ht : ∀ i ∈ t, ∀ j ∈ t, i ≠ j → (r : ℤ) ≤ |i - j|) :
-    ProbabilityTheory.iIndepFun
-      (fun i : {i // i ∈ t} => fun omega =>
-        (kickLegLow M s lam i.1 omega, kickLegHigh M s lam i.1 omega))
-      (Cutoff.cutoffSampleLaw M).toMeasure :=
-  (h t ht).comp (fun _ x => (min x lam, x - min x lam))
-    fun _ => (measurable_id.min measurable_const).prodMk
-      (measurable_id.sub (measurable_id.min measurable_const))
 
 end
 

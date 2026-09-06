@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaGoodEvent
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccMatching
@@ -263,36 +263,6 @@ theorem stepSevenThetaRatio_le_of_caps [NeZero d] {k : ℤ} (a : CoeffFamily d)
       _ = (256 / 63 * CB) * (64 / 7 * CB) * 1 := by rw [hcancel]
       _ = 16384 / 441 * CB ^ (2 : ℕ) := by ring
   rwa [hprod] at hTheta
-
-/-- **Row 4 in its uniform shape.**  With a single constant `C := max 2 CB`
-serving clause (A) and clause (B) alike, the `Θ` cap is the table entry
-
-```text
-  Θ_{1/4,1/8}(□_{k-1}; a) ≤ (4096/441)·C^4 ,
-```
-
-so no derived-slot constant exceeds's table. -/
-theorem stepSevenThetaRatio_le_rg11Table [NeZero d] {k : ℤ} (a : CoeffFamily d)
-    {sigma CB : ℝ} (hsigma : 0 < sigma) (hCB : 0 ≤ CB)
-    (hcaps : StepSevenLambdaCaps (originCube d k) a sigma CB) :
-    Ch02.ThetaRatio (originCube d (k - 1)) stepSevenCaccS stepSevenCaccT a ≤
-      4096 / 441 * (max 2 CB) ^ (4 : ℕ) := by
-  have hC2 : (2 : ℝ) ≤ max 2 CB := le_max_left _ _
-  have hCB' : CB ≤ max 2 CB := le_max_right _ _
-  have hCnn : (0 : ℝ) ≤ max 2 CB := le_trans (by norm_num) hC2
-  have hA : (4 : ℝ) ≤ (max 2 CB) ^ (2 : ℕ) := by
-    have hpow := pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 2) hC2 2
-    calc (4 : ℝ) = (2 : ℝ) ^ (2 : ℕ) := by norm_num
-      _ ≤ (max 2 CB) ^ (2 : ℕ) := hpow
-  have hB : CB ^ (2 : ℕ) ≤ (max 2 CB) ^ (2 : ℕ) := pow_le_pow_left₀ hCB hCB' 2
-  have hprod := mul_le_mul hA hB (pow_nonneg hCB 2) (pow_nonneg hCnn 2)
-  have hfour : (4 : ℝ) * CB ^ (2 : ℕ) ≤ (max 2 CB) ^ (4 : ℕ) := by
-    calc (4 : ℝ) * CB ^ (2 : ℕ) ≤ (max 2 CB) ^ (2 : ℕ) * (max 2 CB) ^ (2 : ℕ) := hprod
-      _ = (max 2 CB) ^ (4 : ℕ) := by ring
-  refine le_trans (stepSevenThetaRatio_le_of_caps a hsigma hcaps) ?_
-  have hscale := mul_le_mul_of_nonneg_left hfour (by norm_num : (0 : ℝ) ≤ 4096 / 441)
-  calc (16384 : ℝ) / 441 * CB ^ (2 : ℕ) = 4096 / 441 * (4 * CB ^ (2 : ℕ)) := by ring
-    _ ≤ 4096 / 441 * (max 2 CB) ^ (4 : ℕ) := hscale
 
 end
 

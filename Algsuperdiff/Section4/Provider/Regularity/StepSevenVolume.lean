@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccVolume
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenSelectionPackage
@@ -40,7 +40,6 @@ m-3]` the display would be false as printed.
 
 ## What is produced
 
-* `stepSevenCaccCoreGap` — the side condition from the selection.
 * `truncatedWindow_succ_subset_caccCore` — the tex's own inclusion
   `(z+□_{n+1}) ∩ □_m ⊆ (z+□_{n'-2}) ∩ □_m`, with the side condition discharged.
 * `three_rpow_le_volume_toReal_truncatedWindow` /
@@ -51,9 +50,6 @@ m-3]` the display would be false as printed.
   the window at `n+1` has volume at least `3^{dn}` — the printed `3^{dn}`
   denominator, not an approximation of it.
 * `stepSevenVolumeRatio_le` — the general-ratio producer on the two masses.
-* `stepSevenVolumeRatio_le_of_selection` — the same with the side condition and
-  the scale condition BOTH discharged from `StepSevenSelection`, i.e. the form a
-  caller at the Step-7a selection may use with no arithmetic of its own.
 
 The masses `IS ≤ IT` remain the caller's: `ν^{1/2}‖∇u‖_{L̲²(S)}` is read as the
 symmetric coefficient energy, and its monotonicity in the domain is an integral
@@ -76,12 +72,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ## 1. The side condition, and the inclusion it unlocks -/
-
-/-- **The unstated side condition, derived.**'s selection puts `n'` in `[n+3,
-m-3]`, and `n + 3 ≤ n'` is literally `n + 1 ≤ n' - 2`. -/
-theorem stepSevenCaccCoreGap {B : Finset ℤ} {n m n' m' : ℤ}
-    (h : StepSevenSelection B n m n' m') : n + 1 ≤ n' - 2 := by
-  linarith only [h.lower_lo]
 
 /-- **The tex's own inclusion** `(z+□_{n+1}) ∩ □_m ⊆ (z+□_{n'-2}) ∩ □_m`, at the
 derived side condition. -/
@@ -195,18 +185,6 @@ theorem stepSevenVolumeRatio_le (d : ℕ) {m n n' : ℤ} {z : Vec d}
   have hmain := normalizedSqrt_le_volumeRatio_mul hSpos hTpos hmono
   refine le_trans hmain ?_
   exact mul_le_mul_of_nonneg_right hratio (Real.sqrt_nonneg _)
-
-/-- **`hvol` with the side condition discharged from the Step-7a selection.**
--/
-theorem stepSevenVolumeRatio_le_of_selection (d : ℕ) {B : Finset ℤ} {m n n' m' : ℤ}
-    {z : Vec d} (hz : z ∈ openCubeSet (originCube d m)) (hnm : n ≤ m)
-    (hsel : StepSevenSelection B n m n' m') {IS IT : ℝ} (hmono : IS ≤ IT) :
-    truncatedWindow z m (n + 1) ⊆ truncatedWindow z m (n' - 2) ∧
-      Real.sqrt (IS / (volume (truncatedWindow z m (n + 1))).toReal) ≤
-        Real.rpow (3 : ℝ) (((d : ℝ) / 2) * ((n' : ℝ) - (n : ℝ))) *
-          Real.sqrt (IT / (volume (truncatedWindow z m (n' - 2))).toReal) :=
-  ⟨truncatedWindow_succ_subset_caccCore z m (stepSevenCaccCoreGap hsel),
-    stepSevenVolumeRatio_le d hz hnm hmono⟩
 
 end
 

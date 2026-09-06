@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Localization.LocalizationAssembly
 import Algsuperdiff.Section3.Provider.Base.AnnealedPlateau
@@ -79,7 +79,12 @@ theorem coefficientCutoffCubeEllipticityUpper_mono (M : ABKModel d) {k m : ℤ}
   have hb := coefficientCutoffCubeEntryBound_mono M hkm omega Q
   have hb0 := coefficientCutoffCubeEntryBound_nonneg M k omega Q
   unfold coefficientCutoffCubeEllipticityUpper
-  gcongr
+  exact div_le_div_of_nonneg_right
+    (add_le_add_left
+      (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hb0 hb 2)
+        (mul_nonneg (Nat.cast_nonneg d) (Nat.cast_nonneg d)))
+      (M.nu ^ 2))
+    hnu.le
 
 /-! ## The isotropic normalizer's row bound -/
 
@@ -143,8 +148,8 @@ The ceiling is spelled with the constant
 `Provider.Base.cutoffPlateauAmplitude`, whose
 body is definitionally the plateau amplitude `annealedPlateau` displays: no
 statement in this module spells that product by hand.  The two side conditions
-after the unfold (`hpow`, `hcoef`) are what `gcongr` needs and are not a
-re-spelling of the ceiling. -/
+after the unfold (`hpow`, `hcoef`) are what the monotonicity step needs and are
+not a re-spelling of the ceiling. -/
 theorem sigmaBar_le_plateauCeiling (M : ABKModel d) {k m : ℤ} (hkm : k ≤ m) :
     (Annealed.sigmaBar M k : ℝ) ≤
       M.nu * (1 + Provider.Base.cutoffPlateauAmplitude M m) := by
@@ -160,7 +165,8 @@ theorem sigmaBar_le_plateauCeiling (M : ABKModel d) {k m : ℤ} (hkm : k ≤ m) 
   have hcoef : (0 : ℝ) ≤ Disorder.cstarPlus M * (2 * M.nu ^ 2)⁻¹ * M.gamma⁻¹ *
       (1 + 4 * M.gamma) :=
     mul_nonneg (mul_nonneg (mul_nonneg hc.le (by positivity)) (by positivity)) (by linarith)
-  gcongr
+  exact mul_le_mul_of_nonneg_left
+    (add_le_add_right (mul_le_mul_of_nonneg_left hpow hcoef) 1) hnu.le
 
 /-! ## The uniform bound at the moving comparator -/
 
@@ -195,7 +201,14 @@ private theorem blockMatrixOfCoeffNormSqBound_mono {lam L L' : ℝ} (hL : 0 ≤ 
       blockMatrixOfCoeffNormSqBound lam L' := by
   unfold blockMatrixOfCoeffNormSqBound
   have hinv : (0 : ℝ) ≤ lam⁻¹ * lam⁻¹ := mul_self_nonneg _
-  gcongr
+  have hsq : L ^ 2 ≤ L' ^ 2 := pow_le_pow_left₀ hL hLL' 2
+  have hlin : 2 * (2 * L ^ 2 + 1) ≤ 2 * (2 * L' ^ 2 + 1) :=
+    mul_le_mul_of_nonneg_left
+      (add_le_add_left (mul_le_mul_of_nonneg_left hsq (by norm_num)) 1)
+      (by norm_num)
+  exact add_le_add (mul_le_mul_of_nonneg_left hsq (by norm_num))
+    (mul_le_mul (mul_le_mul_of_nonneg_right hlin hinv) (add_le_add_left hsq 1)
+      (by positivity) (mul_nonneg (by positivity) hinv))
 
 /-- **The uniform descendant bound at the moving comparator.**  CoarseGraining's
 `Ch02.normalizedBlockResponseUniformBound` at the cutoff family of shell index
@@ -223,7 +236,11 @@ theorem normalizedBlockResponseUniformBound_coefficientCutoff_isotropic_le [NeZe
     have hd : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
     exact mul_le_mul_of_nonneg_left hT hd
   have hcm : (1 + 2 * coefficientCutoffCubeEllipticityUpper M k omega Q ^ 2) / M.nu ≤
-      (1 + 2 * L ^ 2) / M.nu := by gcongr
+      (1 + 2 * L ^ 2) / M.nu :=
+    div_le_div_of_nonneg_right
+      (add_le_add_right
+        (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hLk0 hL 2) (by norm_num)) 1)
+      hnu.le
   have hcL0 : (0 : ℝ) ≤ (1 + 2 * L ^ 2) / M.nu := by positivity
   have hGm := blockMatrixOfCoeffNormSqBound_mono (lam := M.nu) hLk0 hL
   have hG0 := blockMatrixOfCoeffNormSqBound_nonneg M.nu

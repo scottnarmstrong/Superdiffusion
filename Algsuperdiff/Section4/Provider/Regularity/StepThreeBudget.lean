@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepThreeBadSet
 
@@ -53,7 +53,7 @@ The honest resolution, with the exact arithmetic:
 * the fix costs nothing: `X_m(α) = Z_m + k + 3 ≥ 14` needs only `k ≥ 11`, and
   `k = ⌈4 log₃(16 C_edos)⌉ ≥ 11` follows from the same explicit floor
   `1 ≤ C_edos` that gives `k ≥ 10` — because `⌈x⌉ ≥ 11 ⟺ x > 10` and
-  `3^5 = 243 < 256 = 16²` is a strict inequality (`eleven_le_stepOneK`).  So no
+  `3^5 = 243 < 256 = 16²` is a strict inequality.  So no
   `C_edos` floor moves, no `k`-formula moves, and no statement anywhere changes;
   only the pin sharpens from `k ≥ 10, X ≥ 13` to `k ≥ 11, X ≥ 14`.
 
@@ -66,7 +66,7 @@ the standing floor `C_edos ≥ 1` has room; the floor for `k ≥ 12` would be
 * `triadicLatticePoint_shift`, `mem_latticeCubeSet_shift`,
   `mem_openCubeSet_of_mem_latticeCubeSet` — the lattice bookkeeping.
 * `stepThreeBadSet_card_le_of_goodScaleWindows(_fine)` — the budget.
-* `eleven_le_stepOneK`, `fourteen_le_minimalScaleX`, `fourteen_le_window` — the
+* `fourteen_le_minimalScaleX`, `fourteen_le_window` — the
   sharpened window-length pin.
 * `stepOneBadSetSeparation_of_card_le`,
   `stepOneBadSetSeparation_of_goodScaleWindows` — the separation.
@@ -175,27 +175,6 @@ theorem stepThreeBadSet_card_le_of_goodScaleWindows {M : ABKModel d} {delta : �
   rwa [triadicLatticePoint_shift] at h
 
 /-! ## 3. The sharpened window-length pin -/
-
-/-- **`k ≥ 11`**, from the same explicit floor `1 ≤ C_edos` that gives `k ≥ 10`:
-`⌈x⌉ ≥ 11 ⟺ x > 10`, and `3^5 = 243 < 256 = 16²` strictly. -/
-theorem eleven_le_stepOneK {Cedos : ℝ} (hCedos : 1 ≤ Cedos) : 11 ≤ stepOneK Cedos := by
-  have hlog3 : 0 < Real.log 3 := Real.log_pos (by norm_num)
-  have h1 : Real.log ((3 : ℝ) ^ (5 : ℕ)) < Real.log ((16 : ℝ) ^ (2 : ℕ)) :=
-    Real.log_lt_log (by positivity) (by norm_num)
-  rw [Real.log_pow, Real.log_pow] at h1
-  push_cast at h1
-  have h52 : (5 : ℝ) / 2 < Real.logb 3 16 := by
-    rw [Real.logb, lt_div_iff₀ hlog3]
-    linarith only [h1]
-  have hmono : Real.logb 3 16 ≤ Real.logb 3 (16 * Cedos) :=
-    Real.logb_le_logb_of_le (by norm_num) (by norm_num) (by linarith only [hCedos])
-  have hten : (10 : ℝ) < 4 * Real.logb 3 (stepOneKArg Cedos) := by
-    rw [stepOneKArg_eq]
-    linarith only [h52, hmono]
-  have hceil : 10 < stepOneK Cedos := by
-    rw [stepOneK]
-    exact Nat.lt_ceil.mpr (by exact_mod_cast hten)
-  omega
 
 /-- **`X_m(α) ≥ 14`** at `k ≥ 11` (the sharpened pin). -/
 theorem fourteen_le_minimalScaleX {Omega : Type*} (Z : Omega → ℕ∞) {k : ℕ}

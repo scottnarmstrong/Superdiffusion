@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ResidualCorrectorExistence
 
@@ -145,62 +145,7 @@ theorem datumResidualBound_nonneg (d : ℕ) (n : ℤ) {Kh : ℝ} (hKh : 0 ≤ Kh
     mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d)) hKh
   exact mul_nonneg hd hr
 
-/-- **The datum's deviation from its affine lift, on the boundary window.**  The
-instantiation of `AffineSplitLift.abs_sub_affineLift_volumeAverage_le` at
-`U₂ = (x + □_{n-2}) ∩ □_m` and sup-radius `3^{n-2}/2`, with the integrability
-slot discharged. -/
-theorem abs_sub_affineLift_le_truncatedWindow {m n : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) {h : Vec d → ℝ} {G : Vec d → Vec d}
-    {Kh : ℝ} (hKh : 0 ≤ Kh)
-    (hgrad : HasGradientOn (truncatedWindow x m (n - 2)) h G)
-    (hhol : HolderSeminormBoundOn (truncatedWindow x m (n - 2)) (1 / 2 : ℝ) Kh G)
-    {y : Vec d} (hy : y ∈ truncatedWindow x m (n - 2)) :
-    |h y - affineLift x (h x)
-        (volumeAverageVec (truncatedWindow x m (n - 2)) G) y|
-      ≤ datumResidualBound d n Kh := by
-  have h3 : (0 : ℝ) < (3 : ℝ) ^ (n - 2) := zpow_pos (by norm_num) _
-  have hr0 : (0 : ℝ) ≤ (3 : ℝ) ^ (n - 2) / 2 := by linarith only [h3]
-  have hxU : x ∈ truncatedWindow x m (n - 2) := mem_truncatedWindow_self (n - 2) hx
-  have hdiam : ∀ p ∈ truncatedWindow x m (n - 2), ‖p - x‖ ≤ (3 : ℝ) ^ (n - 2) / 2 :=
-    fun p hp => norm_sub_le_of_mem_truncatedWindow hp
-  have hint : ∀ i, IntegrableOn (fun p => G p i) (truncatedWindow x m (n - 2)) volume :=
-    fun i => integrableOn_coord_of_holderSeminormBoundOn
-      (isOpen_truncatedWindow x m (n - 2)).measurableSet
-      (ne_of_lt (volume_truncatedWindow_lt_top x m (n - 2))) hxU hKh hhol hdiam i
-  exact abs_sub_affineLift_volumeAverage_le
-    (convex_truncatedWindow x m (n - 2)) hxU hy hKh hr0
-    (volume_truncatedWindow_pos (n - 2) hx)
-    (volume_truncatedWindow_lt_top x m (n - 2)) hint hgrad hhol hdiam
-
 /-! ## 3. The corrector carrying the datum's deviation -/
-
-/-- **The datum corrector.**
-
-For an `H¹(U₂)` datum `Φ` bounded on `U₂` by `datumResidualBound d n Kh` — the
-`H¹` realization of `h - ℓ_h`, whose bound `§2` supplies — the Dirichlet problem
-on `U₂` has a weakly harmonic solution `w` carrying `Φ`'s trace and satisfying
-the same `L^∞` bound.  This is the manuscript's `v₁`; the two-sided weak maximum
-principle is what turns the boundary datum's bound into the interior one. -/
-theorem exists_datumCorrector [NeZero d] {m n : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) {Kh : ℝ} (hKh : 0 ≤ Kh)
-    (Φ : H1Function (truncatedWindow x m (n - 2)))
-    (hΦ : ∀ y ∈ truncatedWindow x m (n - 2),
-      |Φ.toFun y| ≤ datumResidualBound d n Kh) :
-    ∃ w : H1Function (truncatedWindow x m (n - 2)),
-      IsWeaklyHarmonicOn (truncatedWindow x m (n - 2)) w ∧
-      (∃ Ψ : H1Function (truncatedWindow x m (n - 2)),
-        (∀ y ∈ truncatedWindow x m (n - 2), Ψ.toFun y = Φ.toFun y) ∧
-        MemH10 (truncatedWindow x m (n - 2)) (fun y => w.toFun y - Ψ.toFun y)) ∧
-      (∀ᵐ y ∂(volumeMeasureOn (truncatedWindow x m (n - 2))),
-        |w.toFun y| ≤ datumResidualBound d n Kh) := by
-  obtain ⟨Ψ, hub, hlb, hmatch⟩ :=
-    exists_h1_clamp (isOpenBoundedConvexDomain_truncatedWindow x m (n - 2)) Φ
-      (datumResidualBound_nonneg d n hKh)
-  obtain ⟨w, hharm, hdiff, hbu, hbl⟩ :=
-    exists_residualCorrector_truncatedWindow hx Ψ hub hlb
-  exact ⟨w, hharm, ⟨Ψ, fun y hy => hmatch y (hΦ y hy), hdiff⟩,
-    ae_abs_le_of_isWeaklyHarmonicOn
-      (isOpenBoundedConvexDomain_truncatedWindow x m (n - 2)) hharm hbu hbl⟩
 
 /-! ## 4. Where the `[∇h]` leg proves -/
 

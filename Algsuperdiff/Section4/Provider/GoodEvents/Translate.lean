@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Cutoff.Symmetry
 
@@ -34,7 +34,7 @@ What the graph's stationarity gaps still require is *not* a stronger invariance
 of the law: it is the (separate) claim that the observable being maximized is
 the same function of the translated sample, i.e. the pointwise identities
 `observable(z + □) (ω) = observable(□) (translate z ω)`.  Those identities are
-per-observable statements and are owned by the individual Section 4 packets;
+per-observable statements and are proved in the individual Section 4 modules;
 this module supplies only the law-level half.
 
 ## References
@@ -70,62 +70,12 @@ theorem translateCutoffSample_zero_eq_id :
     Cutoff.translateCutoffSample (0 : Vec d) = id :=
   funext fun omega => translateCutoffSample_zero omega
 
-/-- **Composition of translations.**  Pointwise form. -/
-theorem translateCutoffSample_add (z w : Vec d) (omega : Cutoff.CutoffSample d) :
-    Cutoff.translateCutoffSample z (Cutoff.translateCutoffSample w omega) =
-      Cutoff.translateCutoffSample (z + w) omega := by
-  apply Subtype.ext
-  funext k
-  apply Algsuperdiff.Frozen.Assumptions.ShellField.ext
-  intro x
-  simp only [Cutoff.translateCutoffSample_val,
-    Algsuperdiff.Frozen.Assumptions.ShellField.translateSequence_apply,
-    Algsuperdiff.Frozen.Assumptions.ShellField.translate_apply, add_assoc]
-
-/-- **Composition of translations.**  Function form. -/
-theorem translateCutoffSample_comp (z w : Vec d) :
-    Cutoff.translateCutoffSample (d := d) z ∘ Cutoff.translateCutoffSample w =
-      Cutoff.translateCutoffSample (z + w) :=
-  funext fun omega => translateCutoffSample_add z w omega
-
-/-- Translating by `-z` undoes translating by `z`. -/
-theorem translateCutoffSample_neg_left (z : Vec d) :
-    Function.LeftInverse (Cutoff.translateCutoffSample (d := d) (-z))
-      (Cutoff.translateCutoffSample z) := by
-  intro omega
-  rw [translateCutoffSample_add, neg_add_cancel]
-  exact translateCutoffSample_zero omega
-
-/-- Translating by `z` undoes translating by `-z`. -/
-theorem translateCutoffSample_neg_right (z : Vec d) :
-    Function.RightInverse (Cutoff.translateCutoffSample (d := d) (-z))
-      (Cutoff.translateCutoffSample z) := by
-  intro omega
-  rw [translateCutoffSample_add, add_neg_cancel]
-  exact translateCutoffSample_zero omega
-
-/-- Every translation is a bijection of the cutoff-sample carrier. -/
-theorem bijective_translateCutoffSample (z : Vec d) :
-    Function.Bijective (Cutoff.translateCutoffSample (d := d) z) :=
-  Function.bijective_iff_has_inverse.2
-    ⟨Cutoff.translateCutoffSample (-z),
-      translateCutoffSample_neg_left z, translateCutoffSample_neg_right z⟩
-
 /-! ## 2. Preimage calculus -/
 
 /-- The preimage form of `translate 0 = id`. -/
 theorem preimage_translateCutoffSample_zero (t : Set (Cutoff.CutoffSample d)) :
     Cutoff.translateCutoffSample (0 : Vec d) ⁻¹' t = t := by
   rw [translateCutoffSample_zero_eq_id, Set.preimage_id]
-
-/-- The preimage form of the composition law: translating a `w`-preimage by `z`
-gives the `w + z`-preimage.  The order flip is genuine — `Set.preimage_comp`
-puts the outer map second. -/
-theorem preimage_translateCutoffSample_preimage (z w : Vec d)
-    (t : Set (Cutoff.CutoffSample d)) :
-    Cutoff.translateCutoffSample z ⁻¹' (Cutoff.translateCutoffSample w ⁻¹' t) =
-      Cutoff.translateCutoffSample (w + z) ⁻¹' t := by
-  rw [← Set.preimage_comp, translateCutoffSample_comp]
 
 /-! ## 3. The law-level statements -/
 
@@ -147,16 +97,6 @@ theorem measure_preimage_translateCutoffSample (M : ABKModel d) (z : Vec d)
     (Cutoff.cutoffSampleLaw M).toMeasure (Cutoff.translateCutoffSample z ⁻¹' t) =
       (Cutoff.cutoffSampleLaw M).toMeasure t :=
   (measurePreserving_translateCutoffSample M z).measure_preimage ht.nullMeasurableSet
-
-/-- The complementary form: bad events transfer too.  This is what a lattice
-union bound consumes. -/
-theorem measure_compl_preimage_translateCutoffSample (M : ABKModel d) (z : Vec d)
-    {t : Set (Cutoff.CutoffSample d)} (ht : MeasurableSet t) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        ((Cutoff.translateCutoffSample z ⁻¹' t)ᶜ) =
-      (Cutoff.cutoffSampleLaw M).toMeasure tᶜ := by
-  rw [← Set.preimage_compl]
-  exact measure_preimage_translateCutoffSample M z ht.compl
 
 end
 

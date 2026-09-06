@@ -190,7 +190,7 @@ private theorem tunedDeepTailFluct_sq_le
   have hdepth := waveBandDepth_spec
     (c := c) (E := E) M.shellPrefix.gamma_pos ht
   have hEinvSq : (E ^ 2)⁻¹ ≤ 1 :=
-    inv_le_one_of_one_le₀ (by nlinarith [hE])
+    inv_le_one_of_one_le₀ (one_le_pow₀ hE)
   have hc1 : c ≤ 1 := by
     dsimp only [c]
     exact collarBandMeanDepthCoeff_le_one d
@@ -201,8 +201,8 @@ private theorem tunedDeepTailFluct_sq_le
         mul_le_mul hc1 hEinvSq (inv_nonneg.mpr (sq_nonneg E)) (by norm_num)
       _ = 1 := by ring
   have hgk : M.gamma * (k₀ : ℝ) ≤ 2 := by
-    dsimp only [k₀, collarBandMeanDepth] at ⊢
-    nlinarith [hdepth, hcEinv]
+    have hdepth' : M.gamma * (k₀ : ℝ) ≤ c * (E ^ 2)⁻¹ + M.gamma := hdepth
+    linarith only [hdepth', hcEinv, hgamma1]
   have hbandPow : (3 : ℝ) ^ (2 * (M.gamma * (k₀ : ℝ))) ≤ 81 := by
     calc
       (3 : ℝ) ^ (2 * (M.gamma * (k₀ : ℝ))) ≤
@@ -217,7 +217,7 @@ private theorem tunedDeepTailFluct_sq_le
     exact (probeBandUnitGain_le M.shellPrefix.dimension).trans (by norm_num)
   have hqpowSq : (q ^ g₀) ^ 2 ≤ 1 := by
     have hqpow : q ^ g₀ ≤ 1 := pow_le_one₀ hq0 hq1
-    nlinarith [pow_nonneg hq0 g₀]
+    exact pow_le_one₀ (pow_nonneg hq0 g₀) hqpow
   have hA0 : 0 ≤ A ^ 2 * M.gamma := by
     exact mul_nonneg (sq_nonneg A) M.shellPrefix.gamma_pos.le
   rw [probeDeepBandGaugedFluct_sq_eq_closed_s33]
@@ -354,7 +354,7 @@ private theorem collarDeepTail_layer_isBigOWith
   have hgammaHalf : M.gamma / 2 ≤ bfaProfileB * sigma := by
     have hbs : 0 ≤ bfaProfileB * sigma :=
       mul_nonneg bfaProfileB_pos.le hsigma0.le
-    nlinarith
+    linarith only [hgammaProfile, hbs]
   have hrawP := isBigOWith_gammaSigma_slstarPowerTerm_of_gates
     (m := R.scale) (E := (E : ℝ))
     (sigma := upperProfileSigma sigma) (b := bfaProfileB) (gam := M.gamma)
@@ -476,13 +476,15 @@ private theorem gammaProductConst_collarDeepTail_le_sixtyFour
       hgammaHalf0 bfaProfileB_pos hgamma
   have htauLower : (1 : ℝ) / 5 ≤ upperProfileHsepTau sigma := by
     have hden : 0 < 8 + 3 * sigma + sigma ^ 2 := by positivity
-    have hsigmaSq : sigma ^ 2 ≤ (1 : ℝ) / 4 := by nlinarith
+    have hsigmaSq : sigma ^ 2 ≤ (1 : ℝ) / 4 := by
+      calc sigma ^ 2 ≤ (1 / 2 : ℝ) ^ 2 := pow_le_pow_left₀ hsigma0.le hsigma 2
+        _ = (1 : ℝ) / 4 := by norm_num
     rw [upperProfileHsepTau]
     rw [div_le_div_iff₀ (by norm_num : (0 : ℝ) < 5) hden]
-    nlinarith
+    linarith only [hsigmaSq, hsigma]
   have halphaLower : (1 : ℝ) / 5 ≤ alpha := htauLower.trans htau
   have hinv : alpha⁻¹ ≤ (5 : ℝ) :=
-    (inv_le_iff_one_le_mul₀ halpha0).2 (by nlinarith)
+    (inv_le_iff_one_le_mul₀ halpha0).2 (by linarith only [halphaLower])
   have hexponent :
       ((alpha * 1 / (alpha + 1))⁻¹) = alpha⁻¹ + 1 := by
     field_simp [halpha0.ne']
@@ -672,14 +674,14 @@ theorem collarDeepTail_coordinate_isBigOWith_and_ae_summable
   have hgammaHalf : M.gamma / 2 ≤ bfaProfileB * sigma := by
     have hbs : 0 ≤ bfaProfileB * sigma :=
       mul_nonneg bfaProfileB_pos.le hsigma0.le
-    nlinarith
+    linarith only [hgammaProfile, hbs]
   have hgammaB : M.gamma ≤ bfaProfileB := by
     calc
       M.gamma ≤ (3 / 2 : ℝ) * bfaProfileB * sigma := hgammaProfile
       _ ≤ (3 / 2 : ℝ) * bfaProfileB * (1 / 2) :=
         mul_le_mul_of_nonneg_left hsigma
           (mul_nonneg (by norm_num) bfaProfileB_pos.le)
-      _ ≤ bfaProfileB := by nlinarith [bfaProfileB_pos]
+      _ ≤ bfaProfileB := by linarith only [bfaProfileB_pos]
   let alpha : ℝ := upperProfileBaseSigma sigma /
     ((2 * (M.gamma / 2) + 2 * bfaProfileB) / bfaProfileB)
   let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^

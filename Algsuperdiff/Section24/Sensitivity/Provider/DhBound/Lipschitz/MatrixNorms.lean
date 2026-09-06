@@ -70,9 +70,9 @@ theorem norm_mat_le_sum_abs_entries (A : Mat d) :
 theorem sum_abs_entries_le_sq_mul_norm (A : Mat d) :
     (∑ i : Fin d, ∑ j : Fin d, |A i j|) ≤ (d : ℝ) ^ 2 * ‖A‖ := by
   calc (∑ i : Fin d, ∑ j : Fin d, |A i j|)
-      ≤ ∑ _i : Fin d, ∑ _j : Fin d, ‖A‖ := by
-        gcongr with i _ j _
-        simpa [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
+      ≤ ∑ _i : Fin d, ∑ _j : Fin d, ‖A‖ :=
+        Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun j _ => by
+          simpa [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
     _ = (d : ℝ) ^ 2 * ‖A‖ := by
         simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
         ring
@@ -104,9 +104,9 @@ theorem norm_le_sum_basisVec_apply {F : Type*} [NormedAddCommGroup F] [NormedSpa
       ≤ ∑ k : Fin d, ‖x k • L (basisVec k)‖ := norm_sum_le _ _
     _ = ∑ k : Fin d, ‖x k‖ * ‖L (basisVec k)‖ := by
         simp [norm_smul]
-    _ ≤ ∑ k : Fin d, ‖x‖ * ‖L (basisVec k)‖ := by
-        gcongr with k _
-        exact norm_le_pi_norm x k
+    _ ≤ ∑ k : Fin d, ‖x‖ * ‖L (basisVec k)‖ :=
+        Finset.sum_le_sum fun k _ =>
+          mul_le_mul_of_nonneg_right (norm_le_pi_norm x k) (norm_nonneg _)
     _ = (∑ k : Fin d, ‖L (basisVec k)‖) * ‖x‖ := by
         rw [← Finset.mul_sum, mul_comm]
 
@@ -117,12 +117,12 @@ theorem matrixDerivativeNorm_range_bddAbove (D : Vec d →L[ℝ] Mat d) :
   refine ⟨(d : ℝ) ^ 2 * ‖D‖, ?_⟩
   rintro c ⟨v, rfl⟩
   calc matrixNorm (D v.1) ≤ (d : ℝ) ^ 2 * ‖D v.1‖ := matrixNorm_le_sq_mul_norm _
-    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * ‖v.1‖) := by
-        gcongr
-        exact D.le_opNorm _
-    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * 1) := by
-        gcongr
-        exact (norm_vec_le_vecNorm v.1).trans v.2
+    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * ‖v.1‖) :=
+        mul_le_mul_of_nonneg_left (D.le_opNorm _) (sq_nonneg _)
+    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * 1) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left ((norm_vec_le_vecNorm v.1).trans v.2) (norm_nonneg _))
+          (sq_nonneg _)
     _ = (d : ℝ) ^ 2 * ‖D‖ := by ring
 
 theorem matrixDerivativeNorm_range_nonempty (D : Vec d →L[ℝ] Mat d) :
@@ -154,12 +154,12 @@ theorem matrixDerivativeNorm_le_sq_mul_norm (D : Vec d →L[ℝ] Mat d) :
   refine csSup_le (matrixDerivativeNorm_range_nonempty D) ?_
   rintro c ⟨v, rfl⟩
   calc matrixNorm (D v.1) ≤ (d : ℝ) ^ 2 * ‖D v.1‖ := matrixNorm_le_sq_mul_norm _
-    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * ‖v.1‖) := by
-        gcongr
-        exact D.le_opNorm _
-    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * 1) := by
-        gcongr
-        exact (norm_vec_le_vecNorm v.1).trans v.2
+    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * ‖v.1‖) :=
+        mul_le_mul_of_nonneg_left (D.le_opNorm _) (sq_nonneg _)
+    _ ≤ (d : ℝ) ^ 2 * (‖D‖ * 1) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left ((norm_vec_le_vecNorm v.1).trans v.2) (norm_nonneg _))
+          (sq_nonneg _)
     _ = (d : ℝ) ^ 2 * ‖D‖ := by ring
 
 /-- The frozen first-derivative norm is dominated by the coordinate entries. -/
@@ -169,9 +169,8 @@ theorem matrixDerivativeNorm_le_sq_mul_sum (D : Vec d →L[ℝ] Mat d) :
   refine (matrixDerivativeNorm_le_sq_mul_norm D).trans ?_
   have hstep : ‖D‖ ≤ ∑ k : Fin d, ∑ i : Fin d, ∑ j : Fin d, |D (basisVec k) i j| := by
     refine (norm_le_sum_basisVec_apply D).trans ?_
-    gcongr with k _
-    exact norm_mat_le_sum_abs_entries _
-  gcongr
+    exact Finset.sum_le_sum fun k _ => norm_mat_le_sum_abs_entries _
+  exact mul_le_mul_of_nonneg_left hstep (sq_nonneg _)
 
 /-! ## The frozen second-derivative norm -/
 
@@ -183,12 +182,12 @@ theorem matrixSecondDerivativeNorm_range_bddAbove
   rintro c ⟨v, rfl⟩
   calc matrixDerivativeNorm (H v.1) ≤ (d : ℝ) ^ 2 * ‖H v.1‖ :=
         matrixDerivativeNorm_le_sq_mul_norm _
-    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * ‖v.1‖) := by
-        gcongr
-        exact H.le_opNorm _
-    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * 1) := by
-        gcongr
-        exact (norm_vec_le_vecNorm v.1).trans v.2
+    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * ‖v.1‖) :=
+        mul_le_mul_of_nonneg_left (H.le_opNorm _) (sq_nonneg _)
+    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * 1) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left ((norm_vec_le_vecNorm v.1).trans v.2) (norm_nonneg H))
+          (sq_nonneg _)
     _ = (d : ℝ) ^ 2 * ‖H‖ := by ring
 
 theorem matrixSecondDerivativeNorm_range_nonempty
@@ -224,23 +223,22 @@ theorem matrixSecondDerivativeNorm_le_sq_mul_sum (H : Vec d →L[ℝ] (Vec d →
   have hnorm : ‖H‖ ≤ ∑ l : Fin d, ∑ k : Fin d, ∑ i : Fin d, ∑ j : Fin d,
       |H (basisVec l) (basisVec k) i j| := by
     refine (norm_le_sum_basisVec_apply H).trans ?_
-    gcongr with l _
+    refine Finset.sum_le_sum fun l _ => ?_
     refine (norm_le_sum_basisVec_apply (H (basisVec l))).trans ?_
-    gcongr with k _
-    exact norm_mat_le_sum_abs_entries _
+    exact Finset.sum_le_sum fun k _ => norm_mat_le_sum_abs_entries _
   refine csSup_le (matrixSecondDerivativeNorm_range_nonempty H) ?_
   rintro c ⟨v, rfl⟩
   calc matrixDerivativeNorm (H v.1) ≤ (d : ℝ) ^ 2 * ‖H v.1‖ :=
         matrixDerivativeNorm_le_sq_mul_norm _
-    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * ‖v.1‖) := by
-        gcongr
-        exact H.le_opNorm _
-    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * 1) := by
-        gcongr
-        exact (norm_vec_le_vecNorm v.1).trans v.2
+    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * ‖v.1‖) :=
+        mul_le_mul_of_nonneg_left (H.le_opNorm _) (sq_nonneg _)
+    _ ≤ (d : ℝ) ^ 2 * (‖H‖ * 1) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left ((norm_vec_le_vecNorm v.1).trans v.2) (norm_nonneg H))
+          (sq_nonneg _)
     _ = (d : ℝ) ^ 2 * ‖H‖ := by ring
     _ ≤ (d : ℝ) ^ 2 * ∑ l : Fin d, ∑ k : Fin d, ∑ i : Fin d, ∑ j : Fin d,
-          |H (basisVec l) (basisVec k) i j| := by
-        gcongr
+          |H (basisVec l) (basisVec k) i j| :=
+        mul_le_mul_of_nonneg_left hnorm (sq_nonneg _)
 
 end Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz

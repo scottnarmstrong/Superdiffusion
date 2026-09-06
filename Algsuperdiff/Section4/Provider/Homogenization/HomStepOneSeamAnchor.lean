@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepOneAnchor
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamRepin
@@ -12,7 +12,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamRepin
 
 ## What this module is
 
-The SIBLING of `HomStepOneAnchor.exists_ethmB_factor_moments`, at the two
+The SIBLING of the anchor's Step-1 factor moments, at the two
 re-pins the §4.5 lane now carries:
 
 * the BASE re-pin `s ↦ s/8` of `HomSeamRepin.homSeamBase` (an INSTANTIATION of
@@ -111,7 +111,8 @@ variable {d : ℕ}
 /-- The `γ`-threshold of the RE-PINNED Step-1 factor bounds.  Branch one is the
 anchor's lower `s`-endpoint at the SMALLEST slot `s/32`
 (`128 C_A² γ^{1/4} ≤ 1` in the quartic gauge — eight times the `16` of
-`homGamma0`), branch two is the anchor's own `γ`-gate, unchanged. -/
+the anchor's own threshold), branch two is the anchor's own `γ`-gate,
+unchanged. -/
 def homSeamGamma0 (CA : ℝ) : ℝ :=
   min ((128 * max CA 1 ^ (2 : ℕ))⁻¹ ^ (4 : ℕ)) ((max CA 1)⁻¹ ^ (10 : ℕ))
 
@@ -121,24 +122,6 @@ theorem homSeamGamma0_pos (CA : ℝ) : 0 < homSeamGamma0 CA := by
   · have h : (0 : ℝ) < (128 * max CA 1 ^ (2 : ℕ))⁻¹ := by positivity
     exact pow_pos h 4
   · exact pow_pos (inv_pos.mpr hK) 10
-
-/-- The re-pinned threshold is below the one: the `s/32` slot is strictly
-more demanding than the `s/4` slot it replaces. -/
-theorem homSeamGamma0_le_homGamma0 (CA : ℝ) : homSeamGamma0 CA ≤ homGamma0 CA := by
-  have hK : (0 : ℝ) < max CA 1 := maxOne_pos CA
-  have hKsq : (0 : ℝ) < max CA 1 ^ (2 : ℕ) := by positivity
-  have h16 : (0 : ℝ) < 16 * max CA 1 ^ (2 : ℕ) := by linarith only [hKsq]
-  have hle : 16 * max CA 1 ^ (2 : ℕ) ≤ 128 * max CA 1 ^ (2 : ℕ) := by
-    linarith only [hKsq]
-  have hinv : (128 * max CA 1 ^ (2 : ℕ))⁻¹ ≤ (16 * max CA 1 ^ (2 : ℕ))⁻¹ := by
-    have h := one_div_le_one_div_of_le h16 hle
-    rwa [one_div, one_div] at h
-  have hpow : (128 * max CA 1 ^ (2 : ℕ))⁻¹ ^ (4 : ℕ) ≤
-      (16 * max CA 1 ^ (2 : ℕ))⁻¹ ^ (4 : ℕ) := by
-    refine pow_le_pow_left₀ ?_ hinv 4
-    positivity
-  refine min_le_min ?_ (le_refl _)
-  exact hpow
 
 /-! ## 2. `3^x ≤ 3`: the improved exponent budget -/
 
@@ -178,7 +161,7 @@ private theorem factor_majorant_le {A P W Br G L B C : ℝ}
 
 /-- **THE RE-PINNED STEP-1 FACTOR MOMENTS.**
 
-The sibling of `HomStepOneAnchor.exists_ethmB_factor_moments` at the re-pinned
+The sibling of the anchor's Step-1 factor moments at the re-pinned
 base `homSeamBase M hs = s/8` AND at the two enlarged-`Y` indices `t/2`, `t` of
 `HomSpineTopScale.stepTwoEnlargedY`.  The `bounds_mathcal_E_aL` lemma
 is applied five times; every hypothesis below is either one of the anchor's own

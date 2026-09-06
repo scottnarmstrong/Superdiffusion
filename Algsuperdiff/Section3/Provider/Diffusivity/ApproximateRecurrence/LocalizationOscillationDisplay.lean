@@ -346,17 +346,17 @@ private theorem oscillation_lower_bound_display_core (M : ABKModel d) {C₀ : �
   -- the three constant comparisons
   have hC1 : (8 : ℝ) ^ ((4 : ℝ)⁻¹) * C₀ ≤ oscillationDisplayConst C₀ := by
     unfold oscillationDisplayConst
-    nlinarith [mul_nonneg hE8 hC₀, mul_nonneg (mul_nonneg hE8 hC₀) hS.le,
-      mul_nonneg hE8 hS.le, hE8, hS.le, hC₀]
+    linarith only [mul_nonneg (mul_nonneg hE8 hC₀) hS.le, mul_nonneg hE8 hS.le,
+      hE8, hS.le]
   have hC2 : (8 : ℝ) ^ ((4 : ℝ)⁻¹) * C₀ * shellDerivGammaFourthConst ≤
       oscillationDisplayConst C₀ := by
     unfold oscillationDisplayConst
-    nlinarith [mul_nonneg hE8 hC₀, mul_nonneg (mul_nonneg hE8 hC₀) hS.le,
-      mul_nonneg hE8 hS.le, hE8, hS.le, hC₀]
+    linarith only [mul_nonneg hE8 hC₀, mul_nonneg hE8 hS.le, hE8, hS.le]
   have hC3 : shellDerivGammaFourthConst ≤ oscillationDisplayConst C₀ := by
     unfold oscillationDisplayConst
-    nlinarith [mul_nonneg (mul_nonneg hE8 (by linarith : (0:ℝ) ≤ C₀ + 1))
-      (by linarith : (0:ℝ) ≤ shellDerivGammaFourthConst + 1)]
+    exact le_add_of_nonneg_left
+      (mul_nonneg (mul_nonneg hE8 (by linarith : (0:ℝ) ≤ C₀ + 1))
+        (by linarith : (0:ℝ) ≤ shellDerivGammaFourthConst + 1))
   -- the three term-by-term estimates
   have hXnn : (0 : ℝ) ≤ (N : ℝ) * (sigmaInv * Real.sqrt (d : ℝ) * Book.Ch02.vecNorm e) :=
     mul_nonneg (Nat.cast_nonneg N)

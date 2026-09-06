@@ -88,19 +88,6 @@ theorem IsWeaklyHarmonicOn.mono {U V : Set (Vec d)} {u : Vec d → ℝ}
     ← setIntegral_mul_euclideanCoordLaplacian_eq_integral u (hsupp.trans hVU)]
   exact hu ψ hψ hψc (hsupp.trans hVU)
 
-/-- Weak harmonicity is preserved by scalar multiples. -/
-theorem IsWeaklyHarmonicOn.const_mul {U : Set (Vec d)} {u : Vec d → ℝ}
-    (hu : IsWeaklyHarmonicOn U u) (c : ℝ) :
-    IsWeaklyHarmonicOn U (fun x => c * u x) := by
-  intro ψ hψ hψc hsupp
-  have hrw : ∀ x : Vec d,
-      c * u x * euclideanCoordLaplacian ψ x =
-        c * (u x * euclideanCoordLaplacian ψ x) := by
-    intro x
-    ring
-  simp only [hrw]
-  rw [integral_const_mul, hu ψ hψ hψc hsupp, mul_zero]
-
 /-- **Weak plus `C^2` implies classical.**
 
 If `u` is of class `C^2` and weakly harmonic on an open set `U`, then its

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.ShiftedG0Lane
 import Algsuperdiff.Section4.Provider.Proportion.ShiftedG1Lane
@@ -25,9 +25,6 @@ interface, re-based:
 * `exists_ratioTail_goodEventBase_shift` — the composition: the two proved lanes
   (`𝒢₀` from `ShiftedG0Lane`, `𝒢₁` from `ShiftedG1Lane`) plus the `𝒢₂` lane as a
   named `LaneTailFrom` slot of the identical shape.
-* `measure_scalePropFrom_goodEventBase_le` — the same conclusion written in the
-  frozen display's own window convention, through the re-index
-  `ShiftedConcentration.scalePropFrom_eq_scaleProp`.
 
 ## References
 
@@ -59,30 +56,10 @@ def LaneTailFrom (M : ABKModel d) (Ev : ℤ → Set (Cutoff.CutoffSample d))
     (theta c1 : ℝ) : Prop :=
   ∀ m0 : ℤ, LaneTail M (fun k => Ev (m0 + k)) theta c1
 
-/-- The base-`0` instance of a `LaneTailFrom` is the proved `LaneTail`. -/
-theorem LaneTailFrom.base {M : ABKModel d} {Ev : ℤ → Set (Cutoff.CutoffSample d)}
-    {theta c1 : ℝ} (H : LaneTailFrom M Ev theta c1) : LaneTail M Ev theta c1 := by
-  have h := H 0
-  have hfun : (fun k : ℤ => Ev (0 + k)) = Ev := by
-    funext k
-    rw [zero_add]
-  rwa [hfun] at h
-
 /-- A based lane endpoint transfers to every larger level. -/
 theorem LaneTailFrom.mono_level {M : ABKModel d} {Ev : ℤ → Set (Cutoff.CutoffSample d)}
     {theta theta' c1 : ℝ} (h : theta ≤ theta') (H : LaneTailFrom M Ev theta c1) :
     LaneTailFrom M Ev theta' c1 := fun m0 => (H m0).mono_level h
-
-/-- A based lane endpoint transfers to every smaller rate. -/
-theorem LaneTailFrom.mono_rate {M : ABKModel d} {Ev : ℤ → Set (Cutoff.CutoffSample d)}
-    {theta c1 c1' : ℝ} (h : c1' ≤ c1) (H : LaneTailFrom M Ev theta c1) :
-    LaneTailFrom M Ev theta c1' := fun m0 => (H m0).mono_rate h
-
-/-- A based lane endpoint transfers along an inclusion of the good events. -/
-theorem LaneTailFrom.mono_event {M : ABKModel d}
-    {Ev Ev' : ℤ → Set (Cutoff.CutoffSample d)} {theta c1 : ℝ}
-    (h : ∀ k, Ev k ⊆ Ev' k) (H : LaneTailFrom M Ev theta c1) :
-    LaneTailFrom M Ev' theta c1 := fun m0 => (H m0).mono_event (fun k => h (m0 + k))
 
 /-! ## 2. The three-fold union bound, at every base -/
 
@@ -325,39 +302,6 @@ theorem exists_ratioTail_goodEventBase_shift (d : ℕ) :
       (hG2.mono_level (by linarith only [htheta0])) m0 n
   · exact measure_scaleProp_goodEventBase_le_shift M (Support.cgEllipLowerConstant d)
       s ep theta c1 htheta0 hlane0 hlane1 hG2 m0 n
-
-/-! ## 5. The frozen display's window convention -/
-
-/-- **The good-proportion clause in the frozen display's own window convention.**
-`scalePropFrom` is the `Finset.range (Mw+1)`-indexed average of the
-`Set.indicator`s at the scales `m₀ + k`; the window re-index
-`scalePropFrom_eq_scaleProp` turns it into the proved `Finset.Icc`-indexed
-`scaleProp` of the shifted family, so the three-lane union bound applies
-verbatim. -/
-theorem measure_scalePropFrom_goodEventBase_le (M : ABKModel d) (Ccg : ℝ)
-    (s : {s : ℝ // 0 < s}) (ep theta c1 : ℝ) (htheta0 : 0 < theta)
-    (h0 : LaneTailFrom M (fun k => Support.eventG0 M Ccg k) (theta / 4) c1)
-    (h1 : LaneTailFrom M
-      (fun k => Support.eventG1 M k (s : ℝ)
-        ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-      (theta / 4) c1)
-    (h2 : LaneTailFrom M (fun k => Support.eventG2 M k s ep) (theta / 4) c1)
-    (m0 : ℤ) (Mw : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | scalePropFrom (fun k => Support.goodEventBase M Ccg k s ep) m0 Mw omega
-          ≤ 1 - theta}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (Mw : ℝ))) := by
-  have hset : {omega |
-        scalePropFrom (fun k => Support.goodEventBase M Ccg k s ep) m0 Mw omega
-          ≤ 1 - theta}
-      = {omega |
-        scaleProp (fun k => Support.goodEventBase M Ccg (m0 + k) s ep) Mw omega
-          ≤ 1 - theta} := by
-    ext omega
-    simp only [Set.mem_setOf_eq,
-      scalePropFrom_eq_scaleProp (fun k => Support.goodEventBase M Ccg k s ep) m0 Mw omega]
-  rw [hset]
-  exact measure_scaleProp_goodEventBase_le_shift M Ccg s ep theta c1 htheta0 h0 h1 h2 m0 Mw
 
 end
 

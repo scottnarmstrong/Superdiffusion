@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalFullNorm
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalSmoothTest
@@ -11,9 +11,9 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalSmoothTest
 
 ## What this file supplies
 
-`SmoothDualDominatesHolderTests Q s p Ktest` is the ONE gap
-between `CoarseGraining`'s smooth `W^{s,p′}` dual and the repository's
-`WeakNegDualBoundOn`, and MEASURED that it is FALSE at equal orders (the
+The domination of the Hölder test gauge by `CoarseGraining`'s smooth
+`W^{s,p′}` dual is the ONE gap between that dual and the repository's
+`WeakNegDualBoundOn`, and it is FALSE at equal orders (the
 Gagliardo integrand of a `C^{0,s}` field is logarithmically divergent).  This
 file gives the honest, order-losing form as a THEOREM:
 
@@ -198,7 +198,7 @@ theorem openCubeSet_nonempty (Q : TriadicCube d) : (openCubeSet Q).Nonempty :=
 
 /-- **The test-class comparison at the two orders `s′` (dual) and `s` (data).**
 
-This is the `SmoothDualDominatesHolderTests` with the `CoarseGraining` side
+This is the smooth-dual/Hölder test domination with the `CoarseGraining` side
 read at the strictly smaller order `s′`, which is the only reading that can be
 true. -/
 def SmoothDualDominatesHolderTestsAt (Q : TriadicCube d) (s' s : FractionalOrder)
@@ -381,8 +381,8 @@ theorem smoothDualDominatesHolderTestsAt (Q : TriadicCube d) (s' s : FractionalO
 
 /-- **The Step-4 carrier, produced from the smooth-dual level at order `s′`.**
 
-The `weakNegDualBoundOn_of_smoothDual` with the `CoarseGraining` side read at
-`s′ < s`. The output level is the data order `s`, which is what the bundle's
+The conversion of a smooth-dual level into the Step-4 carrier, with the
+`CoarseGraining` side read at `s′ < s`. The output level is the data order `s`, which is what the bundle's
 duality clauses use. -/
 theorem weakNegDualBoundOn_of_smoothDualAt {Q : TriadicCube d} {s' s : FractionalOrder}
     {p : FiniteLpExponent} {Ktest : ℝ} (hK : 0 ≤ Ktest)

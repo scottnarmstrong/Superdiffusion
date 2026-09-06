@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepOneParameters
 
@@ -111,15 +111,6 @@ theorem rpow_three_quarter_le_rpow_three_half {t : ℝ} (ht : 0 ≤ t) :
     Real.rpow (3 : ℝ) (1 / 4 * t) ≤ Real.rpow (3 : ℝ) (1 / 2 * t) :=
   Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [ht])
 
-/-- **`t.regularity` Step 6, as printed**: the exponential prefactor is bounded by
-`3^{(1/2)(1-α)(m-n)}`.  The adopted (slack) reading. -/
-theorem exp_le_rpow_three_half_of_step6_floor {C1 Citer t : ℝ} {k : ℕ}
-    (hC1 : 0 < C1) (hCiter : 0 ≤ Citer) (ht : 0 ≤ t)
-    (hfloor : 4 * Citer * ((k : ℝ) + 1) / Real.log 3 ≤ C1) :
-    Real.exp (C1⁻¹ * Citer * t) ≤ Real.rpow (3 : ℝ) (1 / 2 * t) :=
-  le_trans (exp_le_rpow_three_quarter_of_step6_floor hC1 hCiter ht hfloor)
-    (rpow_three_quarter_le_rpow_three_half ht)
-
 /-- The Step-6 exponent argument `t := (1-α)(m-n)`. -/
 def stepSixExponent (alpha : ℝ) (n m : ℤ) : ℝ := (1 - alpha) * ((m : ℝ) - (n : ℝ))
 
@@ -205,26 +196,6 @@ theorem oscillationHolderBound_of_iterationResult (d : ℕ)
           (dataG + dataH) :=
   holderBound_of_iterationResult hC hoscHi hdataG hdataH
     (exp_stepOneC1_le_rpow_three_half d hCiter halpha hnm) hiter
-
-/-- **`t.regularity` Step 6, assembled at the Step-1 `C₁` — the sharp exponent**
-(`1/4` in place of the printed `1/2`).  Stated, not substituted: the printed form
-above is the headline. -/
-theorem oscillationHolderBoundSharp_of_iterationResult (d : ℕ)
-    {Cedos Cann Citer C alpha : ℝ} {k : ℕ} {n m : ℤ}
-    {oscLo oscHi dataG dataH : ℝ} (hC : 0 ≤ C) (hCiter : 0 ≤ Citer)
-    (halpha : alpha ≤ 1) (hnm : n ≤ m) (hoscHi : 0 ≤ oscHi) (hdataG : 0 ≤ dataG)
-    (hdataH : 0 ≤ dataH)
-    (hiter : oscLo ≤
-        C * Real.exp ((stepOneC1 d Cedos Cann Citer k)⁻¹ * Citer *
-            stepSixExponent alpha n m) * (oscHi + C * dataG) +
-          C * Real.exp ((stepOneC1 d Cedos Cann Citer k)⁻¹ * Citer *
-            stepSixExponent alpha n m) * dataH) :
-    oscLo ≤
-      (C + C * C) * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) * oscHi +
-        (C + C * C) * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) *
-          (dataG + dataH) :=
-  holderBound_of_iterationResult hC hoscHi hdataG hdataH
-    (exp_stepOneC1_le_rpow_three_quarter d hCiter halpha hnm) hiter
 
 end
 

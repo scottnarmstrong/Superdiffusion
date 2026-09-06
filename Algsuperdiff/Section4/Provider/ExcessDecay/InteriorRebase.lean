@@ -1,16 +1,17 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorAssemblyXFrame
-import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorGlueFrame
 import Algsuperdiff.Section4.Provider.Annular.SubConstFamily
+import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorAssemblyLhs
+import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorGlueFrame
+import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorGlueWindow
 
 /-!
 # The child frame, re-based on the **parent's** antisymmetric flux increment
 
-`InteriorAssemblyXFrame` composes the coarse-graining estimate at the child's
+The child-frame composition takes the coarse-graining estimate at the child's
 *own* flux-corrected family `ã_{L,n}` — the cutoff coefficient at the
 translated sample `translateCutoffSample x ω` minus the child's own increment
 `(κ_L − κ_n)_{□_n}`.

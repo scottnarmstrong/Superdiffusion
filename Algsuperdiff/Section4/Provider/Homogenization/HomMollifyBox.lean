@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomLiftEndpoint
-import Algsuperdiff.Section4.Provider.Homogenization.HomLiftNegativeNorm
+import Homogenization.Book.Ch03.Definitions
+import Homogenization.Deterministic.WeakNormInterfaces.Definitions
 import Homogenization.Geometry.CubeMetric
 import Homogenization.Sobolev.Foundations.CubeCalderonZygmund.StoppingRadius
 
@@ -52,28 +53,23 @@ in exactly one elementary direction,
   grid gauge  ≤  √d · translate gauge · 3^{-s·scale},
 ```
 
-because every grid cube *is* a translate (`cubeAverage_eq_boxAverage`).  The
+because every grid cube *is* a translate.  The
 converse — reconstructing a translate average from the grid averages at all
 scales — is true, but is a genuine martingale/telescoping argument over the
 triadic filtration; see the "reconstruction residue" section of
 `HomMollifyPairing`.  Accordingly the mollifier calculus of this file runs on
-the *translate* gauge `UniformBoxGaugeBound`, and
-`negBesovInftyNorm_le_of_uniformBoxGauge` records exactly how much stronger
-that hypothesis is.
+the *translate* gauge `UniformBoxGaugeBound`, which is the stronger of the two
+hypotheses.
 
 ## Main definitions and results
 
 * `boxRadius n` — the half-side `3^n/2`; `boxSet n x` — the scale-`n` box
   centred at `x`, i.e. `Metric.closedBall x (boxRadius n)`.
-* `volume_boxSet`, `measurableSet_boxSet`, `convex_boxSet`, `isCompact_boxSet`.
+* `volume_boxSet`, `measurableSet_boxSet`, `isCompact_boxSet`.
 * `boxAverage`, `boxAverageVec` — the scalar and vector sliding averages,
   defined through `CoarseGraining`'s `closedBallAverage`.
-* `cubeAverage_eq_boxAverage`, `cubeAverageVec_eq_boxAverageVec` — every `CoarseGraining`
-  triadic cube average is a box average at the cube's centre.
 * `UniformBoxGaugeBound m s A F` — the translate-uniform negative gauge of
   order `-s`: `‖(F)_{x+□_n}‖ ≤ A 3^{-ns}` for every `n ≤ m` and every `x`.
-* `negBesovInftyNorm_le_of_uniformBoxGauge` — the comparison with the grid
-  gauge, at the explicit dimensional factor `√d`.
 
 ## References
 
@@ -113,14 +109,8 @@ theorem boxSet_def (n : ℤ) (x : Vec d) : boxSet n x = Metric.closedBall x (box
 theorem mem_boxSet_iff {n : ℤ} {x y : Vec d} : y ∈ boxSet n x ↔ ‖y - x‖ ≤ boxRadius n := by
   rw [boxSet_def, Metric.mem_closedBall, dist_eq_norm]
 
-theorem self_mem_boxSet (n : ℤ) (x : Vec d) : x ∈ boxSet n x :=
-  Metric.mem_closedBall_self (boxRadius_pos n).le
-
 theorem measurableSet_boxSet (n : ℤ) (x : Vec d) : MeasurableSet (boxSet (d := d) n x) :=
   measurableSet_closedBall
-
-theorem convex_boxSet (n : ℤ) (x : Vec d) : Convex ℝ (boxSet (d := d) n x) :=
-  convex_closedBall x (boxRadius n)
 
 theorem isCompact_boxSet (n : ℤ) (x : Vec d) : IsCompact (boxSet (d := d) n x) :=
   isCompact_closedBall x (boxRadius n)
@@ -163,10 +153,6 @@ theorem boxAverage_eq_inv_mul_integral (n : ℤ) (x : Vec d) (f : Vec d → ℝ)
     boxAverage n x f = (((3 : ℝ) ^ (n : ℝ)) ^ d)⁻¹ * ∫ y in boxSet n x, f y := by
   rw [boxAverage_def, closedBallAverage, boxSet_def, two_mul_boxRadius]
 
-theorem boxAverage_eq_setAverage (n : ℤ) (x : Vec d) (f : Vec d → ℝ) :
-    boxAverage n x f = ⨍ y in boxSet n x, f y :=
-  closedBallAverage_eq_setAverage x (boxRadius_pos n).le f
-
 /-- A uniform pointwise bound on the box passes to the average. -/
 theorem abs_boxAverage_le {n : ℤ} {x : Vec d} {f : Vec d → ℝ} {C : ℝ}
     (hf : ∀ y ∈ boxSet n x, |f y| ≤ C) : |boxAverage n x f| ≤ C := by
@@ -185,23 +171,6 @@ theorem abs_boxAverage_le {n : ℤ} {x : Vec d} {f : Vec d → ℝ} {C : ℝ}
         exact hbound
     _ = C := by field_simp
 
-/-! ## 3. Triadic cubes are translated boxes -/
-
-/-- **Every `CoarseGraining` cube average is a box average at the cube's centre.** -/
-theorem cubeAverage_eq_boxAverage (Q : TriadicCube d) (f : Vec d → ℝ) :
-    cubeAverage Q f = boxAverage Q.scale (cubeCenter Q) f := by
-  have hrad : boxRadius Q.scale = cubeRadius Q := by
-    rw [boxRadius_def, three_rpow_scale_eq Q]
-    simp only [cubeRadius]
-    ring
-  rw [boxAverage_def, hrad, closedBallAverage_eq_setAverage _ (cubeRadius_pos Q).le,
-    cubeAverage_eq_setAverage_closedBall]
-
-theorem cubeAverageVec_eq_boxAverageVec (Q : TriadicCube d) (F : Vec d → Vec d) :
-    cubeAverageVec Q F = boxAverageVec Q.scale (cubeCenter Q) F := by
-  funext i
-  exact cubeAverage_eq_boxAverage Q _
-
 /-! ## 4. The translate-uniform negative gauge -/
 
 /-- **The translate-uniform negative gauge of order `-s` on the scales
@@ -215,11 +184,6 @@ available at a general centre. -/
 def UniformBoxGaugeBound (m : ℤ) (s A : ℝ) (F : Vec d → Vec d) : Prop :=
   ∀ n : ℤ, n ≤ m → ∀ x : Vec d, ‖boxAverageVec n x F‖ ≤ A * (3 : ℝ) ^ (-((n : ℝ) * s))
 
-theorem uniformBoxGaugeBound_def (m : ℤ) (s A : ℝ) (F : Vec d → Vec d) :
-    UniformBoxGaugeBound m s A F ↔
-      ∀ n : ℤ, n ≤ m → ∀ x : Vec d,
-        ‖boxAverageVec n x F‖ ≤ A * (3 : ℝ) ^ (-((n : ℝ) * s)) := Iff.rfl
-
 /-- The gauge constant of a nonvacuous gauge is nonnegative. -/
 theorem UniformBoxGaugeBound.nonneg {m : ℤ} {s A : ℝ} {F : Vec d → Vec d}
     (h : UniformBoxGaugeBound m s A F) : 0 ≤ A := by
@@ -231,85 +195,6 @@ theorem UniformBoxGaugeBound.nonneg {m : ℤ} {s A : ℝ} {F : Vec d → Vec d}
   push_neg at hA
   have hneg : A * (3 : ℝ) ^ (-((m : ℝ) * s)) < 0 := mul_neg_of_neg_of_pos hA hpos
   linarith only [h0, hneg]
-
-/-- The gauge is monotone in its constant. -/
-theorem UniformBoxGaugeBound.mono {m : ℤ} {s A A' : ℝ} {F : Vec d → Vec d}
-    (h : UniformBoxGaugeBound m s A F) (hAA : A ≤ A') : UniformBoxGaugeBound m s A' F := by
-  intro n hn x
-  exact (h n hn x).trans (mul_le_mul_of_nonneg_right hAA (three_rpow_nonneg _))
-
-/-- The Euclidean norm of a vector is at most `√d` times its sup norm. -/
-theorem sqrt_vecNormSq_le (v : Vec d) : Real.sqrt (vecNormSq v) ≤ Real.sqrt d * ‖v‖ := by
-  have hsum : vecNormSq v ≤ (d : ℝ) * ‖v‖ ^ 2 := by
-    have hterm : ∀ i : Fin d, v i * v i ≤ ‖v‖ ^ 2 := by
-      intro i
-      have hi : |v i| ≤ ‖v‖ := by
-        simpa only [Real.norm_eq_abs] using norm_le_pi_norm v i
-      have habs : (0 : ℝ) ≤ |v i| := abs_nonneg _
-      calc v i * v i = |v i| * |v i| := by rw [← abs_mul, abs_mul_self]
-        _ ≤ ‖v‖ * ‖v‖ := mul_le_mul hi hi habs (norm_nonneg _)
-        _ = ‖v‖ ^ 2 := by ring
-    have hle := Finset.sum_le_sum fun i (_ : i ∈ (Finset.univ : Finset (Fin d))) => hterm i
-    simpa only [vecNormSq, vecDot, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      nsmul_eq_mul] using hle
-  have hd : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-  calc Real.sqrt (vecNormSq v) ≤ Real.sqrt ((d : ℝ) * ‖v‖ ^ 2) := Real.sqrt_le_sqrt hsum
-    _ = Real.sqrt d * ‖v‖ := by
-        rw [Real.sqrt_mul hd, Real.sqrt_sq (norm_nonneg v)]
-
-/-- **The comparison with the grid gauge.**
-
-A translate-uniform bound `A` at order `-s` on the scales `n ≤ Q.scale` gives
-the `(∞,∞)` grid gauge of `HomLiftNegativeNorm` at `√d · A · 3^{-s·Q.scale}` —
-the manuscript's scale-normalized left-hand quantity.  The `√d` is the
-sup-norm/Euclidean-norm conversion (`CoarseGraining`'s negative Besov family
-measures the average vector in the Euclidean norm) and the factor
-`3^{-s·Q.scale}` is the normalization of
-`negBesovInftyDepthSeminorm_eq_scaleNormalized`.
-
-Only this direction is elementary; see the module docstring. -/
-theorem negBesovInftyNorm_le_of_uniformBoxGauge (Q : TriadicCube d) {s A : ℝ}
-    {F : Vec d → Vec d} (h : UniformBoxGaugeBound Q.scale s A F) :
-    negBesovInftyNorm Q s F ≤ Real.sqrt d * A * (3 : ℝ) ^ (-(s * ((Q.scale : ℤ) : ℝ))) := by
-  have hA : 0 ≤ A := h.nonneg
-  have hconst : (0 : ℝ) ≤ Real.sqrt d * A * (3 : ℝ) ^ (-(s * ((Q.scale : ℤ) : ℝ))) := by
-    have h1 := three_rpow_nonneg (-(s * ((Q.scale : ℤ) : ℝ)))
-    have hsd : (0 : ℝ) ≤ Real.sqrt d := Real.sqrt_nonneg _
-    exact mul_nonneg (mul_nonneg hsd hA) h1
-  refine negBesovInftyNorm_le Q s F hconst ?_
-  intro j
-  have hmax : negBesovInftyDepthMax Q F j
-      ≤ Real.sqrt d * A * (3 : ℝ) ^ (-(((Q.scale - (j : ℤ) : ℤ) : ℝ) * s)) := by
-    refine negBesovInftyDepthMax_le ?_
-    intro R hR
-    have hscale : R.scale = Q.scale - (j : ℤ) := scale_eq_sub_of_mem_descendantsAtDepth hR
-    have hle : ‖boxAverageVec R.scale (cubeCenter R) F‖
-        ≤ A * (3 : ℝ) ^ (-(((R.scale : ℤ) : ℝ) * s)) := by
-      refine h R.scale ?_ _
-      rw [hscale]
-      omega
-    calc Real.sqrt (vecNormSq (cubeAverageVec R F))
-        ≤ Real.sqrt d * ‖cubeAverageVec R F‖ := sqrt_vecNormSq_le _
-      _ = Real.sqrt d * ‖boxAverageVec R.scale (cubeCenter R) F‖ := by
-          rw [cubeAverageVec_eq_boxAverageVec]
-      _ ≤ Real.sqrt d * (A * (3 : ℝ) ^ (-(((R.scale : ℤ) : ℝ) * s))) :=
-          mul_le_mul_of_nonneg_left hle (Real.sqrt_nonneg _)
-      _ = Real.sqrt d * A * (3 : ℝ) ^ (-(((Q.scale - (j : ℤ) : ℤ) : ℝ) * s)) := by
-          rw [hscale, mul_assoc]
-  have hweight : (3 : ℝ) ^ (-s * (j : ℝ)) *
-      ((3 : ℝ) ^ (-(((Q.scale - (j : ℤ) : ℤ) : ℝ) * s)))
-        = (3 : ℝ) ^ (-(s * ((Q.scale : ℤ) : ℝ))) := by
-    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    congr 1
-    push_cast
-    ring
-  calc negBesovInftyDepthSeminorm Q s F j
-      = (3 : ℝ) ^ (-s * (j : ℝ)) * negBesovInftyDepthMax Q F j := rfl
-    _ ≤ (3 : ℝ) ^ (-s * (j : ℝ)) *
-        (Real.sqrt d * A * (3 : ℝ) ^ (-(((Q.scale - (j : ℤ) : ℤ) : ℝ) * s))) :=
-        mul_le_mul_of_nonneg_left hmax (three_rpow_nonneg _)
-    _ = Real.sqrt d * A * (3 : ℝ) ^ (-(s * ((Q.scale : ℤ) : ℝ))) := by
-        rw [← hweight]; ring
 
 end
 

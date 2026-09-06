@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSupClauseCcgFree
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamComposition
@@ -11,8 +11,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamComposition
 
 ## What this file does
 
-`HomSeamComposition.generatorRenormalizationShape_of_supClauseProducer`
-reduced the frozen root to ONE object, but at the lane's NUMERAL clause
+The composition of `HomSeamComposition` reduced the frozen root to ONE object, but at the lane's NUMERAL clause
 constant `recutPinnedCcgFlux d p` — which the producing route cannot meet
 (`CA ≍ |log γ|^{1-1/(4d)}`).  This file re-states the reduction at
 a model-dependent constant `CcgF: ABKModel d → ℝ`, subject to exactly the two
@@ -26,14 +25,12 @@ things the lane actually needs of it:
 The second is exactly the shape of the two-factor budget
 `HomSeamBudgetArith.recut_geomBudget_le_absLog`
 (`GEOM · (1 + (s·p')⁻¹)^{1/p'} ≤ 2|log γ|`), so a producer whose constant is
-`≲ (1 + (s·p')⁻¹)^{1/p'}` — which is what
-`HomSpineDepthBandInput.exists_coarseGrainingSupMultiscale_unconditional`
-delivers at `x₀ = s·p'` — meets it.
+`≲ (1 + (s·p')⁻¹)^{1/p'}` — which is what the unconditional sup-form multiscale
+clause of `HomSpineDepthBandInput` delivers at `x₀ = s·p'` — meets it.
 
-`supClauseProducerAtBudgeted_of_supClauseProducer` is the REGRESSION
-certificate: the pinned producer still drives the composition (its
-constant is model-free, and `GEOM ≤ 2|log γ|` is available), so the re-thread only
-enlarges the class of admissible producers.
+The re-thread is a genuine widening: the pinned producer still drives the
+composition (its constant is model-free, and `GEOM ≤ 2|log γ|` is available), so
+it only enlarges the class of admissible producers.
 -/
 
 open Algsuperdiff.Section3
@@ -51,8 +48,7 @@ noncomputable section
 
 /-- **THE FROZEN `generator_renormalization` BODY FROM A BUDGETED CLAUSE.**
 
-`HomSeamSupClauseProvider.generator_renormalization_provider_final_of_supClause`
-with the numeral `Ccg` pin freed.  The hypothesis list is `{0 < cstar, 0 <
+The provider at the sup-form clause, with the numeral `Ccg` pin freed.  The hypothesis list is `{0 < cstar, 0 <
 gamma0, 0 < Cgap, 0 ≤ Cbud}` plus the three properties of `CcgF` and the clause
 supply — and NOTHING else.  `C_en⁰`, `C_top` and the geometric factor are still
 closed terms pinned inside; `K_abs` is now the closed term `seamKabsAt d hd1
@@ -128,7 +124,7 @@ theorem generator_renormalization_provider_final_of_supClauseAt (d : ℕ) (cstar
 
 An a.e. producer of the sup-form multiscale clause at SOME positive `γ₀` and at
 SOME model-dependent constant meeting the duality pin and the budget.  This
-is `HomSeamComposition.SupClauseProducerAt` with the `Ccg` slot freed. -/
+is the composition's one remaining input with the `Ccg` slot freed. -/
 def SupClauseProducerAtBudgeted (d : ℕ) (cstar : ℝ) : Prop :=
   ∃ gamma0 : ℝ, 0 < gamma0 ∧
     ∀ (hd : 2 ≤ d) (inst : NeZero d), ∃ (CcgF : ABKModel d → ℝ) (Cbud : ℝ),
@@ -168,27 +164,6 @@ theorem generatorRenormalizationShape_of_supClauseProducerAtBudgeted (d : ℕ)
   · refine ⟨1, 1, one_pos, one_pos, ?_⟩
     intro M _hcs _hgamma _m
     exact absurd M.shellPrefix.dimension hd
-
-/-- **THE REGRESSION CERTIFICATE.**  The pinned producer still drives the
-composition: its constant is model-free and `GEOM ≤ 2|log γ|` is available
-(`HomSeamBudgetArith.recut_geomFactor_le_absLog`), so the budget is met at
-`C_bud = 2·C(p,d)`. -/
-theorem supClauseProducerAtBudgeted_of_supClauseProducer (d : ℕ) (cstar : ℝ)
-    (h : SupClauseProducerAt d cstar) : SupClauseProducerAtBudgeted d cstar := by
-  obtain ⟨gamma0, hg0, hcl⟩ := h
-  refine ⟨gamma0, hg0, fun hd inst => ?_⟩
-  have hd1 : 1 ≤ d := le_trans (by norm_num) hd
-  have hpin0 : (0 : ℝ) ≤ recutPinnedCcgFlux d (recutExponent d hd1) :=
-    recutPinnedCcgFlux_nonneg d (recutExponent d hd1)
-  refine ⟨fun _ => recutPinnedCcgFlux d (recutExponent d hd1),
-    2 * recutPinnedCcgFlux d (recutExponent d hd1), by linarith only [hpin0],
-    fun _ => hpin0, fun _ => ?_, fun M hlog => ?_,
-    (seamMultiscaleSupClauseSupplyAt_pin d hd1 cstar gamma0).mpr (hcl hd inst)⟩
-  · exact cgDualBoundConstFlux_le_ofReal_of_pinned_le d hd (recutExponent d hd1)
-      (recutExponent_two_le d hd1) le_rfl
-  · have hgeom := recut_geomFactor_le_absLog hd1 M hlog
-    have h := mul_le_mul_of_nonneg_left hgeom hpin0
-    linarith only [h]
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryGeometry
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderProducer
@@ -46,7 +46,7 @@ in which the two downstream normalizers are read off:
 * `exists_gradientHolder_boundary` divides by the *reflected* window's own
   normalizer `|reflectedWindow|^{-1/d} ≥ (2·3^{n-2})^{-1}`, giving the excess
   `E(V, reflectedWindow)` at the cost of a factor `2`;
-* `OneStepBoundaryDatum` splits `E_raw` over `U_2 ⊔ (reflectedWindow \ U_2)`
+* the split bound splits `E_raw` over `U_2 ⊔ (reflectedWindow \ U_2)`
   and divides by `U_2`'s normalizer, producing the manuscript's `C 3^{-n/2} E(v,
   U_2) + K_h` with `K_h` the far-side (datum) leg.
 
@@ -94,12 +94,6 @@ private theorem sqrt_zpow_div_self_boundary (n : ℤ) :
     ← Real.rpow_sub h3, ← Real.rpow_add h3]
   congr 1
   ring
-
-private theorem rpow_neg_inv_pow_boundary {a : ℝ} (ha : 0 < a) (hd : d ≠ 0) :
-    (a ^ d) ^ (-(d : ℝ)⁻¹) = a⁻¹ := by
-  have hdR : (d : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hd
-  rw [← Real.rpow_natCast a d, ← Real.rpow_mul ha.le,
-    show (d : ℝ) * -(d : ℝ)⁻¹ = -1 by field_simp, Real.rpow_neg_one]
 
 /-! ## 3. The producer, raw form -/
 
@@ -196,52 +190,6 @@ theorem exists_gradientHolder_boundary_raw [NeZero d] {m n : ℤ} {x : Vec d}
   · exact hasGradientOn_gradField hharm hWS
 
 /-! ## 4. The producer at the reflected window's own normalizer -/
-
-/-- **The boundary producer at the reflected window's excess.**  Dividing the raw
-form by `|reflectedWindow|^{-1/d} ≥ (2·3^{n-2})^{-1}` costs exactly the factor
-`2` of the reflection. -/
-theorem exists_gradientHolder_boundary [NeZero d] (hd : d ≠ 0) {m n : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) (hmn : n - 2 < m)
-    {V : Vec d → ℝ}
-    (hharm : HarmonicOnNhd (V ∘ toEuc.symm)
-      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m (n - 2)))
-    (hintsq : ∀ (c : ℝ) (g : Vec d),
-      IntegrableOn (fun y => (V y - affineEval c g y) ^ 2)
-        (reflectedWindow x m (n - 2)) volume) :
-    ∃ K : ℝ, 0 ≤ K ∧
-      (∀ i, IntegrableOn (fun p => gradField V p i) (truncatedWindow x m (n - 3)) volume) ∧
-      HasGradientOn (truncatedWindow x m (n - 3)) V (gradField V) ∧
-      HolderSeminormBoundOn (truncatedWindow x m (n - 3)) (1 / 2 : ℝ) K (gradField V) ∧
-      K ≤ boundarySchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-            * (2 * affineExcess (reflectedWindow x m (n - 2)) V) := by
-  obtain ⟨K, hK, hint, hgrad, hhol, hraw⟩ :=
-    exists_gradientHolder_boundary_raw hx hmn hharm hintsq
-  refine ⟨K, hK, hint, hgrad, hhol, le_trans hraw ?_⟩
-  have hEnn : 0 ≤ affineExcessRaw (reflectedWindow x m (n - 2)) V :=
-    affineExcessRaw_nonneg _ _
-  have hpos : (0 : ℝ) < (volume (reflectedWindow x m (n - 2))).toReal :=
-    volume_toReal_reflectedWindow_pos x hx (by omega)
-  have hhi : (volume (reflectedWindow x m (n - 2))).toReal ≤ (2 * (3 : ℝ) ^ (n - 2)) ^ d :=
-    volume_toReal_reflectedWindow_le x hx (by omega) hmn
-  have hexp : -(d : ℝ)⁻¹ ≤ 0 := by
-    have h : (0 : ℝ) ≤ (d : ℝ)⁻¹ := by positivity
-    linarith only [h]
-  have hnorm : ((2 : ℝ) * (3 : ℝ) ^ (n - 2))⁻¹
-      ≤ ((volume (reflectedWindow x m (n - 2))).toReal) ^ (-(d : ℝ)⁻¹) := by
-    have h := Real.rpow_le_rpow_of_nonpos hpos hhi hexp
-    rwa [rpow_neg_inv_pow_boundary (a := 2 * (3 : ℝ) ^ (n - 2)) (by positivity) hd] at h
-  have hstep : (3 : ℝ) ^ (-(n - 2)) * affineExcessRaw (reflectedWindow x m (n - 2)) V
-      ≤ 2 * affineExcess (reflectedWindow x m (n - 2)) V := by
-    rw [affineExcess]
-    have h1 : (3 : ℝ) ^ (-(n - 2)) = 2 * ((2 : ℝ) * (3 : ℝ) ^ (n - 2))⁻¹ := by
-      have h3 : (0 : ℝ) < (3 : ℝ) ^ (n - 2) := zpow_pos (by norm_num) _
-      rw [zpow_neg]
-      field_simp
-    rw [h1, mul_assoc]
-    exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hnorm hEnn) (by norm_num)
-  have hcoef : (0 : ℝ) ≤ boundarySchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ) :=
-    mul_nonneg (boundarySchauderConst_nonneg d) (Real.rpow_nonneg (by positivity) _)
-  exact mul_le_mul_of_nonneg_left hstep hcoef
 
 end
 

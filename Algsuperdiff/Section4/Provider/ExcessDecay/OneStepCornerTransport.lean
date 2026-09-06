@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepCornerTransportGeom
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepCornerTransportNorms
@@ -200,15 +200,6 @@ theorem affineExcessRaw_truncatedWindow_comp_coordFaceReflection_zero (x : Vec d
       = affineExcessRaw (truncatedWindow x m k) V := by
   rw [truncatedWindow_coordFaceReflection_zero]
   exact affineExcessRaw_comp_coordFaceReflection_zero l
-    (measurableSet_truncatedWindow x m k) V
-
-theorem affineExcess_truncatedWindow_comp_coordFaceReflection_zero (x : Vec d)
-    (m k : ℤ) (l : Fin d) (V : Vec d → ℝ) :
-    affineExcess (truncatedWindow (coordFaceReflection (0 : ℝ) l x) m k)
-        (fun y => V (coordFaceReflection (0 : ℝ) l y))
-      = affineExcess (truncatedWindow x m k) V := by
-  rw [truncatedWindow_coordFaceReflection_zero]
-  exact affineExcess_comp_coordFaceReflection_zero l
     (measurableSet_truncatedWindow x m k) V
 
 theorem vecDot_coordFaceReflection_zero_pair (l : Fin d) (A x : Vec d) :

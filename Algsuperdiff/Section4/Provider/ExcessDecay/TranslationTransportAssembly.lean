@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.AntisymmetricShiftCutoff
 import Algsuperdiff.Section4.Provider.ExcessDecay.EquationRestriction
@@ -139,16 +139,6 @@ theorem untranslate_restrict_toFun {m k : ℤ} {z : Vec d}
     (H1Function.untranslate z
         (u.restrict (isOpen_translateSet_openCubeSet z k) hsub)).toFun x =
       u.toFun (x + z) :=
-  rfl
-
-/-- The transported solution's gradient: it is `∇u(· + z)`. -/
-theorem untranslate_restrict_grad {m k : ℤ} {z : Vec d}
-    (u : H1Function (openCubeSet (originCube d m)))
-    (hsub : translateSet z (openCubeSet (originCube d k)) ⊆
-      openCubeSet (originCube d m)) (x : Vec d) :
-    (H1Function.untranslate z
-        (u.restrict (isOpen_translateSet_openCubeSet z k) hsub)).grad x =
-      u.grad (x + z) :=
   rfl
 
 end

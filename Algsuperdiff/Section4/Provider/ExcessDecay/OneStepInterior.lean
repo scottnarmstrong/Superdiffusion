@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderComposeInterior
 import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
@@ -37,125 +37,6 @@ open scoped ENNReal
 noncomputable section
 
 variable {d : ℕ}
-
-/-- **The re-gated sibling of**
-`OneStepConditional.excessDecay_oneStep_of_harmonicApprox`.
-
-Statement transcribed byte-for-byte from the proved theorem, with the `hharm`
-display re-gated at the frozen threshold `Cv⁻¹ s⁴` and the reachability
-hypothesis `hrep` inserted.  The printed supply event `𝒢(n-2+3, z; s/8,
-(s/8)√δ)` sits below both thresholds, so the two indicators agree at the
-witnessed `ω` and the re-gating is free.
--/
-theorem excessDecay_oneStep_of_harmonicApprox_regated (hd : d ≠ 0) {m n : ℤ} {k : ℕ}
-    (hk : 3 ≤ k) {M : ABKModel d} {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) {delta : ℝ}
-    (hdelta1 : delta ≤ 1) {x z : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) (hnm : n - 1 ≤ m) {u v : Vec d → ℝ}
-    (hu : MemLp u 2 (volume.restrict (truncatedWindow x m n)))
-    (hv : MemLp v 2 (volume.restrict (truncatedWindow x m n)))
-    (huv : MemLp (fun y => u y - v y) 2 (volume.restrict (movedReplacementCube x m n)))
-    {omega : Cutoff.CutoffSample d}
-    (hmem : omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-      (Support.cgEllipLowerConstant d) (n - 2 + 3) z ⟨s / 8, by linarith only [hs]⟩
-      (s / 8 * Real.sqrt delta))
-    {B : ℝ≥0∞} (hB : B ≠ ⊤)
-    {Cv : ℝ}
-    (hrep : s / 8 * Real.sqrt delta ≤ Cv⁻¹ * s ^ (4 : ℕ))
-    (hharm : Set.indicator
-        (Algsuperdiff.Frozen.Section4.goodEventAt M (Support.cgEllipLowerConstant d)
-          (n - 2 + 3) z ⟨s / 8, by linarith only [hs]⟩ (Cv⁻¹ * s ^ (4 : ℕ)))
-        (fun _omega' =>
-          MeasureTheory.eLpNorm (fun y => u y - v y) 2
-            (Support.normalizedVolumeMeasureOn
-              ((fun y => wellPlacedCentre x m (n - 2) + y) ''
-                openCubeSet (originCube d (n - 2)))))
-        omega ≤ B)
-    {Gv : Vec d → Vec d} {K Kh Csch : ℝ} (hK : 0 ≤ K) (hCsch : 0 ≤ Csch)
-    (hint : ∀ i, IntegrableOn (fun p => Gv p i) (truncatedWindow x m (n - 3)) volume)
-    (hgrad : HasGradientOn (truncatedWindow x m (n - 3)) v Gv)
-    (hhol : HolderSeminormBoundOn (truncatedWindow x m (n - 3)) (1 / 2 : ℝ) K Gv)
-    (hschauder : K ≤ Csch * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-        * affineExcess (truncatedWindow x m (n - 2)) v + Kh) :
-    affineExcess (truncatedWindow x m (n - (k : ℤ))) u
-      ≤ taylorContractionConst d * Csch * windowRatioConst d 2
-            * ((3 : ℝ) ^ (-(k : ℤ))) ^ (1 / 2 : ℝ)
-            * affineExcess (truncatedWindow x m n) u
-        + triangleRemainderConst d Csch k
-            * ((3 : ℝ) ^ (-n) * (Real.sqrt (((3 : ℝ) ^ (2 : ℤ)) ^ d) * B.toReal))
-        + taylorContractionConst d * ((3 : ℝ) ^ (n - (k : ℤ))) ^ (1 / 2 : ℝ) * Kh := by
-  have hsqrtnn : (0 : ℝ) ≤ Real.sqrt delta := Real.sqrt_nonneg _
-  have hsqrtle : Real.sqrt delta ≤ 1 := by
-    rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
-    exact Real.sqrt_le_sqrt hdelta1
-  have hep0 : (0 : ℝ) ≤ s / 8 * Real.sqrt delta :=
-    mul_nonneg (by linarith only [hs]) hsqrtnn
-  have hhalf : s / 8 * Real.sqrt delta ≤ 1 / 2 := by
-    have h1 : s / 8 ≤ 1 / 8 := by linarith only [hs1]
-    calc s / 8 * Real.sqrt delta ≤ (1 / 8 : ℝ) * 1 :=
-          mul_le_mul h1 hsqrtle hsqrtnn (by norm_num)
-      _ ≤ 1 / 2 := by norm_num
-  refine excessDecay_oneStep_of_harmonicApprox hd hk hs hs1 hdelta1 hx hnm hu hv huv hmem hB ?_ hK
-    hCsch hint hgrad hhol hschauder
-  exact indicator_goodEventAt_transfer hep0 hrep hhalf hmem hharm
-
-/-- **The re-gated sibling of**
-`OneStepSchauderChain.excessDecay_oneStep_interior_of_harmonicApprox`.
-
-Statement transcribed byte-for-byte from the proved theorem, with the `hharm`
-display re-gated at the frozen threshold `Cv⁻¹ s⁴` and the reachability
-hypothesis `hrep` inserted.  The printed supply event `𝒢(n-2+3, z; s/8,
-(s/8)√δ)` sits below both thresholds, so the two indicators agree at the
-witnessed `ω` and the re-gating is free.
--/
-theorem excessDecay_oneStep_interior_of_harmonicApprox_regated [NeZero d] (hd : d ≠ 0) {m n : ℤ}
-    {k : ℕ} (hk : 3 ≤ k) {M : ABKModel d} {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) {delta : ℝ}
-    (hdelta1 : delta ≤ 1) {x z : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) (hnm : n - 1 ≤ m)
-    (hcube : (fun y => x + y) '' openCubeSet (originCube d (n - 2)) ⊆
-      openCubeSet (originCube d m))
-    {u v : Vec d → ℝ}
-    (hu : MemLp u 2 (volume.restrict (truncatedWindow x m n)))
-    (hv : MemLp v 2 (volume.restrict (truncatedWindow x m n)))
-    (huv : MemLp (fun y => u y - v y) 2 (volume.restrict (movedReplacementCube x m n)))
-    (hharmclass : HarmonicOnNhd (v ∘ Schauder.toEuc.symm)
-      ((Schauder.toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' truncatedWindow x m (n - 2)))
-    {omega : Cutoff.CutoffSample d}
-    (hmem : omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-      (Support.cgEllipLowerConstant d) (n - 2 + 3) z ⟨s / 8, by linarith only [hs]⟩
-      (s / 8 * Real.sqrt delta))
-    {B : ℝ≥0∞} (hB : B ≠ ⊤)
-    {Cv : ℝ}
-    (hrep : s / 8 * Real.sqrt delta ≤ Cv⁻¹ * s ^ (4 : ℕ))
-    (hharm : Set.indicator
-        (Algsuperdiff.Frozen.Section4.goodEventAt M (Support.cgEllipLowerConstant d)
-          (n - 2 + 3) z ⟨s / 8, by linarith only [hs]⟩ (Cv⁻¹ * s ^ (4 : ℕ)))
-        (fun _omega' =>
-          MeasureTheory.eLpNorm (fun y => u y - v y) 2
-            (Support.normalizedVolumeMeasureOn
-              ((fun y => wellPlacedCentre x m (n - 2) + y) ''
-                openCubeSet (originCube d (n - 2)))))
-        omega ≤ B) :
-    affineExcess (truncatedWindow x m (n - (k : ℤ))) u
-      ≤ taylorContractionConst d * schauderWindowConst d * windowRatioConst d 2
-            * ((3 : ℝ) ^ (-(k : ℤ))) ^ (1 / 2 : ℝ)
-            * affineExcess (truncatedWindow x m n) u
-        + triangleRemainderConst d (schauderWindowConst d) k
-            * ((3 : ℝ) ^ (-n) * (Real.sqrt (((3 : ℝ) ^ (2 : ℤ)) ^ d) * B.toReal))
-        + taylorContractionConst d * ((3 : ℝ) ^ (n - (k : ℤ))) ^ (1 / 2 : ℝ) * 0 := by
-  have hsqrtnn : (0 : ℝ) ≤ Real.sqrt delta := Real.sqrt_nonneg _
-  have hsqrtle : Real.sqrt delta ≤ 1 := by
-    rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
-    exact Real.sqrt_le_sqrt hdelta1
-  have hep0 : (0 : ℝ) ≤ s / 8 * Real.sqrt delta :=
-    mul_nonneg (by linarith only [hs]) hsqrtnn
-  have hhalf : s / 8 * Real.sqrt delta ≤ 1 / 2 := by
-    have h1 : s / 8 ≤ 1 / 8 := by linarith only [hs1]
-    calc s / 8 * Real.sqrt delta ≤ (1 / 8 : ℝ) * 1 :=
-          mul_le_mul h1 hsqrtle hsqrtnn (by norm_num)
-      _ ≤ 1 / 2 := by norm_num
-  refine excessDecay_oneStep_interior_of_harmonicApprox hd hk hs hs1 hdelta1 hx hnm hcube hu hv huv
-    hharmclass hmem hB ?_
-  exact indicator_goodEventAt_transfer hep0 hrep hhalf hmem hharm
 
 /-- **The re-gated sibling of**
 `OneStepSchauderComposeInterior.excessDecay_oneStep_interior_of_weaklyHarmonic`.

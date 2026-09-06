@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryClauseSkeleton
 
@@ -151,22 +151,6 @@ theorem normalizedL2On_sub_average_le_sub_const {W : Set (Vec d)}
     linarith only [hpy, h0]
   exact le_of_sq_le_sq hsq (normalizedL2On_nonneg W _)
 
-/-- **The scalar half of Pythagoras.**  The mean gap is at most the deviation
-from the competing constant. -/
-theorem abs_volumeAverage_sub_const_le_normalizedL2On_sub_const {W : Set (Vec d)}
-    (hWpos : 0 < volume W) (hWtop : volume W ≠ ⊤) {f : Vec d → ℝ}
-    (hf : IntegrableOn f W volume) (hf2 : IntegrableOn (fun x => f x ^ 2) W volume)
-    (c : ℝ) :
-    |volumeAverage W f - c| ≤ normalizedL2On W (fun x => f x - c) := by
-  have hpy := normalizedL2On_sub_const_sq_eq hWpos hWtop hf hf2 c
-  have hsq : |volumeAverage W f - c| ^ 2 ≤
-      normalizedL2On W (fun x => f x - c) ^ 2 := by
-    have h0 : (0 : ℝ) ≤ normalizedL2On W (fun x => f x - volumeAverage W f) ^ 2 :=
-      sq_nonneg _
-    rw [sq_abs]
-    linarith only [hpy, h0]
-  exact le_of_sq_le_sq hsq (normalizedL2On_nonneg W _)
-
 /-- The normalized seminorm of a constant is its absolute value. -/
 theorem normalizedL2On_const {W : Set (Vec d)} (hWpos : 0 < volume W)
     (hWtop : volume W ≠ ⊤) (b : ℝ) :
@@ -179,34 +163,6 @@ theorem normalizedL2On_const {W : Set (Vec d)} (hWpos : 0 < volume W)
   rw [hconst, ← mul_assoc, inv_mul_cancel₀ hVne, one_mul, Real.sqrt_sq_eq_abs]
 
 /-! ## 3. The author's chain, end to end -/
-
-/-- **The author's chain.**
-
-```text
-  |(u)_W − (h)_W|  ≤  ‖u − h‖_{L̲²(W)} + ‖h − (h)_W‖_{L̲²(W)} ,
-```
-
-by Pythagoras at the competing constant `c = (h)_W` (§2) followed by Minkowski,
-"the last bit costing exactly the `∇h` term" once `‖h − (h)_W‖` is discharged by
-the data Poincaré (§5).
-
-O: this bounds the residue `S` **by** the assembly's own open quantity `‖u −
-h‖_{L̲²(W)}`; see §4 and the module docstring. -/
-theorem meanGap_le_normalizedL2On_sub_add_datumOscillation {W : Set (Vec d)}
-    (hWpos : 0 < volume W) (hWtop : volume W ≠ ⊤) {u h : Vec d → ℝ}
-    (hu : IntegrableOn u W volume) (hu2 : IntegrableOn (fun x => u x ^ 2) W volume)
-    (huh : MemLp (fun x => u x - h x) 2 (volume.restrict W))
-    (hhosc : MemLp (fun x => h x - volumeAverage W h) 2 (volume.restrict W)) :
-    |volumeAverage W u - volumeAverage W h| ≤
-      normalizedL2On W (fun x => u x - h x) +
-        normalizedL2On W (fun x => h x - volumeAverage W h) := by
-  have hstep1 := abs_volumeAverage_sub_const_le_normalizedL2On_sub_const
-    hWpos hWtop hu hu2 (volumeAverage W h)
-  have hfun : (fun x => u x - volumeAverage W h) =
-      fun x => (u x - h x) + (h x - volumeAverage W h) := by
-    funext x; ring
-  rw [hfun] at hstep1
-  exact hstep1.trans (normalizedL2On_add_le huh hhosc)
 
 /-! ## 4. The reverse decomposition: what the assembly's slot consumes -/
 
@@ -270,94 +226,7 @@ theorem normalizedL2On_sub_le_oscillation_add_meanGap_add_datumOscillation
 
 /-! ## 5. The leg comparison: what the chain DO buy -/
 
-/-- **The leg comparison (the author's chain, read on the clause's leg).**
-
-```text
-  ‖u − (u)_W‖_{L̲²(W)}  ≤  ‖u − h‖_{L̲²(W)} + ‖h − (h)_W‖_{L̲²(W)} .
-```
-
-This is mean-minimality at the competing constant `(h)_W` followed by Minkowski
-— the author's `u − (u) → u − (h) → u − h` chain verbatim, "the last bit costing
-exactly the `∇h` term". -/
-theorem oscillation_le_normalizedL2On_sub_add_datumOscillation {W : Set (Vec d)}
-    (hWpos : 0 < volume W) (hWtop : volume W ≠ ⊤) {u h : Vec d → ℝ}
-    (hu : IntegrableOn u W volume) (hu2 : IntegrableOn (fun x => u x ^ 2) W volume)
-    (huh : MemLp (fun x => u x - h x) 2 (volume.restrict W))
-    (hhosc : MemLp (fun x => h x - volumeAverage W h) 2 (volume.restrict W)) :
-    normalizedL2On W (fun x => u x - volumeAverage W u) ≤
-      normalizedL2On W (fun x => u x - h x) +
-        normalizedL2On W (fun x => h x - volumeAverage W h) := by
-  have hstep1 := normalizedL2On_sub_average_le_sub_const hWpos hWtop hu hu2
-    (volumeAverage W h)
-  have hfun : (fun x => u x - volumeAverage W h) =
-      fun x => (u x - h x) + (h x - volumeAverage W h) := by
-    funext x; ring
-  rw [hfun] at hstep1
-  exact hstep1.trans (normalizedL2On_add_le huh hhosc)
-
 /-! ## 6. The chain at the boundary covering cube -/
-
-/-- **The mean-comparison chain instantiated at the residue window.**
-
-At the covering cube `c + □_{n+2}` the datum oscillation is discharged by the
-proved data Poincaré (`BoundaryClauseSkeleton`), giving
-
-```text
-  |(u)_{c+□_{n+2}} − (h)_{c+□_{n+2}}|
-      ≤ ‖u − h‖_{L̲²(c+□_{n+2})}
-        + C(d) 3^{n+2} Σ_i ‖∂_i h‖_{L̲²(c+□_{n+2})} ,
-```
-
-the second summand being exactly the frozen leg's shape.  The first summand is
-the assembly's open quantity: see the module docstring's orientation finding. -/
-theorem meanGap_coveringCube_le_normalizedL2On_sub_add_gradH {n m : ℤ} {x : Vec d}
-    (hnm : n + 2 ≤ m) (u h : H1Function (openCubeSet (originCube d m)))
-    (huI : IntegrableOn u.toFun
-      ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-        openCubeSet (originCube d (n + 2))) volume)
-    (huI2 : IntegrableOn (fun y => u.toFun y ^ 2)
-      ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-        openCubeSet (originCube d (n + 2))) volume)
-    (huh : MemLp (fun y => u.toFun y - h.toFun y) 2
-      (volume.restrict ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-        openCubeSet (originCube d (n + 2)))))
-    (hhosc : MemLp (fun y => h.toFun y -
-        volumeAverage ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
-          openCubeSet (originCube d (n + 2))) h.toFun) 2
-      (volume.restrict ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-        openCubeSet (originCube d (n + 2))))) :
-    |volumeAverage ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-          openCubeSet (originCube d (n + 2))) u.toFun -
-        volumeAverage ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-          openCubeSet (originCube d (n + 2))) h.toFun| ≤
-      normalizedL2On ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-          openCubeSet (originCube d (n + 2))) (fun y => u.toFun y - h.toFun y) +
-        unitMeanZeroPoincareConst d * (3 : ℝ) ^ (n + 2) *
-          ∑ i : Fin d,
-            (eLpNorm (fun y => h.grad y i) 2
-              (Support.normalizedVolumeMeasureOn
-                ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
-                  openCubeSet (originCube d (n + 2))))).toReal := by
-  classical
-  set cc : Set (Vec d) :=
-    (fun y => wellPlacedCentre x m (n + 2) + y) '' openCubeSet (originCube d (n + 2))
-    with hcc
-  have hccpos : 0 < volume cc := by
-    rw [hcc]
-    exact lt_of_le_of_ne (zero_le _)
-      (Ne.symm (volume_image_add_openCubeSet_ne_zero _ (originCube d (n + 2))))
-  have hcctop : volume cc ≠ ⊤ := by
-    rw [hcc, volume_image_add_openCubeSet]
-    exact volume_openCubeSet_ne_top (originCube d (n + 2))
-  have hchain := meanGap_le_normalizedL2On_sub_add_datumOscillation
-    (W := cc) hccpos hcctop huI huI2 huh hhosc
-  have hdat := eLpNorm_sub_average_coveringCube_le_meanZeroPoincare (x := x) hnm h
-  have hdict : normalizedL2On cc (fun y => h.toFun y - volumeAverage cc h.toFun) =
-      (eLpNorm (fun y => h.toFun y - volumeAverage cc h.toFun) 2
-        (Support.normalizedVolumeMeasureOn cc)).toReal :=
-    normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn hccpos hcctop hhosc
-  rw [hdict] at hchain
-  linarith only [hchain, hdat]
 
 end
 

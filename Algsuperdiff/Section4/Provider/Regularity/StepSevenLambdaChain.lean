@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaSlots
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenMean
@@ -49,35 +49,6 @@ open Algsuperdiff.Section4.Provider.ExcessDecay
 noncomputable section
 
 variable {d : ℕ}
-
-/-! ## 0. The scope of the lattice-aligned reading -/
-
-/-- **When's Step-7a clamp is the identity.**  If the inner window `z + □_{k-1}`
-already lies inside `□_m`, then the sandwich centre may be taken to be `z`
-itself:
-
-```text
-  (z + □_{k-1}) ∩ □_m  =  z + □_{k-1}  ⊆  (z + □_k) ∩ □_m .
-```
-
-Off this set (a centre `z` within `3^{k-1}` of `∂□_m`)'s clamp moves the centre
-off the lattice and the printed lemma's own off-grid content is required; see
-the `StepSevenLambdaStability` module docstring. -/
-theorem stepSevenSandwich_of_interior (z : Vec d) {m k : ℤ}
-    (hsub : (fun v => z + v) '' openCubeSet (originCube d (k - 1)) ⊆
-      openCubeSet (originCube d m)) :
-    truncatedWindow z m (k - 1) =
-        (fun v => z + v) '' openCubeSet (originCube d (k - 1)) ∧
-      (fun v => z + v) '' openCubeSet (originCube d (k - 1)) ⊆
-        truncatedWindow z m k := by
-  have hcube : openCubeSet (originCube d (k - 1)) ⊆ openCubeSet (originCube d k) :=
-    openCubeSet_subset_of_mem_descendantsAtScale (by show k - 1 ≤ k; omega)
-      (stepSevenCentreChild_mem_descendantsAtScale d k)
-  refine ⟨?_, ?_⟩
-  · rw [truncatedWindow]
-    exact Set.inter_eq_left.mpr hsub
-  · rw [truncatedWindow]
-    exact Set.subset_inter (Set.image_mono hcube) hsub
 
 /-! ## 1. Row 1 at the chain's own indexing -/
 

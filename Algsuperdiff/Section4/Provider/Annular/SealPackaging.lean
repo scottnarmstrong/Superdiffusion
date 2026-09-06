@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.LambdaDischarge
 import Algsuperdiff.Section4.Provider.GoodEvents.Api
@@ -23,7 +23,7 @@ carrying `hpref` as its one hypothesis.
    `ε`.  A naïve `∀ ε, ∀ᵐ ω` → `∀ᵐ ω, ∀ ε` swap is false in general
    (uncountably many `ε`), so `clauseTwo_pointwise_of_display` below repeats
    the proved clause-(ii) route **pointwise at a single sample**: every
-   ingredient of `ClauseOneFinal.clauseTwo_of_final_display`
+   ingredient of that route
    (`goodEventBase_subset_annularEvent`,
    `ClauseTwo.clauseOneDisplayRhs_le_of_goodEventBase`,
    `ClauseTwo.indicator_observableSup_le_of_sqSup`,
@@ -127,7 +127,7 @@ private theorem mul_le_one_of_quarter_of_half {s ep : ℝ} (hep0 : 0 < ep)
 
 /-- **The proved clause-(ii) route, pointwise.**
 
-`ClauseOneFinal.clauseTwo_of_final_display` with the `∀ᵐ` peeled off both sides:
+The clause-(ii) route with the `∀ᵐ` peeled off both sides:
 every step of it is sample-wise, so a *single* sample satisfying the `ε`-free
 clause-(i) display satisfies the clause-(ii) bound for **every** admissible `ε`.
 That is what lets the target's `∀ ε` sit inside its `∀ᵐ`. -/

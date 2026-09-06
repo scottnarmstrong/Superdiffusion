@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionWindow
 import Algsuperdiff.Section4.Provider.ExcessDecay.AffineSplitLift
@@ -125,17 +125,6 @@ theorem foldSignCoord_of_unmet {x : Vec d} {m k : ℤ} {i : Fin d}
   have h2 : ¬ (x i - (1 / 2 : ℝ) * (3 : ℝ) ^ k ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m) := hlow
   rw [foldSignCoord, if_neg h1, if_neg h2]
 
-theorem foldSignCoord_mul_self (x : Vec d) (m k : ℤ) (i : Fin d) (t : ℝ) :
-    foldSignCoord x m k i t * foldSignCoord x m k i t = 1 := by
-  by_cases hup : MeetsUpperFace x m k i
-  · rw [foldSignCoord_of_meetsUpperFace hup]
-    split_ifs <;> norm_num
-  · by_cases hlow : MeetsLowerFace x m k i
-    · rw [foldSignCoord_of_meetsLowerFace hup hlow]
-      split_ifs <;> norm_num
-    · rw [foldSignCoord_of_unmet hup hlow]
-      norm_num
-
 /-! ## 2. The fold, the global sign, and the odd extension -/
 
 /-- The coordinatewise fold of `Vec d` onto the window's side of every met
@@ -151,11 +140,6 @@ def windowFoldSign (x : Vec d) (m k : ℤ) (y : Vec d) : ℝ :=
 @[simp] theorem windowFold_apply (x : Vec d) (m k : ℤ) (y : Vec d) (i : Fin d) :
     windowFold x m k y i = foldCoord x m k i (y i) :=
   rfl
-
-theorem windowFoldSign_mul_self (x : Vec d) (m k : ℤ) (y : Vec d) :
-    windowFoldSign x m k y * windowFoldSign x m k y = 1 := by
-  rw [windowFoldSign, ← Finset.prod_mul_distrib]
-  exact Finset.prod_eq_one fun i _ => foldSignCoord_mul_self x m k i (y i)
 
 theorem abs_foldSignCoord (x : Vec d) (m k : ℤ) (i : Fin d) (t : ℝ) :
     |foldSignCoord x m k i t| = 1 := by
@@ -205,70 +189,6 @@ theorem oddExtend_sub (x : Vec d) (m k : ℤ) (f g : Vec d → ℝ) :
 theorem abs_oddExtend (x : Vec d) (m k : ℤ) (f : Vec d → ℝ) (y : Vec d) :
     |oddExtend x m k f y| = |f (windowFold x m k y)| := by
   rw [oddExtend_apply, abs_mul, abs_windowFoldSign, one_mul]
-
-/-! ## 3. The extension restricts to the original function -/
-
-theorem foldCoord_eq_self_of_mem {x : Vec d} {m k : ℤ} {i : Fin d} {t : ℝ}
-    (hlo : windowLo x m k i < t) (hhi : t < windowHi x m k i) :
-    foldCoord x m k i t = t := by
-  have hmt : t < (1 / 2 : ℝ) * (3 : ℝ) ^ m :=
-    lt_of_lt_of_le hhi (windowHi_le_half_zpow x m k i)
-  have hmt' : -(1 / 2 : ℝ) * (3 : ℝ) ^ m < t :=
-    lt_of_le_of_lt (neg_half_zpow_le_windowLo x m k i) hlo
-  by_cases hup : MeetsUpperFace x m k i
-  · rw [foldCoord_of_meetsUpperFace hup]
-    exact min_eq_left (by linarith only [hmt])
-  · by_cases hlow : MeetsLowerFace x m k i
-    · rw [foldCoord_of_meetsLowerFace hup hlow]
-      exact max_eq_left (by linarith only [hmt'])
-    · rw [foldCoord_of_unmet hup hlow]
-
-theorem foldSignCoord_eq_one_of_mem {x : Vec d} {m k : ℤ} {i : Fin d} {t : ℝ}
-    (hlo : windowLo x m k i < t) (hhi : t < windowHi x m k i) :
-    foldSignCoord x m k i t = 1 := by
-  have hmt : t < (1 / 2 : ℝ) * (3 : ℝ) ^ m :=
-    lt_of_lt_of_le hhi (windowHi_le_half_zpow x m k i)
-  have hmt' : -(1 / 2 : ℝ) * (3 : ℝ) ^ m < t :=
-    lt_of_le_of_lt (neg_half_zpow_le_windowLo x m k i) hlo
-  by_cases hup : MeetsUpperFace x m k i
-  · rw [foldSignCoord_of_meetsUpperFace hup, if_neg (by linarith only [hmt])]
-  · by_cases hlow : MeetsLowerFace x m k i
-    · rw [foldSignCoord_of_meetsLowerFace hup hlow, if_neg (by linarith only [hmt'])]
-    · rw [foldSignCoord_of_unmet hup hlow]
-
-theorem windowFold_eq_self_of_mem_truncatedWindow {x : Vec d} {m k : ℤ}
-    {y : Vec d} (hy : y ∈ truncatedWindow x m k) :
-    windowFold x m k y = y := by
-  rw [truncatedWindow_eq_coordBox, mem_coordBox_iff] at hy
-  funext i
-  exact foldCoord_eq_self_of_mem (hy i).1 (hy i).2
-
-theorem windowFoldSign_eq_one_of_mem_truncatedWindow {x : Vec d} {m k : ℤ}
-    {y : Vec d} (hy : y ∈ truncatedWindow x m k) :
-    windowFoldSign x m k y = 1 := by
-  rw [truncatedWindow_eq_coordBox, mem_coordBox_iff] at hy
-  refine Finset.prod_eq_one fun i _ => ?_
-  exact foldSignCoord_eq_one_of_mem (hy i).1 (hy i).2
-
-/-- On the window itself the odd extension is the original function. -/
-theorem oddExtend_eq_of_mem_truncatedWindow {x : Vec d} {m k : ℤ}
-    (f : Vec d → ℝ) {y : Vec d} (hy : y ∈ truncatedWindow x m k) :
-    oddExtend x m k f y = f y := by
-  rw [oddExtend_apply, windowFold_eq_self_of_mem_truncatedWindow hy,
-    windowFoldSign_eq_one_of_mem_truncatedWindow hy, one_mul]
-
-/-- On the window itself the odd extension of a gradient field is the original
-field. -/
-theorem oddExtendGrad_eq_of_mem_truncatedWindow {x : Vec d} {m k : ℤ}
-    (G : Vec d → Vec d) {y : Vec d} (hy : y ∈ truncatedWindow x m k) :
-    oddExtendGrad x m k G y = G y := by
-  have hfold := windowFold_eq_self_of_mem_truncatedWindow hy
-  have hsign := windowFoldSign_eq_one_of_mem_truncatedWindow hy
-  rw [truncatedWindow_eq_coordBox, mem_coordBox_iff] at hy
-  funext i
-  rw [oddExtendGrad_apply, hfold, hsign,
-    foldSignCoord_eq_one_of_mem (hy i).1 (hy i).2]
-  ring
 
 /-! ## 4. The fold maps the reflected window onto the window -/
 

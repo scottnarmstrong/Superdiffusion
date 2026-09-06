@@ -11,13 +11,8 @@ ABK26, Proposition `p.concentration`, specialised to a `ℤ`-indexed sequence.
 
 ## Why `r` and not `2`
 
-The manuscript's "`2`-dependent" is dimension-restricted: the honest count
-gives `r`-dependence for any `r` with `3^r > 3 + ⅔√d`, i.e. `r(d) = max{2,
-⌈log₃(3 + ⅔√d)⌉}`, which equals `2` exactly for `d ≤ 80`.  The separation
-geometry at our carrier is `Section4/Probability/AnnulusSeparation.lean`
-(`separatedBy_annulusRegion_of_gap`, with the concrete `d ≤ 81` / `d ≤ 729`
-instances).  `TwoDependent` is retained as the `r = 2` instance the
-manuscript's regime uses.
+The manuscript's "`2`-dependent" is dimension-restricted, while the reusable
+predicate here records dependence at an arbitrary separation radius `r`.
 
 ## The colouring
 
@@ -29,7 +24,7 @@ property is `le_abs_sub_of_intCast_zmod_eq`; the palette size is
 
 ## Main results
 
-* `Algsuperdiff.Probability.RDependent.of_iIndepFun`, `.comp`, `.mono`
+* `Algsuperdiff.Probability.RDependent.comp`, `.mono`
 * `Algsuperdiff.Probability.le_abs_sub_of_intCast_zmod_eq`
 * `Algsuperdiff.Probability.card_zmod_succ`
 
@@ -54,16 +49,6 @@ def RDependent {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (X : ℤ → �
   ∀ s : Finset ℤ, (∀ i ∈ s, ∀ j ∈ s, i ≠ j → (r : ℤ) ≤ |i - j|) →
     ProbabilityTheory.iIndepFun (fun (i : {i // i ∈ s}) => X i.1) P
 
-/-- **The `r = 2` instance** — the manuscript's regime (`d ≤ 80`). `X_n` and
-`X_{n'}` are independent whenever `|n − n'| ≥ 2`. -/
-def TwoDependent {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (X : ℤ → Ω → ℝ) : Prop :=
-  RDependent P X 2
-
-/-- Full independence is `r`-dependence, for every `r`. -/
-theorem RDependent.of_iIndepFun {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    {X : ℤ → Ω → ℝ} (h : ProbabilityTheory.iIndepFun X P) (r : ℕ) : RDependent P X r :=
-  fun s _ => h.precomp (g := (Subtype.val : {i // i ∈ s} → ℤ)) Subtype.val_injective
-
 /-- `r`-dependence is stable under composing each coordinate with a measurable map
 (used to pass from `X` to the centred family `X − E X`). -/
 theorem RDependent.comp {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
@@ -72,14 +57,6 @@ theorem RDependent.comp {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     RDependent P (fun j ω => g j (X j ω)) r := by
   intro s hs
   exact (h s hs).comp (fun (i : {i // i ∈ s}) => g i.1) (fun i => hg i.1)
-
-/-- `r`-dependence weakens as `r` grows. -/
-theorem RDependent.mono {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    {X : ℤ → Ω → ℝ} {r r' : ℕ} (h : RDependent P X r) (hrr : r ≤ r') :
-    RDependent P X r' := by
-  intro s hs
-  refine h s (fun i hi j hj hij => le_trans ?_ (hs i hi j hj hij))
-  exact_mod_cast hrr
 
 /-! ## The `ZMod (r+1)` colouring of a window -/
 

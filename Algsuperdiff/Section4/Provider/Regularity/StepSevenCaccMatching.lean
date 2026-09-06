@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepOneParameters
 import Algsuperdiff.Section4.Provider.ExcessDecay.CaccioppoliInteriorPrefactor
@@ -43,7 +43,7 @@ discharges it.
 
 * **`s ∈ (0,1)`** ⇝ `stepOneS = 1/4`.  Discharged, `stepSevenCaccS_lt_one`.
 * **`t ∈ (0,1/2]`, `σ = 1-s-t > 0`** ⇝ `stepSevenCaccT = 1/8`, `σ = 5/8`.
-  Discharged, `stepSevenCaccT_lt_half` + `stepSevenCacc_sigma_pos`.
+  Discharged, `stepSevenCaccT_lt_half` and the positivity of `σ`.
 * **`x ∈ □_0`** (the Dirichlet-patch centre) ⇝ the good-scale centre: the patch
   contains its own centre, so the patch inclusion implies it.
 * **`𝐚 ∈ L^∞(□_0; ℝ_+^{d×d})`** ⇝ the truncated field `𝐚_{L,n'}`
@@ -143,13 +143,6 @@ theorem stepSevenCaccT_lt_half : stepSevenCaccT < 1 / 2 := by
 theorem stepSevenCaccS_add_T_lt_one : stepSevenCaccS + stepSevenCaccT < 1 := by
   rw [stepSevenCaccS_eq, stepSevenCaccT_eq]; norm_num
 
-/-- **`σ = 1 - s - t = 5/8 > 0`** at the pin — the printed side condition. -/
-theorem stepSevenCacc_sigma_eq : 1 - stepSevenCaccS - stepSevenCaccT = 5 / 8 := by
-  rw [stepSevenCaccS_eq, stepSevenCaccT_eq]; norm_num
-
-theorem stepSevenCacc_sigma_pos : 0 < 1 - stepSevenCaccS - stepSevenCaccT := by
-  rw [stepSevenCacc_sigma_eq]; norm_num
-
 /-! ## 2. The prefactor and the forcing factor at the pin -/
 
 theorem stepSevenCaccPrefactor_le [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
@@ -161,20 +154,6 @@ theorem stepSevenCaccPrefactor_le [NeZero d] {Q : TriadicCube d} {a : CoeffFamil
   have ht : stepSevenCaccT = (1 / 2 : ℝ) / 4 := by rw [stepSevenCaccT_eq]; norm_num
   rw [hs, ht] at hTheta ⊢
   exact caccioppoliWithRHSPrefactor_quarter_le hC (by norm_num) (by norm_num) hTheta
-
-/-- **The forcing factor at the §4.4 pin is an absolute numeral.**
-`t^{-8}(1-2t)^{-1} = 8^8 · 4/3 ≤ 2^{25}` at `t = 1/8`.  This is the whole
-`s`-dependence of the printed estimate, evaluated. -/
-theorem stepSevenCaccForcing_le :
-    Real.rpow stepSevenCaccT (-8 : ℝ) / (1 - 2 * stepSevenCaccT) ≤ 33554432 := by
-  have hcast : (-8 : ℝ) = (((-8 : ℤ)) : ℝ) := by norm_num
-  have hz : Real.rpow ((1 : ℝ) / 8) (((-8 : ℤ)) : ℝ) = ((1 : ℝ) / 8) ^ (-8 : ℤ) :=
-    Real.rpow_intCast _ _
-  have hval : Real.rpow ((1 : ℝ) / 8) (-8 : ℝ) = 16777216 := by
-    rw [hcast, hz]
-    norm_num
-  rw [stepSevenCaccT_eq, hval]
-  norm_num
 
 /-! ## 3. The coarse-grained Caccioppoli, at the §4.4 pin -/
 

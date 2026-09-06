@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.LambdaIndexUpscale
 
@@ -98,39 +98,6 @@ theorem inv_unitCubeLambda_twoGamma_le_lambdaPrintedAtom (M : ABKModel d)
   exact le_trans hgauge (le_of_eq hid)
 
 /-! ## 2. The moment bound at the consumed slot -/
-
-/-- **Bullet (B5) at the consumed slot, at every moment `q ∈ [1,∞)`.**
-
-The moment bound of `LambdaIndexUpscale.lintegral_rpow_lambdaPrintedAtom_le`,
-transferred to the `λ`-slot `MajorantSlots.step3DisplayAt` actually reads, at
-constant `1`.  Every index is the printed one: cube `□_{R.scale}`, field
-`𝐚_{R.scale−2}`, gauge `σ̄_{R.scale−1}`. -/
-theorem lintegral_rpow_inv_unitCubeLambda_twoGamma_le (M : ABKModel d) {m0 : ℤ}
-    {E F : {E : ℝ // 1 ≤ E}} (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 E)
-    (htail : ∀ (k : ℤ) (y : Vec d),
-      IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 3 : ℝ))
-        (fun omega =>
-          Localize.cgExcess M (Support.cgEllipLowerConstant d) (k - 2) y omega)
-        (Proportion.cgTailScale M (F : ℝ)))
-    (R : TriadicCube d) (hj : R.scale - 1 ≤ m0) {p : ℝ} (hp : 1 ≤ p) :
-    ∫⁻ omega : Cutoff.CutoffSample d,
-        ENNReal.ofReal
-          ((Algsuperdiff.Frozen.Section24.unitCubeLambda (2 * M.gamma) (.finite 2)
-            (unitRescaledCutoffCoeff M R (R.scale - 2) omega))⁻¹) ^ p
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure
-      ≤ ENNReal.ofReal
-          (lambdaUpscaleConst d * (((Annealed.sigmaBar M (R.scale - 1) : ℝ))⁻¹ *
-              Support.cgEllipLowerConstant d) +
-            gammaMomentBound (1 / 3) p
-              (lambdaUpscaleConst d * lambdaMaxOrliczConst d *
-                (((Annealed.sigmaBar M (R.scale - 1) : ℝ))⁻¹ *
-                  Proportion.cgTailScale M (F : ℝ)))) ^ p := by
-  have hp0 : (0 : ℝ) < p := lt_of_lt_of_le zero_lt_one hp
-  refine le_trans (lintegral_mono fun omega => ?_)
-    (lintegral_rpow_lambdaPrintedAtom_le M hS htail hj (triadicCubeShift R) hp)
-  exact ENNReal.rpow_le_rpow
-    (ENNReal.ofReal_le_ofReal (inv_unitCubeLambda_twoGamma_le_lambdaPrintedAtom M R omega))
-    hp0.le
 
 /-- **The consumed-slot bullet, packaged and unconditional in the printed
 regime.**  The counterpart of

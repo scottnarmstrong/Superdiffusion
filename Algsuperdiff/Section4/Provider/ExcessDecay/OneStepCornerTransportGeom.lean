@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionWindow
 
@@ -60,16 +60,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ## 1. The coordinate-negation involution -/
-
-/-- `coordFaceReflection 0 i` negates the `i`-th coordinate and fixes the
-others. -/
-theorem coordFaceReflection_zero_apply' (i : Fin d) (y : Vec d) (l : Fin d) :
-    coordFaceReflection (0 : ℝ) i y l = if l = i then -(y l) else y l := by
-  rw [Homogenization.coordFaceReflection_apply]
-  by_cases h : l = i
-  · rw [if_pos h, if_pos h]
-    ring
-  · rw [if_neg h, if_neg h]
 
 private theorem coordFaceReflection_zero_self_apply (i : Fin d) (y : Vec d) :
     coordFaceReflection (0 : ℝ) i y i = -(y i) := by

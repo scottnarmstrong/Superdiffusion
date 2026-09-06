@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G1ThresholdArith
 import Algsuperdiff.Section4.Provider.Proportion.ShiftedConcentration
@@ -19,12 +19,12 @@ through it, so that the `𝒢₁` proportion tail is available at every base sca
 ## Contents
 
 * `ratioTail_of_shellArray_shift` — the single-shell array engine at base `m₀`.
-  Same hypothesis list as the proved `ratioTail_of_shellArray`, except that the
-  deterministic reduction is asked at **every** `m : ℤ` (the proved one asks it
-  only at `m ≥ 0`, and the sign binder is unused in both `𝒢₁` lanes).
-* `hreduce_eventG1a_all`, `hreduce_eventG1b_all` — the two proved lane
-  reductions with their unused `0 ≤ m` binder dropped, so that they can be
-  instantiated at a negative scale.  Nothing else changes: both go through the
+  Same hypothesis list as the base-`0` shell-array engine, except that the
+  deterministic reduction is asked at **every** `m : ℤ` (the base-`0` form asks
+  it only at `m ≥ 0`, and the sign binder is unused in both `𝒢₁` lanes).
+* `hreduce_eventG1a_all`, `hreduce_eventG1b_all` — the two lane reductions
+  without the `0 ≤ m` binder, so that they can be instantiated at a negative
+  scale.  Nothing else changes: both go through the
   public, sign-condition-free `lt_Yk_of_lt_rowGE`.
 * `ratioTail_eventG1a_shift`, `ratioTail_eventG1b_shift` — the two lanes at base
   `m₀`.  The null enlargement is unchanged: the enlarged shifted family is the
@@ -33,14 +33,14 @@ through it, so that the `𝒢₁` proportion tail is available at every base sca
   recombination and the composed tail, both at base `m₀`.
 * `ratioTail_eventG1_of_majorant_shift`,
   `ratioTail_eventG1_shellThreshold_shift` — the same explicit parameter
-  package as the proved `G1ThresholdArith` route, re-run at base `m₀`.
+  package as the `G1ThresholdArith` majorant, re-run at base `m₀`.
 
 ## Why the parameter arithmetic is re-elaborated here
 
-The proved `ratioTail_eventG1_of_majorant` builds its parameter package (`Lam`,
-`U`, `V`, `p`, `p₂`, `D`, `D₂`, the two rate conditions, the two threshold
-conditions) *inside* a closed proof and exposes none of it, and the arithmetic
-helpers it consumes are `private` to that module.  The package is index-free —
+The base-`0` majorant route builds its parameter package (`Lam`, `U`, `V`, `p`,
+`p₂`, `D`, `D₂`, the two rate conditions, the two threshold conditions) *inside*
+a closed proof and exposes none of it, and the arithmetic helpers it consumes
+are `private` to that module.  The package is index-free —
 it never mentions the window, the base scale, or the family — so the honest
 route at base `m₀` is to re-elaborate the very same arithmetic and change only
 the final application.  That is what is done below.
@@ -70,7 +70,7 @@ variable {d : ℕ}
 
 /-- **The proportion tail of one `𝒢₁` lane over the window `{m₀,…,m₀+n}`.**
 
-The hypothesis list is that of the proved `ratioTail_of_shellArray`, with the
+The hypothesis list is that of the base-`0` shell-array engine, with the
 deterministic reduction asked at every scale `m : ℤ` and the base scale `m₀`
 inserted before the window length.  Both Appendix-D hypotheses are discharged
 inside exactly as in the base-`0` engine; the endpoint is the re-based
@@ -118,10 +118,9 @@ theorem ratioTail_of_shellArray_shift (M : ABKModel d)
 
 /-- **The `hreduce` slot of the large-waves lane, at every scale.**
 
-This is the proved `hreduce_eventG1a` with its unused `(_hm : 0 ≤ m)` binder
-dropped; the proof is unchanged, since `lt_Yk_of_lt_rowGE` and
-`lt_rowGE_of_notMem_eventG1a` are both stated at an arbitrary scale.  The
-binder has to go: the re-based engine instantiates the reduction at negative
+The large-waves reduction without a sign binder on `m`, which costs nothing:
+`lt_Yk_of_lt_rowGE` and `lt_rowGE_of_notMem_eventG1a` are both stated at an
+arbitrary scale.  The re-based engine instantiates the reduction at negative
 scales. -/
 theorem hreduce_eventG1a_all (M : ABKModel d) {sprime T D p theta : ℝ}
     (hsle : sprime ≤ 1 - M.gamma) (hD : 0 < D)
@@ -142,9 +141,9 @@ theorem hreduce_eventG1a_all (M : ABKModel d) {sprime T D p theta : ℝ}
 
 /-- **The `hreduce` slot of the small-waves lane, at every scale.**
 
-This is the proved `hreduce_eventG1b` with its unused `(_hm : 0 ≤ m)` binder
-dropped; the proof is unchanged, since `lt_Yk_of_lt_rowGE` and
-`lt_rowGE_of_notMem_eventG1b` are both stated at an arbitrary scale. -/
+The small-waves reduction without a sign binder on `m`, which costs nothing:
+`lt_Yk_of_lt_rowGE` and `lt_rowGE_of_notMem_eventG1b` are both stated at an
+arbitrary scale. -/
 theorem hreduce_eventG1b_all (M : ABKModel d) {s T D p theta : ℝ}
     (hs0 : 0 < s) (hs1 : s ≤ 1) (hD : 0 < D)
     (hlam : 0 ≤ 9 * (s / 8)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p))
@@ -167,7 +166,7 @@ theorem hreduce_eventG1b_all (M : ABKModel d) {s T D p theta : ℝ}
 /-! ## 3. The two lanes at base `m₀` -/
 
 /-- **The large-waves proportion tail over the window `{m₀,…,m₀+n}`**, with the
-hypothesis list of the proved `ratioTail_eventG1a`. -/
+hypothesis list of the base-`0` large-waves lane. -/
 theorem ratioTail_eventG1a_shift (M : ABKModel d)
     {sprime T D p theta c1 Q : ℝ} {r : ℕ}
     (hs0 : 0 < sprime) (hs2 : 2 * sprime ≤ 1) (hsle : sprime ≤ 1 - M.gamma)
@@ -200,7 +199,7 @@ theorem ratioTail_eventG1a_shift (M : ABKModel d)
     m0 n
 
 /-- **The small-waves proportion tail over the window `{m₀,…,m₀+n}`**, with the
-hypothesis list of the proved `ratioTail_eventG1b`. -/
+hypothesis list of the base-`0` small-waves lane. -/
 theorem ratioTail_eventG1b_shift (M : ABKModel d)
     {s T D p theta c1 Q : ℝ} {r : ℕ}
     (hs0 : 0 < s) (hs1 : s ≤ 1)
@@ -276,7 +275,7 @@ theorem ratioTail_eventG1_of_lanes_shift (M : ABKModel d) {s T theta c1 : ℝ}
   linarith only [Real.exp_nonneg (-c1 * (n : ℝ))]
 
 /-- **The `𝒢₁` proportion tail over the window `{m₀,…,m₀+n}`**, with the hypothesis
-list of the proved `ratioTail_eventG1`: the two moment exponents, the two
+list of the base-`0` `𝒢₁` tail: the two moment exponents, the two
 Appendix-D normalizers, the two rate conditions and the two threshold
 conditions. -/
 theorem ratioTail_eventG1_shift (M : ABKModel d)
@@ -454,12 +453,12 @@ private theorem laneB_bound {G Sp SW X Y C s : ℝ} (hG : 0 ≤ G) (hSp : 0 ≤ 
 /-- **The `𝒢₁` proportion tail above the explicit majorant, over the window
 `{m₀,…,m₀+n}`.**
 
-The parameter package is exactly the one the proved
-`ratioTail_eventG1_of_majorant` builds: the moment exponents `p = 64 r Λ/θ + 2`
+The parameter package is exactly the one the base-`0` majorant route builds:
+the moment exponents `p = 64 r Λ/θ + 2`
 and `p₂ = 256 r Λ/(sθ) + 8/s + 1` with `Λ = log(6r) + c₁ r`, the two `Γ`-moment
 normalisers, the two rate conditions, and the two threshold conditions.  None
 of it mentions the window or the base scale, so the only difference from the
-proved route is the final application, which is the re-based
+base-`0` route is the final application, which is the re-based
 `ratioTail_eventG1_shift`. -/
 theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ}
     {r : ℕ} (hs0 : 0 < s) (hs1 : s ≤ 1) (hr1 : 1 ≤ r) (htheta0 : 0 < theta)

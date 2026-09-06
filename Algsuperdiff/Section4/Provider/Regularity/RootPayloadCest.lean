@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBPayload
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaSlots
@@ -108,71 +108,6 @@ theorem rootClauseBPrefactor_mono_ccacc (d : ℕ) [NeZero d]
     mul_le_mul_of_nonneg_right hCg hYnn
   rw [rootClauseBPrefactor, rootClauseBPrefactor]
   exact add_le_add hleft hright
-
-/-! ## 3. The endpoint at a sample-free `C_est` -/
-
-/-- **Clause (B) of `RootAssemblyConditional.RootLatticeDisplay`, at an `ω`-
-`C_est`.**
-
-Identical to `RootClauseBPayload.rootClauseB_display_offGrid` except that the
-funding hypothesis is stated at the sample-free `rootClauseBCaccUniform C_c C_Bc`
-in place of `stepSevenCaccConst C_c □_{n'} 𝐚_{L,n'+1}(τ_z ω)`.  The conclusion
-is byte-identical to the parent's, hence to the root's printed second conjunct. -/
-theorem rootClauseB_display_offGrid_uniformCest (d : ℕ) [NeZero d] :
-    ∃ Cch Cc : ℝ, 0 < Cch ∧ 0 < Cc ∧
-      ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : {E : ℝ // 1 ≤ E}),
-        Algsuperdiff.Frozen.Section3.inductionState M m0 Ecap →
-        M.gamma < 1 / 2 →
-        ∀ (L : ℤ) {alpha : ℝ} {n m n' : ℤ} {x : Vec d}
-          (omega : Cutoff.CutoffSample d)
-          (uglob hdat : H1Function (openCubeSet (originCube d m)))
-          {gsrc : Vec d → Vec d}
-          {Khol Kd CB CBc Cdel Cosc CdM C1 delta Cest : ℝ} {B : ℕ},
-          m ≤ m0 → n' ≤ m - 1 → n + 1 ≤ n' - 2 → n ≤ m →
-          Support.IsDirichletSolutionOn
-              (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-              (originCube d m) uglob hdat gsrc →
-          MemLp gsrc 2
-              (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))) →
-          MemLp (Gagliardo.gagliardoKernel stepOneS 2 gsrc) 2
-              (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m))) →
-          0 ≤ Khol → 0 ≤ Kd → 0 ≤ CB → 0 ≤ CBc → 0 ≤ Cdel → 0 ≤ Cosc → 0 ≤ CdM →
-          2 * (d : ℝ) + 2 ≤ C1 → 0 ≤ alpha → alpha ≤ 1 →
-          delta ≤ C1⁻¹ * (1 - alpha) → n' - n ≤ (B : ℤ) + 6 →
-          (B : ℝ) ≤ delta * (((m - n).toNat : ℝ) + 1) →
-          RootClauseBPayload M L Khol Kd CB CBc Cdel Cosc CdM alpha n m n' x omega
-            uglob gsrc →
-          rootClauseBPrefactor d Cch (rootClauseBCaccUniform Cc CBc)
-              Cosc CBc CB (max (Real.sqrt ((3 : ℝ) ^ d)) Kd)
-              (edFinalDataOscW M Cdel * stepFourGagliardoConst d stepOneS) CdM ≤
-            Cest →
-          (offGridCentre n x ∈ openCubeSet (originCube d (m - 1)) →
-            Real.sqrt M.nu *
-                Support.normalizedL2On
-                  (truncatedWindow (offGridCentre n x) m (n + 1))
-                  (fun y => Real.sqrt (vecNormSq (uglob.grad y)))
-              ≤ Cest * Real.rpow (3 : ℝ) ((1 - alpha) * ((m : ℝ) - (n : ℝ))) *
-                (Real.sqrt M.nu *
-                    Support.normalizedL2On (openCubeSet (originCube d m))
-                      (fun y => Real.sqrt (vecNormSq (uglob.grad y))) +
-                  Real.sqrt (Annealed.sigmaBar M m : ℝ)⁻¹ *
-                    Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Khol)) := by
-  obtain ⟨Cch, Cc, hCch, hCc, hmain⟩ := rootClauseB_display_offGrid d
-  refine ⟨Cch, Cc, hCch, hCc, ?_⟩
-  intro M m0 Ecap hS hgamma L alpha n m n' x omega uglob hdat gsrc Khol Kd CB CBc Cdel
-    Cosc CdM C1 delta Cest B hmm0 hn' hcore hnm hsol hgL2 hgW hKhol hKd hCB hCBc hCdel
-    hCosc hCdM hC1 halpha0 halpha1 hdelta hgap hbudget hpay hCest
-  refine hmain M m0 Ecap hS hgamma L omega uglob hdat hmm0 hn' hcore hnm hsol hgL2 hgW
-    hKhol hKd hCB hCBc hCdel hCosc hCdM hC1 halpha0 halpha1 hdelta hgap hbudget hpay ?_
-  have hsigma : (0 : ℝ) < (Annealed.sigmaBar M (n' + 1) : ℝ) :=
-    (Annealed.sigmaBar M (n' + 1)).2
-  have hcacc := stepSevenCaccConst_le_uniform (k := n') hCc hsigma hpay.capsCacc
-  have hCtr : (0 : ℝ) ≤ max (Real.sqrt ((3 : ℝ) ^ d)) Kd :=
-    le_max_of_le_left (Real.sqrt_nonneg _)
-  have hCWG : (0 : ℝ) ≤ edFinalDataOscW M Cdel * stepFourGagliardoConst d stepOneS :=
-    mul_nonneg (edFinalDataOscW_nonneg hgamma hCdel) (stepFourGagliardoConst_nonneg d _)
-  exact le_trans (rootClauseBPrefactor_mono_ccacc d hCch.le hCosc hCB hCtr hCWG hCdM
-    hcacc) hCest
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBCloseAssembly
 
@@ -60,9 +60,6 @@ theorem edFinalDataOscW_le_uniform {M : ABKModel d} {Cdel : ℝ}
 /-- **The `α`-free Step-1 amplitude** `ε₀ = (s/8)·√(1/2)`, the value of `stepOneEp`
 at the top of the Step-1 window `δ ≤ 1/2`. -/
 def stepOneEpUniform : ℝ := stepOneSEighth * Real.sqrt (1 / 2)
-
-theorem stepOneEpUniform_nonneg : 0 ≤ stepOneEpUniform :=
-  mul_nonneg stepOneSEighth_pos.le (Real.sqrt_nonneg _)
 
 /-- **, the amplitude half**: `ε(δ) = (s/8)√δ ≤ (s/8)/√2` for every `δ` in the
 Step-1 window. -/

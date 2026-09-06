@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.SlopeStabilityEndpoints
 import Algsuperdiff.Section4.Provider.ExcessDecay.MeanControlWindowCube
@@ -265,67 +265,6 @@ theorem oscillation_sub_le {V : Set (Vec d)}
 
 /-! ## 4. The composite reduction -/
 
-/-- **The mean comparison reduced: the homogenization-error route, assembled.**
-
-The scalar `S = |⨍_{V₁}(u − h)|` is bounded by
-
-* the window oscillation of `u − h`, at the two volume-ratio factors — which
-  splits into the frozen leg and the datum oscillation;
-* the homogenization error `‖u − v̄‖_{L̲²(V₂)}` on the boundary-flush cube;
-* the datum comparison `‖h̄ − h‖_{L̲²(V₂)}` (a data-only step);
-* the mean `|⨍_{V₂}(v̄ − h̄)|` of the comparator difference.
-
-Nothing on the right-hand side is `S`: the reduction is loop-free. -/
-theorem abs_volumeAverage_sub_le_meanControlReduction {W V₁ V₂ : Set (Vec d)}
-    (hV₁m : MeasurableSet V₁) (hV₂m : MeasurableSet V₂)
-    (hsub₁ : V₁ ⊆ W) (hsub₂ : V₂ ⊆ W)
-    (hWpos : 0 < (volume W).toReal) (hV₁pos : 0 < (volume V₁).toReal)
-    (hV₂pos : 0 < (volume V₂).toReal)
-    (hV₁top : volume V₁ ≠ ⊤) (hV₂top : volume V₂ ≠ ⊤)
-    {u h vbar hbar : Vec d → ℝ}
-    (hρ₁ : IntegrableOn (fun x => u x - h x) V₁ volume)
-    (hρ₂ : IntegrableOn (fun x => u x - h x) V₂ volume)
-    (hρ₁sq : IntegrableOn (fun x => ((u x - h x) -
-      volumeAverage W (fun y => u y - h y)) ^ 2) V₁ volume)
-    (hρ₂sq : IntegrableOn (fun x => ((u x - h x) -
-      volumeAverage W (fun y => u y - h y)) ^ 2) V₂ volume)
-    (hρWsq : IntegrableOn (fun x => ((u x - h x) -
-      volumeAverage W (fun y => u y - h y)) ^ 2) W volume)
-    (huv : IntegrableOn (fun x => u x - vbar x) V₂ volume)
-    (hhh : IntegrableOn (fun x => hbar x - h x) V₂ volume)
-    (hvh : IntegrableOn (fun x => vbar x - hbar x) V₂ volume)
-    (huv2 : IntegrableOn (fun x => (u x - vbar x) ^ 2) V₂ volume)
-    (hhh2 : IntegrableOn (fun x => (hbar x - h x) ^ 2) V₂ volume) :
-    |volumeAverage V₁ (fun x => u x - h x)| ≤
-      (Real.sqrt ((volume W).toReal / (volume V₁).toReal) +
-          Real.sqrt ((volume W).toReal / (volume V₂).toReal)) *
-          normalizedL2On W (fun x => (u x - h x) -
-            volumeAverage W (fun y => u y - h y)) +
-        (normalizedL2On V₂ (fun x => u x - vbar x) +
-          normalizedL2On V₂ (fun x => hbar x - h x) +
-          |volumeAverage V₂ (fun x => vbar x - hbar x)|) := by
-  have h₁ := abs_volumeAverage_sub_windowAverage_le hV₁m hsub₁ hWpos hV₁pos hV₁top
-    hρ₁ hρ₁sq hρWsq
-  have h₂ := abs_volumeAverage_sub_windowAverage_le hV₂m hsub₂ hWpos hV₂pos hV₂top
-    hρ₂ hρ₂sq hρWsq
-  have h₃ := abs_volumeAverage_sub_le_comparatorSplit hV₂m hV₂pos
-    (u := u) (h := h) (vbar := vbar) (hbar := hbar) huv hhh hvh huv2 hhh2
-  have htri : |volumeAverage V₁ (fun x => u x - h x)| ≤
-      |volumeAverage V₁ (fun x => u x - h x) -
-          volumeAverage W (fun y => u y - h y)| +
-        |volumeAverage V₂ (fun x => u x - h x) -
-          volumeAverage W (fun y => u y - h y)| +
-        |volumeAverage V₂ (fun x => u x - h x)| := by
-    have hA := abs_sub_abs_le_abs_sub (volumeAverage V₁ (fun x => u x - h x))
-      (volumeAverage W (fun y => u y - h y))
-    have hB := abs_sub_abs_le_abs_sub (volumeAverage W (fun y => u y - h y))
-      (volumeAverage V₂ (fun x => u x - h x))
-    have hC := abs_sub_comm (volumeAverage W (fun y => u y - h y))
-      (volumeAverage V₂ (fun x => u x - h x))
-    rw [hC] at hB
-    linarith only [hA, hB]
-  linarith only [htri, h₁, h₂, h₃]
-
 /-! ## 5. The loop-free certificate -/
 
 /-- **The remaining obligation's own oscillation carries no `S`.**
@@ -359,66 +298,6 @@ theorem oscillation_comparatorDifference_le {V : Set (Vec d)}
   linarith only [hsplit, hv', hh']
 
 /-! ## 6. The boundary-trace form of the remaining obligation -/
-
-/-- **The absorption arithmetic of the remaining obligation.**
-
-The intended proof of `|⨍_V w| ≤ C·‖w − (w)_V‖` for a `Δ`-harmonic `w` vanishing
-on a face of `V` runs through a cross-section trace inequality and produces, at
-first, the *quadratic* form
-
-```text
-  β² ≤ A·osc² + B·osc·(osc + |β|)
-```
-
-with `A`, `B` the (explicit, `d`-only) trace and Caccioppoli constants.  This
-lemma is the elementary absorption that turns that form into the linear bound
-
-```text
-  |β| ≤ (B + √(A+B)) · osc  ,
-```
-
-recorded here so that the remaining obligation is exactly one analytic
-inequality with no further arithmetic attached.  The constant is the positive
-root of `t² − B t − (A+B) = 0` rounded up, and it is sharp in order: at `B = 0`
-it reads `|β| ≤ √A · osc`, which is exactly what `β² ≤ A·osc²` gives. -/
-theorem abs_le_of_sq_le_quadratic {beta osc A B : ℝ} (hosc : 0 ≤ osc)
-    (hA : 0 ≤ A) (hB : 0 ≤ B)
-    (hquad : beta ^ 2 ≤ A * osc ^ 2 + B * osc * (osc + |beta|)) :
-    |beta| ≤ (B + Real.sqrt (A + B)) * osc := by
-  have hAB : (0 : ℝ) ≤ A + B := by linarith only [hA, hB]
-  set s : ℝ := Real.sqrt (A + B) with hs
-  have hsnn : 0 ≤ s := Real.sqrt_nonneg _
-  have hss : s * s = A + B := Real.mul_self_sqrt hAB
-  clear_value s
-  clear hs
-  have hb : 0 ≤ |beta| := abs_nonneg beta
-  have hsq : |beta| * |beta| = beta ^ 2 := by
-    rw [← sq_abs beta]; ring
-  have hquad' : |beta| * |beta| ≤ (A + B) * (osc * osc) + B * osc * |beta| := by
-    rw [hsq]
-    linarith only [hquad]
-  by_contra hcon
-  push_neg at hcon
-  have hBsnn : 0 ≤ B + s := by linarith only [hB, hsnn]
-  have hprodnn : 0 ≤ (B + s) * osc := mul_nonneg hBsnn hosc
-  have hbpos : 0 < |beta| := lt_of_le_of_lt hprodnn hcon
-  have hmul : ((B + s) * osc) * |beta| < |beta| * |beta| :=
-    mul_lt_mul_of_pos_right hcon hbpos
-  have hsoscnn : 0 ≤ s * osc := mul_nonneg hsnn hosc
-  have hsooo : (s * osc) * ((B + s) * osc) ≤ (s * osc) * |beta| :=
-    mul_le_mul_of_nonneg_left hcon.le hsoscnn
-  have hexpand : (s * osc) * ((B + s) * osc) =
-      B * s * (osc * osc) + (A + B) * (osc * osc) := by
-    calc (s * osc) * ((B + s) * osc)
-        = B * s * (osc * osc) + (s * s) * (osc * osc) := by ring
-      _ = B * s * (osc * osc) + (A + B) * (osc * osc) := by rw [hss]
-  have hoscsq : 0 ≤ osc * osc := mul_nonneg hosc hosc
-  have hnn : 0 ≤ B * s * (osc * osc) := mul_nonneg (mul_nonneg hB hsnn) hoscsq
-  have hlow : (A + B) * (osc * osc) ≤ (s * osc) * |beta| := by
-    rw [hexpand] at hsooo
-    linarith only [hsooo, hnn]
-  have hid : (B + s) * osc * |beta| = B * osc * |beta| + (s * osc) * |beta| := by ring
-  linarith only [hquad', hmul, hlow, hid]
 
 end
 

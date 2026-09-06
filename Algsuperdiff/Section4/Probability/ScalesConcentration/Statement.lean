@@ -19,8 +19,7 @@ This module states and proves (`sorry`-free) Proposition
 * **Step 5 (`Chernoff.lean`, `count_chernoff_bound`)** — the Chernoff bound on
   `∑_j Z_j`, derived from `full_mgf_bound` by Markov.
 
-The main theorem `p_concentration_for_scales` and the classical-hypothesis
-corollary `p_concentration_for_scales_of_integrable` are assembled `sorry`-free.
+Every leg of the assembly is `sorry`-free.
 
 ## Independence hypothesis (design choice)
 
@@ -48,9 +47,6 @@ array `X`.  The Bochner form `∫ (X k j)^p ∂P ≤ 1` is **not** usable: Bochn
 integration returns the junk value `0` for a non-integrable nonnegative
 function, so a heavy-tailed i.i.d. array satisfies the Bochner hypothesis
 vacuously while `∫⁻ expZfun = ⊤`, which makes the proposition false as stated.
-The corollary `p_concentration_for_scales_of_integrable` recovers `hmomL` for
-callers holding the classical `Integrable (X^p)` plus Bochner `∫ X^p ≤ 1`, via
-`ofReal_integral_eq_lintegral_ofReal`.
 -/
 
 namespace Algsuperdiff.Section4.Probability.ScalesConcentration
@@ -81,10 +77,7 @@ is not Bochner-integrable.  The Bochner form `∫ ω, (X k j ω)^p ∂P ≤ 1` i
 *insufficient* — indeed it makes the statement false — because the Bochner
 integral returns the junk value `0` for a non-integrable nonnegative array, so
 a heavy-tailed i.i.d. array vacuously satisfies `∫ X^p ≤ 1` while `∫⁻ expZfun =
-⊤`.  Downstream users whose hypotheses are the classical `Integrable` + Bochner
-moment `∫ X^p ≤ 1` should apply the convenience corollary
-`p_concentration_for_scales_of_integrable`, which supplies `hmomL` via
-`ofReal_integral_eq_lintegral_ofReal`. -/
+⊤`. -/
 theorem p_concentration_for_scales_Cstar
     (P : Measure Ω) [IsProbabilityMeasure P] (X : ℤ → ℤ → Ω → ℝ)
     {p s : ℝ} {r : ℕ} (hp : 1 ≤ p) (hs : 0 < s) (hs1 : s ≤ 1)
@@ -150,55 +143,5 @@ theorem p_concentration_for_scales_Cstar
         rw [hlam]
         exact count_chernoff_bound (P := P) (X := X) hp hs hs1 hsp hr hXmeas hmomL hindep
           m θ hrm hθ0
-
-/-- **Proposition `p.concentration.for.scales`, existential form.**  The same
-statement as `p_concentration_for_scales_Cstar` with the (universal,
-array-independent) threshold constant `Cstar = 16 C₆ / log 3` hidden behind an
-existential.  Prefer `p_concentration_for_scales_Cstar` at call sites that must
-state a scalar smallness condition on the threshold
-`9 s⁻¹ C^{1/p} θ^{-1/p}` — with `C` existentially quantified such a condition is
-unstatable, since the array data would have to be produced before `C` is known. -/
-theorem p_concentration_for_scales
-    (P : Measure Ω) [IsProbabilityMeasure P] (X : ℤ → ℤ → Ω → ℝ)
-    {p s : ℝ} {r : ℕ} (hp : 1 ≤ p) (hs : 0 < s) (hs1 : s ≤ 1)
-    (hsp : 1 ≤ s * p) (hr : 1 ≤ r)
-    (hXmeas : ∀ k j, Measurable (X k j))
-    (hXnn : ∀ k j ω, 0 ≤ X k j ω)
-    (hmomL : ∀ k j, ∫⁻ ω, ENNReal.ofReal ((X k j ω) ^ p) ∂P ≤ 1)
-    (hindep : ColumnsIndep P X r) :
-    ∃ C : ℝ, 0 < C ∧ ∀ (m : ℕ) (θ : ℝ), (r : ℤ) ≤ (m : ℤ) → 0 < θ → θ ≤ 1 →
-      P {ω | θ < (1 / ((m : ℝ) + 1)) *
-          ∑ k ∈ Finset.Icc (0 : ℤ) (m : ℤ),
-            (if 9 * s⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s k ω
-              then (1 : ℝ) else 0)}
-        ≤ ENNReal.ofReal (Real.exp (-(s * p * θ) / (16 * (r : ℝ)) * ((m : ℝ) + 1))) :=
-  ⟨Cstar, Cstar_pos,
-    p_concentration_for_scales_Cstar P X hp hs hs1 hsp hr hXmeas hXnn hmomL hindep⟩
-
-/-- **Convenience corollary for classical hypotheses.**  Downstream users whose
-moment control is the Bochner integral `∫ ω, (X k j ω)^p ∂P ≤ 1` *together with*
-integrability of each `X_{k,j}^p` obtain `p_concentration_for_scales` directly:
-the lintegral moment `hmomL` is recovered from the Bochner moment via
-`ofReal_integral_eq_lintegral_ofReal`.  This is the reading of the paper's
-`E[X^p] ≤ 1` under which `X^p` is genuinely integrable. -/
-theorem p_concentration_for_scales_of_integrable
-    (P : Measure Ω) [IsProbabilityMeasure P] (X : ℤ → ℤ → Ω → ℝ)
-    {p s : ℝ} {r : ℕ} (hp : 1 ≤ p) (hs : 0 < s) (hs1 : s ≤ 1)
-    (hsp : 1 ≤ s * p) (hr : 1 ≤ r)
-    (hXmeas : ∀ k j, Measurable (X k j))
-    (hXnn : ∀ k j ω, 0 ≤ X k j ω)
-    (hint : ∀ k j, Integrable (fun ω => (X k j ω) ^ p) P)
-    (hmom : ∀ k j, ∫ ω, (X k j ω) ^ p ∂P ≤ 1)
-    (hindep : ColumnsIndep P X r) :
-    ∃ C : ℝ, 0 < C ∧ ∀ (m : ℕ) (θ : ℝ), (r : ℤ) ≤ (m : ℤ) → 0 < θ → θ ≤ 1 →
-      P {ω | θ < (1 / ((m : ℝ) + 1)) *
-          ∑ k ∈ Finset.Icc (0 : ℤ) (m : ℤ),
-            (if 9 * s⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s k ω
-              then (1 : ℝ) else 0)}
-        ≤ ENNReal.ofReal (Real.exp (-(s * p * θ) / (16 * (r : ℝ)) * ((m : ℝ) + 1))) := by
-  refine p_concentration_for_scales P X hp hs hs1 hsp hr hXmeas hXnn (fun k j => ?_) hindep
-  rw [← ofReal_integral_eq_lintegral_ofReal (hint k j)
-      (Filter.Eventually.of_forall (fun ω => Real.rpow_nonneg (hXnn k j ω) p))]
-  exact ENNReal.ofReal_le_one.2 (hmom k j)
 
 end Algsuperdiff.Section4.Probability.ScalesConcentration

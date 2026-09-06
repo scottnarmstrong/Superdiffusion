@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCaccioppoliDatum
 import Algsuperdiff.Section4.Provider.ExcessDecay.HarmonicReplacement
@@ -162,28 +162,6 @@ theorem exists_dirichletForcedCubeSolution_boundaryData (Q : TriadicCube d)
     rfl, rho, hexact⟩
 
 omit [NeZero d] in
-/-- **The difference of two Dirichlet solutions with the same datum has a global
-zero trace.**
-
-This discharges the `MemH10` hypothesis of the boundary Caccioppoli display in
-`BoundaryAssemblyEnergy`, whenever both solutions carry the *exact* (not merely
-a.e.) zero-trace witness — which is the form
-`exists_dirichletForcedCubeSolution_boundaryData` produces. -/
-theorem memH10_sub_of_exact_zeroTrace {Q : TriadicCube d}
-    {u v h : H1Function (openCubeSet Q)}
-    {rhou rhov : H10Function (openCubeSet Q)}
-    (hu : ∀ y, rhou.toH1Function.toFun y = u.toFun y - h.toFun y)
-    (hv : ∀ y, rhov.toH1Function.toFun y = v.toFun y - h.toFun y) :
-    MemH10 (openCubeSet Q) (fun y => u.toFun y - v.toFun y) := by
-  have hsub := memH10_sub (U := openCubeSet Q)
-    (u := fun y => u.toFun y - h.toFun y) (v := fun y => v.toFun y - h.toFun y)
-    ⟨rhou, funext hu⟩ ⟨rhov, funext hv⟩
-  have hfun : (fun y => (u.toFun y - h.toFun y) - (v.toFun y - h.toFun y)) =
-      fun y => u.toFun y - v.toFun y := by
-    funext y
-    ring
-  rwa [hfun] at hsub
-
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay

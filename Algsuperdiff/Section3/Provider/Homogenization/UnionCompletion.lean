@@ -72,9 +72,9 @@ ABK26 sets `k1 := ceil(alpha^{-1} log_3(4 epsilon^{-1} C))` where `alpha(d)` and
 `C(d)` are the exponent and constant of the iterated recurrence `e.iter.post`.
 Neither `alpha` nor that `C` exists in this repository --- they are outputs of
 the separate node `p.homogenization.step#iterate` --- so `k1` is **not** derived
-here.  It is bound existentially, together with its SSA.4 budget, inside the
-single conditional A obligation below, in exactly the shape SSA.4 says the
-iteration delivers.
+here.  It is bound existentially, together with its budget, inside the
+single conditional A obligation below, in exactly the shape the iteration
+delivers.
 
 ## Scope facts, inherited and disclosed
 
@@ -86,13 +86,13 @@ iteration delivers.
 * The two-sided `IsBigO` of the consumed envelope engine where the printed
   statement is one-sided,
   the `(3 ^ d + 1) ^ d` colour stride, the CoarseGraining `gammaTriangleConst`
-  centering constant, and the SSA.3 numerals `1/16` and `1/8` are all inherited
+  centering constant, and the numerals `1/16` and `1/8` are all inherited
   from the consumed statements, not introduced here.
 
 The data are `M : ABKModel d`, together with `d`, `m`, `E`, `k1`, `k2`,
 `epsilon`, `Chom`, the abstract carriers of the two combinators, and the
 `meanBound` slot of the domination lemma.  The only numerals fixed by hand are
-the two SSA.3 numerals already fixed by the proved transport.
+the two numerals already fixed by the proved transport.
 
 ## References
 
@@ -452,14 +452,14 @@ private theorem gamma_le_of_smallness {Chom Escale epsilon gamma : ℝ}
     (heps : epsilon ∈ Set.Ioc 0 (1 / 2))
     (hgamma : gamma ≤ Chom⁻¹ * (Escale⁻¹) ^ 2 * epsilon) : gamma ≤ 1 / 128 := by
   have hChompos : (0 : ℝ) < Chom := by linarith
-  have hChominv : Chom⁻¹ ≤ 1 / 64 := by
-    have hcancel : Chom⁻¹ * Chom = 1 := inv_mul_cancel₀ (ne_of_gt hChompos)
-    nlinarith [inv_pos.2 hChompos]
+  have hChominv : Chom⁻¹ ≤ 1 / 64 :=
+    (inv_anti₀ (by norm_num : (0 : ℝ) < 64) hChom).trans (by norm_num)
   have hEpos : (0 : ℝ) < Escale := by linarith
   have hEinv : Escale⁻¹ ≤ 1 := by
     simpa only [inv_one] using inv_anti₀ (by norm_num : (0 : ℝ) < 1) hE
   have hEinvnn : (0 : ℝ) ≤ Escale⁻¹ := le_of_lt (inv_pos.2 hEpos)
-  have hEsq : (Escale⁻¹) ^ 2 ≤ 1 := by nlinarith
+  have hEsq : (Escale⁻¹) ^ 2 ≤ 1 := by
+    simpa using pow_le_pow_left₀ hEinvnn hEinv 2
   have hstep : Chom⁻¹ * (Escale⁻¹) ^ 2 * epsilon ≤ 1 / 64 * 1 * (1 / 2) :=
     mul_le_mul (mul_le_mul hChominv hEsq (sq_nonneg _) (by norm_num)) heps.2
       heps.1.le (by norm_num)
@@ -478,7 +478,12 @@ private theorem gamma_le_iterate_smallness {Chom Citer Dcost Escale epsilon gamm
   have hfac : (0 : ℝ) ≤ (Escale⁻¹) ^ 2 * epsilon :=
     mul_nonneg (sq_nonneg _) hepspos.le
   have hmono : Chom⁻¹ * (Escale⁻¹) ^ 2 * epsilon ≤
-      (Citer * Dcost)⁻¹ * (Escale⁻¹) ^ 2 * epsilon := by nlinarith
+      (Citer * Dcost)⁻¹ * (Escale⁻¹) ^ 2 * epsilon := by
+    calc Chom⁻¹ * (Escale⁻¹) ^ 2 * epsilon
+        = Chom⁻¹ * ((Escale⁻¹) ^ 2 * epsilon) := by ring
+      _ ≤ (Citer * Dcost)⁻¹ * ((Escale⁻¹) ^ 2 * epsilon) :=
+          mul_le_mul_of_nonneg_right hinvle hfac
+      _ = (Citer * Dcost)⁻¹ * (Escale⁻¹) ^ 2 * epsilon := by ring
   have hsplit : (Citer * Dcost)⁻¹ * (Escale⁻¹) ^ 2 * epsilon =
       Citer⁻¹ * (Escale⁻¹) ^ 2 * (epsilon / Dcost) := by
     rw [mul_inv, div_eq_mul_inv]
@@ -527,7 +532,9 @@ private theorem union_budget_bound {d : ℕ} (hd2 : 2 ≤ d)
     exact hk1
   have hdreal : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd2
   have hden : (2 : ℝ) ≤ (d : ℝ) * Real.log 3 := by
-    nlinarith [one_lt_log_three]
+    calc (2 : ℝ) = 2 * 1 := (mul_one 2).symm
+      _ ≤ (d : ℝ) * Real.log 3 :=
+          mul_le_mul hdreal one_lt_log_three.le zero_le_one (by linarith)
   have hdenpos : (0 : ℝ) < (d : ℝ) * Real.log 3 := by linarith
   have hlogquot : Real.log (c1 / (epsilon / 2)) =
       Real.log c1 + Real.log 2 + |Real.log epsilon| := by
@@ -543,18 +550,21 @@ private theorem union_budget_bound {d : ℕ} (hd2 : 2 ≤ d)
   have hXle : 2 * Real.log (c1 / (epsilon / 2)) / ((d : ℝ) * Real.log 3) ≤
       Real.log c1 + Real.log 2 + |Real.log epsilon| := by
     rw [hlogquot, div_le_iff₀ hdenpos]
-    nlinarith [hSnn, hden]
+    calc 2 * (Real.log c1 + Real.log 2 + |Real.log epsilon|)
+        = (Real.log c1 + Real.log 2 + |Real.log epsilon|) * 2 := by ring
+      _ ≤ (Real.log c1 + Real.log 2 + |Real.log epsilon|) * ((d : ℝ) * Real.log 3) :=
+          mul_le_mul_of_nonneg_left hden hSnn
   rw [abs_of_nonneg hXnn] at hk2
   have hk2' : ((k2zero + 1 : ℕ) : ℝ) ≤
       2 + (Real.log c1 + Real.log 2 + |Real.log epsilon|) := by
     push_cast
     linarith
   have hQ : (0 : ℝ) ≤ Citer * Real.log Dcost + 2 + Real.log c1 + Real.log 2 := by
-    nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ Citer) hlogD]
+    linarith only [hlogc1, hlog2, mul_nonneg (by linarith : (0 : ℝ) ≤ Citer) hlogD]
   have hkey : (0 : ℝ) ≤
       (Citer * Real.log Dcost + 2 + Real.log c1 + Real.log 2) *
         (2 * |Real.log epsilon| - 1) := mul_nonneg hQ (by linarith)
-  nlinarith [hk1', hk2', hkey]
+  linarith only [hk1', hk2', hkey]
 
 /-- **The Section 3.5 cutoff-union conclusion, conditional on the iterate mean
 bound.**
@@ -573,7 +583,7 @@ net multiplies the mean as well, which is why the iteration is run at
 The window evaluation `1/16 in [8 gamma, 1]` required by the proved transport
 is *derived*, not assumed: the frozen smallness binder `gamma <= Chom^{-1}
 E^{-2} epsilon` with `Chom >= 64`, `E >= 1` and `epsilon <= 1/2` gives `gamma
-<= 1/128`.  The manuscript's own route (SSA.3: a lower bound on `E` from `15
+<= 1/128`.  The manuscript's own route (a lower bound on `E` from `15
 c_star^{-1} <= E` together with an upper bound on `c_star`, whence `8 gamma <
 1/16`) is available here — the proved `Provider.Disorder.cstar_le_three_halves`
 gives `E >= 10` and `8 gamma <= 8 * 10^{-10} < 1/16`; only the literal

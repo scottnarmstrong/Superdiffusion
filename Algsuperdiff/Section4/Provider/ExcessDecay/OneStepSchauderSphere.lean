@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderKernelL1
 import Mathlib.MeasureTheory.Constructions.HaarToSphere
@@ -25,7 +25,7 @@ The reproducing-convolution route of the Schauder gradient-Hölder estimate rest
   a radius-independent sphere average, hence equals its own sphere average.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/SphereAverage.lean ====
+-- ==== the sphere average ====
 open scoped Real
 open MeasureTheory Metric
 
@@ -43,12 +43,12 @@ a finite, strictly positive measure, so it normalizes the spherical average. -/
 def sphereMeasure (d : ℕ) : Measure (sphere (0 : EuclideanSpace ℝ (Fin d)) 1) :=
   (volume : Measure (EuclideanSpace ℝ (Fin d))).toSphere
 
-instance : IsFiniteMeasure (sphereMeasure d) :=
+instance instIsFiniteMeasureSphereMeasure : IsFiniteMeasure (sphereMeasure d) :=
   inferInstanceAs (IsFiniteMeasure
     ((volume : Measure (EuclideanSpace ℝ (Fin d))).toSphere))
 
 /-- For `d ≥ 1` the ambient space is nontrivial, hence the surface measure is nonzero. -/
-instance [NeZero d] : NeZero (sphereMeasure d) := by
+instance instNeZeroSphereMeasure [NeZero d] : NeZero (sphereMeasure d) := by
   haveI : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
   haveI : Nontrivial (EuclideanSpace ℝ (Fin d)) := inferInstance
   exact ⟨Measure.toSphere_ne_zero (μ := (volume : Measure (EuclideanSpace ℝ (Fin d))))⟩
@@ -141,7 +141,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/SphereAverageDeriv.lean ====
+-- ==== the derivative of the sphere average ====
 open scoped Real
 open MeasureTheory Metric
 
@@ -236,7 +236,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/SphereMVP.lean ====
+-- ==== the mean value property ====
 open scoped Real Topology
 open MeasureTheory Metric Filter Set
 
@@ -321,4 +321,3 @@ theorem sphereAverage_eq_center_of_flux_zero [NeZero d] {u : EuclideanSpace ℝ 
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
-

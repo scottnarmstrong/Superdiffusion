@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.PerCubeBracket
 
@@ -89,14 +89,6 @@ def step3ThirdTerm [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicC
   C * (((Annealed.sigmaBar M m : ℝ)⁻¹ +
       (unitCubeLambda (2 * M.gamma) (.finite 2)
         (unitRescaledCutoffCoeff M R (R.scale - 2) omega))⁻¹) * grad) ^ 2
-
-/-- **The display IS the sum of its three named summands** (definitional). -/
-theorem step3DisplayAt_eq_add_add [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ)
-    (R : TriadicCube d) (omega : Cutoff.CutoffSample d) (s grad val : ℝ) :
-    step3DisplayAt C M m R omega s grad val =
-      step3FirstTerm C M m R omega s grad + step3SecondTerm C M m R omega grad val +
-        step3ThirdTerm C M m R omega grad :=
-  rfl
 
 /-! ## 2. Two abstract moment steps -/
 

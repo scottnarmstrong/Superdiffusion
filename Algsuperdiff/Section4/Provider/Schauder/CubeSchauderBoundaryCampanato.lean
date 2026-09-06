@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderBoundaryOneStep
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderCampanato
@@ -20,7 +20,7 @@ recursion `CubeSchauderIteration.excess_le_geometric`, the top-scale estimate
 point of `□_m`), and the sub-lattice-to-every-scale interpolation — is reused
 unchanged.
 
-That is `SCH-5`'s structural finding in force: the boundary route carries no
+This is the structural point: the boundary route carries no
 interior slot, so **one** branch supplies the Campanato datum at every base
 point, and the interior restriction `x ∈ □_{m-1}` disappears from the endpoint.
 

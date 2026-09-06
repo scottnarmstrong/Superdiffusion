@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalGagliardo
 
@@ -187,7 +187,7 @@ theorem cgTestConst_nonneg (d : ℕ) (Q : TriadicCube d) {alpha s' t : ℝ}
 
 /-- **The full norm of a Hölder test field, against the Step-4 test gauge.**
 
-This is the honest, order-losing form of the `SmoothDualDominatesHolderTests`
+This is the honest, order-losing form of the smooth-dual/Hölder test
 comparison: the `W^{s′,q}` unit-ball gauge of a `C^{0,α}` field is at most
 `K_test` times its `W^{α,∞}` gauge, with `K_test` carrying the single factor
 `3^{m(α-s′)}`. -/

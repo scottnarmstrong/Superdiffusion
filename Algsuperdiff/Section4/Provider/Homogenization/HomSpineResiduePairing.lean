@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineInstallPins
 
@@ -25,7 +25,7 @@ file performs that comparison at the two printed summands of `EthmB(m)`:
   energy-density bound gives it — `C_en = C · (3^{(1-α)X_m}
   (1 + 𝓔_{1/4}))` — which is what makes the pairing an inequality between the
   SAME two random factors.
-* `ofReal_gapLeg_le` pairs the SECOND level slot against the `γ⁵` summand,
+* the gap leg pairs the SECOND level slot against the `γ⁵` summand,
   through `HomSpineInstallData.homGapAbsorbAt` at any `s₂`
   admitting the absorption, in particular the corrected pin `s₂ = 49/100`.
 * `ofReal_add_le_ethmB` adds the two, and `le_toReal_of_ofReal_le` converts the
@@ -44,8 +44,7 @@ them exists in the tree:
 
 1. **the coefficient** — the bundle's slots dominate
    `parentTruncatedHomogenizationErrorInfinity{One,Two}Scalar` at the CUTOFF
-   field `a_L` (`HomCGCarrierLegs.exists_weakNegDualBounds_of_cutoffPair`,
-   `Cutoff.coefficientCutoffCoeffOn`), while `EthmB(m)` and BOTH printed
+   field `a_L` (`Cutoff.coefficientCutoffCoeffOn`), while `EthmB(m)` and BOTH printed
    displays carry the FLUX-CORRECTED field
    `ã_{L,m}`;
 2. **the order** — the bundle pins the dual low order at `s₁′ = s/8` (and its
@@ -161,77 +160,6 @@ theorem homGapConstAt_nonneg {s2 : ℝ} (hs2 : 5 < 10 * s2 * Real.log 3) :
   rw [homGapConstAt]
   positivity
 
-/-- The abstract shape of the gap pairing. -/
-private theorem ofReal_gapLeg_core {c gap K Cgap g5 E2 : ℝ} (Ecar : ℝ≥0∞)
-    (hc : 0 ≤ c) (hK : 0 ≤ K) (hCgap : 0 < Cgap) (hg5 : 0 ≤ g5) (hE2 : 0 ≤ E2)
-    (hgap : gap ≤ K * g5) (hdom : ENNReal.ofReal E2 ≤ Ecar) :
-    ENNReal.ofReal (c * gap * (1 + E2 ^ (2 : ℕ))) ≤
-      ENNReal.ofReal (c * K / Cgap) *
-        (ENNReal.ofReal (Cgap * g5) * (1 + Ecar ^ (2 : ℝ))) := by
-  have hsq : (0 : ℝ) ≤ E2 ^ (2 : ℕ) := pow_nonneg hE2 2
-  have hone : (0 : ℝ) ≤ 1 + E2 ^ (2 : ℕ) := by linarith only [hsq]
-  have hstep : c * gap * (1 + E2 ^ (2 : ℕ)) ≤ c * (K * g5) * (1 + E2 ^ (2 : ℕ)) :=
-    mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hgap hc) hone
-  have hcK : (0 : ℝ) ≤ c * K / Cgap := div_nonneg (mul_nonneg hc hK) hCgap.le
-  have hCg5 : (0 : ℝ) ≤ Cgap * g5 := mul_nonneg hCgap.le hg5
-  have hsplit : c * (K * g5) * (1 + E2 ^ (2 : ℕ)) =
-      c * K / Cgap * (Cgap * g5) * (1 + E2 ^ (2 : ℕ)) := by
-    field_simp
-  have hprod : ENNReal.ofReal (c * K / Cgap * (Cgap * g5) * (1 + E2 ^ (2 : ℕ))) =
-      ENNReal.ofReal (c * K / Cgap) *
-        (ENNReal.ofReal (Cgap * g5) * ENNReal.ofReal (1 + E2 ^ (2 : ℕ))) := by
-    rw [ENNReal.ofReal_mul (mul_nonneg hcK hCg5), ENNReal.ofReal_mul hcK, mul_assoc]
-  have hsum : ENNReal.ofReal (1 + E2 ^ (2 : ℕ)) ≤ 1 + Ecar ^ (2 : ℝ) := by
-    have hrw : ENNReal.ofReal (1 + E2 ^ (2 : ℕ)) =
-        1 + ENNReal.ofReal E2 ^ (2 : ℕ) := by
-      rw [ENNReal.ofReal_add (by norm_num) hsq, ENNReal.ofReal_one,
-        ENNReal.ofReal_pow hE2]
-    have hpow : ENNReal.ofReal E2 ^ (2 : ℕ) ≤ Ecar ^ (2 : ℕ) := pow_le_pow_left' hdom 2
-    have hcast : Ecar ^ (2 : ℕ) = Ecar ^ (2 : ℝ) := by
-      rw [← ENNReal.rpow_natCast Ecar 2]
-      norm_num
-    rw [hrw, ← hcast]
-    exact add_le_add le_rfl hpow
-  calc ENNReal.ofReal (c * gap * (1 + E2 ^ (2 : ℕ)))
-      ≤ ENNReal.ofReal (c * (K * g5) * (1 + E2 ^ (2 : ℕ))) :=
-        ENNReal.ofReal_le_ofReal hstep
-    _ = ENNReal.ofReal (c * K / Cgap) *
-          (ENNReal.ofReal (Cgap * g5) * ENNReal.ofReal (1 + E2 ^ (2 : ℕ))) := by
-        rw [hsplit, hprod]
-    _ ≤ ENNReal.ofReal (c * K / Cgap) *
-          (ENNReal.ofReal (Cgap * g5) * (1 + Ecar ^ (2 : ℝ))) :=
-        mul_le_mul' le_rfl (mul_le_mul' le_rfl hsum)
-
-/-- **THE SECOND PAIRING**.
-
-The level's forcing slot, once the mesoscale gap `s^{-9/2} 3^{s₂(n-m)}` has been
-absorbed at the `γ⁵` rate (`homGapAbsorbAt`), is below the `γ⁵` summand of
-`EthmB(m)` times a constant that carries no randomness.
-
-The single input is `hdom`: the second error slot is dominated by `EthmB(m)`'s
-own `𝓔` factor.  See the module disclosure. -/
-theorem ofReal_gapLeg_le (M : ABKModel d) {Cgap : ℝ} (m : ℤ)
-    (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) {c E2 s2 : ℝ}
-    (hlog : 4 ≤ |Real.log M.gamma|) (hgamma1 : M.gamma < 1) (hCgap : 0 < Cgap)
-    (hc : 0 ≤ c) (hE2 : 0 ≤ E2) (hs2 : 5 < 10 * s2 * Real.log 3)
-    (hdom : ENNReal.ofReal E2 ≤
-      fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homQuarterOf s) omega) :
-    ENNReal.ofReal
-        (c *
-            (homS M ^ (-(9 / 2) : ℝ) *
-              (3 : ℝ) ^ (s2 * (((homN M m : ℤ)) : ℝ) - s2 * (m : ℝ))) *
-          (1 + E2 ^ (2 : ℕ))) ≤
-      ENNReal.ofReal (c * homGapConstAt s2 / Cgap) *
-        ethmBGap M Cgap m (homN M m) s omega := by
-  have hgap := homGapAbsorbAt (M := M) hlog hgamma1 m hs2
-  have hexp : (3 : ℝ) ^ (s2 * (((homN M m : ℤ)) : ℝ) - s2 * (m : ℝ)) =
-      (3 : ℝ) ^ (s2 * ((((homN M m : ℤ)) : ℝ) - (m : ℝ))) := by
-    congr 1
-    ring
-  rw [hexp, ethmBGap]
-  exact ofReal_gapLeg_core _ hc (homGapConstAt_nonneg hs2) hCgap
-    (pow_nonneg M.shellPrefix.gamma_pos.le 5) hE2 hgap hdom
-
 /-! ## 4. The two legs added: the budget inequality -/
 
 /-- **THE `EthmB(m)` BUDGET, in `[0,∞]`.**  Both level slots together are below
@@ -272,15 +200,6 @@ theorem le_toReal_of_ofReal_le {X Cw : ℝ} {T : ℝ≥0∞} (hCw : 0 ≤ Cw)
     rw [ENNReal.ofReal_mul hCw, ENNReal.ofReal_toReal hfin]
   rw [hT] at h
   exact (ENNReal.ofReal_le_ofReal_iff (mul_nonneg hCw ENNReal.toReal_nonneg)).1 h
-
-/-- The real cut of `EthmB(m)` itself is a legitimate defect witness: it is
-nonnegative and it is dominated by the carrier (with no finiteness needed). -/
-theorem ofReal_ethmB_toReal_le (M : ABKModel d) (Cgap : ℝ)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m n : ℤ) (s : {s : ℝ // 0 < s})
-    (omega : Cutoff.CutoffSample d) :
-    ENNReal.ofReal (ethmB M Cgap Y m n s omega).toReal ≤
-      ethmB M Cgap Y m n s omega :=
-  ENNReal.ofReal_toReal_le
 
 end
 

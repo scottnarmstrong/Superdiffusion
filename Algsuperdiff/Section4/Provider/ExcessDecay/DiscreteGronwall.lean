@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
@@ -102,12 +102,5 @@ theorem discrete_gronwall {N : ℕ} {H : ℝ} {a ε : ℕ → ℝ} (hH : 0 ≤ H
   have hHprod : H * ∏ k ∈ range l, (1 + ε k) ≤ H * Real.exp (∑ k ∈ range l, ε k) :=
     mul_le_mul_of_nonneg_left hpe hH
   linarith only [hprod, hstep, hHprod]
-
-/-- **Discrete Grönwall**, the source's literal single-index conclusion. -/
-theorem discrete_gronwall_top {N : ℕ} {H : ℝ} {a ε : ℕ → ℝ} (hH : 0 ≤ H)
-    (hε : ∀ k, 0 ≤ ε k)
-    (hrec : ∀ l ≤ N, a l ≤ H + ∑ k ∈ range l, ε k * a k) :
-    a N ≤ H * Real.exp (∑ k ∈ range N, ε k) :=
-  discrete_gronwall hH hε hrec N le_rfl
 
 end Algsuperdiff.Section4.Provider.ExcessDecay

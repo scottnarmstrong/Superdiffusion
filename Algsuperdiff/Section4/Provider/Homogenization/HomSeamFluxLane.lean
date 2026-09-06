@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSchauderUniform
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxCoefficient
@@ -11,7 +11,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxCoefficient
 
 ## Why this file exists
 
-The lane (`HomCGCarrierLegs`, `HomSpineRecutSupport`, `HomSchauderSwap`) is
+The lane (`HomSpineRecutSupport`, `HomSchauderSwap`) is
 pinned at the UNCUT cutoff field `a_L`, while the manuscript runs Step 3 and
 Step 4 at the flux-corrected field `ã_{L,m} = a_L - (k_L - k_m)_{□_m}`.
 `HomSeamFluxCoefficient` showed the `a_L`-sided seam bridge is not available;
@@ -97,7 +97,7 @@ theorem symmPart_fluxCorrectedCoeffOn_eq_nu (M : ABKModel d) (L m : ℤ)
 
 /-- **THE PRINTED FINITE-`p` DISPLAY, AT THE PRINT'S OWN COEFFICIENT.**
 
-`HomCGDischargeInstantiation.exists_printedCoarseGraining_of_cutoffPair` with
+The printed display at the spine's own cutoff pair, with
 the coefficient slot filled by the flux-corrected field instead of the uncut
 `a_L`. The elliptic pair fed in is still the spine's own (the root's binder is
 at `a_L`); the transport to `ã` is
@@ -136,7 +136,7 @@ theorem exists_printedCoarseGraining_of_fluxPair (d : ℕ) (hd : 2 ≤ d)
 
 /-- **The two Step-4 duality slots from the display, GENERIC in the coefficient.**
 
-`HomCGCarrierLegs.weakNegDualBounds_endpointLevels_of_display` with the
+The two endpoint-level duality slots of the display, with the
 coefficient slot freed: the inner producer
 `HomCGFinalLegs.weakNegDualBounds_of_smoothDualDisplay` never looks at the
 field, and the two level transports are scalar arithmetic. -/
@@ -182,7 +182,7 @@ theorem weakNegDualBounds_endpointLevels_of_displayOn {m : ℤ}
 
 /-- **THE TWO STEP-4 DUALITY SLOTS AT THE PRINT'S COEFFICIENT.**
 
-`HomCGCarrierLegs.exists_weakNegDualBounds_of_cutoffPair` re-instantiated at
+The two duality slots at the spine's own cutoff pair, re-instantiated at
 `ã_{L,m}`.  The inputs are unchanged in kind:
 
 * the root's two `IsDirichletSolutionOn` binders — still stated at `a_L`, and
@@ -281,8 +281,8 @@ theorem exists_weakNegDualBounds_of_fluxPair (d : ℕ) (hd : 2 ≤ d)
 open Classical in
 /-- **The printed coarse-graining constant `C(p,d)` of the `ã` lane, named.**
 
-The sibling of `HomSpineRecutSupport.cgDualBoundConst`: the re-cut bundle refers
-to it in the slot condition `C(p,d) ≤ Ccg`. -/
+The sibling of the `a_L` lane's coarse-graining dual-bound constant: the re-cut
+bundle refers to it in the slot condition `C(p,d) ≤ Ccg`. -/
 def cgDualBoundConstFlux (d : ℕ) (p : FiniteLpExponent) : ℝ≥0∞ :=
   if h : 2 ≤ d ∧ (2 : ℝ≥0∞) ≤ p.exponent then
     Classical.choose (exists_weakNegDualBounds_of_fluxPair d h.1 p h.2)
@@ -311,7 +311,7 @@ theorem cgDualBoundConstFlux_dominates_self (d : ℕ) (hd : 2 ≤ d) (p : Finite
 
 /-- **THE STEP-4 ENDPOINT, GENERIC IN THE COEFFICIENT FIELD.**
 
-`HomSpineEndpoint.stepFourEnergyEndpoint` with the cutoff field replaced by an
+The Step-4 energy endpoint with the cutoff field replaced by an
 arbitrary field whose symmetric part is `ν Id`.  The proof is unchanged:
 `HomStepFourEnergy.energy_split` reads the field only through `hsym`, and
 `stepFourEnergyDisplay` never sees it at all.  The conclusion is

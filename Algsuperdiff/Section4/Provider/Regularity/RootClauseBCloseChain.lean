@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBChain
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBCloseArith
@@ -17,7 +17,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-- `RootClauseBChain.rootClauseB_display_interior` with `k = m-1` replaced by a
+/-- The interior clause-(B) display with `k = m-1` replaced by a
 free `k_c ≤ m-1`; the coarse clause-(B) record accordingly sits at `□_{k_c+1}`
 against its own `σ̄_{k_c+1}`, which is what lets the record come from the
 Step-3 good event instead of the uncontrolled top scale. -/

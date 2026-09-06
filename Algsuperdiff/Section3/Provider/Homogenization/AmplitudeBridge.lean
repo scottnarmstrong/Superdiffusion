@@ -269,7 +269,7 @@ private theorem lintegral_ofReal_pow_four_le_of_twoTerm
         congr 1
         ring
 
-/-! ## The `E` floor available after the  `c_star` ruling -/
+/-! ## The `E` floor available from the `c_star` upper bound -/
 
 theorem ten_le_of_fifteen_mul_inv_cstar_le (M : ABKModel d) {E : ℝ}
     (hEfloor : 15 * (Disorder.cstar M)⁻¹ ≤ E) : (10 : ℝ) ≤ E := by

@@ -1,10 +1,9 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.DescendantLattice
-import Algsuperdiff.Section4.Provider.BoundsEaL.ExpectationTransport
 import Algsuperdiff.Section4.Provider.BoundsEaL.ShellSlotBounds
 
 /-!
@@ -122,85 +121,7 @@ theorem exists_normalizedBlockResponseMax_le_lFreeStep3Majorant_of_tail (d : ℕ
       (Cutoff.negateCutoffSample omega)
       (fun L'' hL'' => hTneg m (0 : Fin d → ℤ) L'' hL'') L' hle' hL'
 
-/-- ** in the shape of the transport's `hGmaj` slot**: the same bound with the tail
-gauge required at every sample.  A corollary of the per-sample form. -/
-theorem exists_normalizedBlockResponseMax_le_lFreeStep3Majorant (d : ℕ)
-    (dimension : 2 ≤ d) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (m n : ℤ), n ≤ m → ∀ s : ℝ, 0 < s → s ≤ 1 / 4 →
-        M.gamma ≤ 1 / 8 →
-        ∀ T : ℤ → (Fin d → ℤ) → Cutoff.CutoffSample d → ℝ,
-          (∀ (k : ℤ) (v : Fin d → ℤ) (om : Cutoff.CutoffSample d) (L : ℤ), m ≤ L →
-            tailLayerSum m k v om L ≤ T k v om) →
-          ∀ L : ℤ, m ≤ L → ∀ (l : ℕ) (R : TriadicCube d),
-            R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)) →
-            ∀ omega : Cutoff.CutoffSample d,
-              Ch02.normalizedBlockResponseMax R
-                  (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-                  (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
-                lFreeStep3Majorant C M m s (lFreeGradSlot m T) (lFreeValueSlot m T) R
-                  omega := by
-  haveI : NeZero d := ⟨by omega⟩
-  obtain ⟨C, hC, hmaj⟩ :=
-    exists_normalizedBlockResponseMax_le_lFreeStep3Majorant_of_tail d dimension
-  refine ⟨C, hC, ?_⟩
-  intro M m n hnm s hs0 hs1 hgam T hT L hmL l R hR omega
-  exact hmaj M m n hnm s hs0 hs1 hgam T omega
-    (fun k v L' hL' => hT k v omega L' hL')
-    (fun k v L' hL' => hT k v (Cutoff.negateCutoffSample omega) L' hL') L hmL l R hR
-
 /-! ## The transport at the `L`-free majorant -/
-
-/-- **The anchor's left-hand side, at the `L`-free majorant.**
-
-`ExpectationTransport.lintegral_observableSup_rpow_le_tsum_lintegral_moment` with
-its `hGmaj` slot discharged by the theorem above: the `p`-th `lintegral` of the
-two-argument `sup_{L ≥ m}` observable is bounded by an explicit constant times
-the per-scale `tsum` of `lintegral`s of the descendant averages of
-`lFreeStep3Majorant^{p/2}` -- an integrand that does not mention `L`.
-
-`hT` (the shell-tail gauge) and `hGmeas` (the transport's measurability side
-condition, stated at this very majorant) are the two caller obligations. -/
-theorem lintegral_observableSup_rpow_le_tsum_lintegral_lFreeStep3Majorant (d : ℕ)
-    (dimension : 2 ≤ d) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (m n : ℤ), n ≤ m → ∀ (s : {s : ℝ // 0 < s}),
-        (s : ℝ) ≤ 1 / 4 → M.gamma ≤ 1 / 8 →
-        ∀ p : ℝ, 2 * (d : ℝ) * (s : ℝ)⁻¹ ≤ p →
-        ∀ T : ℤ → (Fin d → ℤ) → Cutoff.CutoffSample d → ℝ,
-          (∀ (k : ℤ) (v : Fin d → ℤ) (om : Cutoff.CutoffSample d) (L : ℤ), m ≤ L →
-            tailLayerSum m k v om L ≤ T k v om) →
-          (∀ l : ℕ, Measurable fun omega =>
-            Ch02.finsetAverageReal (descendantsAtScale (originCube d m) (n - (l : ℤ)))
-              (fun R => Real.rpow
-                (lFreeStep3Majorant C M m (s : ℝ) (lFreeGradSlot m T) (lFreeValueSlot m T) R
-                  omega) (p / 2))) →
-          (∫⁻ omega, Support.fluxCorrectedTwoScaleErrorObservableSup M m n s omega ^ p
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-            ENNReal.ofReal (Real.rpow (2 : ℝ) p *
-                Real.rpow (3 : ℝ) (1 / 2 * p * (s : ℝ) * ((m : ℝ) - (n : ℝ))) *
-                Ch02.geometricDiscount (s : ℝ) 1) *
-              ∑' l : ℕ, ENNReal.ofReal (Real.rpow (3 : ℝ) (-(s : ℝ) * (l : ℝ))) *
-                ∫⁻ omega, ENNReal.ofReal
-                    (Ch02.finsetAverageReal
-                      (descendantsAtScale (originCube d m) (n - (l : ℤ)))
-                      (fun R => Real.rpow
-                        (lFreeStep3Majorant C M m (s : ℝ) (lFreeGradSlot m T)
-                          (lFreeValueSlot m T) R omega) (p / 2)))
-                  ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
-  haveI : NeZero d := ⟨by omega⟩
-  obtain ⟨C, hC, hmaj⟩ := exists_normalizedBlockResponseMax_le_lFreeStep3Majorant d dimension
-  refine ⟨C, hC, ?_⟩
-  intro M m n hnm s hs1 hgam p hp T hT hGmeas
-  refine lintegral_observableSup_rpow_le_tsum_lintegral_moment M hnm s
-    (le_trans hs1 (by norm_num)) hp
-    (fun _ R omega =>
-      lFreeStep3Majorant C M m (s : ℝ) (lFreeGradSlot m T) (lFreeValueSlot m T) R omega)
-    hGmeas ?_
-  intro L hL l R hR omega
-  exact hmaj M m n hnm (s : ℝ) s.2 hs1 hgam T hT L hL l R hR omega
 
 end
 

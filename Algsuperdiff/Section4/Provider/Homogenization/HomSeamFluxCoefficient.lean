@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.AntisymmetricShift
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamRepin
@@ -11,7 +11,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamRepin
 
 ## What this file settles
 
-`HomSeamRepin.FluxCorrectedParentBridge` names, as an input, the domination
+`HomSeamRepin` names, as an input, the domination
 
 ```text
   𝓔_{t,∞,2}(□_m, n; a_L, σ̄_m)  ≤  sup_{L' ≥ m} 𝓔_{t,∞,2}(□_m, n; ã_{L',m}, σ̄_m)
@@ -162,8 +162,8 @@ theorem printedLocalEnergy_fluxCorrected (M : ABKModel d) (L m : ℤ)
 /-! ## 4. The print-accurate `𝓔` slots -/
 
 /-- The `𝓔₁` slot at the PRINTED coefficient `ã_{L,m}` and the low order `s/8`.
-The sibling of `HomSpineInstallPins.recutPinnedE1` with the print's own
-coefficient in place of the uncut `a_L`. -/
+The sibling of the pinned `𝓔₁` slot at the uncut `a_L`, with the print's own
+coefficient in its place. -/
 def recutPinnedE1Flux [NeZero d] (M : ABKModel d) (L : ℤ) (omega : Cutoff.CutoffSample d)
     (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ} (hsig : 0 < sigmaBarM) (s : FractionalOrder) : ℝ :=
   (Ch02.parentTruncatedHomogenizationErrorInfinityOneScalar (originCube d m)
@@ -209,7 +209,7 @@ comparator is the printed `σ̄_m` itself, not a free scalar: the right-hand
 observable is hard-pinned at `Annealed.sigmaBar M m` inside
 `fluxCorrectedTwoScaleErrorFunctional`, so a freely quantified `σ̄` made the
 statement unprovable off the pin.  The §4.5 spine instantiates the whole chain
-only at `Annealed.sigmaBar M m` (`HomSeamFluxBundle`, `HomSpineInstallPins`),
+only at `Annealed.sigmaBar M m` (`HomSpineInstallPins`),
 so the pin costs nothing downstream.  The `𝓔₁`/`𝓔₂` slot definitions above stay
 general, because `SpineDatumRecutCoreFlux` consumes them at a free `σ̄`. -/
 def FluxCorrectedParentIdentification [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ)

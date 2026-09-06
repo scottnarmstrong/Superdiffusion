@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFourBoundaryDecayC1
 import Algsuperdiff.Section4.Provider.Regularity.StepFourFinalEndpoint
@@ -325,16 +325,6 @@ def edBoundaryDataHPrinted (d : ℕ) [NeZero d] (Cb C : ℝ) (k : ℕ) (Kh : ℝ
     (1 - stepFiveRatioH) +
   4 / Real.log 3 *
     (2 * edBoundaryCbd d Cb C k * (Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh))
-
-theorem edBoundaryDataHPrinted_nonneg (d : ℕ) [NeZero d] (Cb : ℝ) {C Kh : ℝ}
-    (hC : 0 ≤ C) (k : ℕ) (hKh : 0 ≤ Kh) (m : ℤ) :
-    (0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C k Kh m := by
-  have hlog : (0 : ℝ) < Real.log 3 := Real.log_pos (by norm_num)
-  have h1 := edBoundaryKhleg_nonneg d Cb (C := C) (Kh := Kh) hC k hKh m
-  have h2 := mul_nonneg (le_of_lt (div_pos (by norm_num : (0 : ℝ) < 4) hlog))
-    (edBoundaryHinf_nonneg d Cb (C := C) (Kh := Kh) hC k hKh m)
-  rw [edBoundaryDataHPrinted]
-  linarith only [h1, h2]
 
 /-- **`t.regularity` Step 6 on the boundary branch, in the Step-7 chain's own
 `hosc` slot.**

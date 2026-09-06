@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderSphere
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
@@ -18,7 +18,7 @@ Two ingredients of the flux-vanishing crux behind the mean value property:
   fundamental theorem of calculus can be applied to it.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/PolarBridge.lean ====
+-- ==== the polar-coordinates bridge ====
 open scoped Real ENNReal NNReal
 open MeasureTheory Metric Set
 
@@ -111,7 +111,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/FluxContinuous.lean ====
+-- ==== continuity of the flux ====
 open scoped Real
 open MeasureTheory Metric
 

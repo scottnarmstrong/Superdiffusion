@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.GoodEvents.Api
 import Algsuperdiff.Section4.Support.FluxCorrectedRepresentative
@@ -45,23 +45,6 @@ coefficient covariance *through* the Ch02 error functional — i.e. a theorem
 Any future statement that wants to read the composition as a literal cube
 translation must prove that lemma first.
 
-## The shell gauges are covariant, not invariant
-
-`Support.shellW2InfNormAt z k j` carries its base point, and the sample
-translation *shifts that base point additively*:
-`shellW2InfNormAt z k ((translate y ω).1 l) = shellW2InfNormAt (z + y) k (ω.1 l)`
-(`shellW2InfNormAt_translateCutoffSample`).  `Support.shellW1InfGradNorm m j`
-carries **no** base point (it is the gauge on the origin cube `□_m`), so the
-naive invariance `shellW1InfGradNorm m ((translate y ω).1 l) = shellW1InfGradNorm m (ω.1 l)`
-is **not available and is not claimed**: it would assert that every shell's
-`□_m`-supremum of `∇²j` equals its `y+□_m`-supremum, which no property of the
-carrier supplies.  The honest law is that the sample translation replaces the
-shell `j` by `ShellField.translate y j`, i.e. moves the gauge from `□_m` to
-`y+□_m`, which is exactly the first leg of `shellW2InfNormAt y m`.  This is
-what the frozen `𝒢₁(m)` at a centre `y` means, so nothing is blocked; the
-translated gauge is stated here together with its `W̲^{1,∞} ≤ W̲^{2,∞}`
-comparison.  The shell *index* is untouched: translation is spatial only.
-
 ## Consumers
 
 * `mul_sum_indicator_goodEventAt_comp_translate` and
@@ -69,9 +52,8 @@ comparison.  The shell *index* is untouched: translation is spatial only.
   reads: the two clauses of `Frozen.Section4.minimal_scale_separation` at the
   centre `Support.triadicLatticePoint (n-1) z` have the same law as at the
   origin.
-* `measure_lt_comp_translateCutoffSample` and
-  `measurable_fluxCorrectedErrorObservableSup_translate` are what the tail step
-  reads.
+* `measure_lt_comp_translateCutoffSample` is the law-transport estimate used by
+  the tail step.
 
 ## References
 
@@ -96,110 +78,6 @@ The two public observables of `p.mathcalE.annular.decomp` are the ones the
 frozen `minimal_scale_separation` composes with
 `Cutoff.translateCutoffSample`.  All four identities per observable are
 definitional (`rfl`, or `congrArg` over the proved group action). -/
-
-/-- **The translation passes inside the `L`-supremum.**  The shape a per-`L`
-estimate at a translated centre consumes. -/
-theorem fluxCorrectedErrorObservableSup_translate (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) (y : Vec d) (omega : Cutoff.CutoffSample d) :
-    Support.fluxCorrectedErrorObservableSup M m s
-        (Cutoff.translateCutoffSample y omega) =
-      ⨆ L : {L : ℤ // m ≤ L},
-        ENNReal.ofReal
-          (Support.fluxCorrectedErrorRepresentative M L.1 m s
-            (Cutoff.translateCutoffSample y omega)) :=
-  rfl
-
-/-- The observable at the `0`-translated sample is the observable. -/
-theorem fluxCorrectedErrorObservableSup_translate_zero (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
-    Support.fluxCorrectedErrorObservableSup M m s
-        (Cutoff.translateCutoffSample (0 : Vec d) omega) =
-      Support.fluxCorrectedErrorObservableSup M m s omega :=
-  congrArg (Support.fluxCorrectedErrorObservableSup M m s)
-    (translateCutoffSample_zero omega)
-
-/-- Two successive translations of the sample add: the identity a nested
-lattice maximum (a centre inside a coarser centre) consumes. -/
-theorem fluxCorrectedErrorObservableSup_translate_translate (M : ABKModel d)
-    (m : ℤ) (s : {s : ℝ // 0 < s}) (y z : Vec d)
-    (omega : Cutoff.CutoffSample d) :
-    Support.fluxCorrectedErrorObservableSup M m s
-        (Cutoff.translateCutoffSample y (Cutoff.translateCutoffSample z omega)) =
-      Support.fluxCorrectedErrorObservableSup M m s
-        (Cutoff.translateCutoffSample (y + z) omega) :=
-  congrArg (Support.fluxCorrectedErrorObservableSup M m s)
-    (translateCutoffSample_add y z omega)
-
-/-- The observable at a translated sample is measurable in the sample. -/
-theorem measurable_fluxCorrectedErrorObservableSup_translate (M : ABKModel d)
-    (m : ℤ) (s : {s : ℝ // 0 < s}) (y : Vec d) :
-    Measurable fun omega : Cutoff.CutoffSample d =>
-      Support.fluxCorrectedErrorObservableSup M m s
-        (Cutoff.translateCutoffSample y omega) :=
-  (Support.measurable_fluxCorrectedErrorObservableSup M m s).comp
-    (Cutoff.measurable_translateCutoffSample y)
-
-/-- The squared-supremum observable at a translated sample, with the
-translation inside the `L`-supremum. -/
-theorem fluxCorrectedErrorObservableSqSup_translate (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) (y : Vec d) (omega : Cutoff.CutoffSample d) :
-    Support.fluxCorrectedErrorObservableSqSup M m s
-        (Cutoff.translateCutoffSample y omega) =
-      ⨆ L : {L : ℤ // m ≤ L},
-        ENNReal.ofReal
-          (Support.fluxCorrectedErrorRepresentative M L.1 m s
-            (Cutoff.translateCutoffSample y omega) ^ 2) :=
-  rfl
-
-/-- The squared observable at the `0`-translated sample. -/
-theorem fluxCorrectedErrorObservableSqSup_translate_zero (M : ABKModel d)
-    (m : ℤ) (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
-    Support.fluxCorrectedErrorObservableSqSup M m s
-        (Cutoff.translateCutoffSample (0 : Vec d) omega) =
-      Support.fluxCorrectedErrorObservableSqSup M m s omega :=
-  congrArg (Support.fluxCorrectedErrorObservableSqSup M m s)
-    (translateCutoffSample_zero omega)
-
-/-- Two successive translations add, for the squared observable. -/
-theorem fluxCorrectedErrorObservableSqSup_translate_translate (M : ABKModel d)
-    (m : ℤ) (s : {s : ℝ // 0 < s}) (y z : Vec d)
-    (omega : Cutoff.CutoffSample d) :
-    Support.fluxCorrectedErrorObservableSqSup M m s
-        (Cutoff.translateCutoffSample y (Cutoff.translateCutoffSample z omega)) =
-      Support.fluxCorrectedErrorObservableSqSup M m s
-        (Cutoff.translateCutoffSample (y + z) omega) :=
-  congrArg (Support.fluxCorrectedErrorObservableSqSup M m s)
-    (translateCutoffSample_add y z omega)
-
-/-- The squared observable at a translated sample is measurable. -/
-theorem measurable_fluxCorrectedErrorObservableSqSup_translate (M : ABKModel d)
-    (m : ℤ) (s : {s : ℝ // 0 < s}) (y : Vec d) :
-    Measurable fun omega : Cutoff.CutoffSample d =>
-      Support.fluxCorrectedErrorObservableSqSup M m s
-        (Cutoff.translateCutoffSample y omega) :=
-  (Support.measurable_fluxCorrectedErrorObservableSqSup M m s).comp
-    (Cutoff.measurable_translateCutoffSample y)
-
-/-- **Why translating the sample is translating the cube.**  The applied form of
-the proved `Cutoff.coefficientCutoff_translateCutoffSample`: the coefficient
-field of the `y`-translated sample is the coefficient field of the sample read
-at `x + y`.  This is the pointwise covariance that justifies the convention;
-lifting it through the Ch02 error functional is not proved and is not needed by
-any frozen §4 statement (see the module note). -/
-theorem coefficientCutoff_translateCutoffSample_apply (M : ABKModel d) (m : ℤ)
-    (y : Vec d) (omega : Cutoff.CutoffSample d) (x : Vec d) :
-    Cutoff.coefficientCutoff M.nu m (Cutoff.translateCutoffSample y omega) x =
-      Cutoff.coefficientCutoff M.nu m omega (x + y) := by
-  rw [Cutoff.coefficientCutoff_translateCutoffSample, translateReg_apply]
-
-/-! ## 2. The good-event indicator at a translated centre
-
-The frozen `goodEventAt` is preimage-shaped, so an indicator of the event at
-centre `y` composed with the `y`-translated observable is the indicator of the
-*untranslated* event at the translated sample.  This is the workhorse of every
-§4.2 lattice maximum: it turns each summand of
-`minimal_scale_separation` into the origin summand evaluated at
-`translateCutoffSample y ω`. -/
 
 /-- **The indicator-composition identity.**  Verifies and uses the
 preimage shape of the frozen definition (`Api.goodEventAt_eq_preimage`). -/
@@ -234,14 +112,6 @@ theorem indicator_goodEventAt_fluxCorrectedErrorObservableSup (M : ABKModel d)
   indicator_goodEventAt_comp_translate M Ccg m y s ep
     (Support.fluxCorrectedErrorObservableSup M m s) omega
 
-/-- The complement of the frozen event is the preimage of the complement. -/
-theorem compl_goodEventAt_eq_preimage (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (y : Vec d) (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep)ᶜ =
-      Cutoff.translateCutoffSample y ⁻¹'
-        (Support.goodEventBase M Ccg m s ep)ᶜ :=
-  Set.preimage_compl.symm
-
 /-- The indicator-composition identity on the *bad* event. -/
 theorem indicator_compl_goodEventAt_comp_translate {beta : Type*} [Zero beta]
     (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d) (s : {s : ℝ // 0 < s})
@@ -271,133 +141,6 @@ theorem indicator_compl_goodEventAt_one (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
   indicator_compl_goodEventAt_comp_translate M Ccg m y s ep
     (fun _ => (1 : ℝ≥0∞)) omega
 
-/-- Membership at a composed centre: the event at `y + z` read at `ω` is the
-event at `y` read at the `z`-translated sample. -/
-theorem mem_goodEventAt_add_iff (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y z : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) (omega : Cutoff.CutoffSample d) :
-    omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (y + z) s ep ↔
-      Cutoff.translateCutoffSample z omega ∈
-        Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep := by
-  rw [← preimage_translateCutoffSample_goodEventAt M Ccg m y z s ep]
-  exact Iff.rfl
-
-/-- **The iterated-translate indicator identity.**  The summand at the composed
-centre `y + z` read at `ω` is the summand at centre `y` read at the
-`z`-translated sample.  This is the shape a lattice maximum nested inside a
-coarser lattice maximum consumes. -/
-theorem indicator_goodEventAt_add_comp_translate {beta : Type*} [Zero beta]
-    (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y z : Vec d) (s : {s : ℝ // 0 < s})
-    (ep : ℝ) (f : Cutoff.CutoffSample d → beta)
-    (omega : Cutoff.CutoffSample d) :
-    Set.indicator
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (y + z) s ep)
-        (fun omega' => f (Cutoff.translateCutoffSample (y + z) omega')) omega =
-      Set.indicator (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep)
-        (fun omega'' => f (Cutoff.translateCutoffSample y omega''))
-        (Cutoff.translateCutoffSample z omega) := by
-  rw [indicator_goodEventAt_comp_translate M Ccg m (y + z) s ep f omega,
-    indicator_goodEventAt_comp_translate M Ccg m y s ep f
-      (Cutoff.translateCutoffSample z omega), translateCutoffSample_add y z omega]
-
-/-! ## 3. The shell gauges at a translated sample
-
-`ShellNorms.lean`'s two gauges behave differently under
-`translateCutoffSample`, because only the second carries a base point.  The
-shell index is untouched throughout: the action is spatial. -/
-
-/-- The frozen translation action on a single shell composes.  A `private`
-re-proof of `Section3.Provider.Stream.translate_translate`. -/
-private theorem shellField_translate_translate (a b : Vec d) (j : ShellField d) :
-    ShellField.translate a (ShellField.translate b j) =
-      ShellField.translate (a + b) j :=
-  ShellField.ext fun x => by
-    simp only [ShellField.translate_apply, add_assoc]
-
-/-- **The `W̲^{2,∞}` gauge is covariant: the sample translation shifts the base
-point additively.**  `‖j‖_{W̲^{2,∞}(z+□_k)}` of the `y`-translated sample is
-`‖j‖_{W̲^{2,∞}((z+y)+□_k)}` of the sample. -/
-theorem shellW2InfNormAt_translateCutoffSample (y z : Vec d) (k l : ℤ)
-    (omega : Cutoff.CutoffSample d) :
-    Support.shellW2InfNormAt z k
-        ((Cutoff.translateCutoffSample y omega).1 l) =
-      Support.shellW2InfNormAt (z + y) k (omega.1 l) := by
-  show Support.shellW2InfNormAt z k (ShellField.translate y (omega.1 l)) = _
-  rw [Support.shellW2InfNormAt_def, Support.shellW2InfNormAt_def,
-    shellField_translate_translate]
-
-/-- **The `W̲^{1,∞}` gauge has no base point, so it is covariant only through
-the shell.**  The sample translation replaces the shell `j_l` by
-`ShellField.translate y j_l`, i.e. moves the gauge from `□_m` to `y+□_m`; the
-naive invariance in `y` is false. -/
-theorem shellW1InfGradNorm_translateCutoffSample (y : Vec d) (m l : ℤ)
-    (omega : Cutoff.CutoffSample d) :
-    Support.shellW1InfGradNorm m
-        ((Cutoff.translateCutoffSample y omega).1 l) =
-      Support.shellW1InfGradNorm m (ShellField.translate y (omega.1 l)) :=
-  rfl
-
-theorem shellW1InfGradNorm_translateCutoffSample_le_shellW2InfNormAt
-    (y : Vec d) (m l : ℤ) (omega : Cutoff.CutoffSample d) :
-    Support.shellW1InfGradNorm m
-        ((Cutoff.translateCutoffSample y omega).1 l) ≤
-      Support.shellW2InfNormAt y m (omega.1 l) :=
-  Support.shellW1InfGradNorm_translate_le_shellW2InfNormAt y m (omega.1 l)
-
-/-- The triadic lattice `3^j ℤ^d` is closed under addition. -/
-theorem triadicLatticePoint_add (j : ℤ) (v w : Fin d → ℤ) :
-    Support.triadicLatticePoint j v + Support.triadicLatticePoint j w =
-      Support.triadicLatticePoint j (v + w) := by
-  funext i
-  show (3 : ℝ) ^ j * (v i : ℝ) + (3 : ℝ) ^ j * (w i : ℝ) =
-    (3 : ℝ) ^ j * (((v + w) i : ℤ) : ℝ)
-  rw [Pi.add_apply, Int.cast_add]
-  ring
-
-/-- A point of the coarse lattice `3^k ℤ^d` is a point of the finer lattice
-`3^i ℤ^d` whenever `i ≤ k`.  The hypothesis is supplied by `Finset.mem_Icc` at
-every §4.2 consumer (the centre lattice of `minimal_scale_separation` is
-`3^{n-1}ℤ^d` and the inner scales run over `Finset.Icc n m`). -/
-theorem triadicLatticePoint_of_le {i k : ℤ} (hik : i ≤ k) (v : Fin d → ℤ) :
-    Support.triadicLatticePoint k v =
-      Support.triadicLatticePoint i (fun a => 3 ^ (k - i).toNat * v a) := by
-  have hcast : (((k - i).toNat : ℤ)) = k - i := Int.toNat_of_nonneg (by omega)
-  have hsum : i + (k - i) = k := by omega
-  funext a
-  show (3 : ℝ) ^ k * (v a : ℝ) =
-    (3 : ℝ) ^ i * (((3 ^ (k - i).toNat * v a : ℤ) : ℝ))
-  rw [Int.cast_mul, Int.cast_pow, Int.cast_ofNat, ← mul_assoc,
-    ← zpow_natCast (3 : ℝ) (k - i).toNat, hcast,
-    ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), hsum]
-
-/-- **The lattice-maximum shape.**  After a translation by a centre of the
-finer lattice `3^i ℤ^d`, the `W̲^{2,∞}` gauge at a coarse centre
-`3^k v` is the gauge at a single point of `3^i ℤ^d`. -/
-theorem shellW2InfNormAt_triadicLatticePoint_translateCutoffSample {i k : ℤ}
-    (hik : i ≤ k) (v w : Fin d → ℤ) (l : ℤ) (omega : Cutoff.CutoffSample d) :
-    Support.shellW2InfNormAt (Support.triadicLatticePoint k v) k
-        ((Cutoff.translateCutoffSample
-          (Support.triadicLatticePoint i w) omega).1 l) =
-      Support.shellW2InfNormAt
-        (Support.triadicLatticePoint i (fun a => 3 ^ (k - i).toNat * v a + w a))
-        k (omega.1 l) := by
-  rw [shellW2InfNormAt_translateCutoffSample, triadicLatticePoint_of_le hik v,
-    triadicLatticePoint_add]
-  rfl
-
-/-! ## 4. Transport of the law
-
-Thin wrappers over the proved `measurePreserving_translateCutoffSample` of
-`Translate.lean`, composed with the pointwise identities above.  Nothing about
-the measure is re-proved here. -/
-
-/-- Integrals are unchanged by a translation of the sample. -/
-theorem lintegral_comp_translateCutoffSample (M : ABKModel d) (y : Vec d)
-    {f : Cutoff.CutoffSample d → ℝ≥0∞} (hf : Measurable f) :
-    ∫⁻ omega, f (Cutoff.translateCutoffSample y omega)
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure =
-      ∫⁻ omega, f omega ∂(Cutoff.cutoffSampleLaw M).toMeasure :=
-  (measurePreserving_translateCutoffSample M y).lintegral_comp hf
-
 /-- **The level sets of an observable at a translated sample carry the origin
 mass.**  The general form; the two threshold specializations follow. -/
 theorem measure_comp_translateCutoffSample (M : ABKModel d) (y : Vec d)
@@ -407,14 +150,6 @@ theorem measure_comp_translateCutoffSample (M : ABKModel d) (y : Vec d)
         {omega | f (Cutoff.translateCutoffSample y omega) ∈ B} =
       (Cutoff.cutoffSampleLaw M).toMeasure {omega | f omega ∈ B} :=
   measure_preimage_translateCutoffSample M y (hf hB)
-
-/-- The `t ≤ ·` level set transfers. -/
-theorem measure_le_comp_translateCutoffSample (M : ABKModel d) (y : Vec d)
-    {f : Cutoff.CutoffSample d → ℝ≥0∞} (hf : Measurable f) (t : ℝ≥0∞) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | t ≤ f (Cutoff.translateCutoffSample y omega)} =
-      (Cutoff.cutoffSampleLaw M).toMeasure {omega | t ≤ f omega} :=
-  measure_comp_translateCutoffSample M y hf measurableSet_Ici
 
 /-- The `t < ·` level set transfers: the shape a union bound over centres
 consumes: the `Z₁` tail and the `Z₂` centre union. -/

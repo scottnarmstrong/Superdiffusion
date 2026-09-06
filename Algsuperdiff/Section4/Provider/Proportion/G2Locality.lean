@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2Score
 import Algsuperdiff.Section4.Provider.Proportion.TranslatedLocality
@@ -257,11 +257,6 @@ def errorFunctionalAtCube [NeZero d] (M : ABKModel d) (L : ℤ) (Q : TriadicCube
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q
       (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega)
-
-theorem errorFunctionalAtCube_originCube [NeZero d] (M : ABKModel d) (L n : ℤ)
-    (s : ℝ) (sigma : Observable.PositiveScalar) :
-    errorFunctionalAtCube M L (originCube d n) s sigma =
-      Support.cutoffHomogenizationError22Functional M L n s sigma := rfl
 
 private theorem errorFunctional_term_nonneg [NeZero d] (M : ABKModel d) (L : ℤ)
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (sigma : Observable.PositiveScalar)

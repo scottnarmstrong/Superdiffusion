@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.ClauseTwo
 import Algsuperdiff.Section4.Provider.Annular.FinalStitch
@@ -9,8 +9,8 @@ import Algsuperdiff.Section4.Provider.Annular.FinalStitch
 /-!
 # The clause-(i) endpoint with `huglyf` stitched in
 
-`ClauseOneHonestEvent.exists_clauseOne_honest_display` reduced clause (i) to the
-four slots `hpref`, `hpret`, `huglyf`, `huglyt` at the honest event
+The clause-(i) endpoint at the honest event reduces to the four slots
+`hpref`, `hpret`, `huglyf`, `huglyt` at
 `𝒢₀(m) ∩ 𝒢₁(m; s, √c⋆ γ^{−1/2})`.  `FinalStitch` produces the `huglyf` slot from
 the lattice chain, at the annulus family `annularResponseMax`.  This module
 runs the composition, so that the endpoint's remaining inputs are
@@ -21,7 +21,7 @@ runs the composition, so that the endpoint's remaining inputs are
   the relaxed constant `¼`; see `FinalStitch` and `SigmaBarBudget`).
   `SignLowDischarge` removes `hsignlow` from this list.
 
-Three differences from `exists_clauseOne_honest_display`, all forced by the
+Three differences from the un-stitched composite, all forced by the
 producer:
 
 1. `K_tail = 2` and `gradNf = 2 · annularGradBlock` (so `K_gn = 162`).  The
@@ -113,8 +113,8 @@ theorem summable_annFam_two_annularGradBlock_of_eventG1 (M : ABKModel d) (m : �
 /-! ## Part C -- the clause-(i) composite at the lattice-chain pinning -/
 
 /-- **The clause-(i) composite with `Jannf` pinned and `K_tail = 2`.**  This is
-`ClauseOneHonestEvent.clauseOne_bound_of_eventG1` re-run at the pinning the
-lattice chain produces: `gradNf = 2 · annularGradBlock`, `K_gn = 162`,
+the honest-event clause-(i) composite re-run at the pinning the lattice chain
+produces: `gradNf = 2 · annularGradBlock`, `K_gn = 162`,
 `K_tail = 2`, `Jannf = annularResponseMax`.  The output constant is the same
 `clauseOneOutConstant`. -/
 theorem clauseOne_bound_final [NeZero d] (M : ABKModel d) (L m : ℤ)
@@ -250,177 +250,6 @@ theorem clauseOne_bound_final [NeZero d] (M : ABKModel d) (L m : ℤ)
       rw [hid]
       linarith only [hb])
     hCleg hCout1 hCout2 hCout3
-
-/-! ## Part D -- the endpoint -/
-
-/-- **The clause-(i) endpoint with `huglyf` discharged.**
-
-`ClauseOneHonestEvent.exists_clauseOne_honest_display` with its `huglyf` slot
-supplied by the lattice chain (through `FinalStitch`), so that the remaining
-inputs are exactly
-
-* the printed ranges `s ≤ 1/4`, `8γ ≤ s`, `c⋆⁴ ≤ 6`, `1 ≤ |log γ|` and the
-  standing regime `γ ≤ C_shom^{−10} c⋆^{10}`;
-* the typing nondegeneracies `0 < C₁`, `0 < C`, `0 ≤ C_l`, `0 ≤ Jannt` and the
-  constant inequality fixing `C`;
-* the three hypotheses `hpref`, `hpret`, `huglyt`, left as binders here; **and**
-* the two obligations `FinalStitch` does not close, `hsignlow` (at the relaxed
-  constant `¼`, closed downstream in `SignLowDischarge`) and `hlam`.
-
-The `s ≤ 1` of the honest-event endpoint is tightened to `s ≤ 1/4`: that is the
-Section 2.4 window the ugly chain needs, carried honestly and never narrowed
-silently. -/
-theorem exists_clauseOne_final (d : ℕ) (dimension : 2 ≤ d) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ Cs Cshom : ℝ, 0 < Cs ∧ 6 ≤ Cshom ∧
-      ∀ M : ABKModel d,
-        M.gamma ≤ (Cshom ^ (10 : ℕ))⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        ∀ (Ccg : ℝ) (m : ℤ) (s : {s : ℝ // 0 < s}),
-          (s : ℝ) ≤ 1 / 4 → 8 * M.gamma ≤ (s : ℝ) → Disorder.cstar M ^ 4 ≤ 6 →
-          1 ≤ |Real.log M.gamma| →
-        ∀ (Jannt : Cutoff.CutoffSample d → ℤ → ℤ → ℤ → ℝ) (C₁ Cl C : ℝ),
-          0 < C₁ → 0 < C → 0 ≤ Cl →
-          Cs * (1 + 196 * Cl) ^ 2 * 4 * (1 + Cl)
-              + 16 * Cs * (1 + 196 * Cl) ^ 2 * Cl * (1 + centeringConst d ^ 2)
-              + 4 * Cs * (1 + 4 * Cl ^ 2) ≤ C →
-          (∀ omega L j n, 0 ≤ Jannt omega L j n) →
-          (∀ n : ℤ, n ≤ m - 1 →
-            1 / 4 * ((Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹)
-                * (3 : ℝ) ^ (M.gamma * (n : ℝ)))
-              ≤ (Annealed.sigmaBar M (n - 2) : ℝ)) →
-          (∀ omega ∈ Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-            ∀ (n : ℤ) (v : Fin d → ℤ), n ≤ m - 1 →
-              v ∈ Support.latticeAnnulusSet d n m n →
-              (Annealed.sigmaBar M (n - 2) : ℝ) *
-                  (unitCubeLambda (2 * M.gamma) (.finite 2)
-                    (unitRescaledCutoffCoeff M (⟨n, v⟩ : TriadicCube d) (n - 2)
-                      omega))⁻¹ ≤
-                Cl * (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (n : ℝ)))) →
-          (∀ omega ∈ Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-            ∀ L : ℤ, m ≤ L →
-              IsAnnularDecompPre (s : ℝ) m (jLegField M L m omega)
-                (annularResponseMax M L m omega) C₁) →
-          (∀ omega ∈ Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-            ∀ L : ℤ, m ≤ L →
-              IsAnnularDecompPre (s : ℝ) m (jLegTranspose M L m omega)
-                (Jannt omega L) C₁) →
-          (∀ omega ∈ Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-            ∀ L : ℤ, m ≤ L → ∀ j n : ℤ, j ≤ m → n ≤ j - 1 →
-              IsUglyJEstimate (Jannt omega L j n)
-                (annularErrorLatticeMax M s omega j n)
-                (((Annealed.sigmaBar M m : ℝ) *
-                  ((Annealed.sigmaBar M (n - 2) : ℝ))⁻¹ - 1) ^ 2)
-                (annularL2Block M m omega j n)
-                (2 * annularGradBlock M m omega j n + 2 * gradTailSq M m omega)
-                (gradTailSq M m omega) (Disorder.cstar M) M.gamma
-                ((3 : ℝ) ^ ((s : ℝ) * ((m - n : ℤ) : ℝ)))
-                ((3 : ℝ) ^ (((s : ℝ) + M.gamma) * ((m - n : ℤ) : ℝ))) C) →
-        ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          Set.indicator (Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-              (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-            ≤ ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom * (s : ℝ))
-                * clauseOneTermOne M m s omega
-              + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
-                  * ((s : ℝ)⁻¹ ^ (3 : ℕ)) * ((Disorder.cstar M)⁻¹ ^ (4 : ℕ))
-                  * M.gamma ^ 2 * |Real.log M.gamma| ^ 4)
-              + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
-                  * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹ * M.gamma)
-                * clauseOneTermThree M m omega
-              + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
-                  * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹ * M.gamma)
-                * clauseOneTermFour M m s omega := by
-  haveI : NeZero d := ⟨by omega⟩
-  obtain ⟨Cs, hCs, hugly⟩ := exists_uglyJEstimate_annulus_of_eventG1 d dimension
-  obtain ⟨C₀, hC₀6, -, hstate⟩ :=
-    Algsuperdiff.Section4.Provider.GoodEvents.exists_allScalesInductionState_ge d 0
-  obtain ⟨Cshom, hC6, hC₀le, hshomGen⟩ := exists_shomSlot_ge d C₀
-  refine ⟨Cs, Cshom, hCs, hC6, ?_⟩
-  intro M hreg Ccg m s hs14 hsg hcstar4 hlog Jannt C₁ Cl C hC₁ hC0 hCl hCconst
-    hJt0 hsignlow hlam hpref hpret huglyt
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hs1 : (s : ℝ) ≤ 1 := by linarith only [hs14]
-  have hregA : M.gamma ≤ (Cshom⁻¹) ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) := by
-    rwa [inv_pow]
-  have hshom := hshomGen M hregA m
-  have hC₀0 : (0 : ℝ) < C₀ := lt_of_lt_of_le (by norm_num) hC₀6
-  have hregC : M.gamma ≤ (C₀⁻¹) ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregA.trans ?_
-    have hinv : Cshom⁻¹ ≤ C₀⁻¹ := inv_anti₀ hC₀0 hC₀le
-    have h10 : (Cshom⁻¹) ^ (10 : ℕ) ≤ (C₀⁻¹) ^ (10 : ℕ) :=
-      pow_le_pow_left₀ (inv_nonneg.mpr (le_trans hC₀0.le hC₀le)) hinv 10
-    exact mul_le_mul_of_nonneg_right h10 (pow_nonneg hcs0.le 10)
-  obtain ⟨E, -, -, hSall⟩ := hstate M hregC
-  have hbound : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      omega ∈ Support.eventG0 M Ccg m ∩
-          Support.eventG1 M m (s : ℝ)
-            (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹) →
-        clauseOneTermOne M m s omega ≠ ⊤ → ∀ L : ℤ, m ≤ L →
-        IsClauseOneBound (Support.fluxCorrectedError M L m (s : ℝ) omega ^ 2)
-          (annDouble m (fun j n =>
-            (3 : ℝ) ^ (-((s : ℝ) * ((m - n : ℤ) : ℝ)))
-              * annularErrorLatticeMax M s omega j n))
-          (M.gamma ^ 2 * |Real.log M.gamma| ^ 4) (gradTailSq M m omega)
-          (∑' v : ℕ, (3 : ℝ) ^ (-((s : ℝ) / 2) * (v : ℝ))
-            * shellBlockLatticeReal M m omega (m - (v : ℤ)) ^ 2)
-          (s : ℝ) (Disorder.cstar M) M.gamma
-          (clauseOneOutConstant C₁ C 2 Cshom) := by
-    filter_upwards [annularErrorAtomMax_ae_le_annularErrorLatticeMax M s] with
-      omega hae hmem hfin L hL
-    refine clauseOne_bound_final M L m s omega hs1 hsg hcstar4 hlog hmem.2
-      (summable_annFam_error_of_clauseOneTermOne_ne_top M m s omega hfin)
-      hC6 hshom hC₁.le hC0.le (fun j n => hJt0 omega L j n)
-      (hpref omega hmem L hL) (hpret omega hmem L hL) ?_ (huglyt omega hmem L hL)
-    intro j n hjm hnj
-    refine isUglyJEstimate_mono_E2 hC0.le (Real.rpow_nonneg (by norm_num) _)
-      (hae j n hnj) ?_
-    exact hugly M m L m E omega (s : ℝ) Cl C (hSall m) le_rfl hL s.2 hs14 hsg
-      hmem.2 hCl (hlam omega hmem) hsignlow hCconst j n hjm hnj
-  have hdisplay := clauseOne_representative_display_dichotomy M m s
-    (Support.eventG0 M Ccg m ∩
-      Support.eventG1 M m (s : ℝ)
-        (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-    (C := clauseOneOutConstant C₁ C 2 Cshom)
-    (clauseOneOutConstant_pos hC₁ hC0 (by norm_num) hC6) hbound
-  filter_upwards [hdisplay] with omega hom
-  rwa [clauseOneDisplayRhs_eq] at hom
-
-/-! ## Part E -- the clause-(ii) corollary -/
-
-/-- **Clause (ii) off the honest-event clause-(i) display.**  The display is
-restricted from `𝒢₀ ∩ 𝒢₁(m; s, √c⋆ γ^{−1/2})` to the manuscript's own
-`e.lambda.good.events` by `goodEventBase_subset_annularEvent`, and then
-`ClauseTwo.clauseTwo_of_clauseOne_display` fires unchanged. -/
-theorem clauseTwo_of_final_display [NeZero d] (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) {ep C : ℝ} (hC0 : 0 ≤ C)
-    (hep : ep ∈ Set.Ioc (0 : ℝ) (1 / 2)) (hsep : (s : ℝ) * ep ≤ 1)
-    (hsmall : M.gamma * |Real.log M.gamma| ^ 2
-      ≤ (s : ℝ) ^ (3 / 2 : ℝ) * Disorder.cstar M ^ 2 * ep)
-    (hdisp : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.eventG0 M Ccg m ∩
-          Support.eventG1 M m (s : ℝ)
-            (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-          (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ clauseOneDisplayRhs M m s C omega) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.goodEventBase M Ccg m s ep)
-          (Support.fluxCorrectedErrorObservableSup M m s) omega
-        ≤ ENNReal.ofReal (2 * Real.sqrt C * ep) := by
-  refine clauseTwo_of_clauseOne_display M Ccg m s hC0 hep hsmall ?_
-  filter_upwards [hdisp] with omega hom
-  refine le_trans ?_ hom
-  exact Set.indicator_le_indicator_of_subset
-    (goodEventBase_subset_annularEvent M Ccg m s hep.1.le hsep)
-    (fun _a => zero_le _) omega
 
 end
 

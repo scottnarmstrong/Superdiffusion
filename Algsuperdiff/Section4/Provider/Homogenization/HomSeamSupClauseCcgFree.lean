@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSupClauseProvider
 
@@ -10,7 +10,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSupClauseProvider
 
 ## Why the pin has to move
 
-`HomSeamSupClauseProvider.RecutCoreSupplyFluxSupClause` and
+The sup-form clause carrier of `HomSeamSupClauseProvider` and
 `HomSeamSupClauseChain.RecutCoreSupplyFluxEnergySupGrad` hard-code
 `recutPinnedCcgFlux d p` in the clause conjunct.  The route that actually
 PRODUCES the sup-form clause (`HomSpineDepthBandInput`) arrives at its own
@@ -33,9 +33,8 @@ Everything above them (`spineDatumRecutCoreFluxAtHalfSupGrad_of_supply`,
 `spineDatumCoarseGrainingRecutFluxAtHalfSupGrad_of_core_pinned`,
 `spineClauseConst_le_abs_half`) is ALREADY `Ccg`-free and is used verbatim.
 
-`seamMultiscaleSupClauseSupplyAt_pin` is the REGRESSION certificate: at the
-constant function `recutPinnedCcgFlux` the re-cut supply IS the one, by
-`Iff.rfl`.
+The re-thread is a strict widening: at the constant function
+`recutPinnedCcgFlux` the re-cut supply IS the pinned one, by `Iff.rfl`.
 
 ## The budget, made explicit
 
@@ -63,7 +62,7 @@ variable {d : ℕ}
 
 /-- **THE SUP-FORM CLAUSE CARRIER AT A FREE `Ccg`.**
 
-`HomSeamSupClauseProvider.RecutCoreSupplyFluxSupClause` with the numeral pin
+The sup-form clause carrier of `HomSeamSupClauseProvider` with the numeral pin
 `recutPinnedCcgFlux d p` replaced by a parameter.  NOTHING else changes — not a
 binder, not an order, not a constant. -/
 def RecutCoreSupplyFluxSupClauseAt [NeZero d] (M : ABKModel d) (m : ℤ)
@@ -103,15 +102,6 @@ def SeamMultiscaleSupClauseSupplyAt (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)
       ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
         RecutCoreSupplyFluxSupClauseAt M m hd1 hlog (CcgF M) omega
 
-/-- **THE REGRESSION CERTIFICATE.**  At the constant function
-`recutPinnedCcgFlux d p` the re-cut supply IS the supply — the re-thread
-adds a parameter and changes nothing else. -/
-theorem seamMultiscaleSupClauseSupplyAt_pin (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)
-    (cstar gamma0 : ℝ) :
-    SeamMultiscaleSupClauseSupplyAt d hd1 cstar gamma0
-        (fun _ => recutPinnedCcgFlux d (recutExponent d hd1)) ↔
-      SeamMultiscaleSupClauseSupply d hd1 cstar gamma0 := Iff.rfl
-
 /-! ## 2. The supply layer at `CcgF` -/
 
 /-- `HomSeamSupClauseSpine.SeamEnergySupplyOfRegularityGradSupBudget` carried one
@@ -132,8 +122,7 @@ def SeamSupplyFluxAtSupGradBudget (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)
 
 /-- **THE SUPPLY LAYER, FROM THE CLAUSE ALONE.**
 
-`HomSeamSupClauseProvider.seamEnergySupplyGradSupBudget_of_supClause` at a free
-`Ccg`, with the flux-corrected parent identification (already unconditional)
+The supply layer of `HomSeamSupClauseProvider` at a free `Ccg`, with the flux-corrected parent identification (already unconditional)
 appended so that the output is the `Ccg`-free carrier
 `RecutCoreSupplyFluxAtSupGrad`. -/
 theorem seamSupplyFluxAtSupGradBudget_of_supClauseAt (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)
@@ -214,16 +203,11 @@ theorem recutCwHalfEnvelope_affine (d : ℕ) (hd1 : 1 ≤ d) (Ccg Cgap Cen0 : �
   rw [recutCwHalfEnvelope, recutCwHalfEnvelope, seamCwCen0Slope]
   ring
 
-/-- **`K_abs` AT A FREE `Ccg`.**  `HomProviderBSeamAssemblyHalf.recutKabsHalf`
-with the numeral pin freed; `seamKabsAt_pin` records that it IS the term
-at the pin. -/
+/-- **`K_abs` AT A FREE `Ccg`.**  The half-gauge `K_abs`
+with the numeral pin freed; at the pin it IS that term. -/
 def seamKabsAt (d : ℕ) (hd1 : 1 ≤ d) (Cgap Ccg Cen0 : ℝ) : ℝ :=
   (2 * stepFourSchauderConstU d + 288 * (d : ℝ) ^ (2 : ℕ)) *
     recutCwHalfEnvelope d hd1 Ccg Cgap Cen0
-
-theorem seamKabsAt_pin (d : ℕ) (hd1 : 1 ≤ d) (Cgap Cen0 : ℝ) :
-    seamKabsAt d hd1 Cgap (recutPinnedCcgFlux d (recutExponent d hd1)) Cen0 =
-      recutKabsHalf d hd1 Cgap Cen0 := rfl
 
 theorem seamKabsAt_nonneg (d : ℕ) (hd1 : 1 ≤ d) {Cgap Ccg Cen0 : ℝ} (hCcg0 : 0 ≤ Ccg)
     (hCgap : 0 < Cgap) (hCen0 : 0 ≤ Cen0) : 0 ≤ seamKabsAt d hd1 Cgap Ccg Cen0 := by
@@ -290,8 +274,8 @@ theorem seamKabsAt_le_budget (d : ℕ) (hd1 : 1 ≤ d) {Cgap : ℝ} (hCgap : 0 <
 
 /-- **THE BUNDLE, AT A MODEL-DEPENDENT CLAUSE CONSTANT.**
 
-`HomSeamSupClauseSpine.seamBundleOfRegularityHalfSupGradBudget_of_energySupplyGradSupBudget`
-with the numeral pin replaced by `CcgF M`.  The two facts the pin used to
+The budgeted bundle of `HomSeamSupClauseSpine` with the numeral pin replaced by
+`CcgF M`.  The two facts the pin used to
 supply — `0 ≤ Ccg` and `C(p,d) ≤ ofReal Ccg` — become hypotheses; every other
 step is unchanged, because the whole chain above `RecutCoreSupplyFluxAtSupGrad`
 already carries `Ccg` free. -/

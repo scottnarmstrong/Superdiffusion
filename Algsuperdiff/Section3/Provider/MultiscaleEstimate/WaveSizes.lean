@@ -224,8 +224,7 @@ theorem half_le_one_sub_three_rpow_neg {a : ℝ} (ha : 0 < a) (ha1 : a ≤ 1) :
   linarith
 
 /-- **The exponent split of the printed proof**: since `s ≥ 8γ`, `3^{2γ j} 3^{-s j}
-≤ 3^{-(3/4) s j}`, so a quarter of the geometric weight absorbs the `γ`-drift
-recorded in development OQ-9. -/
+≤ 3^{-(3/4) s j}`, so a quarter of the geometric weight absorbs the `γ`-drift. -/
 theorem three_rpow_split {s gamma : ℝ} (hsg : 8 * gamma ≤ s) (j : ℕ) :
     (3 : ℝ) ^ (-s * (j : ℝ)) * (3 : ℝ) ^ (2 * gamma * (j : ℝ)) ≤
       (3 : ℝ) ^ (-(3 / 4 * s) * (j : ℝ)) := by

@@ -1,9 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.Homogenization.HomLiftNegativeNorm
+import Algsuperdiff.Section4.Provider.Homogenization.HomLiftScaleArith
+import Homogenization.Book.Ch03.Definitions
+import Homogenization.Deterministic.WeakNormInterfaces.Definitions
 
 /-!
 # Theorem B, §4.5: the finite-`p` negative Besov carrier
@@ -49,17 +51,10 @@ are load-bearing and are recorded here:
 * `negBesovLpDepthMean` — the depth-`j` `ℓ^p` mean of the grid cell averages,
   `( avsum_{R ∈ D_j} |(F)_R|^p )^{1/p}`;
 * `negBesovLpDepthSeminorm` — its `3^{-sj}` weighted form;
-* `negBesovLpPartialNorm`, `negBesovLpNorm` — the `(p,p)` outer index, in
-  `CoarseGraining`'s partial-sum/`sSup` idiom (`negativeBesovVectorPartialNormFinite`),
-  which needs no summability side hypothesis;
-* `negBesovLpDepthSeminorm_le_of_partialBound` — the outer index collapses:
-  a bound on every partial norm bounds every depth seminorm;
 * `sqrt_vecNormSq_cubeAverageVec_le_of_depthBound` — **THE EXTRACTION**: one
   term of an `ℓ^p` mean over `3^{jd}` cells is at most `3^{jd/p}` times the
   mean, so the per-cell gauge holds at the shifted exponent `s + d/p` and at
-  the SAME constant;
-* `negBesovInftyNorm_le_of_partialBound` — the `p = ∞` gauge at the
-  shifted exponent, i.e. the finite-`p` carrier feeds the carrier verbatim.
+  the SAME constant.
 
 ## References
 
@@ -113,19 +108,6 @@ def negBesovLpDepthMean (Q : TriadicCube d) (p : ℝ) (F : Vec d → Vec d) (j :
 def negBesovLpDepthSeminorm (Q : TriadicCube d) (s p : ℝ) (F : Vec d → Vec d) (j : ℕ) : ℝ :=
   (3 : ℝ) ^ (-s * (j : ℝ)) * negBesovLpDepthMean Q p F j
 
-/-- The finite-depth `(p,p)` partial norm, in `CoarseGraining`'s partial-sum idiom
-(`negativeBesovVectorPartialNormFinite`). -/
-def negBesovLpPartialNorm (Q : TriadicCube d) (s p : ℝ) (N : ℕ) (F : Vec d → Vec d) : ℝ :=
-  (∑ j ∈ Finset.range (N + 1), negBesovLpDepthSeminorm Q s p F j ^ p) ^ (1 / p)
-
-/-- **The `(p,p)` scale-normalized negative Besov gauge**, `3^{-ms}[F]_{B̲^{-s}_{p,p}(□_m)}`.
-
-The outer index is realized as the supremum of the partial norms, exactly as
-`CoarseGraining` realizes its own finite multiscale exponent; this avoids a
-summability side hypothesis, and for nonnegative terms it is the same number. -/
-def negBesovLpNorm (Q : TriadicCube d) (s p : ℝ) (F : Vec d → Vec d) : ℝ :=
-  sSup (Set.range fun N : ℕ => negBesovLpPartialNorm Q s p N F)
-
 theorem negBesovLpDepthMean_def (Q : TriadicCube d) (p : ℝ) (F : Vec d → Vec d) (j : ℕ) :
     negBesovLpDepthMean Q p F j =
       (descendantsAverage Q j fun R =>
@@ -134,14 +116,6 @@ theorem negBesovLpDepthMean_def (Q : TriadicCube d) (p : ℝ) (F : Vec d → Vec
 theorem negBesovLpDepthSeminorm_def (Q : TriadicCube d) (s p : ℝ) (F : Vec d → Vec d) (j : ℕ) :
     negBesovLpDepthSeminorm Q s p F j =
       (3 : ℝ) ^ (-s * (j : ℝ)) * negBesovLpDepthMean Q p F j := rfl
-
-theorem negBesovLpPartialNorm_def (Q : TriadicCube d) (s p : ℝ) (N : ℕ) (F : Vec d → Vec d) :
-    negBesovLpPartialNorm Q s p N F =
-      (∑ j ∈ Finset.range (N + 1), negBesovLpDepthSeminorm Q s p F j ^ p) ^ (1 / p) := rfl
-
-theorem negBesovLpNorm_def (Q : TriadicCube d) (s p : ℝ) (F : Vec d → Vec d) :
-    negBesovLpNorm Q s p F =
-      sSup (Set.range fun N : ℕ => negBesovLpPartialNorm Q s p N F) := rfl
 
 /-! ## 3. Elementary API -/
 
@@ -158,12 +132,6 @@ theorem negBesovLpDepthSeminorm_nonneg (Q : TriadicCube d) (s p : ℝ)
     (F : Vec d → Vec d) (j : ℕ) : 0 ≤ negBesovLpDepthSeminorm Q s p F j :=
   mul_nonneg (three_rpow_nonneg _) (negBesovLpDepthMean_nonneg Q p F j)
 
-theorem negBesovLpPartialNorm_nonneg (Q : TriadicCube d) (s p : ℝ) (N : ℕ)
-    (F : Vec d → Vec d) : 0 ≤ negBesovLpPartialNorm Q s p N F :=
-  Real.rpow_nonneg
-    (Finset.sum_nonneg fun i _ =>
-      Real.rpow_nonneg (negBesovLpDepthSeminorm_nonneg Q s p F i) p) _
-
 /-- The `p`-th power of the depth mean recovers the depth average. -/
 theorem negBesovLpDepthMean_rpow (Q : TriadicCube d) {p : ℝ} (hp : 0 < p)
     (F : Vec d → Vec d) (j : ℕ) :
@@ -172,44 +140,6 @@ theorem negBesovLpDepthMean_rpow (Q : TriadicCube d) {p : ℝ} (hp : 0 < p)
   rw [negBesovLpDepthMean_def,
     ← Real.rpow_mul (descendantsAverage_rpow_nonneg Q p F j),
     one_div_mul_cancel (ne_of_gt hp), Real.rpow_one]
-
-/-! ## 4. The outer index collapses -/
-
-/-- **One depth term is below every partial norm that reaches it.**  This is
-the only property of the `(p,p)` outer index the conversion uses, and it is
-the direction `B^{-s}_{p,p} ↪ B^{-s}_{p,∞}` at constant `1`. -/
-theorem negBesovLpDepthSeminorm_le_negBesovLpPartialNorm (Q : TriadicCube d) {s p : ℝ}
-    (hp : 0 < p) (F : Vec d → Vec d) {j N : ℕ} (hjN : j ≤ N) :
-    negBesovLpDepthSeminorm Q s p F j ≤ negBesovLpPartialNorm Q s p N F := by
-  have hmem : j ∈ Finset.range (N + 1) := Finset.mem_range.mpr (Nat.lt_succ_of_le hjN)
-  have hterm : negBesovLpDepthSeminorm Q s p F j ^ p ≤
-      ∑ i ∈ Finset.range (N + 1), negBesovLpDepthSeminorm Q s p F i ^ p :=
-    Finset.single_le_sum
-      (f := fun i => negBesovLpDepthSeminorm Q s p F i ^ p)
-      (fun i _ => Real.rpow_nonneg (negBesovLpDepthSeminorm_nonneg Q s p F i) p) hmem
-  have hsum : (0 : ℝ) ≤ ∑ i ∈ Finset.range (N + 1), negBesovLpDepthSeminorm Q s p F i ^ p :=
-    Finset.sum_nonneg fun i _ => Real.rpow_nonneg (negBesovLpDepthSeminorm_nonneg Q s p F i) p
-  refine le_of_rpow_le_rpow (negBesovLpDepthSeminorm_nonneg Q s p F j)
-    (Real.rpow_nonneg hsum _) hp ?_
-  rw [negBesovLpPartialNorm_def, ← Real.rpow_mul hsum, one_div_mul_cancel (ne_of_gt hp),
-    Real.rpow_one]
-  exact hterm
-
-/-- **A uniform bound on the partial norms bounds every depth seminorm.**
-This is the shape in which the transcribed source hypothesis is consumed. -/
-theorem negBesovLpDepthSeminorm_le_of_partialBound (Q : TriadicCube d) {s p A : ℝ}
-    (hp : 0 < p) (F : Vec d → Vec d)
-    (h : ∀ N : ℕ, negBesovLpPartialNorm Q s p N F ≤ A) (j : ℕ) :
-    negBesovLpDepthSeminorm Q s p F j ≤ A :=
-  (negBesovLpDepthSeminorm_le_negBesovLpPartialNorm Q hp F (le_refl j)).trans (h j)
-
-/-- The gauge is bounded by any uniform bound on its partial norms. -/
-theorem negBesovLpNorm_le_of_partialBound (Q : TriadicCube d) {s p A : ℝ} (hA : 0 ≤ A)
-    (F : Vec d → Vec d) (h : ∀ N : ℕ, negBesovLpPartialNorm Q s p N F ≤ A) :
-    negBesovLpNorm Q s p F ≤ A := by
-  refine Real.sSup_le ?_ hA
-  rintro x ⟨N, rfl⟩
-  exact h N
 
 /-! ## 5. THE EXTRACTION: one cell out of the `ℓ^p` mean -/
 
@@ -283,47 +213,6 @@ theorem sqrt_vecNormSq_cubeAverageVec_le_of_depthBound {Q : TriadicCube d} {s p 
       (le_of_lt hcard)
   exact le_of_rpow_le_rpow (Real.sqrt_nonneg _)
     (mul_nonneg hA (three_rpow_nonneg _)) hp hgoal
-
-/-! ## 6. The finite-`p` carrier feeds the `p = ∞` carrier -/
-
-/-- **The finite-`p` gauge dominates the `(∞,∞)` gauge at the shifted
-exponent.**
-
-A bound `A` on the `(p,p)` gauge of `F` at order `-s` is a bound `A` on the
-`(∞,∞)` gauge at order `-(s + d/p)`.  Nothing is lost but the exponent shift:
-the constant is unchanged. -/
-theorem negBesovInftyDepthSeminorm_le_of_partialBound {Q : TriadicCube d} {s p A : ℝ}
-    (hp : 0 < p) {F : Vec d → Vec d}
-    (h : ∀ N : ℕ, negBesovLpPartialNorm Q s p N F ≤ A) (j : ℕ) :
-    negBesovInftyDepthSeminorm Q (s + (d : ℝ) / p) F j ≤ A := by
-  have hA : 0 ≤ A :=
-    le_trans (negBesovLpDepthSeminorm_nonneg Q s p F 0)
-      (negBesovLpDepthSeminorm_le_of_partialBound Q hp F h 0)
-  have hbd := negBesovLpDepthSeminorm_le_of_partialBound Q hp F h j
-  have hmax : negBesovInftyDepthMax Q F j ≤ A * (3 : ℝ) ^ ((s + (d : ℝ) / p) * (j : ℝ)) :=
-    negBesovInftyDepthMax_le fun R hR =>
-      sqrt_vecNormSq_cubeAverageVec_le_of_depthBound hp hbd hR
-  rw [negBesovInftyDepthSeminorm_def]
-  have hstep := mul_le_mul_of_nonneg_left hmax
-    (three_rpow_nonneg (-(s + (d : ℝ) / p) * (j : ℝ)))
-  refine hstep.trans (le_of_eq ?_)
-  have hone : (3 : ℝ) ^ (-(s + (d : ℝ) / p) * (j : ℝ)) *
-      (3 : ℝ) ^ ((s + (d : ℝ) / p) * (j : ℝ)) = 1 := by
-    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    have hzero : -(s + (d : ℝ) / p) * (j : ℝ) + (s + (d : ℝ) / p) * (j : ℝ) = 0 := by ring
-    rw [hzero, Real.rpow_zero]
-  calc (3 : ℝ) ^ (-(s + (d : ℝ) / p) * (j : ℝ)) *
-        (A * (3 : ℝ) ^ ((s + (d : ℝ) / p) * (j : ℝ)))
-      = ((3 : ℝ) ^ (-(s + (d : ℝ) / p) * (j : ℝ)) *
-          (3 : ℝ) ^ ((s + (d : ℝ) / p) * (j : ℝ))) * A := by ring
-    _ = A := by rw [hone, one_mul]
-
-/-- The `(∞,∞)` gauge itself, at the shifted exponent. -/
-theorem negBesovInftyNorm_le_of_partialBound {Q : TriadicCube d} {s p A : ℝ}
-    (hp : 0 < p) (hA : 0 ≤ A) {F : Vec d → Vec d}
-    (h : ∀ N : ℕ, negBesovLpPartialNorm Q s p N F ≤ A) :
-    negBesovInftyNorm Q (s + (d : ℝ) / p) F ≤ A :=
-  negBesovInftyNorm_le Q _ F hA (negBesovInftyDepthSeminorm_le_of_partialBound hp h)
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.Book.Ch03.Theorems.GeneralCoarseGrainingL2TwoExponent
 import Algsuperdiff.Section4.Provider.ExcessDecay.StabilityExponentComparison
@@ -198,15 +198,6 @@ theorem constantGradientSeminorm_le_comparisonLHS (Q : TriadicCube d)
   linarith only [hflux]
 
 /-! ## 4. The homogenization error: CoarseGraining's depth maximum vs the development object -/
-
-/-- At depth `j = 0` — the manuscript's `m = n` specialization — CoarseGraining's
-depth-truncated error *is* the one-cube `q = 1` error on `Q`. -/
-theorem coarseGrainingHomogenizationErrorAtDepth_zero [NeZero d] (Q : TriadicCube d)
-    (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d) (r : ℝ) :
-    Ch03.coarseGrainingHomogenizationErrorAtDepth Q a a0 r 0 =
-      Ch02.HomogenizationErrorOnCube Q r .infinity (.finite 1) a a0.matrix := by
-  rw [Ch03.coarseGrainingHomogenizationErrorAtDepth, Ch02.finsetSupReal]
-  simp [descendantsAtDepth]
 
 /-- **CoarseGraining's `q = 1` depth maximum, in the development's `q = 2` one-cube
 object.**

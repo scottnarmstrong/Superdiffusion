@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.KickFamily
 import Algsuperdiff.Section4.Provider.MinimalScale.KickSplit
@@ -306,12 +306,6 @@ def kickTwoConst (d : ℕ) : ℝ := gammaTriangleConst 2 * (8 * Real.sqrt (penal
 /-- The dimensional constant of the `Γ_{1/2}` closed form. -/
 def kickHalfConst (d : ℕ) : ℝ := gammaTriangleConst (1 / 2) * (128 * penaltyBase d ^ 2)
 
-theorem kickTwoConst_pos (d : ℕ) : 0 < kickTwoConst d := by
-  have h1 : (0 : ℝ) < gammaTriangleConst 2 := gammaTriangleConst_pos
-  have h2 : (0 : ℝ) < Real.sqrt (penaltyBase d) := Real.sqrt_pos.2 (penaltyBase_pos d)
-  rw [kickTwoConst]
-  exact mul_pos h1 (by linarith only [h2])
-
 theorem kickHalfConst_pos (d : ℕ) : 0 < kickHalfConst d := by
   have h1 : (0 : ℝ) < gammaTriangleConst (1 / 2) := gammaTriangleConst_pos
   have h2 : (0 : ℝ) < penaltyBase d ^ 2 := pow_pos (penaltyBase_pos d) 2
@@ -431,8 +425,7 @@ X_j^{(2)} = annularKick_j − min(annularKick_j, lam) ≤ 𝒪_{Γ_{1/2}}(C exp(
 ```
 
 and `X_j^{(1)} + X_j^{(2)} = annularKick_j` exactly.  The `r`-dependence of the
-pair is `KickFamily.iIndepFun_kickLegPair_of_rDependent`, which needs nothing
-from here.
+pair is settled in `KickFamily`, which needs nothing from here.
 
 `s^{−5/2}` is written `((√s)⁵)⁻¹`, so that no `rpow` appears in the statement.
 

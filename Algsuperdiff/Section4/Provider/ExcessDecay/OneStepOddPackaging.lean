@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepOddPackagingCore
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionAssembly
@@ -23,9 +23,9 @@ import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionAssembly
 
 * `exists_h1Function_oddFaceExtend` — the packaged existence: an `H1Function U`
   whose `toFun`/`grad` are **pointwise** the odd extension pair, i.e. verbatim
-  the `hwval` (at `c₀ = 0`) and `hwgrad` slots of
-  `OneStepOddCompose.exists_classicalCompetitor_gradientHolder_boundary_odd_of_meets*Face`
-  and the `hw` slot of the proved transfers.
+  the `hwval` (at `c₀ = 0`) and `hwgrad` slots the boundary branch's odd
+  producer asks for at one met face, and the `hw` slot of the proved
+  transfers.
 
 * `localizedZeroTraceFunctionOn_oddFaceExtend` — the stage-to-stage transport:
   the odd extension inherits face-only zero trace on the larger box, from the
@@ -452,9 +452,8 @@ theorem h1FunctionOfSetEq_toFun {U V : Set (Vec d)} (h : U = V) (u : H1Function 
 /-- ** A on the windows, upper met face.**  `V = (x+□_k) ∩ □_m` meets exactly the
 upper `i`-face of `∂□_m`; a face-vanishing `v ∈ H¹(V)` produces the `H¹` datum
 of the reflected window with `toFun`/`grad` pinned pointwise to the odd
-extension pair — the exact `hwval` (`c₀ = 0`) and `hwgrad` slots of
-`OneStepOddCompose.exists_classicalCompetitor_gradientHolder_boundary_odd_of_meetsUpperFace`
-and the `hw` slot of
+extension pair — the exact `hwval` (`c₀ = 0`) and `hwgrad` slots the boundary
+branch's odd producer asks for, and the `hw` slot of
 `OddReflectionAssembly.isWeaklyHarmonicOn_reflectedWindow_of_meetsUpperFace`. -/
 theorem exists_h1_oddFaceReflection_of_meetsUpperFace {x : Vec d} {m k : ℤ}
     (hkm : k < m) {i : Fin d} (hup : MeetsUpperFace x m k i)

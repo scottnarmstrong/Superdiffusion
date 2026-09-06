@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringGeometry
 
@@ -59,113 +59,14 @@ variable {d : ℕ}
 
 /-! ## 1. Two open cubes of the same scale -/
 
-/-- If a real number can be shifted by every element of `(-H, H)` and stay in
-`(-H, H)`, it is zero. -/
-private theorem eq_zero_of_shift_bounds {H delta : ℝ} (hH : 0 < H)
-    (h : ∀ t : ℝ, -H < t → t < H → -H < delta + t ∧ delta + t < H) : delta = 0 := by
-  rcases lt_trichotomy delta 0 with hd | hd | hd
-  · exfalso
-    rcases le_or_gt H (-delta) with hb | hb
-    · have hzero := (h 0 (by linarith only [hH]) hH).1
-      linarith only [hzero, hb]
-    · have h1 : -H < -H + (-delta) / 2 := by linarith only [hd]
-      have h2 : -H + (-delta) / 2 < H := by linarith only [hb, hH]
-      have hstep := (h (-H + (-delta) / 2) h1 h2).1
-      linarith only [hstep, hd]
-  · exact hd
-  · exfalso
-    rcases le_or_gt H delta with hb | hb
-    · have hzero := (h 0 (by linarith only [hH]) hH).2
-      linarith only [hzero, hb]
-    · have h1 : -H < H - delta / 2 := by linarith only [hb, hH]
-      have h2 : H - delta / 2 < H := by linarith only [hd]
-      have hstep := (h (H - delta / 2) h1 h2).2
-      linarith only [hstep, hd]
-
 /-- Half the side of `□_j` is positive. -/
 private theorem half_three_zpow_pos (j : ℤ) : (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ j := by
   have h3 : (0 : ℝ) < (3 : ℝ) ^ j := zpow_pos (by norm_num) j
   linarith only [h3]
 
-/-- **Same-scale translates are nested only when equal.**
-
-`a + □_j ⊆ b + □_j` forces `a = b`.  This is the geometric core: the
-boundary covering cube and the good-event slot's cube have the *same* scale
-`n+2`, so one sits inside the other only in the degenerate case. -/
-theorem eq_of_image_add_openCubeSet_subset {j : ℤ} {a b : Vec d}
-    (h : (fun y => a + y) '' openCubeSet (originCube d j) ⊆
-      (fun y => b + y) '' openCubeSet (originCube d j)) : a = b := by
-  classical
-  funext i
-  have hH : (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ j := half_three_zpow_pos j
-  have hkey : a i - b i = 0 := by
-    refine eq_zero_of_shift_bounds hH (fun t ht1 ht2 => ?_)
-    have hmem : Pi.single i t ∈ openCubeSet (originCube d j) := by
-      rw [mem_openCubeSet_originCube_iff]
-      intro l
-      by_cases hl : l = i
-      · subst hl
-        rw [Pi.single_eq_same]
-        exact ⟨by linarith only [ht1], by linarith only [ht2]⟩
-      · rw [Pi.single_eq_of_ne hl]
-        exact ⟨by linarith only [hH], hH⟩
-    have hp : a + Pi.single i t ∈ (fun y => a + y) '' openCubeSet (originCube d j) :=
-      ⟨Pi.single i t, hmem, rfl⟩
-    have hq := h hp
-    rw [mem_image_add_iff, mem_openCubeSet_originCube_iff] at hq
-    have hqi := hq i
-    simp only [Pi.sub_apply, Pi.add_apply, Pi.single_eq_same] at hqi
-    exact ⟨by linarith only [hqi.1], by linarith only [hqi.2]⟩
-  linarith only [hkey]
-
 /-! ## 2. The frontier gate from a containment in `□_m` -/
 
-/-- A set contained in the *open* cube `□_m` misses `∂□_m`. -/
-theorem inter_frontier_eq_empty_of_subset_openCubeSet {m : ℤ} {S : Set (Vec d)}
-    (h : S ⊆ openCubeSet (originCube d m)) :
-    S ∩ frontier (openCubeSet (originCube d m)) = ∅ := by
-  have hopen : IsOpen (openCubeSet (originCube d m)) := isOpen_openCubeSet _
-  refine Set.eq_empty_of_subset_empty ?_
-  rw [← hopen.inter_frontier_eq]
-  exact Set.inter_subset_inter_left _ h
-
 /-! ## 3. The obstruction -/
-
-/-- **The obstruction.**
-
-If some centre `c` has its covering cube `c + □_{n+2}` inside the anchor's domain
-`□_m` *and* inside the good-event slot's cube `z + □_{n+2}`, then the anchor's own
-**interior gate** holds.
-
-Read contrapositively: on the boundary branch — the one the interior chain
-(`GeneralClauseInteriorFinal`) leaves open, where `(z+□_{n+2}) ∩ ∂□_m ≠ ∅` —
-every admissible covering cube of the covering scale leaves the slot cube.
-Since every proved transport of the flux-corrected error to an off-grid cube
-(`OffGridComposeAssembly`, `OffGridErrorFluxCorrected`) requires the off-grid
-cube to be *contained* in the grid cube carrying the error, the good event
-`𝒢(n+2, z; s/8, 1/2)` cannot supply the covering cube's ellipticity data. -/
-theorem gate_of_coveringCube_subset_slot {k m : ℤ} {c z : Vec d}
-    (hdom : (fun y => c + y) '' openCubeSet (originCube d k) ⊆
-      openCubeSet (originCube d m))
-    (hslot : (fun y => c + y) '' openCubeSet (originCube d k) ⊆
-      (fun y => z + y) '' openCubeSet (originCube d k)) :
-    ((fun y => z + y) '' openCubeSet (originCube d k)) ∩
-      frontier (openCubeSet (originCube d m)) = ∅ := by
-  have hcz : c = z := eq_of_image_add_openCubeSet_subset hslot
-  refine inter_frontier_eq_empty_of_subset_openCubeSet ?_
-  rw [← hcz]
-  exact hdom
-
-/-- The obstruction at the boundary lane's own covering cube: the well-placed
-cube always satisfies the domain requirement, so the slot containment alone
-forces the interior gate. -/
-theorem gate_of_wellPlacedCentre_subset_slot {k m : ℤ} {x z : Vec d} (hkm : k ≤ m)
-    (hslot : (fun y => wellPlacedCentre x m k + y) '' openCubeSet (originCube d k) ⊆
-      (fun y => z + y) '' openCubeSet (originCube d k)) :
-    ((fun y => z + y) '' openCubeSet (originCube d k)) ∩
-      frontier (openCubeSet (originCube d m)) = ∅ :=
-  gate_of_coveringCube_subset_slot
-    (image_add_wellPlacedCentre_subset_openCubeSet x hkm) hslot
 
 /-! ## 4. The positive half: the covering cube fits one scale up -/
 

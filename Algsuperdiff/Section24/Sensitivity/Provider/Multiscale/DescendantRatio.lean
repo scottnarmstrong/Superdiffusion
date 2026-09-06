@@ -19,7 +19,7 @@ differentiable.  Only per-cube ratio estimates enter.
 
 Every declaration is an internal helper for the Section 2.4 sensitivity
 providers.  The hypothesis `hdesc` is the per-cube analytic input supplied by
-the neighbouring packets; it must be discharged at every application.
+the neighbouring modules; it must be discharged at every application.
 -/
 
 namespace Algsuperdiff.Section24.Sensitivity.Provider.Multiscale

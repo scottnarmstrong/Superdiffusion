@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ForcingCorrection
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoarseGrainingL2Interior
@@ -78,45 +78,6 @@ theorem replacementDefect_grad (a : Ch03.CoeffFamily d)
   rw [replacementDefect, H10Function.toCubeSet_toH1Function_grad,
     coarseGrainingDatum_u, coarseGrainingDatum_v]
   exact dirichletCorrector_grad_eq_sub a0 u hg x
-
-theorem replacementDefect_toFun (a0 : Ch03.ConstantCoeffMatrix d)
-    (u : H1Function (openCubeSet Q)) {g : Vec d → Vec d}
-    (hg : MemVectorL2 (openCubeSet Q) g) (x : Vec d) :
-    (replacementDefect a0 u hg).toH1Function.toFun x =
-      u.toFun x - (forcedReplacement a0 u hg).toFun x := by
-  rw [replacementDefect, H10Function.toCubeSet_toH1Function_toFun]
-  exact dirichletCorrector_toFun_eq_sub a0 u hg x
-
-/-! ## 3. The coarse-graining leg at the §4.3 slot, from the equation alone -/
-
-/-- For `0 < σ̄`, `0 < s ≤ 1`, `g ∈ L²(W) ∩ H^s(W)` and `u` solving
-`−∇·a∇u = ∇·g` weakly on `W = openCubeSet Q`:
-
-```text
-  σ̄ · 3^{-scale(Q)} ‖u − v_g‖_{L̲²(Q)}
-      ≤ 3 C_neg(d) C_cg(d) ·
-          ( (1024/3) s^{-4} · (energy term)
-          + (16384/3) s^{-6} · (forcing term) ) ,
-```
-
-with `v_g` the auxiliary solution `forcedReplacement`. -/
-theorem coarseGraining_l2_slot_le_of_isForcedEquation {a : Ch03.CoeffFamily d}
-    {sigma0 : ℝ} (hsigma0 : 0 < sigma0) {u : H1Function (openCubeSet Q)}
-    {g : Vec d → Vec d} (hu : Ch03.IsForcedEquation Q a u g)
-    (hgL2 : MemVectorL2 (openCubeSet Q) g) {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
-    (hg : Ch03.ForceBesovRegularity Q s g) :
-    sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-        cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-          (replacementDefect (scalarComparator hsigma0) u hgL2).toH1Function.toFun x) ≤
-      3 * negNormBaseConst d * coarseGrainingP2Const d *
-        ((1024 / 3) * (s⁻¹) ^ (4 : ℕ) *
-            coarseGrainingEnergyTerm Q a (scalarComparator hsigma0) (s / 4) u +
-          (16384 / 3) * (s⁻¹) ^ (6 : ℕ) *
-            coarseGrainingForceTerm Q a (scalarComparator hsigma0) (s / 4) s g) :=
-  coarseGraining_l2_slot_le hsigma0
-    (coarseGrainingDatum a (scalarComparator hsigma0) hu hgL2)
-    (replacementDefect (scalarComparator hsigma0) u hgL2)
-    (replacementDefect_grad a (scalarComparator hsigma0) hu hgL2) hs hs1 hg
 
 end
 

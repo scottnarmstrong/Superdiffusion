@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.ClauseOneHonestEvent
 import Algsuperdiff.Section4.Provider.Annular.UglyLatticeChain
@@ -48,8 +48,6 @@ bounded by an absolute constant, with **no `s`-dependence anywhere**.
 * `shellGaugeHead_le_of_eventG1` / `shellGaugeTail_le_of_eventG1` /
   `shellGauge_le_of_eventG1` — the head block `(n−2, m]`, the tail block
   `(m, L]` and their sum.
-* `summable_shellW1InfGradNorm_tail_of_eventG1` — the raw tail summability the
-  lattice chain's composition consumes.
 -/
 
 namespace Algsuperdiff.Section4.Provider.Annular
@@ -383,18 +381,6 @@ theorem shellGaugeHead_le_of_eventG1 (M : ABKModel d) (m : ℤ) {s T : ℝ}
 
 /-! ## Part F -- the tail block `(m, L]` and the raw tail summability -/
 
-/-- **The raw tail summability**, the `hsum` slot of the lattice-chain
-composition: the `𝒢₁ᵃ` reading with the fixed weight `3^{(2−γ)m}` divided out. -/
-theorem summable_shellW1InfGradNorm_tail_of_eventG1 (M : ABKModel d) (m : ℤ)
-    {s T : ℝ} {omega : Cutoff.CutoffSample d}
-    (homega : omega ∈ Support.eventG1 M m s T) :
-    Summable fun k : {k : ℤ // m ≤ k} => Support.shellW1InfGradNorm m (omega.1 k.1) := by
-  have hc : (0 : ℝ) < (3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ)) := by positivity
-  have h := (summable_gradTail_of_eventG1 M m homega).mul_left
-    ((3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ)))⁻¹
-  refine h.congr fun k => ?_
-  exact inv_mul_cancel_left₀ (ne_of_gt hc) _
-
 /-- The weighted layer sum over `(m, b]` sits below the full `𝒢₁ᵃ` tail sum,
 i.e. below `√(gradTailSq)`.  This is the form the fifth (`gradM`) slot of
 `e.ugly.estimate.for.J` consumes. -/
@@ -420,16 +406,6 @@ theorem sum_gradTailFam_Ioc_le_tsum (M : ABKModel d) (m : ℤ) {s T : ℝ}
     Finset.filter_true_of_mem
       (fun l hl => by rw [Finset.mem_Ioc] at hl; omega)] at hle
   rwa [← Finset.mul_sum] at hle
-
-/-- The `𝒢₁ᵃ` reading at the raw gauge: the whole `k ≥ m` shell tail of
-`‖∇j_k‖_{W̲^{1,∞}(□_m)}` is at most `3^{−(2−γ)m} T`. -/
-theorem sum_shellW1InfGradNorm_Ioc_le_of_eventG1 (M : ABKModel d) (m : ℤ)
-    {s T : ℝ} (hT : 0 ≤ T) {omega : Cutoff.CutoffSample d}
-    (homega : omega ∈ Support.eventG1 M m s T) (b : ℤ) :
-    (3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ)) *
-        ∑ l ∈ Finset.Ioc m b, Support.shellW1InfGradNorm m (omega.1 l) ≤ T :=
-  (sum_gradTailFam_Ioc_le_tsum M m homega b).trans
-    (tsum_gradTail_le_of_eventG1 M m hT homega)
 
 /-- **The tail block of the Step-2 gauge budget.**  The layers above `m` are
 transported to scale `m` by the cross-scale comparison and then absorbed by the

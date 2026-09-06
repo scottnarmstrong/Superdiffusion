@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.RatioTailClosed
 import Algsuperdiff.Section4.Provider.Proportion.ShiftedConcentration
@@ -12,8 +12,8 @@ import Algsuperdiff.Section4.Provider.Proportion.ShiftedConcentration
 ABK26, §4.1, `e.no.bad.scales.applied.for.lambdas` for the `𝒢₀` lane, on the
 window `{m₀,…,m₀+n}` rather than `{0,…,n}`.
 
-The proved `RatioTailUniform.exists_ratioTail_eventG0_uniform` is stated for
-the base-`0` window that `IndicatorDensity.scaleProp` hard-codes.  Downstream
+The level-uniform `𝒢₀` endpoint is stated for the base-`0` window that
+`IndicatorDensity.scaleProp` hard-codes.  Downstream
 consumers read the proportion over a window that starts at an arbitrary scale
 `m₀`, and the manuscript's own reduction is "translate the array".
 `ShiftedConcentration` carries out that translation once and generically; this
@@ -24,8 +24,8 @@ module feeds the `𝒢₀` lane's array and event family through it.
 * `hreduce_eventG0_all` — the proved deterministic reduction of the `𝒢₀` bad
   event into the Appendix-D threshold event, at **every** scale `m : ℤ`.
 * `ratioTail_Ycal_shift` — the `𝒢₀`-lane proportion tail engine on the window
-  `{m₀,…,m₀+n}`: the hypothesis list of `Concentration.ratioTail_Ycal`, with the
-  deterministic reduction asked at every `m : ℤ`.
+  `{m₀,…,m₀+n}`: the base-`0` hypothesis list, with the deterministic reduction
+  asked at every `m : ℤ`.
 * `exists_ratioTail_eventG0_uniform_shift` — the level-uniform endpoint on the
   window `{m₀,…,m₀+n}`, with the constant `C(d)` and the range `r(d)` chosen
   before `M`, before `θ` and before the base `m₀`.
@@ -80,17 +80,14 @@ private theorem exp_neg_le_eight {w : ℝ} (hw : 0 < w) :
 
 /-! ## 2. The deterministic reduction, at every scale
 
-`RowSumFinite.hreduce_eventG0` carries a binder `0 ≤ m` that its proof never
-touches, but a caller must still supply it, so it cannot be instantiated at a
-negative scale.  A window based at `m₀ < 0` needs exactly that.  The statement
-below is the proved reduction with the unused `0 ≤ m` binder dropped; the proof
-is unchanged, since `RowSumFinite.lt_Yk_of_notMem_eventG0` carries no sign
-condition on `m`. -/
+A window based at `m₀ < 0` needs the deterministic reduction of the `𝒢₀` bad
+event at negative scales.  The statement below carries no sign condition on `m`,
+which costs nothing: `RowSumFinite.lt_Yk_of_notMem_eventG0` carries none
+either. -/
 
-/-- **The `hreduce` slot at every scale `m : ℤ`.**  The proved
-`RowSumFinite.hreduce_eventG0` with its unused `0 ≤ m` binder dropped.  `hthr`
-is the manuscript's own threshold identification: the Appendix-D level `9
-s'^{-1} C_⋆^{1/p} θ^{-1/p}` must sit below the normalizer's reciprocal. -/
+/-- **The `hreduce` slot at every scale `m : ℤ`.**  `hthr` is the manuscript's
+own threshold identification: the Appendix-D level `9 s'^{-1} C_⋆^{1/p}
+θ^{-1/p}` must sit below the normalizer's reciprocal. -/
 theorem hreduce_eventG0_all {d : ℕ} (M : ABKModel d) (Ccg : ℝ) {p theta D : ℝ}
     (hD : 0 < D)
     (hthr : 9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) ≤ D⁻¹)
@@ -108,7 +105,7 @@ theorem hreduce_eventG0_all {d : ℕ} (M : ABKModel d) (Ccg : ℝ) {p theta D : 
 
 /-- **The `𝒢₀`-lane proportion tail on the window `{m₀,…,m₀+n}`.**
 
-The hypothesis list of `Concentration.ratioTail_Ycal`, with two changes: an extra
+The base-`0` hypothesis list of the `𝒢₀` engine, with two changes: an extra
 base scale `m₀ : ℤ`, and the deterministic reduction `hreduce` asked at **every**
 scale `m : ℤ` rather than only at `m ≥ 0` (`hreduce_eventG0_all` supplies exactly
 that for the `𝒢₀` lane).  The conclusion is the same tail bound
@@ -160,8 +157,8 @@ theorem ratioTail_Ycal_shift {d : ℕ} (M : ABKModel d) (Ccg sprime D : ℝ)
 
 /-! ## 4. The level-uniform endpoint on a window based at `m₀` -/
 
-/-- Identical to `RatioTailUniform.exists_ratioTail_eventG0_uniform` except that the
-proportion is read over the window based at `m₀`.  The base scale is quantified
+/-- The level-uniform `𝒢₀` endpoint, with the proportion read over the window
+based at `m₀`.  The base scale is quantified
 last, after `r`, `C`, the model `M`, the level `θ`, the coupling `C⁹γ² ≤ θc⋆⁸`
 and the rate `c₁`, so no constant in the statement depends on it.
 
@@ -177,8 +174,8 @@ by the `θ`-free floors
 with `L = log(3r) + r` and
 `G₀(d) = 36(1+C_⋆)·gammaMomentConst(1/3)·gammaTriangleConst(1/3)·penaltyNormalizer d`.
 Only the final step differs from the base-`0` proof: the engine is
-`ratioTail_Ycal_shift` instead of `ratioTail_Ycal`, and the reduction is
-`hreduce_eventG0_all` instead of its `0 ≤ m` restriction. -/
+`ratioTail_Ycal_shift` and the reduction is `hreduce_eventG0_all`, neither of
+which restricts the scale to `m ≥ 0`. -/
 theorem exists_ratioTail_eventG0_uniform_shift (d : ℕ) :
     ∃ r : ℕ, 1 ≤ r ∧ ∃ C : ℝ, 6 ≤ C ∧
       ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →

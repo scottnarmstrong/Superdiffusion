@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDepthStraddleMeasure
 
@@ -129,8 +129,8 @@ theorem dist_lt_cubeScaleFactor {Q : TriadicCube d} {x y : Vec d}
 
 /-- **THE SEPARATION FOR THE NEAR BANDS.**  If the depth-`j` slice takes
 different values at `x` and at a point within `t·(cell side)` of `x`, then `x`
-lies in the depth-`j` skeleton layer of normalized thickness `t` — whose measure
-`normalizedCubeMeasure_biUnion_cubeBoundaryLayer_le` bounds by `2·d·t`. -/
+lies in the depth-`j` skeleton layer of normalized thickness `t`, whose
+normalized measure is at most `2·d·t`. -/
 theorem mem_biUnion_cubeBoundaryLayer_of_gridDualDepthTest_ne (Q : TriadicCube d) (j : ℕ)
     (v : TriadicCube d → Vec d) {t : ℝ} (ht : 0 ≤ t) {x y : Vec d} (hx : x ∈ cubeSet Q)
     (hne : gridDualDepthTest Q j v y ≠ gridDualDepthTest Q j v x)

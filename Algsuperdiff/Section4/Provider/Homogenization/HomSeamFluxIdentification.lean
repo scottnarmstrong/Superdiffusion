@@ -1,10 +1,12 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
+import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxLane
+import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxLevelChain
+import Algsuperdiff.Section4.Provider.Homogenization.HomSpineResidueCore
 import Algsuperdiff.Section4.Support.FluxCorrectedTwoScaleCarrier
-import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxCoreSupply
 
 /-!
 # The coefficient input of the `ã` seam, PRODUCED
@@ -49,11 +51,9 @@ obstructions are settled as follows.
 
 ## What is supplied downstream
 
-`RecutCoreSupplyFluxEnergy` is `HomSeamFluxCoreSupply.RecutCoreSupplyFlux` with
-the identification conjunct removed — exactly the remaining residue —
-and `recutCoreSupplyFlux_of_energy` re-attaches the conjunct by one
-application.  `ae_recutCoreSupplyFlux_of_energy` states the a.e. event ONCE, on
-the one measure `cutoffSampleLaw M`.
+`ae_fluxCorrectedParentIdentification` states the identification event ONCE, on
+the one measure `cutoffSampleLaw M`; a residue carrying every other conjunct
+re-attaches it by a single application.
 -/
 
 open Algsuperdiff.Section3
@@ -89,75 +89,6 @@ theorem ae_fluxCorrectedParentIdentification [NeZero d] (M : ABKModel d) (m : �
     with omega homega L hL t
   rw [homega L hL t]
   exact le_fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) ⟨t.1, t.2.1⟩ omega hL
-
-/-! ## 2. The supply interface -/
-
-/-- **The remaining residue**: `RecutCoreSupplyFlux` with the
-coefficient conjunct removed.  Every other character of the statement is
-byte-identical to the supply, including the `σ̄_m` pin. -/
-def RecutCoreSupplyFluxEnergy [NeZero d] (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
-    (omega : Cutoff.CutoffSample d) : Prop :=
-  ∀ L : ℤ, m ≤ L →
-    ∀ (u v h : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d)
-      (Kg Kh KhInf : ℝ),
-      IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-        (originCube d m) u h g →
-      IsDirichletSolutionOn (fun _ => ((Annealed.sigmaBar M m : ℝ)) • (1 : Mat d))
-        (originCube d m) v h g →
-      HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kg g →
-      HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kh h.grad →
-      (∀ x ∈ openCubeSet (originCube d m), ‖h.grad x‖ ≤ KhInf) →
-      ∃ (S : ℝ) (Fflux : Vec d → Vec d),
-        0 ≤ S ∧
-        (∀ N : ℕ,
-          coarseGrainingEnergyPartial (originCube d m)
-              (recutExponent d hd1).exponent.toReal (homS M - homS M / 4) (homK M) N
-              (printedLocalEnergy (fluxCorrectedCoeffOn M L m (originCube d m) omega) u) ≤
-            S) ∧
-        S ≤ Cen0 * recutEnergyFactor M Y m omega *
-            energyBracket ((Annealed.sigmaBar M m : ℝ))
-              (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh ∧
-        (∀ G : Vec d → Vec d,
-          (∀ x ∈ openCubeSet (originCube d m), G x = u.grad x - v.grad x) →
-          CoarseGrainingFinitePMultiscale (originCube d m) (homK M)
-            (recutPinnedCcgFlux d (recutExponent d hd1)) (homS M) (homS M / 4)
-            (recutOrderTop : FractionalOrder).1 (recutExponent d hd1).exponent.toReal
-            ((Annealed.sigmaBar M m : ℝ))
-            (recutPinnedE1Flux M L omega m (homK M) (Annealed.sigmaBar M m).2
-              (recutOrderBase M hlog))
-            (recutPinnedE2Flux M L omega m (homK M) (Annealed.sigmaBar M m).2
-              (recutOrderBase M hlog))
-            (recutPinnedDg m recutOrderTop (recutExponent d hd1) g)
-            (printedLocalEnergy (fluxCorrectedCoeffOn M L m (originCube d m) omega) u)
-            G Fflux)
-
-/-- **THE ONE-APPLICATION HANDOFF.**  The energy residue plus the coefficient
-input IS the supply, in exactly the shape
-`HomSeamFluxCoreSupply.spineDatumRecutCoreFlux_of_supply` consumes. -/
-theorem recutCoreSupplyFlux_of_energy [NeZero d] (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|) (omega : Cutoff.CutoffSample d)
-    (henergy : RecutCoreSupplyFluxEnergy M Y m Cen0 hd1 hlog omega)
-    (hid : FluxCorrectedParentIdentification M m (homK M) omega) :
-    RecutCoreSupplyFlux M Y m Cen0 hd1 hlog omega := by
-  intro L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf
-  obtain ⟨S, Fflux, hS0, hS, hSbound, hCGm⟩ :=
-    henergy L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf
-  exact ⟨S, Fflux, hS0, hS, hSbound, hCGm, hid⟩
-
-/-- **THE SUPPLY, A.E.**  One theorem, one measure: whenever the energy residue
-holds almost surely, the full `ã` supply does. -/
-theorem ae_recutCoreSupplyFlux_of_energy [NeZero d] (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
-    (henergy : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      RecutCoreSupplyFluxEnergy M Y m Cen0 hd1 hlog omega) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      RecutCoreSupplyFlux M Y m Cen0 hd1 hlog omega := by
-  filter_upwards [henergy, ae_fluxCorrectedParentIdentification M m] with omega he hi
-  exact recutCoreSupplyFlux_of_energy M Y m Cen0 hd1 hlog omega he hi
 
 end
 

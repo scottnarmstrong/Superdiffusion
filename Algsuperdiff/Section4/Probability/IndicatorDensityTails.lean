@@ -60,14 +60,14 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 
 /-- The Appendix-D count event at window `{0,…,M}` and level `θ`: the proportion of
 rows `k ≤ M` whose weighted row sum `Y_k` exceeds the threshold
-`9 s⁻¹ C^{1/p} θ^{-1/p}` is more than `θ`.  This is the left-hand side of
-`p_concentration_for_scales`. -/
+`9 s⁻¹ C^{1/p} θ^{-1/p}` is more than `θ`.  This is the left-hand side of the
+Appendix-D concentration bound. -/
 def concEvent (X : ℤ → ℤ → Ω → ℝ) (p s' θ C : ℝ) (M : ℕ) : Set Ω :=
   {ω | θ < (1 / ((M : ℝ) + 1)) *
       ∑ k ∈ Finset.Icc (0 : ℤ) (M : ℤ),
         (if 9 * s'⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s' k ω then (1 : ℝ) else 0)}
 
-/-- **Fixed-level form of `badProp_bound_of_concentration`.**  The density of bad
+/-- **Fixed-level form of the bad-scale density bound.**  The density of bad
 scales over the window `{0,…,M}` is dominated by the Appendix-D count event, at the
 one level `θ` — the form needed when `θ` is pinned by the consumer. -/
 theorem measure_badProp_le_of_concEvent (P : Measure Ω) (X : ℤ → ℤ → Ω → ℝ)
@@ -184,7 +184,7 @@ theorem exp_rate_short {a c₁ Q : ℝ} {n r : ℕ} (hnr : n + 1 ≤ r) (hc₁ :
 Given, for one event family `Ev`:
 
 * `hconc` — the Appendix-D concentration output at level `θ` for the family's array
-  `X` and threshold constant `C` (the conclusion of `p_concentration_for_scales`);
+  `X` and threshold constant `C`;
 * `hreduce` — the deterministic scale-locality reduction
   `(Ev m)ᶜ ⊆ {9 s⁻¹C^{1/p}θ^{-1/p} < Y_m}` for `m ≥ 0`;
 

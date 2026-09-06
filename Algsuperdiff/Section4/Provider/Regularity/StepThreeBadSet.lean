@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
+import Algsuperdiff.Section4.Provider.Regularity.MinimalScaleX
+import Algsuperdiff.Section4.Provider.Regularity.StepOneEpsilon
 import Algsuperdiff.Section4.Provider.GoodEvents.Api
-import Algsuperdiff.Section4.Provider.Regularity.StepOneWeb
 
 /-!
 # `t.regularity` Step 3: the bad-scale set `𝓑_z`, as a `Finset`
@@ -67,11 +68,6 @@ theorem stepThreeGoodEvent_eq_goodEventAt (M : ABKModel d) (delta : ℝ) (j : �
       Algsuperdiff.Frozen.Section4.goodEventAt M (Support.cgEllipLowerConstant d) j z
         ⟨stepOneSEighth, stepOneSEighth_pos⟩ (stepOneSEighth * Real.sqrt delta) := rfl
 
-/-- The Step-3 good event is measurable. -/
-theorem measurableSet_stepThreeGoodEvent (M : ABKModel d) (delta : ℝ) (j : ℤ)
-    (z : Vec d) : MeasurableSet (stepThreeGoodEvent M delta j z) :=
-  GoodEvents.measurableSet_goodEventAt M (Support.cgEllipLowerConstant d) j z
-    ⟨stepOneSEighth, stepOneSEighth_pos⟩ (stepOneEp delta)
 
 /-! ## 2. The bad-scale set -/
 
@@ -102,28 +98,6 @@ theorem stepThreeBadSet_subset_Icc (M : ABKModel d) (delta : ℝ) (n m : ℤ) (z
   subset_trans (stepThreeBadSet_subset M delta n m z omega)
     (Finset.Icc_subset_Icc_right (by linarith only [] : m - 1 ≤ m))
 
-/-! ## 3. The measurability story -/
-
-/-- Each scale's membership event is the complement of the good event, intersected
-with the (deterministic) window condition; in particular it is measurable. -/
-theorem measurableSet_mem_stepThreeBadSet (M : ABKModel d) (delta : ℝ) (n m : ℤ)
-    (z : Vec d) (j : ℤ) :
-    MeasurableSet {omega | j ∈ stepThreeBadSet M delta n m z omega} := by
-  by_cases hj : n ≤ j ∧ j ≤ m - 1
-  · have hset : {omega | j ∈ stepThreeBadSet M delta n m z omega} =
-        (stepThreeGoodEvent M delta j z)ᶜ := by
-      ext omega
-      rw [Set.mem_setOf_eq, mem_stepThreeBadSet_iff, Set.mem_compl_iff]
-      exact ⟨fun h => h.2, fun h => ⟨hj, h⟩⟩
-    rw [hset]
-    exact (measurableSet_stepThreeGoodEvent M delta j z).compl
-  · have hset : {omega | j ∈ stepThreeBadSet M delta n m z omega} = (∅ : Set _) := by
-      ext omega
-      rw [Set.mem_setOf_eq, mem_stepThreeBadSet_iff]
-      exact ⟨fun h => absurd h.1 hj, fun h => absurd h (Set.notMem_empty omega)⟩
-    rw [hset]
-    exact MeasurableSet.empty
-
 /-! ## 4. The cardinality as an indicator sum -/
 
 /-- **`|𝓑_z|` as the indicator sum** over the window `[n, m-1]`, in `ℝ≥0∞` — the
@@ -153,21 +127,5 @@ theorem stepThreeBadSet_card_le_sum_Icc (M : ABKModel d) (delta : ℝ) (n m : �
     (Finset.Icc_subset_Icc_right (by linarith only [] : m - 1 ≤ m)) ?_
   intro j _ _
   exact zero_le _
-
-/-- The `ℝ≥0∞`-valued cardinality is measurable in `ω`: it is the finite sum of the
-indicators of the (measurable) complements of the good events. -/
-theorem measurable_stepThreeBadSet_card (M : ABKModel d) (delta : ℝ) (n m : ℤ)
-    (z : Vec d) :
-    Measurable
-      (fun omega => ((stepThreeBadSet M delta n m z omega).card : ℝ≥0∞)) := by
-  have hfun : (fun omega => ((stepThreeBadSet M delta n m z omega).card : ℝ≥0∞)) =
-      fun omega => ∑ j ∈ Finset.Icc n (m - 1),
-        Set.indicator ((stepThreeGoodEvent M delta j z)ᶜ) (fun _ => (1 : ℝ≥0∞)) omega := by
-    funext omega
-    exact stepThreeBadSet_card_eq_sum M delta n m z omega
-  rw [hfun]
-  refine Finset.measurable_sum _ ?_
-  intro j _
-  exact measurable_const.indicator (measurableSet_stepThreeGoodEvent M delta j z).compl
 
 end Algsuperdiff.Section4.Provider.Regularity

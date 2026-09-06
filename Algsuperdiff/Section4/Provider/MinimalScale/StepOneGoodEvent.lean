@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.KickCollapse
 import Algsuperdiff.Section4.Provider.MinimalScale.DDecomposition
@@ -54,9 +54,6 @@ does too (`kickCollapsed_le_mul_of_coeff_le`).
 
 ## Main results
 
-* `min_le_sqrt_sqrt_mul_cube` — `min{a,b} ≤ (a b³)^{1/4}`.
-* `annularKick_le_legLow_add_min` — the printed two-leg display, obtained free
-  of charge from the exact clamp split.
 * `weighted_annularKick_le_kickCollapsed` — **the collapse step**: the weighted
   inner sum at weight `3^{−½s(k−j)}` is below `3^{−¼s(k−j)}·X_j`.
 
@@ -360,26 +357,6 @@ theorem annularKick_le_of_mem_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) 
 
 /-! ## 4. The printed two-leg display and the collapse -/
 
-theorem min_le_sqrt_sqrt_mul_cube {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
-    min a b ≤ Real.sqrt (Real.sqrt (a * b ^ 3)) := by
-  have hpow : min a b ^ 4 ≤ a * b ^ 3 := by
-    rcases le_total a b with hab | hab
-    · rw [min_eq_left hab]
-      have h1 : a ^ 3 ≤ b ^ 3 := pow_le_pow_left₀ ha hab 3
-      calc a ^ 4 = a * a ^ 3 := by ring
-        _ ≤ a * b ^ 3 := mul_le_mul_of_nonneg_left h1 ha
-    · rw [min_eq_right hab]
-      have h1 : b ^ 3 * b ≤ b ^ 3 * a := mul_le_mul_of_nonneg_left hab (pow_nonneg hb 3)
-      calc b ^ 4 = b ^ 3 * b := by ring
-        _ ≤ b ^ 3 * a := h1
-        _ = a * b ^ 3 := by ring
-  have hroot4 : Real.sqrt (Real.sqrt (a * b ^ 3)) ^ 4 = a * b ^ 3 := by
-    rw [show (4 : ℕ) = 2 * 2 from by norm_num, pow_mul,
-      Real.sq_sqrt (Real.sqrt_nonneg _), Real.sq_sqrt (mul_nonneg ha (pow_nonneg hb 3))]
-  refine le_of_pow_le_pow_left₀ (n := 4) (by norm_num) (Real.sqrt_nonneg _) ?_
-  rw [hroot4]
-  exact hpow
-
 /-- `y ≤ (x)^{1/4}` from `y⁴ ≤ x`, in nested-root form. -/
 theorem le_sqrt_sqrt_of_pow_four_le {x y : ℝ} (h : y ^ 4 ≤ x) :
     y ≤ Real.sqrt (Real.sqrt x) := by
@@ -390,27 +367,6 @@ theorem le_sqrt_sqrt_of_pow_four_le {x y : ℝ} (h : y ^ 4 ≤ x) :
   refine le_of_pow_le_pow_left₀ (n := 4) (by norm_num) (Real.sqrt_nonneg _) ?_
   rw [hroot4]
   exact h
-
-/-- **The printed two-leg display.**  On the good event the exact clamp split of `KickFamily` *is*
-the printed display: `X^{(2)} ≤ annularKick ≤ B` forces `min{X^{(2)}, B} =
-X^{(2)}`, so the inequality holds with equality.  Off the event the display is
-not claimed (the manuscript multiplies by the indicator). -/
-theorem annularKick_le_legLow_add_min (M : ABKModel d) (s : {s : ℝ // 0 < s}) {k j : ℤ}
-    {lam : ℝ} (hlam : 0 ≤ lam) (hjk : j ≤ k) (hs1 : (s : ℝ) ≤ 1)
-    {omega : Cutoff.CutoffSample d} (hmem : omega ∈ eventG2 M k s 1) :
-    annularKick M s j omega
-      ≤ kickLegLow M s lam j omega +
-        min (kickLegHigh M s lam j omega)
-          (6 * ((Real.sqrt (s : ℝ)) ^ 3)⁻¹ *
-            (weightThird ((s : ℝ) / 8) (k - j).toNat)⁻¹) := by
-  have hB := annularKick_le_of_mem_eventG2 M s hjk hs1 hmem
-  have hlow : min (annularKick M s j omega) lam ≤ annularKick M s j omega := min_le_left _ _
-  have hhigh : kickLegHigh M s lam j omega
-      ≤ 6 * ((Real.sqrt (s : ℝ)) ^ 3)⁻¹ * (weightThird ((s : ℝ) / 8) (k - j).toNat)⁻¹ := by
-    rw [kickLegHigh]
-    linarith only [hB, hlow, le_min (annularKick_nonneg M s j omega) hlam]
-  rw [min_eq_left hhigh]
-  exact le_of_eq (kickLegLow_add_kickLegHigh M s lam j omega).symm
 
 /-- **The collapsed variable is monotone in its coefficient, up to the fourth root
 of the ratio.**  This is the one bookkeeping step that lets the collapse be read at

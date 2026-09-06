@@ -22,11 +22,6 @@ j_k`.
 
 ## What is proved
 
-* `streamIncrementLaw M n m` — the push-forward of the shell-sequence law
-  `M.P` along `omega |-> finiteShellIncrement omega n m`.  The increment is
-  *already* a `RegCoeffField d` (`Cutoff.finiteShellIncrement`), so no new
-  carrier is introduced and the push-forward is a genuine
-  `Ch04.RestrictionCoeffLaw d`.
 * `scaledStreamIncrementLaw_stationary_real`,
   `scaledStreamIncrementLaw_stationary` — the joint, multi-shell translation
   covariance, at an arbitrary nonzero spatial rescaling.  This is *not* the
@@ -40,10 +35,9 @@ j_k`.
   slack for the literal range `sqrt(d) 3^m` turns that range into a strictly
   sub-unit one, exactly as `Cutoff.RangeNormalization` does for the coefficient
   cutoff `a_m`.
-* `normalizedStreamIncrementLaw`, the canonical triadic normalization at the
-  depth `Cutoff.cutoffNormalizationDepth d m`, and
-  `partitionStreamIncrementLaw`, the rescaling the partition step can actually
-  use; `partitionStreamIncrementLaw_stationary` and
+* `partitionStreamIncrementLaw`, the rescaling the partition step can actually
+  use, at the depth `Cutoff.cutoffNormalizationDepth d m`;
+  `partitionStreamIncrementLaw_stationary` and
   `partitionStreamIncrementLaw_unitRangeDependent` are the two structural
   assumptions the concentration theorem asks for, at that law.
 * `scaledStreamIncrementLaw_eq_map`, the un-normalization dictionary: every
@@ -85,19 +79,6 @@ theorem continuous_finiteShellIncrement_entry (omega : ShellSeq d) (n m : ℤ)
   rw [h]
   exact continuous_finset_sum _ fun k _ =>
     (continuous_apply j).comp ((continuous_apply i).comp (omega k).1.1.continuous)
-
-/-! ## The push-forward law of a finite stream increment -/
-
-/-- **The law carrier of the stream increment.**  The finite increment
-`k_m - k_n = sum_{k in (n,m]} j_k` is already a regular coefficient field, so
-its law is the honest push-forward of the shell-sequence law along it. -/
-def streamIncrementLaw (M : ABKModel d) (n m : ℤ) :
-    Homogenization.Book.Ch04.RestrictionCoeffLaw d :=
-  Measure.map (fun omega : ShellSeq d => finiteShellIncrement omega n m) M.P.toMeasure
-
-instance streamIncrementLaw_isProbabilityMeasure (M : ABKModel d) (n m : ℤ) :
-    IsProbabilityMeasure (streamIncrementLaw M n m) :=
-  Measure.isProbabilityMeasure_map (measurable_finiteShellIncrement n m).aemeasurable
 
 /-! ## Joint multi-shell translation covariance -/
 
@@ -225,22 +206,6 @@ theorem scaledStreamIncrementLaw_stationary (M : ABKModel d) (n m : ℤ) {r : �
     Homogenization.Book.Ch04.RestrictionStationaryLaw
       (scaledStreamIncrementLaw M n m r hr) :=
   fun z => scaledStreamIncrementLaw_stationary_real M n m hr (intVecToRealVec z)
-
-/-! ## The canonical triadic normalization of the increment range -/
-
-/-- The triadically normalized increment law: the push-forward of the increment
-law under the carrier rescaling `a |-> a(3^k .)` at the canonical depth
-`k = cutoffNormalizationDepth d m`, which is the least triadic depth leaving
-strict `epsilon = 1/4` bridge slack for the literal range `sqrt(d) 3^m`. -/
-def normalizedStreamIncrementLaw (M : ABKModel d) (n m : ℤ) :
-    Homogenization.Book.Ch04.RestrictionCoeffLaw d :=
-  Homogenization.Book.Ch04.restrictionScaleNormalizedLaw
-    (cutoffNormalizationDepth d m)
-    (streamIncrementLaw M n m)
-
-instance normalizedStreamIncrementLaw_isProbabilityMeasure (M : ABKModel d)
-    (n m : ℤ) : IsProbabilityMeasure (normalizedStreamIncrementLaw M n m) :=
-  Homogenization.Book.Ch04.isProbabilityMeasure_restrictionScaleNormalizedLaw _ _
 
 /-! ## Unit-range dependence of the normalized increment law -/
 

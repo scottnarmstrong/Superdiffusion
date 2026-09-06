@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Probability.RDependent
 import Algsuperdiff.Section4.Probability.AnnulusSeparation
@@ -36,24 +36,9 @@ The truncation offset `c` and the count `r` are **free**.
 * `Provider.Proportion.G2Locality.measurable_errorAnnMax_annulusRegion_local` —
   its per-inner-scale summand, same offset;
 
-## The measurability companion
-
-`cutoffSampleLocalSigma` is the `Subtype.val`-comap of a *null-completed*
-sigma-field, so it is **not** contained in the ambient sigma-field of
-`Cutoff.CutoffSample d`: "local-sigma measurable ⟹ ambient measurable" is false
-as stated at this carrier.  The true and consumable form is a.e.-measurability,
-recorded here as `nullMeasurableSet_of_cutoffSampleLocalSigma` and
-`aemeasurable_of_cutoffSampleLocalSigma`.  Consumers that need genuine ambient
-measurability get it from the observable's own construction
-(`Support.measurable_annularErrorObservable`), not from locality.
-
 ## Main results
 
 * `rDependent_of_annulusLocalSigma` — the bridge, free `c` and free `r`.
-* `twoDependent_of_annulusLocalSigma` — the manuscript's `r = 2` instance at the
-  `𝒢₂` offset `c = 2`, with its `d ≤ 81` caveat made explicit.
-* `nullMeasurableSet_of_cutoffSampleLocalSigma`,
-  `aemeasurable_of_cutoffSampleLocalSigma` — the measurability companion.
 
 ## References
 
@@ -96,55 +81,5 @@ theorem rDependent_of_annulusLocalSigma (M : ABKModel d) (c : ℤ) {r : ℕ}
     (fun i j hij => separatedBy_annulusRegion_of_gap hr1 hr
       (hs i.1 i.2 j.1 j.2 fun h => hij (Subtype.ext h)))
     (fun i => hX i.1)
-
-/-- **The manuscript's `2`-dependence at the `𝒢₂` truncation offset.**  At `c = 2`
-— the offset of the proved `𝒢₂` locality exports — the count `r = 2` is
-available exactly for `d ≤ 81`.  This is the printed claim; the free-`r` bridge
-above is what the development consumes, so that no dimension restriction
-enters. -/
-theorem twoDependent_of_annulusLocalSigma (M : ABKModel d) (hd : d ≤ 81)
-    {X : ℤ → Cutoff.CutoffSample d → ℝ}
-    (hX : ∀ n : ℤ, Measurable[Cutoff.cutoffSampleLocalSigma M (n - 2)
-      (annulusRegion d n)] (X n)) :
-    Algsuperdiff.Probability.TwoDependent (Cutoff.cutoffSampleLaw M).toMeasure X :=
-  rDependent_of_annulusLocalSigma M 2 (by norm_num)
-    (three_add_two_thirds_sqrt_le_nine hd) hX
-
-/-! ## The measurability companion -/
-
-/-- A locally measurable set of the genuine cutoff carrier is null-measurable for
-the cutoff law.  It is **not** measurable: `cutoffSampleLocalSigma` is the
-`Subtype.val`-comap of the null-completion `lowerShellLocalCompletion`, so its
-members are only a.e. equal to genuinely measurable sets. -/
-theorem nullMeasurableSet_of_cutoffSampleLocalSigma (M : ABKModel d) (m : ℤ)
-    (U : Set (Vec d)) {A : Set (Cutoff.CutoffSample d)}
-    (hA : MeasurableSet[Cutoff.cutoffSampleLocalSigma M m U] A) :
-    NullMeasurableSet A (Cutoff.cutoffSampleLaw M).toMeasure := by
-  obtain ⟨B, hB, hBA⟩ := MeasurableSpace.measurableSet_comap.1 hA
-  obtain ⟨t, ht, hBt⟩ := hB
-  have hmt : MeasurableSet t := Cutoff.lowerShellLocalSigma_le_borel m U t ht
-  have hpre : (Subtype.val : Cutoff.CutoffSample d → Cutoff.ShellSeq d) ⁻¹' B
-      =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
-    (Subtype.val : Cutoff.CutoffSample d → Cutoff.ShellSeq d) ⁻¹' t := by
-    rw [← Cutoff.map_cutoffSampleLaw_val M] at hBt
-    exact (Measure.tendsto_ae_map measurable_subtype_coe.aemeasurable).eventually hBt
-  refine (measurable_subtype_coe hmt).nullMeasurableSet.congr ?_
-  rw [← hBA]
-  exact hpre.symm
-
-/-- **A locally measurable real observable of the genuine cutoff carrier is
-a.e.-measurable for the cutoff law.**  This is the honest replacement for
-"local-sigma measurable ⟹ ambient measurable", which fails at this carrier
-because the local sigma-field is a comap of a null-completion.  The passage from
-null-measurability to a.e.-measurability is Mathlib's
-`NullMeasurable.aemeasurable`, available because the Borel sigma-field of `ℝ` is
-countably generated. -/
-theorem aemeasurable_of_cutoffSampleLocalSigma (M : ABKModel d) (m : ℤ)
-    (U : Set (Vec d)) {f : Cutoff.CutoffSample d → ℝ}
-    (hf : Measurable[Cutoff.cutoffSampleLocalSigma M m U] f) :
-    AEMeasurable f (Cutoff.cutoffSampleLaw M).toMeasure := by
-  refine MeasureTheory.NullMeasurable.aemeasurable (f := f) ?_
-  intro S hS
-  exact nullMeasurableSet_of_cutoffSampleLocalSigma M m U (hf hS)
 
 end Algsuperdiff.Section4.Probability

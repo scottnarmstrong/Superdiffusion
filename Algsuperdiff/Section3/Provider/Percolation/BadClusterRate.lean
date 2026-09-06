@@ -12,7 +12,7 @@ display `e.percolation.admissibility.bad.clusters`
 E >= exp(C sigma^{-1}) or C c_star^{-1}      and      gamma <= E^{-5} .
 ```
 
-## The author-ruled amendment
+## The additional admissibility requirement
 
 ```
 E >= C b^{-1} ,
@@ -152,7 +152,7 @@ private theorem div_siteRateBase_le_amplitude {x : ℝ}
 /-- **The master step.**  The amended admissibility at `badClustersConst d`
 turns any dimension-only amplitude `A` into the bound
 `A e^{40/sigma} b^{-1} <= E^3`.  The `e^{40/sigma}` comes from `E >= exp(C/sigma)`
-and `sigma <= 1/2`; the `b^{-1}` comes from the author-ruled additional
+and `sigma <= 1/2`; the `b^{-1}` comes from the additional
 requirement `E >= C b^{-1}`. -/
 theorem le_cube_of_admissible {E sigma b A : ℝ}
     (hA0 : 0 < A) (hAle : A ≤ badClustersAmplitude d)
@@ -174,10 +174,10 @@ theorem le_cube_of_admissible {E sigma b A : ℝ}
       _ ≤ Real.exp (4 * C - 80) := Real.exp_le_exp.2 h4C
   have hE0 : (0 : ℝ) < E := lt_of_lt_of_le (Real.exp_pos _) hE
   have hinv : (2 : ℝ) ≤ sigma⁻¹ := by
-    have h1 : sigma⁻¹ * sigma = 1 := inv_mul_cancel₀ (ne_of_gt hsigma0)
-    nlinarith [h1, hsigma0, hsigma, inv_pos.2 hsigma0]
-  have hsq : Real.exp (C / sigma) ^ 2 ≤ E ^ 2 := by
-    nlinarith [Real.exp_pos (C / sigma), hE]
+    have h1 := inv_anti₀ hsigma0 hsigma
+    rwa [show ((1 : ℝ) / 2)⁻¹ = 2 by norm_num] at h1
+  have hsq : Real.exp (C / sigma) ^ 2 ≤ E ^ 2 :=
+    pow_le_pow_left₀ (Real.exp_pos _).le hE 2
   have hCb0 : (0 : ℝ) < C / b := div_pos hCpos hb0
   have hcube : C / b * Real.exp (C / sigma) ^ 2 ≤ E ^ 3 := by
     have h := mul_le_mul hEb hsq (sq_nonneg _) hE0.le
@@ -196,7 +196,7 @@ theorem le_cube_of_admissible {E sigma b A : ℝ}
     have hrw : 2 * (C / sigma) - 40 / sigma = (2 * C - 40) * sigma⁻¹ := by
       field_simp
     rw [hrw]
-    nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ 2 * C - 40)
+    linarith only [mul_nonneg (by linarith : (0 : ℝ) ≤ 2 * C - 40)
       (by linarith : (0 : ℝ) ≤ sigma⁻¹ - 2)]
   have hstep : A * Real.exp (40 / sigma) ≤ C * Real.exp (C / sigma) ^ 2 := by
     have h1 : A * Real.exp (40 / sigma) ≤ Real.exp (4 * C - 80) * Real.exp (40 / sigma) :=
@@ -205,8 +205,8 @@ theorem le_cube_of_admissible {E sigma b A : ℝ}
         Real.exp (C / sigma) ^ 2 := by
       rw [hsqid, hsplit]
       exact mul_le_mul_of_nonneg_right (Real.exp_le_exp.2 hsurplus) (Real.exp_pos _).le
-    have h3 : Real.exp (C / sigma) ^ 2 ≤ C * Real.exp (C / sigma) ^ 2 := by
-      nlinarith [sq_nonneg (Real.exp (C / sigma))]
+    have h3 : Real.exp (C / sigma) ^ 2 ≤ C * Real.exp (C / sigma) ^ 2 :=
+      le_mul_of_one_le_left (sq_nonneg _) (by linarith)
     linarith
   have hbinv : (0 : ℝ) < b⁻¹ := inv_pos.2 hb0
   calc A * Real.exp (40 / sigma) / b = A * Real.exp (40 / sigma) * b⁻¹ := by
@@ -226,7 +226,7 @@ theorem le_cube_of_admissible_exp {E sigma b A : ℝ}
   have hApos : (0 : ℝ) < A * Real.exp (40 / sigma) := by positivity
   have hle : A * Real.exp (40 / sigma) ≤ A * Real.exp (40 / sigma) / b := by
     rw [le_div_iff₀ hb0]
-    nlinarith [hApos]
+    exact mul_le_of_le_one_right hApos.le hb1
   linarith
 
 /-- The master step with both slacks discarded. -/
@@ -241,7 +241,9 @@ theorem le_cube_of_admissible_plain {E sigma b A : ℝ}
     have h0 : (0 : ℝ) ≤ 40 / sigma := by positivity
     have := Real.add_one_le_exp (40 / sigma)
     linarith
-  nlinarith [hA0]
+  calc A = A * 1 := (mul_one A).symm
+    _ ≤ A * Real.exp (40 / sigma) := mul_le_mul_of_nonneg_left hexp1 hA0.le
+    _ ≤ E ^ 3 := hbase
 
 /-! ## The standing consequences of the amended display -/
 
@@ -439,7 +441,7 @@ theorem densityExponentAmplitude_le_siteRateSq (M : ABKModel d) {E sigma b : ℝ
     hb0 hb1 hE hEb hgamma
 
 /-- **Gate 6: the entropy-versus-gain gate.** This is the gate that the printed
-`b`-free admissibility cannot supply and that the author-ruled requirement `E
+`b`-free admissibility cannot supply and that the additional requirement `E
 >= C b^{-1}` does. -/
 theorem entropyGate_of_admissible (M : ABKModel d) {E sigma b : ℝ} (hd : 2 ≤ d)
     (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 2) (hb0 : 0 < b) (hb1 : b ≤ 1)
@@ -462,7 +464,8 @@ theorem entropyGate_of_admissible (M : ABKModel d) {E sigma b : ℝ} (hd : 2 ≤
   have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
   have hX : 1 + 2 * (d : ℝ) / b ≤ (1 + 2 * (d : ℝ)) / b := by
     rw [div_eq_mul_inv, div_eq_mul_inv]
-    nlinarith [hbinv, hd0]
+    linarith only [hbinv, mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hd0)
+      (by linarith : (0 : ℝ) ≤ b⁻¹ - 1)]
   set u : ℝ := Real.exp (40 / sigma) with hudef
   have hu : (0 : ℝ) < u := Real.exp_pos _
   have hkey : (1 + 2 * (d : ℝ)) / b * (2 * u) ≤ siteRateSq M E := by

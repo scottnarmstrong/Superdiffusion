@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomFinitePSource
 import Algsuperdiff.Section4.Provider.Homogenization.HomMollifyBox
@@ -32,7 +32,6 @@ apparatus is already in this repository:
 `OffGridStabilityGeometry` supplies
 
 * `iUnion_maximalCubes_eq` — the maximal grid subcubes tile `x + □_n` EXACTLY;
-* `pairwiseDisjoint_maximalCubes` — they are disjoint;
 * `scale_le_of_maximalCubeIn_offGridCube` — their scales are `≤ n`;
 * `volume_iUnion_maximalCubesAtScale_toReal_le` — **the packing count**, the
   total volume of the scale-`k` maximal cubes is at most

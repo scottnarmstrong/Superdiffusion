@@ -229,7 +229,7 @@ private theorem whitney_frame_afterBandExactScale_sq_le
   have hdepth := waveBandDepth_spec
     (c := c) (E := E) M.shellPrefix.gamma_pos ht
   have hEinvSq : (E ^ 2)⁻¹ ≤ 1 :=
-    inv_le_one_of_one_le₀ (by nlinarith [hE])
+    inv_le_one_of_one_le₀ (one_le_pow₀ hE)
   have hc1 : c ≤ 1 := by
     dsimp only [c]
     exact collarBandMeanDepthCoeff_le_one d
@@ -240,8 +240,8 @@ private theorem whitney_frame_afterBandExactScale_sq_le
         mul_le_mul hc1 hEinvSq (inv_nonneg.mpr (sq_nonneg E)) (by norm_num)
       _ = 1 := by ring
   have hgk₀ : M.gamma * (k₀ : ℝ) ≤ 2 := by
-    dsimp only [k₀, collarBandMeanDepth] at ⊢
-    nlinarith [hdepth, hcEinv]
+    have hdepth' : M.gamma * (k₀ : ℝ) ≤ c * (E ^ 2)⁻¹ + M.gamma := hdepth
+    linarith only [hdepth', hcEinv, hgamma20]
   have hna : M.gamma * ((n : ℝ) + (a : ℝ)) ≤
       (1 / 10 : ℝ) * (n : ℝ) := by
     calc
@@ -256,7 +256,7 @@ private theorem whitney_frame_afterBandExactScale_sq_le
           M.gamma * (1 + (n : ℝ) + (a : ℝ) + (k₀ : ℝ)) ≤
         3 + (-(1 / 40 : ℝ)) * (n : ℝ) := by
     have hgammaOne : M.gamma * 1 ≤ 1 / 20 := by simpa using hgamma20
-    nlinarith [hna, hgk₀]
+    linarith only [hna, hgk₀, hgammaOne]
   have hlayerGrowth :
       whitneyDecayRatio ^ n *
           (3 : ℝ) ^ (M.gamma *
@@ -569,14 +569,14 @@ theorem collar_afterBand_trace_isBigOWith_depthProfile
   have hgammaHalf : M.gamma / 2 ≤ bfaProfileB * sigma := by
     have hbs : 0 ≤ bfaProfileB * sigma :=
       mul_nonneg bfaProfileB_pos.le hsigma0.le
-    nlinarith
+    linarith only [hgammaProfile, hbs]
   have hgammaB : M.gamma ≤ bfaProfileB := by
     calc
       M.gamma ≤ (3 / 2 : ℝ) * bfaProfileB * sigma := hgammaProfile
       _ ≤ (3 / 2 : ℝ) * bfaProfileB * (1 / 2) :=
         mul_le_mul_of_nonneg_left hsigma
           (mul_nonneg (by norm_num) bfaProfileB_pos.le)
-      _ ≤ bfaProfileB := by nlinarith [bfaProfileB_pos]
+      _ ≤ bfaProfileB := by linarith only [bfaProfileB_pos]
   let alpha : ℝ := upperProfileBaseSigma sigma /
     ((2 * (M.gamma / 2) + 2 * bfaProfileB) / bfaProfileB)
   let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^
@@ -916,11 +916,12 @@ private theorem cstarInv_mul_exp_neg_collarRate_le_halfRate
     rw [hcancel] at hmul
     simpa [mul_comm] using hmul
   have hEsq : E ≤ E ^ 2 := by
-    nlinarith [mul_nonneg hE0 (sub_nonneg.mpr hE)]
+    linarith only [mul_nonneg hE0 (sub_nonneg.mpr hE)]
   have hrateCube : 2 * E ^ 2 ≤ rate * E ^ 3 := by
     have hmul := mul_le_mul_of_nonneg_right hrateE (sq_nonneg E)
-    nlinarith
-  have hEhalfCube : E ≤ (rate / 2) * E ^ 3 := by nlinarith
+    linarith only [hmul]
+  have hEhalfCube : E ≤ (rate / 2) * E ^ 3 := by
+    linarith only [hrateCube, hEsq]
   have hhalf0 : 0 ≤ rate / 2 := div_nonneg hrate.le (by norm_num)
   have hEhalfX : E ≤ (rate / 2) * X :=
     hEhalfCube.trans (mul_le_mul_of_nonneg_left hX hhalf0)
@@ -1028,13 +1029,13 @@ private theorem afterBandDepthScale_le_frozenReserve
       (le_max_right _ _).trans hout
   have hlargeChoice : 2 * rate⁻¹ ≤ Cup := by
     have hinv : 0 < rate⁻¹ := inv_pos.mpr hrate
-    nlinarith
+    linarith only [hchoiceRaw, hinv.le, mul_nonneg hK0 hinv.le]
   have hprefChoice : K + 8 ≤ (rate / 2) * Cup := by
     have hhalf : 0 ≤ rate / 2 := by positivity
     have hmul := mul_le_mul_of_nonneg_left hchoiceRaw hhalf
     have hcancel : (rate / 2) * (2 * (K + 8) * rate⁻¹) = K + 8 := by
       field_simp [ne_of_gt hrate]
-    nlinarith
+    linarith only [hmul, hcancel, hhalf]
   have hgamma : M.gamma ≤ (E : ℝ) ^ (-5 : ℤ) :=
     gamma_le_zpow_neg_five_of_frozenGate E.property
       M.shellPrefix.gamma_pos hEgamma
@@ -1112,7 +1113,7 @@ private theorem afterBandDepthScale_le_frozenReserve
   have hCupExp : Cup ≤ Real.exp (Cup / sigma) := by
     have hdiv : Cup ≤ Cup / sigma := by
       rw [le_div_iff₀ hsigma0]
-      nlinarith
+      exact mul_le_of_le_one_right hCup0.le (by linarith only [hsigma])
     exact hdiv.trans ((le_add_of_nonneg_right zero_le_one).trans
       (Real.add_one_le_exp (Cup / sigma)))
   have hlargeE : 2 * rate⁻¹ ≤ (E : ℝ) :=
@@ -1215,7 +1216,8 @@ theorem collar_afterBand_trace_isBigOWith_frozenReserve
   rw [show ((k + 1 : ℕ) : ℝ) = (k : ℝ) + 1 by push_cast; ring]
   have hpow0 : 0 ≤ (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) :=
     Real.rpow_nonneg (by norm_num) _
-  simpa only [mul_assoc, mul_comm, mul_left_comm] using
-    (mul_le_mul_of_nonneg_right hscale hpow0)
+  refine le_trans (le_of_eq ?_)
+    ((mul_le_mul_of_nonneg_right hscale hpow0).trans_eq (mul_comm _ _))
+  ring
 end
 end Algsuperdiff.Section3.Provider.CoarseEllipticity

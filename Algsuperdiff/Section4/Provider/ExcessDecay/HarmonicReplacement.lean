@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.Book.Ch03.Theorems.PublicInternalBridges.WeakSolutionConstructors
 
@@ -276,25 +276,6 @@ theorem isConstantCoeffForcedEquation_forcedReplacement
   rw [hsplit, hcorr, hforce]
   ring
 
-/-- **The harmonic replacement `v`** of tex `e.harmonic.approx.v.def`: the
-element of `u + H¹₀(W)` with `−∇·a₀∇v = 0` weakly.  For the scalar background
-`a₀ = σ̄ Id` this is the printed `−Δv = 0`. -/
-def harmonicReplacement (a0 : Ch03.ConstantCoeffMatrix d)
-    (u : H1Function (openCubeSet Q)) : H1Function (openCubeSet Q) :=
-  forcedReplacement a0 u
-    (g := (0 : Vec d → Vec d))
-    (MeasureTheory.memLp_const (μ := volumeMeasureOn (openCubeSet Q))
-      (p := (2 : ENNReal)) (0 : Vec d))
-
-/-- **`v` is `a₀`-harmonic with the datum's own boundary values.** -/
-theorem isConstantCoeffForcedEquation_harmonicReplacement
-    (a0 : Ch03.ConstantCoeffMatrix d) (u : H1Function (openCubeSet Q)) :
-    Ch03.IsConstantCoeffForcedEquation Q a0 (harmonicReplacement a0 u)
-      (0 : Vec d → Vec d) :=
-  isConstantCoeffForcedEquation_forcedReplacement a0 u _
-
-/-! ## 6. Uniqueness -/
-
 omit [NeZero d] in
 /-- The affine shift, read backwards: if `u − w` solves the forced problem for
 an `H¹₀` function `w`, then `w` solves the zero-trace problem for the corrector
@@ -328,24 +309,6 @@ theorem isZeroTraceDirichletRhsWeakSolution_of_isConstantCoeffForcedEquation
   show (∫ x in openCubeSet Q, vecDot (matVecMul a0.matrix (w.toH1Function.grad x))
       (φ.toH1Function.grad x) ∂MeasureTheory.volume) = _
   linarith only [hbase]
-
-/-- **Uniqueness of the replacement, gradient form.**  Any element of `u + H¹₀(W)`
-solving the same constant-coefficient forced problem has the same gradient in
-`L²(W)` as the chosen one.  This is CoarseGraining's zero-trace uniqueness
-transported through the affine shift. -/
-theorem gradToVectorL2_eq_of_isConstantCoeffForcedEquation
-    (a0 : Ch03.ConstantCoeffMatrix d) (u : H1Function (openCubeSet Q))
-    {g : Vec d → Vec d} (hg : MemVectorL2 (openCubeSet Q) g)
-    (w : H10Function (openCubeSet Q))
-    (hw : Ch03.IsConstantCoeffForcedEquation Q a0 (u - w.toH1Function) g) :
-    w.toH1Function.gradToVectorL2 =
-      (dirichletCorrector a0 u hg).toH1Function.gradToVectorL2 :=
-  IsZeroTraceDirichletRhsWeakSolution.gradToVectorL2_eq_of_isEllipticFieldOn
-    (U := openCubeSet Q) (a := constantCoeffField a0.matrix) (u := w)
-    (v := dirichletCorrector a0 u hg) (g := correctorForce a0 u g)
-    (Ch02.openCubeSet_nonempty Q)
-    (isZeroTraceDirichletRhsWeakSolution_of_isConstantCoeffForcedEquation a0 u hg w hw)
-    (dirichletCorrector_weakSolution a0 u hg) (isEllipticFieldOn_openCubeSet Q a0)
 
 /-- **Uniqueness of the replacement, value form.**  This is the exact sense in
 which the printed "the unique solution of the Dirichlet problem" is realized. -/

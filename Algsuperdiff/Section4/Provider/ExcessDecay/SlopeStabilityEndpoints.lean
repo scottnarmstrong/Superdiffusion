@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.SlopeStability
 
@@ -305,67 +305,7 @@ theorem endpoint_comparisons_of_axisCubeSandwich {W : Set (Vec d)} {zin zout : V
     rw [endpointConst]
     linarith only [hK]
 
-/-- **The two endpoint comparisons on the §4.3 consumption class (the triadic sandwich).**
-
-At the paper's aspect ratio `θ = 1/9` the constant is `endpointConst d (1/9) = C(d)`, scale-free:
-`2 + 3^{d+2}/(2√3) + 2·3^{d+2}·(2√3)`.  This is the `hlo`/`hhi` pair that
-`IterationLemma.iterationSlopeBound` consumes, at a common `Ci` with `1 ≤ Ci`
-(`one_le_endpointConst`). -/
-theorem endpoint_comparisons_of_cubeSandwich {W : Set (Vec d)} {Q₁ Q₂ : TriadicCube d} {j : ℤ}
-    (hd : 0 < d) (hs₁ : Q₁.scale = j - 2) (hs₂ : Q₂.scale = j) (hWm : MeasurableSet W)
-    (hin : openCubeSet Q₁ ⊆ W) (hout : W ⊆ openCubeSet Q₂)
-    {u : Vec d → ℝ} (hu : MemLp u 2 (volume.restrict W)) {c : ℝ} {g : Vec d}
-    (hmin : IsAffineMinimizer W u c g) :
-    oscillationOn W u
-        ≤ endpointConst d (1 / 9 : ℝ) * (affineExcess W u + slopeMagnitude g)
-      ∧ affineExcess W u + slopeMagnitude g
-        ≤ endpointConst d (1 / 9 : ℝ) * oscillationOn W u := by
-  have hLin : cubeScaleFactor Q₁ = (3 : ℝ) ^ (j - 2) := by
-    rw [cubeScaleFactor, hs₁]
-  have hLout : cubeScaleFactor Q₂ = (3 : ℝ) ^ j := by
-    rw [cubeScaleFactor, hs₂]
-  have hin' : axisCube (fun i => ((Q₁.index i : ℝ) - 1 / 2) * cubeScaleFactor Q₁)
-      (cubeScaleFactor Q₁) ⊆ W := by
-    rw [← openCubeSet_eq_axisCube Q₁]
-    exact hin
-  have hout' : W ⊆ axisCube (fun i => ((Q₂.index i : ℝ) - 1 / 2) * cubeScaleFactor Q₂)
-      (cubeScaleFactor Q₂) := by
-    rw [← openCubeSet_eq_axisCube Q₂]
-    exact hout
-  have hθ : (1 / 9 : ℝ) * cubeScaleFactor Q₂ ≤ cubeScaleFactor Q₁ := by
-    rw [hLin, hLout]
-    exact le_of_eq (triadic_aspect j)
-  exact endpoint_comparisons_of_axisCubeSandwich hd (cubeScaleFactor_pos Q₁)
-    (cubeScaleFactor_pos Q₂) (by norm_num) hθ hWm hin' hout' hu hmin
-
 /-! ### The `3^{−j}` normalizer -/
-
-/-- The `3^{−j}`-normalized oscillation is at most the `|W|^{−1/d}`-normalized one,
-on a window sandwiched between the triadic cubes at scales `j−2` and `j`. -/
-theorem oscillationScaled_le_oscillationOn_of_cubeSandwich (hd : d ≠ 0) {W : Set (Vec d)}
-    {j : ℤ} {Q₁ Q₂ : TriadicCube d} (hs₁ : Q₁.scale = j - 2) (hs₂ : Q₂.scale = j)
-    (hin : openCubeSet Q₁ ⊆ W) (hout : W ⊆ openCubeSet Q₂) (u : Vec d → ℝ) :
-    oscillationScaled j W u ≤ oscillationOn W u := by
-  obtain ⟨hlow, _⟩ := rpow_normalizer_bounds (d := d) hd
-    (volume_toReal_ge_of_cubeSandwich hs₁ hin hout) (volume_toReal_le_of_subset hs₂ hout)
-  exact mul_le_mul_of_nonneg_right hlow (normalizedL2On_nonneg _ _)
-
-/-- The reverse comparison, at the printed aspect ratio `3^{−2}`: the general
-normalizer costs at most the factor `3² = 9` (; the sharper ratio available for
-the paper's own truncated windows is deliberately not used). -/
-theorem oscillationOn_le_oscillationScaled_of_cubeSandwich (hd : d ≠ 0) {W : Set (Vec d)}
-    {j : ℤ} {Q₁ Q₂ : TriadicCube d} (hs₁ : Q₁.scale = j - 2) (hs₂ : Q₂.scale = j)
-    (hin : openCubeSet Q₁ ⊆ W) (hout : W ⊆ openCubeSet Q₂) (u : Vec d → ℝ) :
-    oscillationOn W u ≤ 9 * oscillationScaled j W u := by
-  obtain ⟨_, hhigh⟩ := rpow_normalizer_bounds (d := d) hd
-    (volume_toReal_ge_of_cubeSandwich hs₁ hin hout) (volume_toReal_le_of_subset hs₂ hout)
-  have h := mul_le_mul_of_nonneg_right hhigh (normalizedL2On_nonneg
-    (W := W) (f := fun x => u x - volumeAverage W u))
-  rw [oscillationOn, oscillationScaled]
-  calc ((volume W).toReal) ^ (-(d : ℝ)⁻¹)
-        * normalizedL2On W (fun x => u x - volumeAverage W u)
-      ≤ 9 * (3 : ℝ) ^ (-j) * normalizedL2On W (fun x => u x - volumeAverage W u) := h
-    _ = 9 * ((3 : ℝ) ^ (-j) * normalizedL2On W (fun x => u x - volumeAverage W u)) := by ring
 
 end
 

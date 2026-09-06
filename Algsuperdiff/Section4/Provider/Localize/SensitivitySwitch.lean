@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section24.LambdaSensitivityUnconditional
 import Algsuperdiff.Section3.Provider.BadEvents.ResponseCongruence
@@ -122,102 +122,6 @@ theorem lambdaAnnulusAtom_eq_inv_lambdaSq (M : ABKModel d) (k : ℤ)
     Algsuperdiff.Section3.Provider.Multiscale.cubeLowerEllipticityInvLiteral_eq_lambdaSq_inv]
 
 /-! ## 3. The unconditional `λ`-sensitivity, transported to a cube -/
-
-private theorem gradientW1Infinity_nonneg
-    (h : Algsuperdiff.Frozen.Section24.UnitCubeSkewW2Infinity d) :
-    0 ≤ h.gradientW1Infinity :=
-  le_max_of_le_left ENNReal.toReal_nonneg
-
-/-- **`e.lambda.sensitivity.no.conditions` at an arbitrary triadic cube** (the
-first inequality).
-
-For two cutoff levels `j ≤ n` and every triadic cube `Q = z + □_l`,
-
-```
-λ_{t,q}^{-1}(Q; a_n)
-  ≤ 6 ( 1 + C · 3^{2l}‖∇(k_n − k_j)‖_{W̲^{1,∞}(Q)} · λ_{s,2}^{-1}(Q; a_j) )^{2t/(1−2s)}
-      λ_{t,q}^{-1}(Q; a_j) ,
-```
-
-with the literal factor `6` and the exponent `2t/(1−2s)` of the anchor.  The
-manuscript's instance is `s = t = γ` and `q = 2`, admissible as soon as `γ ≤
-1/4` — in particular under the enclosing lemma's `γ ≤ 1/8`.
-
-Pointwise in the sample; no good event, no induction state, no scale gate. -/
-theorem exists_inv_lambdaSq_sensitivity (d : ℕ) (hd : 2 ≤ d) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (Q : TriadicCube d) (j n : ℤ), j ≤ n →
-        ∀ s t : ℝ, 0 < s → s ≤ 1 / 4 → 0 < t → t ≤ 1 / 4 →
-          ∀ q : Ch02.MultiscaleExponent, q.IsAdmissible →
-            ∀ omega : Cutoff.CutoffSample d,
-              (Ch02.lambdaSq Q t q
-                  (Cutoff.coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ ≤
-                6 *
-                    Real.rpow
-                      (1 +
-                        C *
-                            Algsuperdiff.Section3.Provider.BadEvents.incrementOscGauge₂
-                              Q j n omega *
-                          (Ch02.lambdaSq Q s (.finite 2)
-                            (Cutoff.coefficientCutoffTriadicCoeffFamily M j
-                              omega))⁻¹)
-                      (2 * t / (1 - 2 * s)) *
-                  (Ch02.lambdaSq Q t q
-                    (Cutoff.coefficientCutoffTriadicCoeffFamily M j omega))⁻¹ := by
-  obtain ⟨C, hC, hsens⟩ :=
-    Algsuperdiff.Frozen.Section24.lambda_sensitivity_unconditional (d := d) hd
-  refine ⟨C, hC, ?_⟩
-  intro M Q j n hjn s t hs hs4 ht ht4 q hq omega
-  haveI : NeZero d := ⟨by omega⟩
-  -- the anchor at the rescaled objects
-  have hbase :=
-    hsens
-      (Algsuperdiff.Section3.Provider.BadEvents.unitRescaledCutoffCoeff M Q j omega)
-      (Algsuperdiff.Section3.Provider.BadEvents.incrementUnitCube₂ Q j n omega)
-      s t q hs hs4 ht ht4 hq
-  rw [Algsuperdiff.Section3.Provider.BadEvents.unitCubeLambda_perturbCoeffOn_unitRescaledCutoffCoeff
-      M Q hjn omega t q] at hbase
-  simp only
-    [Algsuperdiff.Section3.Provider.BadEvents.unitCubeLambda_unitRescaledCutoffCoeff]
-    at hbase
-  refine hbase.trans ?_
-  -- upgrade the unit-cube gauge to the manuscript's `3^{2l} ‖∇(k_n − k_j)‖`
-  set g : ℝ :=
-    (Algsuperdiff.Section3.Provider.BadEvents.incrementUnitCube₂ Q j n
-      omega).gradientW1Infinity with hg
-  set G : ℝ :=
-    Algsuperdiff.Section3.Provider.BadEvents.incrementOscGauge₂ Q j n omega with hG
-  set L : ℝ :=
-    (Ch02.lambdaSq Q s (.finite 2)
-      (Cutoff.coefficientCutoffTriadicCoeffFamily M j omega))⁻¹ with hL
-  set T : ℝ :=
-    (Ch02.lambdaSq Q t q
-      (Cutoff.coefficientCutoffTriadicCoeffFamily M j omega))⁻¹ with hT
-  have hgnn : 0 ≤ g := gradientW1Infinity_nonneg _
-  have hgG : g ≤ G :=
-    Algsuperdiff.Section3.Provider.BadEvents.gradientW1Infinity_incrementUnitCube₂_le
-      Q j n omega
-  have hLnn : 0 ≤ L :=
-    inv_nonneg.mpr (Ch02.lambdaSq_nonneg Q _ hs (by norm_num))
-  have hTnn : 0 ≤ T := inv_nonneg.mpr (Ch02.lambdaSq_nonneg Q _ ht hq)
-  have hexp : (0 : ℝ) ≤ 2 * t / (1 - 2 * s) := by
-    have hden : (0 : ℝ) < 1 - 2 * s := by linarith only [hs4]
-    have hnum : (0 : ℝ) ≤ 2 * t := by linarith only [ht]
-    exact div_nonneg hnum hden.le
-  have hb0 : (0 : ℝ) ≤ 1 + C * g * L := by
-    have : (0 : ℝ) ≤ C * g * L := mul_nonneg (mul_nonneg hC.le hgnn) hLnn
-    linarith only [this]
-  have hbLe : 1 + C * g * L ≤ 1 + C * G * L := by
-    have : C * g * L ≤ C * G * L :=
-      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hgG hC.le) hLnn
-    linarith only [this]
-  have hstep :
-      Real.rpow (1 + C * g * L) (2 * t / (1 - 2 * s)) ≤
-        Real.rpow (1 + C * G * L) (2 * t / (1 - 2 * s)) :=
-    Real.rpow_le_rpow hb0 hbLe hexp
-  exact
-    mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left hstep (by norm_num : (0 : ℝ) ≤ 6)) hTnn
 
 end
 

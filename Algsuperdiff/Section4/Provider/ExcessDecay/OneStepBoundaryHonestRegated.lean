@@ -1,20 +1,19 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryHonest
-import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryFullRegated
+import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
 
 /-!
 # The re-gated sibling of the re-cut boundary one-step
 
 `OneStepBoundaryHonest.excessDecay_oneStep_boundary_metSet_datumSplit` re-gated
-at the frozen threshold `C_v⁻¹ s⁴`, exactly as
-`OneStepBoundaryFullRegated.excessDecay_oneStep_boundary_metSet_of_harmonicApprox_regated`
-re-gates the proved boundary endpoint.  This is the shape
-`EdAssemblyJoin.excessDecay_oneStep_anchored` consumes on the boundary branch,
-so it is the interface an honest join must be built against.
+at the frozen threshold `C_v⁻¹ s⁴`, exactly as the re-gated sibling of the
+proved boundary endpoint re-gates it.  This is the shape the anchored join
+consumes on the boundary branch, so it is the interface an honest join must be
+built against.
 
 The statement is transcribed byte-for-byte from the re-cut endpoint, with
 `_hharm` re-gated and the reachability hypothesis `_hrep` inserted; the

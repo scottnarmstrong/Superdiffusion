@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -112,7 +112,10 @@ theorem uglyPatch1 {Cs Cr A W GF1 E2 muInv : ℝ}
     Cs * muInv * GF1 * E2 ≤ Cs * (1 + A) ^ 2 * Cr * W * E2 := by
   have hCr : 0 ≤ Cr := hmu0.trans hmu
   calc
-    Cs * muInv * GF1 * E2 ≤ Cs * Cr * ((1 + A) ^ 2 * W) * E2 := by gcongr
+    Cs * muInv * GF1 * E2 ≤ Cs * Cr * ((1 + A) ^ 2 * W) * E2 :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul (mul_le_mul_of_nonneg_left hmu hCs) hGF1 hGF10
+          (mul_nonneg hCs hCr)) hE2
     _ = Cs * (1 + A) ^ 2 * Cr * W * E2 := by ring
 
 /-- **Patch 3**.  The third sensitivity term `Cs sigmaBar_m^{-2} X^2` becomes the
@@ -126,9 +129,10 @@ theorem uglyPatch3 {Cs cstar gam kap Pm Pn W X sigm : ℝ}
   have hgam0 : 0 < gam := gamma_pos_of_kap hkap0 hcstar hkap
   have hkinv : 0 < kap⁻¹ := inv_pos.2 hkap0
   have hPmInv : Pm⁻¹ ≤ Pn⁻¹ := inv_anti₀ hPn0 hPnPm
-  have hstep : sigm⁻¹ ≤ 2 * (kap⁻¹ * Pn⁻¹) := by
-    refine (inv_le_two_mul_inv hkap0 hPm0 hsigmlow).trans ?_
-    gcongr
+  have hstep : sigm⁻¹ ≤ 2 * (kap⁻¹ * Pn⁻¹) :=
+    (inv_le_two_mul_inv hkap0 hPm0 hsigmlow).trans
+      (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hPmInv hkinv.le)
+        (by norm_num))
   have hsq : sigm⁻¹ ^ 2 ≤ 4 * ((kap⁻¹) ^ 2 * (Pn⁻¹) ^ 2) := by
     have hnn : (0 : ℝ) ≤ sigm⁻¹ := (inv_pos.2 hsigm0).le
     have := pow_le_pow_left₀ hnn hstep 2
@@ -139,12 +143,13 @@ theorem uglyPatch3 {Cs cstar gam kap Pm Pn W X sigm : ℝ}
   have hcsg : (0 : ℝ) ≤ cstar⁻¹ * gam := by positivity
   calc
     Cs * sigm⁻¹ ^ 2 * X ^ 2
-        ≤ Cs * (4 * (cstar⁻¹ * gam * (Pn⁻¹) ^ 2)) * X ^ 2 := by gcongr
+        ≤ Cs * (4 * (cstar⁻¹ * gam * (Pn⁻¹) ^ 2)) * X ^ 2 :=
+          mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hsq hCs) hXsq
     _ = 4 * Cs * cstar⁻¹ * gam * 1 * (Pn⁻¹ * X) ^ 2 := by ring
     _ ≤ 4 * Cs * cstar⁻¹ * gam * W * (Pn⁻¹ * X) ^ 2 := by
         have hpos : (0 : ℝ) ≤ 4 * Cs * cstar⁻¹ * gam := by positivity
         have hsqnn : (0 : ℝ) ≤ (Pn⁻¹ * X) ^ 2 := sq_nonneg _
-        gcongr
+        exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hW1 hpos) hsqnn
 
 /-- **Patch 4**.  The fourth sensitivity term `Cs min{1, X lambda^{-1}}^2` also
 becomes the displayed gradient-at-`n` term, by the `lambda`-budget
@@ -167,15 +172,13 @@ theorem uglyPatch4 {Cs Cl cstar gam kap Pn Q W X lamInv sign : ℝ}
     calc lamInv = sign * lamInv * sign⁻¹ := by field_simp
       _ ≤ Cl * Q * sign⁻¹ := this
   have hClQ : 0 ≤ Cl * Q := le_trans (mul_nonneg hsign0.le hlamInv) hlam
-  have hlam'' : lamInv ≤ Cl * Q * (4 * (kap⁻¹ * Pn⁻¹)) := by
-    refine hlam'.trans ?_
-    gcongr
+  have hlam'' : lamInv ≤ Cl * Q * (4 * (kap⁻¹ * Pn⁻¹)) :=
+    hlam'.trans (mul_le_mul_of_nonneg_left hsignstep hClQ)
   -- the `min` is dominated by the product
   have hmin0 : (0 : ℝ) ≤ min 1 (X * lamInv) :=
     le_min zero_le_one (mul_nonneg hX hlamInv)
-  have hminle : min 1 (X * lamInv) ≤ X * (Cl * Q * (4 * (kap⁻¹ * Pn⁻¹))) := by
-    refine (min_le_right _ _).trans ?_
-    gcongr
+  have hminle : min 1 (X * lamInv) ≤ X * (Cl * Q * (4 * (kap⁻¹ * Pn⁻¹))) :=
+    (min_le_right _ _).trans (mul_le_mul_of_nonneg_left hlam'' hX)
   have hsq := pow_le_pow_left₀ hmin0 hminle 2
   have hkap2 : (kap⁻¹) ^ 2 = cstar⁻¹ * gam := kapInv_sq hkap0 hcstar hkap
   have hexp : (X * (Cl * Q * (4 * (kap⁻¹ * Pn⁻¹)))) ^ 2 =
@@ -187,9 +190,11 @@ theorem uglyPatch4 {Cs Cl cstar gam kap Pn Q W X lamInv sign : ℝ}
   have hpn : (0 : ℝ) ≤ (Pn⁻¹ * X) ^ 2 := sq_nonneg _
   calc
     Cs * min 1 (X * lamInv) ^ 2
-        ≤ Cs * (16 * Cl ^ 2 * (cstar⁻¹ * gam) * Q ^ 2 * (Pn⁻¹ * X) ^ 2) := by gcongr
+        ≤ Cs * (16 * Cl ^ 2 * (cstar⁻¹ * gam) * Q ^ 2 * (Pn⁻¹ * X) ^ 2) :=
+          mul_le_mul_of_nonneg_left hsq hCs
     _ = 16 * Cs * Cl ^ 2 * cstar⁻¹ * gam * Q ^ 2 * (Pn⁻¹ * X) ^ 2 := by ring
-    _ ≤ 16 * Cs * Cl ^ 2 * cstar⁻¹ * gam * W * (Pn⁻¹ * X) ^ 2 := by gcongr
+    _ ≤ 16 * Cs * Cl ^ 2 * cstar⁻¹ * gam * W * (Pn⁻¹ * X) ^ 2 :=
+          mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hQ2W hcoef) hpn
 
 /-- **Patch 2**.  The second sensitivity term splits three ways: the
 `sigmaBar`-continuity term, the `L^2` term, and --- via the Poincare hypothesis
@@ -231,36 +236,56 @@ theorem uglyPatch2 {Cs Cl Cr Cp A cstar gam kap Pm Pn Q W Wg GF2 lamInv sigm sig
           (sign⁻¹ ^ 2 * Hsq + (sigm * sign⁻¹ - 1) ^ 2) =
         Cs * (sigm⁻¹ * sign⁻¹) * (sign * lamInv) * GF2 * Hsq +
           Cs * (sigm⁻¹ * sign) * (sign * lamInv) * GF2 * (sigm * sign⁻¹ - 1) ^ 2 := by
-    field_simp
+    have hss : sign * sign⁻¹ = 1 := mul_inv_cancel₀ hsign0.ne'
+    have hlhs : Cs * (sigm⁻¹ * sign ^ 2) * lamInv * GF2 *
+          (sign⁻¹ ^ 2 * Hsq + (sigm * sign⁻¹ - 1) ^ 2) =
+        (sign * sign⁻¹) ^ 2 * (Cs * sigm⁻¹ * lamInv * GF2 * Hsq) +
+          Cs * (sigm⁻¹ * sign) * (sign * lamInv) * GF2 * (sigm * sign⁻¹ - 1) ^ 2 := by
+      ring
+    have hrhs : Cs * (sigm⁻¹ * sign⁻¹) * (sign * lamInv) * GF2 * Hsq =
+        (sign * sign⁻¹) * (Cs * sigm⁻¹ * lamInv * GF2 * Hsq) := by
+      ring
+    rw [hlhs, hrhs, hss]
+    ring
   have hlegH : Cs * (sigm⁻¹ * sign⁻¹) * (sign * lamInv) * GF2 * Hsq ≤
       16 * Cs * (1 + A) ^ 2 * Cl * cstar⁻¹ * gam * W * (Pn⁻¹ * Lnrm) ^ 2 +
         16 * Cs * (1 + A) ^ 2 * Cl * Cp ^ 2 * cstar⁻¹ * gam * Wg * (Pm⁻¹ * Y) ^ 2 := by
+    have hcsg : (0 : ℝ) ≤ Cs * (sigm⁻¹ * sign⁻¹) :=
+      mul_nonneg hCs (mul_nonneg hsigminv.le hsigninv.le)
     have hstep1 : Cs * (sigm⁻¹ * sign⁻¹) * (sign * lamInv) * GF2 * Hsq ≤
-        Cs * (sigm⁻¹ * sign⁻¹) * (Cl * Q) * GF2 * Hsq := by gcongr
+        Cs * (sigm⁻¹ * sign⁻¹) * (Cl * Q) * GF2 * Hsq :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hlam hcsg) hGF20) hHsq
     have hQGF : Cs * (sigm⁻¹ * sign⁻¹) * (Cl * Q) * GF2 * Hsq =
         Cs * (sigm⁻¹ * sign⁻¹) * Cl * (Q * GF2) * Hsq := by ring
     have hstep2 : Cs * (sigm⁻¹ * sign⁻¹) * Cl * (Q * GF2) * Hsq ≤
-        Cs * (sigm⁻¹ * sign⁻¹) * Cl * ((1 + A) ^ 2 * W) * Hsq := by gcongr
+        Cs * (sigm⁻¹ * sign⁻¹) * Cl * ((1 + A) ^ 2 * W) * Hsq :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hGF2 (mul_nonneg hcsg hCl)) hHsq
     -- the two `sigmaBar` lower bounds
     have hsm : sigm⁻¹ ≤ 2 * (kap⁻¹ * Pm⁻¹) :=
       inv_le_two_mul_inv hkap0 hPm0 hsigmlow
     have hsn : sign⁻¹ ≤ 4 * (kap⁻¹ * Pn⁻¹) :=
       inv_le_four_mul_inv hkap0 hPn0 hsignlow
     have hprod : sigm⁻¹ * sign⁻¹ ≤ 8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹) := by
-      have : sigm⁻¹ * sign⁻¹ ≤ (2 * (kap⁻¹ * Pm⁻¹)) * (4 * (kap⁻¹ * Pn⁻¹)) := by gcongr
+      have : sigm⁻¹ * sign⁻¹ ≤ (2 * (kap⁻¹ * Pm⁻¹)) * (4 * (kap⁻¹ * Pn⁻¹)) :=
+        mul_le_mul hsm hsn hsigninv.le (hsigminv.le.trans hsm)
       refine this.trans (le_of_eq ?_)
       rw [show (2 * (kap⁻¹ * Pm⁻¹)) * (4 * (kap⁻¹ * Pn⁻¹)) =
           8 * ((kap⁻¹) ^ 2) * (Pm⁻¹ * Pn⁻¹) by ring, hkap2]
     have hAW : (0 : ℝ) ≤ (1 + A) ^ 2 * W := by positivity
     have hstep3 : Cs * (sigm⁻¹ * sign⁻¹) * Cl * ((1 + A) ^ 2 * W) * Hsq ≤
-        Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl * ((1 + A) ^ 2 * W) * Hsq := by
-      gcongr
+        Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl * ((1 + A) ^ 2 * W) * Hsq :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hprod hCs) hCl) hAW) hHsq
     -- insert the Poincare split
     have hcoef : (0 : ℝ) ≤ Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl *
         ((1 + A) ^ 2 * W) := by positivity
     have hstep4 : Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl * ((1 + A) ^ 2 * W) * Hsq ≤
         Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl * ((1 + A) ^ 2 * W) *
-          (2 * Lnrm ^ 2 + 2 * (Cp * Y) ^ 2) := by gcongr
+          (2 * Lnrm ^ 2 + 2 * (Cp * Y) ^ 2) :=
+      mul_le_mul_of_nonneg_left hH hcoef
     -- distribute and compare the two legs separately
     have hPmInv : Pm⁻¹ ≤ Pn⁻¹ := inv_anti₀ hPn0 hPnPm
     have hLleg : Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl * ((1 + A) ^ 2 * W) *
@@ -277,7 +302,8 @@ theorem uglyPatch2 {Cs Cl Cr Cp A cstar gam kap Pm Pn Q W Wg GF2 lamInv sigm sig
       have hc : (0 : ℝ) ≤ 16 * Cs * (1 + A) ^ 2 * Cl * cstar⁻¹ * gam * W := by positivity
       have hl : (0 : ℝ) ≤ Lnrm ^ 2 := sq_nonneg _
       have hpn : (0 : ℝ) < Pn⁻¹ := inv_pos.2 hPn0
-      gcongr
+      exact mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hPmInv hpn.le) hl) hc
     have hYleg : Cs * (8 * (cstar⁻¹ * gam) * (Pm⁻¹ * Pn⁻¹)) * Cl * ((1 + A) ^ 2 * W) *
           (2 * (Cp * Y) ^ 2) ≤
         16 * Cs * (1 + A) ^ 2 * Cl * Cp ^ 2 * cstar⁻¹ * gam * Wg * (Pm⁻¹ * Y) ^ 2 := by
@@ -305,11 +331,17 @@ theorem uglyPatch2 {Cs Cl Cr Cp A cstar gam kap Pm Pn Q W Wg GF2 lamInv sigm sig
       Cs * (1 + A) ^ 2 * Cr * Cl * W * (sigm * sign⁻¹ - 1) ^ 2 := by
     have hD : (0 : ℝ) ≤ (sigm * sign⁻¹ - 1) ^ 2 := sq_nonneg _
     have hstep1 : Cs * (sigm⁻¹ * sign) * (sign * lamInv) * GF2 * (sigm * sign⁻¹ - 1) ^ 2 ≤
-        Cs * Cr * (Cl * Q) * GF2 * (sigm * sign⁻¹ - 1) ^ 2 := by gcongr
+        Cs * Cr * (Cl * Q) * GF2 * (sigm * sign⁻¹ - 1) ^ 2 :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right
+          (mul_le_mul (mul_le_mul_of_nonneg_left hratio hCs) hlam
+            (mul_nonneg hsign0.le hlamInv) (mul_nonneg hCs hCr)) hGF20) hD
     have hre : Cs * Cr * (Cl * Q) * GF2 * (sigm * sign⁻¹ - 1) ^ 2 =
         Cs * Cr * Cl * (Q * GF2) * (sigm * sign⁻¹ - 1) ^ 2 := by ring
     have hstep2 : Cs * Cr * Cl * (Q * GF2) * (sigm * sign⁻¹ - 1) ^ 2 ≤
-        Cs * Cr * Cl * ((1 + A) ^ 2 * W) * (sigm * sign⁻¹ - 1) ^ 2 := by gcongr
+        Cs * Cr * Cl * ((1 + A) ^ 2 * W) * (sigm * sign⁻¹ - 1) ^ 2 :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hGF2 (mul_nonneg (mul_nonneg hCs hCr) hCl)) hD
     calc
       Cs * (sigm⁻¹ * sign) * (sign * lamInv) * GF2 * (sigm * sign⁻¹ - 1) ^ 2
           ≤ Cs * Cr * Cl * ((1 + A) ^ 2 * W) * (sigm * sign⁻¹ - 1) ^ 2 := by

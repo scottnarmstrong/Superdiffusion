@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepOneSeamAnchor
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepOneDisplay
@@ -21,7 +21,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSpineBase
      = C_top · Y₀ · (1 + 𝓔sup_{1/8})(1 + 𝓔sup_{1/4}),
 ```
 
-i.e. the sibling of `HomStepOneDisplay.exists_ethmB_moment_bound` at the
+i.e. the sibling of Step 1's own display at the
 re-pinned base AND at the enlarged `Y` slot
 (`HomSpineTopScale.stepTwoEnlargedY` at the consumer pin `t = 1/4`).  Two
 moves, one display.

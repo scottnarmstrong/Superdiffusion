@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderReproducing
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderBridge
@@ -24,7 +24,7 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
   (`meanSquareDeviationOn_euclideanBall_eq`).
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/InteriorGradientNative.lean ====
+-- ==== interior gradient estimate ====
 open scoped Real Convolution Topology
 open MeasureTheory Metric Set InnerProductSpace
 
@@ -62,7 +62,7 @@ theorem harmonicOnNhd_sub_const {v : 𝔼 → ℝ} {s : Set 𝔼} (hv : Harmonic
 end
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/InteriorGradientL2Native.lean ====
+-- ==== interior gradient estimate, `L²` form ====
 open scoped Real Convolution Topology
 open MeasureTheory Metric Set InnerProductSpace
 open Homogenization (Vec euclideanBall volumeAverage)

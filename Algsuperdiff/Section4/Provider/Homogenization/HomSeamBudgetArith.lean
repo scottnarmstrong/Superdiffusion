@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineSupFormClause
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCzGridDepthTest
@@ -34,10 +34,9 @@ with NO dependence of the budget constant on `d`.
   recut_geomBudget_le_absLog                -- and at s = homS M, on the gate
 ```
 
-The two `≈` above are the necessity records
-(`HomSpineSupFormClause.coarseGrainingGeomFactor_ge_inv_rpow` for `D3`,
-`HomSpineDepthFarBandSize.farBand_sum_ge_min` for `CA`); this file supplies the
-matching UPPER bounds, which is what the budget slot consumes.
+The two `≈` above are necessity records — the `D3` lower bound and the
+far-band lower bound; this file supplies the matching UPPER bounds, which is what
+the budget slot consumes.
 -/
 
 open Algsuperdiff.Section3
@@ -72,23 +71,12 @@ theorem one_add_le_three_rpow {x : ℝ} (hx : 0 ≤ x) : 1 + x ≤ (3 : ℝ) ^ x
 
 /-! ## 2. The `D3` upper bound -/
 
-/-- The finite-`p` geometric factor is nonnegative on the printed window.  (The
-`HomSpineEnergySlot.coarseGrainingGeomFactor_nonneg` is the same
-statement; it is re-proved here to keep this arithmetic file's import cone at
-the two carrier modules.) -/
-private theorem geomFactor_nonneg {p w : ℝ} (hp : 0 < p) (hw : 0 < w) :
-    0 ≤ coarseGrainingGeomFactor p w := by
-  have hr : (3 : ℝ) ^ (-(w * p)) < 1 := three_rpow_neg_lt_one (mul_pos hw hp)
-  have hden : (0 : ℝ) < 1 - (3 : ℝ) ^ (-(w * p)) := by linarith only [hr]
-  rw [coarseGrainingGeomFactor_def]
-  exact Real.rpow_nonneg (inv_nonneg.mpr hden.le) _
-
 /-- **THE `D3` FACTOR, FROM ABOVE.**
 
 `coarseGrainingGeomFactor p w = (1-3^{-wp})^{-1/p} ≤ (1 + (w·p)⁻¹)^{1/p}`.
 
-This is the exact companion of the necessity record
-`coarseGrainingGeomFactor_ge_inv_rpow`: both sides behave like `(wp)^{-1/p}`
+This is the exact companion of the `D3` necessity record: both sides behave
+like `(wp)^{-1/p}`
 as `w·p → 0`, so nothing is lost here.  No gate, no `γ`, no `d`. -/
 theorem coarseGrainingGeomFactor_le_one_add_inv {p w : ℝ} (hp : 0 < p) (hw : 0 < w) :
     coarseGrainingGeomFactor p w ≤ (1 + (w * p)⁻¹) ^ (1 / p) := by

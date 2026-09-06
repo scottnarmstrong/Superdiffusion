@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaSlots
 import Algsuperdiff.Section4.Support.NormalizedL2
@@ -76,8 +76,7 @@ theorem stepSevenCaccLambda_pos [NeZero d] (Q : TriadicCube d) (a : CoeffFamily 
 /-! ## 3. The forcing factor at the pin -/
 
 /-- **The Caccioppoli's forcing factor at the §4.4 pin**, `t^{-8}(1-2t)^{-1}` at `t
-= 1/8`.  `StepSevenCaccMatching.stepSevenCaccForcing_le` evaluates it below
-`2^{25}`. -/
+= 1/8`. -/
 def stepSevenCaccForcingFactor : ℝ :=
   Real.rpow stepSevenCaccT (-8 : ℝ) / (1 - 2 * stepSevenCaccT)
 
@@ -177,27 +176,6 @@ theorem exists_stepSevenCaccioppoliEnergyNorm (d : ℕ) [NeZero d] :
     rw [h1, Real.sqrt_sq hYnn, hLeq]
   rw [hAeq, hBeq] at hconv
   exact hconv
-
-/-! ## 5. The prefactor's square root at the `Θ` cap -/
-
-theorem stepSevenCaccPrefactorSqrt_le [NeZero d] {Q : TriadicCube d}
-    {a : CoeffFamily d} {C Theta0 : ℝ} (hC : 0 < C) (hTheta0 : 0 ≤ Theta0)
-    (hTheta : Ch02.ThetaRatio Q stepSevenCaccS stepSevenCaccT a ≤ Theta0) :
-    Real.sqrt (caccioppoliWithRHSPrefactor C Q a stepSevenCaccS stepSevenCaccT) ≤
-      2 * (2 * max 1 C) ^ (2 : ℕ) * Theta0 := by
-  have hbase := stepSevenCaccPrefactor_le hC hTheta
-  have hmax : (0 : ℝ) ≤ 2 * max 1 C := by
-    have h1 : (1 : ℝ) ≤ max 1 C := le_max_left _ _
-    linarith only [h1]
-  have hval : (2 * max 1 C) ^ (4 : ℕ) * 4 * Theta0 ^ (2 : ℕ) =
-      (2 * (2 * max 1 C) ^ (2 : ℕ) * Theta0) ^ (2 : ℕ) := by ring
-  have hstep : Real.sqrt (caccioppoliWithRHSPrefactor C Q a stepSevenCaccS stepSevenCaccT) ≤
-      Real.sqrt ((2 * (2 * max 1 C) ^ (2 : ℕ) * Theta0) ^ (2 : ℕ)) := by
-    rw [← hval]
-    exact Real.sqrt_le_sqrt hbase
-  have hnn : (0 : ℝ) ≤ 2 * (2 * max 1 C) ^ (2 : ℕ) * Theta0 :=
-    mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg hmax 2)) hTheta0
-  rwa [Real.sqrt_sq hnn] at hstep
 
 end
 

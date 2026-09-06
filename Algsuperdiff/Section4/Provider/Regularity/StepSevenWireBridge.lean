@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenWireCgMatching
 
@@ -33,7 +33,7 @@ no exponent moves anywhere.
 
 ## What this discharges
 
-`stepSevenBesovBridge_scaleNormalized` is the `hbridge` slot in CoarseGraining's
+The scale-normalized bridge is the `hbridge` slot in CoarseGraining's
 carriers:
 
 ```text
@@ -84,24 +84,6 @@ noncomputable def stepSevenBridgeConst (t : ℝ) : ℝ :=
 
 theorem stepSevenBridgeConst_nonneg (t : ℝ) : 0 ≤ stepSevenBridgeConst t :=
   Real.sqrt_nonneg _
-
-/-- The conversion constant at the §4.4 pin, in the printed spelling `(1 -
-3^{-3/2})^{-1/2}`. -/
-theorem stepSevenBridgeConst_quarter_eq :
-    stepSevenBridgeConst (1 / 4) =
-      Real.sqrt ((1 - Real.rpow (3 : ℝ) (-(3 / 2 : ℝ)))⁻¹) := by
-  have h3 : (0 : ℝ) ≤ 3 := by norm_num
-  have hsq : Real.rpow (3 : ℝ) (-(1 - 1 / 4 : ℝ)) ^ 2 =
-      Real.rpow (3 : ℝ) (-(3 / 2 : ℝ)) := by
-    have hnat : Real.rpow (Real.rpow (3 : ℝ) (-(1 - 1 / 4 : ℝ))) (((2 : ℕ) : ℝ)) =
-        Real.rpow (3 : ℝ) (-(1 - 1 / 4 : ℝ)) ^ (2 : ℕ) :=
-      Real.rpow_natCast _ 2
-    have hmul : Real.rpow (3 : ℝ) (-(1 - 1 / 4 : ℝ) * ((2 : ℕ) : ℝ)) =
-        Real.rpow (Real.rpow (3 : ℝ) (-(1 - 1 / 4 : ℝ))) (((2 : ℕ) : ℝ)) :=
-      Real.rpow_mul h3 _ _
-    have hexp : -(1 - 1 / 4 : ℝ) * ((2 : ℕ) : ℝ) = -(3 / 2 : ℝ) := by norm_num
-    rw [← hnat, ← hmul, hexp]
-  rw [stepSevenBridgeConst, hsq]
 
 /-! ## 2. The weight split -/
 
@@ -203,30 +185,6 @@ theorem stepSevenBesovBridge (Q : TriadicCube d) {t : ℝ} (ht1 : t < 1)
   refine stepSevenBesovBridge_of_partialBound Q ht1 F ?_
   intro N
   exact le_csSup hbdd (Set.mem_range_self N)
-
-/-- **`hbridge` in CoarseGraining's public carriers**, verbatim.
-
-The left side is what the Section-3 mean-zero embedding consumes; the right
-side is what `coarsePoincareRHSTheory` produces. -/
-theorem stepSevenBesovBridge_scaleNormalized (Q : TriadicCube d) {t : ℝ} (ht1 : t < 1)
-    (F : Vec d → Vec d)
-    (hbdd : BddAbove
-      (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminormTwo Q t N F)) :
-    scaleNormalizedNegativeBesovVectorNorm Q 1 (Ch02.MultiscaleExponent.finite 1) F ≤
-      stepSevenBridgeConst t *
-        scaleNormalizedNegativeBesovVectorNorm Q t (Ch02.MultiscaleExponent.finite 2) F := by
-  rw [scaleNormalizedNegativeBesovVectorNorm_finite_one_eq_cubeBesovNegativeVectorSeminorm,
-    scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo]
-  exact stepSevenBesovBridge Q ht1 F hbdd
-
-theorem stepSevenBesovBridge_pinned (Q : TriadicCube d) (F : Vec d → Vec d)
-    (hbdd : BddAbove (Set.range fun N : ℕ =>
-      cubeBesovNegativeVectorPartialSeminormTwo Q stepSevenCgS N F)) :
-    scaleNormalizedNegativeBesovVectorNorm Q 1 (Ch02.MultiscaleExponent.finite 1) F ≤
-      stepSevenBridgeConst stepSevenCgS *
-        scaleNormalizedNegativeBesovVectorNorm Q stepSevenCgS
-          (Ch02.MultiscaleExponent.finite 2) F :=
-  stepSevenBesovBridge_scaleNormalized Q stepSevenCgS_lt_one F hbdd
 
 end
 

@@ -116,16 +116,6 @@ private theorem zero_matVecMul (x : Vec d) :
 
 /-! ## The defining property: the square is the inverse -/
 
-/-- Two doubled block matrices agree as soon as their four blocks agree. -/
-theorem blockMat_ext {A B : BlockMat d}
-    (hUL : A.upperLeft = B.upperLeft) (hUR : A.upperRight = B.upperRight)
-    (hLL : A.lowerLeft = B.lowerLeft) (hLR : A.lowerRight = B.lowerRight) :
-    A = B := by
-  cases A
-  cases B
-  simp only [BlockMat.mk.injEq]
-  exact ⟨hUL, hUR, hLL, hLR⟩
-
 /-- Doubled matrix-vector multiplication is compatible with doubled matrix
 multiplication. -/
 theorem blockMatVecMul_blockMatMul (A B : BlockMat d) (X : BlockVec d) :

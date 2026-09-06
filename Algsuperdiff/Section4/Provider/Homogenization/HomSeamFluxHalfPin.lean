@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxFreeCcg
 
@@ -10,7 +10,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxFreeCcg
 
 ## Why this file exists
 
-`HomSpineResidueCore.recutPinnedKtest = cgTestConstBase d (homS M) (7 homS M/8)
+The printed test-class pin `cgTestConstBase d (homS M) (7 homS M/8)
 p′` gauges the Step-4 dual pairing test at Hölder order `α = s = |log γ|⁻¹`.
 The order gap of the conversion is then `α - s′ = s/8`, PROPORTIONAL to `s`, so
 the radial kernel's geometric factor `(1 - 3^{-(α-s′)p′})⁻¹` degenerates like
@@ -35,12 +35,12 @@ it and evaluates the geometric factor at the FIXED gap `1/2 - 7s/8 ≥ 9/32`.
 * `recutKtestHalf` — the re-pinned test-class constant, and `recutKtestHalfBound`
   its model-free majorant (`cgTestConstBase_half_le` +
   `recutKtestHalf_le_bound`);
-* `recutCwHalfFluxAt` — `HomSeamFluxFreeCcg.recutCwFluxAt` with that constant in
-  the `K_test` slot;
+* `recutCwHalfFluxAt` — the free-`Ccg` pairing constant of `HomSeamFluxFreeCcg`
+  with that constant in the `K_test` slot;
 * `pairCwLegOf_le_of_bounds` — the generic leg envelope: at `sbase ≤ B` and
   `κ ≤ κ₀` the leg is bounded by an `sbase`-free and `κ`-free quantity;
-* **THE ENVELOPE LEMMA** `recutCwHalfFluxAt_le_envelope` /
-  `exists_recutCwHalf_envelope`: `∃ C_w⁰, ∀ M, recutCwHalfFluxAt … ≤ C_w⁰`, at
+* **THE ENVELOPE LEMMA** `recutCwHalfFluxAt_le_envelope`:
+  `recutCwHalfFluxAt … ≤ C_w⁰` at every `M`, at
   the explicit `C_w⁰ = recutCwHalfEnvelope d hd1 Ccg Cgap Cen0` — a function of
   `d`, the printed exponent, `C_gap` and `C_en⁰` alone.  This is exactly the
   statement measured to be FALSE at the `α = s` pin;
@@ -153,7 +153,7 @@ theorem cgTestConstBase_half_le (d : ℕ) {s t : ℝ} (hs : s ≤ 1 / 4) (ht : 0
 
 /-! ## 2. The re-pinned test constant and its model-free majorant -/
 
-/-- **THE RE-PINNED TEST-CLASS CONSTANT.**  `HomSpineResidueCore.recutPinnedKtest`
+/-- **THE RE-PINNED TEST-CLASS CONSTANT.**  The printed test-class pin
 with the Hölder gauge moved from `α = s` to the print's own Schauder provenance
 `α = 1/2`; the dual order `s′ = 7s/8` is UNCHANGED. -/
 def recutKtestHalf (d : ℕ) (hd1 : 1 ≤ d) (M : ABKModel d) : ℝ :=
@@ -263,7 +263,8 @@ theorem pairCwLegOf_le_of_bounds (d : ℕ) {Ccg : ℝ} (p : FiniteLpExponent)
 
 /-! ## 4. The re-pinned pairing constant and THE ENVELOPE -/
 
-/-- `HomSeamFluxFreeCcg.recutCwFluxAt` at the re-pinned test constant. -/
+/-- The free-`Ccg` pairing constant of `HomSeamFluxFreeCcg` at the re-pinned
+test constant. -/
 def recutCwHalfFluxAt (d : ℕ) (hd1 : 1 ≤ d) (M : ABKModel d) (Ccg Cgap Cen0 : ℝ) : ℝ :=
   2 * pairCwOf d Ccg (recutExponent d hd1) recutOrderTop Cgap Cen0 (homS M)
     (recutKtestHalf d hd1 M)
@@ -288,7 +289,7 @@ def recutCwHalfEnvelope (d : ℕ) (hd1 : 1 ≤ d) (Ccg Cgap Cen0 : ℝ) : ℝ :=
 The pairing constant of the re-cut lane, at the Schauder-provenance test pin, is
 bounded by a quantity that does not mention the model.  This is the statement
 measured to be UNSATISFIABLE at the `α = s` pin
-(`recutPinnedKtest ~ |log γ|^{1-1/(4d)}`): the ONLY model-dependent factor of
+(it grows like `|log γ|^{1-1/(4d)}`): the ONLY model-dependent factor of
 `pairCwOf` was the test constant, and at `α = 1/2` it is bounded by
 `recutKtestHalfBound`. -/
 theorem recutCwHalfFluxAt_le_envelope (d : ℕ) (hd1 : 1 ≤ d) (M : ABKModel d)
@@ -352,20 +353,6 @@ theorem recutCwHalfEnvelope_nonneg (d : ℕ) (hd1 : 1 ≤ d) {Ccg Cgap Cen0 : �
         (mul_nonneg hKB0 hCcg0) hp2) hw2) hCdata0) hG0) hCgap.le
     rw [recutCwHalfEnvelope]
     linarith only [hA, hB, hC, hD]
-
-/-- **THE ENVELOPE, IN THE `∃ C_w⁰, ∀ M` FORM THE FRAME CONDITION ASKS FOR.**
-
-The ITEM 4 measured this statement to be FALSE at the `α = s` pin.  At the
-print's own Schauder provenance `α = 1/2` it is a theorem, with the witness
-written down explicitly. -/
-theorem exists_recutCwHalf_envelope (d : ℕ) (hd1 : 1 ≤ d) {Ccg Cgap Cen0 : ℝ}
-    (hCcg0 : 0 ≤ Ccg) (hCgap : 0 < Cgap) (hCen0 : 0 ≤ Cen0) :
-    ∃ Cw0 : ℝ, 0 ≤ Cw0 ∧
-      ∀ M : ABKModel d, 4 ≤ |Real.log M.gamma| →
-        recutCwHalfFluxAt d hd1 M Ccg Cgap Cen0 ≤ Cw0 :=
-  ⟨recutCwHalfEnvelope d hd1 Ccg Cgap Cen0,
-    recutCwHalfEnvelope_nonneg d hd1 hCcg0 hCgap hCen0,
-    fun M hlog => recutCwHalfFluxAt_le_envelope d hd1 M hCcg0 hCgap hCen0 hlog⟩
 
 /-- **THE `K_abs` FRAME CONDITION, CLOSED BEFORE THE MODEL, AT THE RE-PIN.**
 

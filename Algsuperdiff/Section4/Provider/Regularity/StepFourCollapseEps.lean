@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFiveBudgetSums
 
@@ -32,10 +32,10 @@ j}` observable, restricted to the good event and pushed through `ENNReal.toReal`
 * **The scale shifts by one.**  The excess-decay display contracts the excess
   between scales `n` and `n-k`, but reads its error observable at `n-2+3 =
   n+1`.  Identifying the Step-5 index `j:= n` (which is what the excess indices
-  force) therefore pins the Step-5 `ε`-slot at the shifted family `ε_{j+1}`, named
-  `stepFourEps` below.  The shift is carried explicitly, not absorbed:
-  `sum_Icc_stepFourEps_le` re-derives `e.sum.eps.j.bound` for it, at the same
-  constant, from `GoodScaleWindows` on the shifted window `[n+1, m+1]`.
+  force) therefore pins the Step-5 `ε`-slot at the shifted family `ε_{j+1}`.
+  The shift is carried explicitly, not absorbed: `e.sum.eps.j.bound` is
+  re-derived for it, at the same constant, from `GoodScaleWindows` on the
+  shifted window `[n+1, m+1]`.
 
 ## The `toReal` corner, closed
 
@@ -100,97 +100,5 @@ theorem stepFiveEps_le_of_cap {M : ABKModel d} {j : ℤ} {z : Vec d} {delta B : 
     (hcap : stepOneEpsJ M j z delta omega ≤ ENNReal.ofReal B) :
     stepFiveEps M j z delta omega ≤ B :=
   ENNReal.toReal_le_of_le_ofReal hB hcap
-
-/-- **The `ε_j` leg producer, under the annular anchor's own binders.**  The
-finiteness datum is discharged from the proved a.e. cap `ae_stepOneEpsJ_le`,
-whose constant `C_ann` is the frozen `annular_decomposition`'s; nothing else is
-assumed. -/
-theorem ae_fluxCorrectedErrorRepresentative_le_stepFiveEps (d : ℕ) :
-    ∃ Cann : ℝ, 0 < Cann ∧
-      ∀ M : ABKModel d, M.gamma ≤ Cann⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        M.gamma ≤ 1 / 256 →
-        ∀ delta : ℝ, delta ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-          M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-              Real.rpow stepOneSEighth (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) *
-                stepOneEp delta →
-            ∀ (j : ℤ) (z : Vec d),
-              ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-                omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-                    (Support.cgEllipLowerConstant d) j z
-                    ⟨stepOneSEighth, stepOneSEighth_pos⟩ (stepOneEp delta) →
-                  ∀ L : ℤ, j ≤ L →
-                    Support.fluxCorrectedErrorRepresentative M L j
-                        ⟨stepOneSEighth, stepOneSEighth_pos⟩
-                        (Cutoff.translateCutoffSample z omega) ≤
-                      stepFiveEps M j z delta omega := by
-  obtain ⟨Cann, hCann, hcap⟩ := ae_stepOneEpsJ_le d
-  refine ⟨Cann, hCann, ?_⟩
-  intro M hregime hgamma delta hdelta hsmall j z
-  filter_upwards [hcap M hregime hgamma delta hdelta hsmall j z] with omega homega
-  intro hmem L hjL
-  exact fluxCorrectedErrorRepresentative_le_stepFiveEps hjL hmem homega
-
-/-! ## 2. The index-shifted `ε`-family and its budget -/
-
-/-- **The Step-4 `ε`-family**: the Step-5 slot read at the excess-decay lane's own
-gate scale `j + 1` (see the module docstring). -/
-noncomputable def stepFourEps (M : ABKModel d) (j : ℤ) (z : Vec d) (delta : ℝ)
-    (omega : Cutoff.CutoffSample d) : ℝ :=
-  stepFiveEps M (j + 1) z delta omega
-
-theorem stepFourEps_nonneg (M : ABKModel d) (j : ℤ) (z : Vec d) (delta : ℝ)
-    (omega : Cutoff.CutoffSample d) : 0 ≤ stepFourEps M j z delta omega :=
-  stepFiveEps_nonneg M (j + 1) z delta omega
-
-/-- Re-indexing a sum over `[n,m]` by the unit shift. -/
-theorem sum_Icc_shift_one (f : ℤ → ℝ) (n m : ℤ) :
-    ∑ j ∈ Finset.Icc n m, f (j + 1) = ∑ k ∈ Finset.Icc (n + 1) (m + 1), f k := by
-  have hset : Finset.Icc (n + 1) (m + 1) = (Finset.Icc n m).image fun j => j + 1 := by
-    ext k
-    simp only [Finset.mem_Icc, Finset.mem_image]
-    constructor
-    · intro hk
-      exact ⟨k - 1, ⟨by omega, by omega⟩, by omega⟩
-    · rintro ⟨j, hj, rfl⟩
-      omega
-  rw [hset, Finset.sum_image (by
-    intro x _ y _ hxy
-    have hxy' : x + 1 = y + 1 := hxy
-    omega)]
-
-/-- **`e.sum.eps.j.bound` for the shifted family** (the price of the index
-shift is nil): from `GoodScaleWindows` on `[n+1, m+1]`,
-
-```text
-   ∑_{j=n}^{m} ε_{j+1}(z)  ≤  δ ((m-n) + 1) ,          z = 3^n v .
-```
-
-The centre is the SAME lattice point `3^n v` the Step-5 chain carries: the
-shifted window's own "fine" lattice `3^{(n+1)-1}ℤ^d` is exactly `3^n ℤ^d`. -/
-theorem sum_Icc_stepFourEps_le {M : ABKModel d} {delta : ℝ} {n m : ℤ}
-    {omega : Cutoff.CutoffSample d} (hdelta : 0 ≤ delta)
-    (hgood : GoodScaleWindows M stepOneSEighth delta stepOneSEighth_pos (n + 1) (m + 1)
-      omega)
-    {v : Fin d → ℤ} (hv : v ∈ Support.latticeCubeSet d n (m + 1)) :
-    ∑ j ∈ Finset.Icc n m,
-        stepFourEps M j (Support.triadicLatticePoint n v) delta omega ≤
-      delta * (((m - n).toNat : ℝ) + 1) := by
-  have hidx : n + 1 - 1 = n := by omega
-  have hv' : v ∈ Support.latticeCubeSet d (n + 1 - 1) (m + 1) := by
-    rw [hidx]
-    exact hv
-  have h := sum_stepFiveEps_le_of_goodScaleWindows_fine (M := M) (delta := delta)
-    (n := n + 1) (m := m + 1) (omega := omega) hdelta hgood hv'
-  rw [hidx] at h
-  have hlen : ((m + 1 - (n + 1)).toNat : ℝ) = ((m - n).toNat : ℝ) := by
-    congr 2
-    omega
-  rw [hlen] at h
-  rw [show (fun j : ℤ => stepFourEps M j (Support.triadicLatticePoint n v) delta omega) =
-      fun j : ℤ => stepFiveEps M (j + 1) (Support.triadicLatticePoint n v) delta omega from
-    rfl]
-  rw [sum_Icc_shift_one
-    (fun k => stepFiveEps M k (Support.triadicLatticePoint n v) delta omega) n m]
-  exact h
 
 end Algsuperdiff.Section4.Provider.Regularity

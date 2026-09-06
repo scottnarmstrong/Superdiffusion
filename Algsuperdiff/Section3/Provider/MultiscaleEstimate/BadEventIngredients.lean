@@ -115,7 +115,7 @@ occurs.
 
 ## 3. Consumer fit: the `[0,1]` ceiling, never an Orlicz product
 
-The fourth term of the revised `e.local.bad.events.summed` multiplies the crude
+The fourth term of `e.local.bad.events.summed` multiplies the crude
 bound of display 1 against the bad-event max factor built from display 3,
 
 ```

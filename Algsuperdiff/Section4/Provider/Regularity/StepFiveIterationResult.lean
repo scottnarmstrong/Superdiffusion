@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFiveSubWindow
 import Algsuperdiff.Section4.Provider.Regularity.StepSixHolderExponent
@@ -151,8 +151,8 @@ theorem three_rpow_neg_half_lt : (3 : ℝ) ^ (-(1 / 2) : ℝ) < 3 / 5 := by
     inv_eq_one_div]
   exact hkey
 
-/-- `θ^k ∈ (0, 3/5)` for `k ≥ 2` — the anchor's second `θ`-binder.  's
-`stepOneK_ge_ten` supplies `k ≥ 10 ≥ 2` a fortiori. -/
+/-- `θ^k ∈ (0, 3/5)` for `k ≥ 2` — the anchor's second `θ`-binder.  The Step-1
+integer `k` is at least `10`, so it meets the binder a fortiori. -/
 theorem stepFiveTheta_pow_mem {k : ℕ} (hk : 2 ≤ k) :
     stepFiveTheta ^ k ∈ Set.Ioo (0 : ℝ) (3 / 5) := by
   rw [stepFiveTheta_pow]
@@ -227,164 +227,6 @@ theorem oscillation_shape_aux {C Cpre Cg Ch Eq Q oscLo oscHi dataG dataH Sd : �
   have htarget : C * Q * (oscHi + C * dataG) + C * Q * dataH
       = C * Q * oscHi + C * C * (Q * dataG) + C * (Q * dataH) := by ring
   linarith only [hiter, s1, s2, t1, t2, t3, hexpand, htarget]
-
-/-! ## 5. `e.oscillation.iteration.result` -/
-
-/-- **`e.oscillation.iteration.result`**, assembled at the shape Step 6 consumes.
-
-For every `n', m'` with `n ≤ n' ≤ m' ≤ m`,
-
-```text
-   3^{-n'} ‖u - (u)_{U_{n'}}‖_{L̲²(U_{n'})}
-     ≤ C exp( C₁^{-1} C_iter (1-α)(m-n) ) ( 3^{-m'} ‖u - (u)_{U_{m'}}‖ + C·dataG )
-       + C exp( C₁^{-1} C_iter (1-α)(m-n) ) · dataH ,
-```
-
-with `C₁ = stepOne d Cedos Cann C_iter k` and the exponent written as
-`stepSixExponent alpha n m`, so that
-`oscillationHolderBound_of_iterationResult` unifies with it directly.  The
-produced constants are explicit:
-
-```text
-   C_iter := 2 C₀ (k+2) ,      C := max 1 exp( C₀ (k+1)(k+2) ) ,
-```
-
-`C₀` being the frozen iteration anchor's own constant.
-
-```lean
-   ∀ j : ℤ, n + (k : ℤ) ≤ j → j ≤ m - 1 → j ∉ Bz →
-     affineExcess (U (j - (k : ℤ))) u ≤
-       stepFiveTheta ^ k * affineExcess (U j) u +
-         ε j * slopeMagnitude (g j) + δ j
-```
-
-i.e. `e.Ej.decay.assumption` at `h := k`, `θ := 3^{-1/4}`, the Step-5 `ε_j`,
-`δ_j`, and the bad set `𝓑_z` — on Step 4's OWN range `[n+k, m-1] \ 𝓑_z`.
-
-Every other hypothesis is a source premise of the node: the anchor's binders,
-the Step-3 budget `|𝓑_z| ≤ δ(m-n+1)`, `e.sum.eps.j.bound` (supplied by
-`StepFiveBudgetSums.sum_stepFiveEps_le_two_mul_delta_mul_window`),
-`e.sum.delta.j.bound` (supplied by `StepFiveBudgetSums.sum_Icc_delta_le_of_legs`
-together with `StepFiveShomComparison`), and the regime `α ≤ 1`, `1 ≤ m-n`. -/
-theorem oscillationIterationResult_of_stepFourDecay (d : ℕ) (hd : d ≠ 0) (k : ℕ)
-    (hk : 2 ≤ k) :
-    ∃ C Citer : ℝ, 0 < C ∧ 0 ≤ Citer ∧
-      ∀ (Cedos Cann alpha : ℝ), alpha ≤ 1 →
-        ∀ n m : ℤ, (1 : ℤ) ≤ m - n →
-          ∀ U : ℤ → Set (Vec d), IterationWindowFamily U m →
-            ∀ u : Vec d → ℝ, MemLp u 2 (volume.restrict (U m)) →
-              ∀ (c : ℤ → ℝ) (g : ℤ → Vec d),
-                (∀ j : ℤ, j ≤ m → IsAffineMinimizer (U j) u (c j) (g j)) →
-                  ∀ Bz : Finset ℤ,
-                    (Bz.card : ℝ) ≤
-                        stepOneDelta (stepOneC1 d Cedos Cann Citer k) alpha *
-                          (((m : ℝ) - (n : ℝ)) + 1) →
-                      ∀ ε δ : ℤ → ℝ,
-                        (∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ ε j) →
-                        (∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ δ j) →
-                        (∑ j ∈ Finset.Icc n m, ε j ≤
-                          2 * stepOneDelta (stepOneC1 d Cedos Cann Citer k) alpha *
-                            ((m : ℝ) - (n : ℝ))) →
-                        ∀ dataG dataH : ℝ, 0 ≤ dataG → 0 ≤ dataH →
-                          (∑ j ∈ Finset.Icc n m, δ j ≤ dataG + dataH) →
-                          (∀ j : ℤ, n + (k : ℤ) ≤ j → j ≤ m - 1 → j ∉ Bz →
-                            affineExcess (U (j - (k : ℤ))) u ≤
-                              stepFiveTheta ^ k * affineExcess (U j) u +
-                                ε j * slopeMagnitude (g j) + δ j) →
-                          ∀ n' m' : ℤ, n ≤ n' → n' ≤ m' → m' ≤ m →
-                            (3 : ℝ) ^ (-n') *
-                                normalizedL2On (U n')
-                                  (fun x => u x - volumeAverage (U n') u) ≤
-                              C *
-                                  Real.exp
-                                    ((stepOneC1 d Cedos Cann Citer k)⁻¹ * Citer *
-                                      stepSixExponent alpha n m) *
-                                  ((3 : ℝ) ^ (-m') *
-                                      normalizedL2On (U m')
-                                        (fun x => u x - volumeAverage (U m') u) +
-                                    C * dataG) +
-                                C *
-                                  Real.exp
-                                    ((stepOneC1 d Cedos Cann Citer k)⁻¹ * Citer *
-                                      stepSixExponent alpha n m) * dataH := by
-  obtain ⟨C0, hC0, hsub⟩ := exists_oscillation_subwindow_of_iterationLemma d hd
-  have hkR : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-  refine ⟨max 1 (Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2))), 2 * C0 * ((k : ℝ) + 2),
-    lt_of_lt_of_le zero_lt_one (le_max_left _ _),
-    mul_nonneg (mul_nonneg (by norm_num) hC0.le) (by linarith only [hkR]), ?_⟩
-  intro Cedos Cann alpha halpha n m hwin U hU u hu c g hmin Bz hBz ε δ hε hδ hSe
-    dataG dataH hdataG hdataH hSd hstep4 n' m' hn' hn'm' hm'm
-  have hnm : n ≤ m := by omega
-  have hmnR : (1 : ℝ) ≤ (m : ℝ) - (n : ℝ) := by
-    have hcast : ((1 : ℤ) : ℝ) ≤ ((m - n : ℤ) : ℝ) := Int.cast_le.mpr hwin
-    push_cast at hcast
-    linarith only [hcast]
-  have hC1pos : 0 < stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k :=
-    stepOneC1_pos d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k
-  have hdpar : 0 ≤ stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha := by
-    simp only [stepOneDelta]
-    exact mul_nonneg (inv_nonneg.mpr hC1pos.le) (by linarith only [halpha])
-  -- the Step-6 exponent slot, and the abbreviation `X` for `δ (m-n)`
-  have hXnn : 0 ≤ stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-      ((m : ℝ) - (n : ℝ)) := mul_nonneg hdpar (by linarith only [hmnR])
-  have hcardR : (((stepFiveBadSet Bz n m k).card : ℝ)) ≤ (Bz.card : ℝ) + (k : ℝ) + 1 := by
-    have h := stepFiveBadSet_card_le Bz n m k
-    exact_mod_cast h
-  have hgrow : stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-      (((m : ℝ) - (n : ℝ)) + 1) ≤
-      2 * (stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-        ((m : ℝ) - (n : ℝ))) := by
-    have h := mul_le_mul_of_nonneg_left
-      (show ((m : ℝ) - (n : ℝ)) + 1 ≤ 2 * ((m : ℝ) - (n : ℝ)) by linarith only [hmnR]) hdpar
-    linarith only [h]
-  have hBc : (((stepFiveBadSet Bz n m k).card : ℝ)) + 1 ≤
-      ((k : ℝ) + 2) +
-        2 * (stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-          ((m : ℝ) - (n : ℝ))) := by
-    linarith only [hcardR, hBz, hgrow]
-  have hSeX : (∑ j ∈ Finset.Icc n m, ε j) ≤
-      2 * (stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-        ((m : ℝ) - (n : ℝ))) := by
-    have hid : 2 * stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-        ((m : ℝ) - (n : ℝ)) =
-        2 * (stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-          ((m : ℝ) - (n : ℝ))) := by ring
-    linarith only [hSe, hid]
-  -- the sub-window run of the anchor, at the enlarged bad set
-  have hrun := hsub k stepFiveTheta stepFiveTheta_mem (stepFiveTheta_pow_mem hk) n m hnm U hU
-    u hu (stepFiveBadSet Bz n m k) (stepFiveBadSet_subset Bz n m k) ε δ hε hδ c g hmin
-    (iterationDecay_of_stepFourDecay hstep4) n' m' hn' hn'm' hm'm
-  -- the prefactor conversion
-  have hpre0 := exp_budget_le_mul_exp (C0 := C0) (hR := (k : ℝ))
-    (Bc := ((stepFiveBadSet Bz n m k).card : ℝ))
-    (Se := ∑ j ∈ Finset.Icc n m, ε j) (K1 := (k : ℝ) + 2) (K2 := 2) (K3 := 2)
-    (X := stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-      ((m : ℝ) - (n : ℝ))) hC0.le hkR hBc hSeX
-  have hQeq : (C0 * ((k : ℝ) + 1) * 2 + C0 * 2) *
-      (stepOneDelta (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k) alpha *
-        ((m : ℝ) - (n : ℝ)))
-      = (stepOneC1 d Cedos Cann (2 * C0 * ((k : ℝ) + 2)) k)⁻¹ *
-          (2 * C0 * ((k : ℝ) + 2)) * stepSixExponent alpha n m := by
-    simp only [stepOneDelta, stepSixExponent]
-    ring
-  rw [hQeq] at hpre0
-  refine oscillation_shape_aux (Cg := 1) (Ch := 1)
-    (Cpre := Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2)))
-    (Real.exp_pos _).le (Real.exp_pos _).le
-    (mul_nonneg (zpow_nonneg (by norm_num) _) (normalizedL2On_nonneg _ _))
-    hdataG hdataH zero_le_one zero_le_one (by linarith only [hSd]) hpre0
-    (le_max_right _ _) ?_ ?_ hrun
-  · have h1 : (1 : ℝ) ≤ max 1 (Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2))) :=
-      le_max_left _ _
-    have h2 : Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2)) ≤
-        max 1 (Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2))) := le_max_right _ _
-    have h3 := mul_le_mul_of_nonneg_left h1
-      (show (0 : ℝ) ≤ max 1 (Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2))) by
-        linarith only [h1])
-    linarith only [h2, h3]
-  · have h2 : Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2)) ≤
-        max 1 (Real.exp (C0 * ((k : ℝ) + 1) * ((k : ℝ) + 2))) := le_max_right _ _
-    linarith only [h2]
 
 end
 

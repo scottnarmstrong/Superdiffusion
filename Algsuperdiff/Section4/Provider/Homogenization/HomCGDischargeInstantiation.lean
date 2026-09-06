@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGDischargeAssembly
 import Algsuperdiff.Section3.Cutoff.CoefficientFamily
@@ -36,10 +36,7 @@ added:
   `(u - h) - (v - h) = u - v` and `H¹₀` is closed under subtraction.
 
 Then `exists_printedCoarseGraining_of_dirichletPair` restates the display with
-exactly those binders, and `exists_printedCoarseGraining_of_cutoffPair` pins the
-coefficient to the spine's own cutoff field, whose Chapter-2 bundle is
-`Algsuperdiff.Section3.Cutoff.coefficientCutoffCoeffOn` (its `toCoeffField`
-is the spine's field by `rfl`).
+exactly those binders.
 
 ## The itemized spine-side feed
 
@@ -145,50 +142,6 @@ theorem exists_printedCoarseGraining_of_dirichletPair (d : ℕ) (hd : 2 ≤ d)
     (isForcedEquation_of_dirichletSolutionOn a hsol)
     (isScalarForcedEquation_of_dirichletSolutionOn hcomp)
     (hasH10Difference_of_dirichletPair hsol hcomp)
-
-/-! ## 3. The coefficient slot is the spine's own cutoff field -/
-
-/-- The spine's coefficient field is exactly the `toCoeffField` of the
-Chapter-2 bundle `CoarseGraining` consumes — by `rfl`. -/
-theorem coefficientCutoffCoeffOn_toCoeffField_eq (M : Section3.ABKModel d) (L : ℤ)
-    (omega : Section3.Cutoff.CutoffSample d) (Q : TriadicCube d) :
-    (Section3.Cutoff.coefficientCutoffCoeffOn M L omega Q).toCoeffField =
-      (Section3.Cutoff.coefficientCutoff M.nu L omega).toCoeffField := rfl
-
-/-- **The printed display at the spine's cutoff coefficient.**
-
-The coefficient slot of the `CoarseGraining` display is filled by the spine's
-own field, with no ellipticity hypothesis added: the Chapter-2 bundle
-`coefficientCutoffCoeffOn` already carries `λ = ν` and its cube-local upper
-bound. -/
-theorem exists_printedCoarseGraining_of_cutoffPair (d : ℕ) (hd : 2 ≤ d)
-    (p : FiniteLpExponent) (hp : (2 : ℝ≥0∞) ≤ p.exponent) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ C : ℝ≥0∞, C < ∞ ∧
-      ∀ (M : Section3.ABKModel d) (L : ℤ) (omega : Section3.Cutoff.CutoffSample d)
-        (m n : ℤ) (hnm : n < m) (s1 s s2 : FractionalOrder),
-        s1.1 < s.1 → s.1 < s2.1 →
-      ∀ (sigma0 : ℝ) (hsigma0 : 0 < sigma0) (g : Vec d → Vec d),
-        MemCubeEuclideanFullWsp (originCube d m) s2 p g →
-      ∀ u v h : H1Function (openCubeSet (originCube d m)),
-        IsDirichletSolutionOn (Section3.Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-          (originCube d m) u h g →
-        IsDirichletSolutionOn (fun _ => sigma0 • (1 : Mat d)) (originCube d m) v h g →
-        ENNReal.ofReal (Real.rpow 3 (-s.1 * (m : ℝ))) *
-            centeredCubeFluxComparisonSmoothDualLHS m
-              (Section3.Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m))
-              sigma0 u v s p ≤
-          localCoarseGrainingLpRHS C (originCube d m) n
-            (by simpa [originCube] using hnm.le)
-            (Section3.Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m))
-            sigma0 hsigma0 g u s1 s s2 p := by
-  letI : NeZero d := ⟨by omega⟩
-  obtain ⟨C, hCtop, hC⟩ := exists_printedCoarseGraining_of_dirichletPair d hd p hp
-  refine ⟨C, hCtop, ?_⟩
-  intro M L omega m n hnm s1 s s2 hs1s hss2 sigma0 hsigma0 g hg u v h hsol hcomp
-  exact hC m n hnm s1 s s2 hs1s hss2
-    (Section3.Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m))
-    sigma0 hsigma0 g hg u v h hsol hcomp
 
 end
 

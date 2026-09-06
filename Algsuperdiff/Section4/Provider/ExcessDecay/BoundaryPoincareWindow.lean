@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringTrace
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoveringSlotObstruction
@@ -137,26 +137,6 @@ theorem eLpNorm_coveringCube_le_anchorWindow {n m : ℤ} {x z : Vec d}
   rwa [hhalf] at hbase
 
 /-! ## 3. The zero-trace localization onto the anchor's window -/
-
-/-- The anchor's window is open. -/
-theorem isOpen_anchorWindow (j m : ℤ) (z : Vec d) :
-    IsOpen ((((fun y' => z + y') '' openCubeSet (originCube d j)) ∩
-      openCubeSet (originCube d m))) :=
-  (isOpen_image_add_openCubeSet_originCube z j).inter (isOpen_openCubeSet _)
-
-/-- **The boundary datum on the anchor's window.**
-
-A function with a global zero trace on `□_m` has the localized zero trace on the
-window `W' = (z+□_{n+3}) ∩ □_m` through the window `z + □_{n+3}`: the
-containment hypothesis is an equality here, so nothing is lost. -/
-theorem localizedZeroTraceFunctionOn_anchorWindow (j m : ℤ) (z : Vec d)
-    (u : H10Function (openCubeSet (originCube d m))) :
-    LocalizedZeroTraceFunctionOn
-      ((((fun y' => z + y') '' openCubeSet (originCube d j)) ∩
-        openCubeSet (originCube d m)))
-      ((fun y' => z + y') '' openCubeSet (originCube d j)) u.toH1Function.toFun :=
-  localizedZeroTraceFunctionOn_of_memH10_of_inter_subset
-    (isOpen_anchorWindow j m z) Set.inter_subset_right (le_refl _) u
 
 end
 

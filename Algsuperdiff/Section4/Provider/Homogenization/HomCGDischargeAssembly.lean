@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGDischargeBridge
 
@@ -68,11 +68,11 @@ definitionally.
 
 ## What this does NOT give (the honest scope)
 
-`GeneralCoarseGrainingFiniteP` of `HomFinitePSource` carries **three** clauses.
-This file's display is the *duality* content; converting it to this
-repository's `WeakNegDualBoundOn` (clauses 2 and 3) needs a test-class change,
-and the *multiscale* clause 1 is a different object altogether.  See
-`HomCGDischargeTestClass` for both measurements.
+The transcribed finite-`p` coarse-graining hypothesis of `HomFinitePSource`
+carries **three** clauses.  This file's display is the *duality* content;
+converting it to this repository's `WeakNegDualBoundOn` (clauses 2 and 3) needs a
+test-class change, and the *multiscale* clause 1 is a different object
+altogether.  See `HomCGDischargeTestClass` for both measurements.
 -/
 
 open Homogenization Homogenization.Book.Ch03 Homogenization.Book.Ch03.ABK26

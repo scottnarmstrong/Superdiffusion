@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryEnergyRebase
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryTransports
@@ -194,64 +194,6 @@ theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
           (eLpNorm H 2 (Support.normalizedVolumeMeasureOn W)).toReal := by ring
 
 /-! ## 4. The `σ` leg: the honest form and the `ν`-divided fork -/
-
-/-- CoarseGraining's Dirichlet energy estimate at the parent-rebased family, read
-through the `ν`-identification of that family: the coefficient energy of the
-comparison solution *is* `ν ⨍|∇v|²`, and it is at most the square of
-`dirichletEnergyWithRHSRHS`.  **Nothing is divided**: `ν` stands exactly where
-CoarseGraining puts it, and no `ν⁻¹` enters any constant. -/
-theorem exists_nu_mul_normalizedSetAverage_grad_le_dirichletEnergySq (d : ℕ)
-    [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (L k : ℤ) (x z : Vec d) (omega : Cutoff.CutoffSample d)
-        (Q : TriadicCube d) (r : ℝ) (g : Vec d → Vec d)
-        (v : DirichletForcedCubeSolution Q (parentRebasedFamily M L k x z omega) g),
-        0 < r → r < 1 → ForceBesovRegularity Q r g →
-        ForceBesovRegularity Q r (dirichletBoundaryGradientField v) →
-          M.nu * normalizedSetAverage (openCubeSet Q)
-              (fun y => vecNormSq (v.toH1.grad y)) ≤
-            dirichletEnergyWithRHSRHS C Q (parentRebasedFamily M L k x z omega) r g v ^
-              2 := by
-  obtain ⟨C, hCpos, hmain⟩ :=
-    exists_localizedCoeffEnergyValue_openCubeSet_le_dirichletEnergyWithRHSRHS_sq d
-  refine ⟨C, hCpos, ?_⟩
-  intro M L k x z omega Q r g v hr hr1 hg hh
-  have hbase := hmain (Q := Q) (a := parentRebasedFamily M L k x z omega) (r := r)
-    (g := g) v hr hr1 hg hh
-  rwa [localizedCoeffEnergyValue_parentRebasedFamily_eq M L k x z omega Q] at hbase
-
-/-- **The `ν`-divided form.**  Divides the homogenized `ν · ⨍|∇v|² ≤ DirE²` by
-the deterministic `ν`, introducing `ν⁻¹` into a constant the frozen clause
-prices as `C(d)`.  The division is carried by the explicitly named hypothesis `hnudiv :
-(M.nu)⁻¹ ≤ Knu`; no declaration of this repository supplies it, and nothing
-here chooses between this form and
-`exists_nu_mul_normalizedSetAverage_grad_le_dirichletEnergySq`. -/
-theorem exists_normalizedSetAverage_grad_le_dirichletEnergySq_of_nuDivision (d : ℕ)
-    [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (L k : ℤ) (x z : Vec d) (omega : Cutoff.CutoffSample d)
-        (Q : TriadicCube d) (r : ℝ) (g : Vec d → Vec d)
-        (v : DirichletForcedCubeSolution Q (parentRebasedFamily M L k x z omega) g)
-        (Knu : ℝ), (M.nu : ℝ)⁻¹ ≤ Knu →
-        0 < r → r < 1 → ForceBesovRegularity Q r g →
-        ForceBesovRegularity Q r (dirichletBoundaryGradientField v) →
-          normalizedSetAverage (openCubeSet Q)
-              (fun y => vecNormSq (v.toH1.grad y)) ≤
-            Knu *
-              dirichletEnergyWithRHSRHS C Q (parentRebasedFamily M L k x z omega) r g
-                v ^ 2 := by
-  obtain ⟨C, hCpos, hmain⟩ :=
-    exists_nu_mul_normalizedSetAverage_grad_le_dirichletEnergySq d
-  refine ⟨C, hCpos, ?_⟩
-  intro M L k x z omega Q r g v Knu hnudiv hr hr1 hg hh
-  have hbase := hmain M L k x z omega Q r g v hr hr1 hg hh
-  have hnu : (0 : ℝ) < M.nu := M.nu_pos
-  have hsq : (0 : ℝ) ≤
-      dirichletEnergyWithRHSRHS C Q (parentRebasedFamily M L k x z omega) r g v ^ 2 :=
-    sq_nonneg _
-  have hstep := mul_le_mul_of_nonneg_left hbase (inv_nonneg.mpr hnu.le)
-  rw [inv_mul_cancel_left₀ (ne_of_gt hnu)] at hstep
-  exact hstep.trans (mul_le_mul_of_nonneg_right hnudiv hsq)
 
 end
 

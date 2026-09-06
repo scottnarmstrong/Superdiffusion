@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDepthBandReduction
 
@@ -29,11 +29,11 @@ Three pieces.
 * `gridDepthGagliardoBandInput_holds` — the input, carrier and all: the
   `W̲^{s,p'} ∩ L²` bundle for the depth slice (its Gagliardo finiteness IS the
   reduction, its `L²` half is the finite indicator sum), and the band bound.
-* `exists_coarseGrainingSupMultiscale_unconditional` — the SUP-FORM MULTISCALE
-  CLAUSE with NO named input left: `HomSpineDepthGagliardoBand`'s producer at
-  `Cd = gridDepthGagliardoConst d p`, so at
-  `CA = (1 + Cd·(near + 2·x₀⁻¹))^{1/p'}` on the two-sided order pin
-  `x₀ ≤ s·p' ≤ 1/2`.
+Together they leave the SUP-FORM MULTISCALE CLAUSE with NO named input:
+`HomSpineDepthGagliardoBand`'s producer runs at
+`Cd = gridDepthGagliardoConst d p`, so at
+`CA = (1 + Cd·(near + 2·x₀⁻¹))^{1/p'}` on the two-sided order pin
+`x₀ ≤ s·p' ≤ 1/2`.
 -/
 
 open Homogenization Homogenization.Book Homogenization.Book.Ch03
@@ -282,46 +282,6 @@ theorem gridDepthGagliardoBandInput_holds (d : ℕ) (p : FiniteLpExponent) :
       (measurable_gridDualDepthTest Q j v)).aestronglyMeasurable, hfinite⟩⟩,
     memLp_ofVec_gridDualDepthTest Q j v 2⟩, rfl, ?_⟩
   exact hchain
-
-/-! ## 4. The sup-form multiscale clause, unconditional -/
-
-/-- **THE SUP-FORM MULTISCALE CLAUSE, UNCONDITIONAL.**
-`HomSpineDepthGagliardoBand.exists_coarseGrainingSupMultiscale_of_bandInput` with
-its one named input discharged: the clause holds at
-`CA = (1 + Cd·(near + 2·x₀⁻¹))^{1/p'}`, `Cd = gridDepthGagliardoConst d p`, on
-the two-sided order pin `DepthBandPin p x₀`, with no remaining hypothesis beyond
-the printed ones. -/
-theorem exists_coarseGrainingSupMultiscale_unconditional (d : ℕ) (hd : 2 ≤ d)
-    (p : FiniteLpExponent) (hp : (2 : ℝ≥0∞) ≤ p.exponent) {x₀ : ℝ} (hx₀ : 0 < x₀) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ Ccg : ℝ, 0 ≤ Ccg ∧
-      ∀ (m : ℤ) (jn : ℕ), 0 < jn →
-      ∀ (s1 s s2 : FractionalOrder), s1.1 < s.1 → s.1 < s2.1 → DepthBandPin p x₀ s →
-      ∀ (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain (originCube d m)))
-        (sigma0 : ℝ) (hsigma0 : 0 < sigma0) (g : Vec d → Vec d)
-        (u v : H1Function (openCubeSet (originCube d m))),
-        MemCubeEuclideanFullWsp (originCube d m) s2 p g →
-        IsForcedEquation (originCube d m) a u g →
-        IsScalarForcedEquation (originCube d m) sigma0 v g →
-        HasH10Difference (originCube d m) u v →
-      ∀ (E1 E2 Dg : ℝ) (Gen : TriadicCube d → ℝ) (Fgrad Fflux : Vec d → Vec d),
-        0 ≤ E1 → 0 ≤ E2 → 0 ≤ Dg →
-        (∀ R, 0 ≤ Gen R) →
-        (∀ R, printedLocalEnergy a u R ≤ Gen R) →
-        Book.Ch02.parentTruncatedHomogenizationErrorInfinityOneScalar (originCube d m)
-            ((originCube d m).scale - (jn : ℤ)) (by omega) a sigma0 hsigma0 s1 ≤
-          ENNReal.ofReal E1 →
-        Book.Ch02.parentTruncatedHomogenizationErrorInfinityTwoScalar (originCube d m)
-            ((originCube d m).scale - (jn : ℤ)) (by omega) a sigma0 hsigma0
-            (fractionalOrderHalf s1) ≤ ENNReal.ofReal E2 →
-        ABK26.cubeEuclideanPositiveBesovOverlapESeminorm (originCube d m) s2 p g ≤
-          ENNReal.ofReal Dg →
-        Fgrad = (centeredCubeGradientDifferenceL2Field m u v).toField →
-        Fflux = (centeredCubeFluxDifferenceL2Field m a sigma0 u v).toField →
-          CoarseGrainingSupMultiscale (originCube d m) jn Ccg s.1 s1.1 s2.1
-            p.exponent.toReal sigma0 E1 E2 Dg Gen Fgrad Fflux :=
-  exists_coarseGrainingSupMultiscale_of_bandInput d hd p hp
-    (gridDepthGagliardoConst_ne_top d p) hx₀ (gridDepthGagliardoBandInput_holds d p)
 
 end
 

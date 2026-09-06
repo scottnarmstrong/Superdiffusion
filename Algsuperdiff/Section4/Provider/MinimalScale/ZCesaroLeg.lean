@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.KickingAssembly
 import Algsuperdiff.Section4.Provider.MinimalScale.ZAssembly
@@ -415,9 +415,6 @@ theorem one_le_zOneConst (d : ℕ) : 1 ≤ zOneConst d := by
   refine le_trans ?_ (two_mul_three_pow_le_zOneConst d)
   have h : (1 : ℝ) ≤ (3 : ℝ) ^ (2 * d) := one_le_pow₀ (by norm_num)
   linarith only [h]
-
-theorem zOneConst_pos (d : ℕ) : 0 < zOneConst d :=
-  lt_of_lt_of_le zero_lt_one (one_le_zOneConst d)
 
 /-! ## 7. The geometric tail of the Cesàro random scale -/
 

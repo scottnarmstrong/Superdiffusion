@@ -1,16 +1,17 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseJoin
+import Algsuperdiff.Section4.Provider.ExcessDecay.HarmonicProviderFinalInterior
 import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
+import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseWeakening
 
 /-!
 # The re-gated provider assembly, the outer join
 
 **This module is a conditional A, not a source-node closure.**  It is
-`RebaseJoin`'s theorem re-cut at the frozen statement
+The outer join re-cut at the frozen statement
 (`Algsuperdiff/Section4/Provider/ExcessDecay/ProviderEpsFree.lean`, read for
 the byte-verification, never imported).  **Exactly two** literals of the
 display sit at the statement's own existential `C` rather than at `(1/2)`: the
@@ -22,8 +23,8 @@ good-event threshold `C⁻¹ s⁴`.  The **interior** clause's event stays at
 
 `hgen` is a *hypothesis*, and both of those thresholds sit inside its own
 hypotheses: `hgen` is funded less and gated on a smaller event, i.e. it is a
-**weaker** caller obligation than `RebaseJoin`'s.  A weaker hypothesis
-cannot be fed to `RebaseJoin`'s theorem, so its script is re-run, and the two
+**weaker** caller obligation than the `(1/2)`-gated join's.  A weaker hypothesis
+cannot be fed to that theorem, so its script is re-run, and the two
 back-ports appear where the constants are chosen:
 
 * the interior clause (`exists_interiorClause_anchorShape`, gated at `(1/2)`)

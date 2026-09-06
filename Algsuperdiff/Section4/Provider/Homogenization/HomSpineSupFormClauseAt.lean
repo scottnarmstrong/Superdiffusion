@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineSupFormClause
 
@@ -10,7 +10,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSpineSupFormClause
 
 ## Why the constant has to come out of the `∃`
 
-`HomSpineSupFormClause.exists_coarseGrainingSupMultiscale_of_depthConverseOn`
+`HomSpineSupFormClause`'s single-depth clause production
 hides its constant `√d · CA · C(p,d)` inside an existential.  That is harmless
 when `CA` is model-free, and USELESS when it is not: the frozen budget
 (`K_abs ≤ C_abs·|log γ|`) is a QUANTITATIVE statement about the constant, and
@@ -44,7 +44,7 @@ noncomputable section
 
 /-- **THE SUP-FORM CLAUSE, AT A DISPLAYED CONSTANT.**
 
-`HomSpineSupFormClause.exists_coarseGrainingSupMultiscale_of_depthConverseOn`
+`HomSpineSupFormClause`'s single-depth clause production
 with `C(p,d)` hoisted out of the existential and `CA` quantified inside: the
 produced clause constant is the DISPLAYED term
 `(ofReal √d · CA · C).toReal`, so a consumer can bound it. -/

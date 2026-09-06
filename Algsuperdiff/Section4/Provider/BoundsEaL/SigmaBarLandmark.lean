@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.StepFourMoments
 
@@ -196,27 +196,6 @@ theorem exists_sigmaBar_ratio_sub_one_sq_le_unconditional (d : ℕ) :
     Real.rpow_nonneg (by norm_num) _
   exact mul_le_mul_of_nonneg_right
     (mul_le_mul_of_nonneg_right hC1le (sq_nonneg _)) hbase0
-
-/-- **(B2) at every moment, unconditional in the printed regime.**
-
-The moment reading of `exists_sigmaBar_ratio_sub_one_sq_le_unconditional`: the
-display is deterministic, so a probability measure converts it verbatim. -/
-theorem exists_lintegral_rpow_sigmaBar_ratio_sub_one_sq_le_unconditional (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        M.gamma ≤ 1 / 8 →
-        ∀ m j : ℤ, j - 2 ≤ m → ∀ p : ℝ, 0 ≤ p →
-          ∫⁻ _omega : Cutoff.CutoffSample d,
-              ENNReal.ofReal (((Annealed.sigmaBar M m : ℝ) *
-                ((Annealed.sigmaBar M (j - 2) : ℝ))⁻¹ - 1) ^ 2) ^ p
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure
-            ≤ ENNReal.ofReal (C * (min 1 (M.gamma * (((m : ℝ) - (j : ℝ)) + 2) +
-                  M.gamma ^ ((3 : ℝ) / 5) * |Real.log M.gamma| ^ 2)) ^ 2 *
-                (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (j : ℝ))))) ^ p := by
-  obtain ⟨C, hC0, hall⟩ := exists_sigmaBar_ratio_sub_one_sq_le_unconditional d
-  refine ⟨C, hC0, fun M hreg hgam m j hjm p hp => ?_⟩
-  exact lintegral_ofReal_rpow_le_of_ae_le_const hp
-    (Filter.Eventually.of_forall fun _ => hall M hreg hgam m j hjm)
 
 end
 

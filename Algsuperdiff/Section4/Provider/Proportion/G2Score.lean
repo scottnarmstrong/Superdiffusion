@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.Ycal
 
@@ -46,8 +46,6 @@ implicit is therefore never needed.
 * `annularWeight_split` — the exponent split; the whole content of the identity.
 * `inner_eq_annularWeight_mul_XcalE` — **the identity**, an equality of `ℝ≥0∞`.
 * `eventG2_eq_row` — the frozen `𝒢₂` event *is* `{s·XrowE ≤ ε²}`, exactly.
-* `mem_compl_eventG2_iff` — `𝒢₂(m;s,ε)^c = {Y_m > K₂s^{−1}}`, as an iff at the
-  normalized row `Y_m = K₂ε^{−2}·XrowE`.
 
 ## Deviations from the printed text
 
@@ -92,9 +90,6 @@ variable {d : ℕ}
 weight. -/
 def annularWeight (s : ℝ) (k : ℤ) : ℝ≥0∞ :=
   ENNReal.ofReal (Real.rpow (3 : ℝ) (-(1 / 4 : ℝ) * s * ((k : ℤ) : ℝ)))
-
-theorem annularWeight_ne_top (s : ℝ) (k : ℤ) : annularWeight s k ≠ (⊤ : ℝ≥0∞) :=
-  ENNReal.ofReal_ne_top
 
 private theorem rpow_three_nonneg (x : ℝ) : (0 : ℝ) ≤ Real.rpow (3 : ℝ) x :=
   Real.rpow_nonneg (by norm_num) x
@@ -185,8 +180,8 @@ theorem exists_mem_eq_fmax {S : Finset iota} {f : iota → ℝ} (hS : S.Nonempty
 
 /-- **The two renderings of the lattice maximum coincide.**  The `Finset`
 enumeration `latticeAnnulusFinset` and the proved set `latticeAnnulusSet` have
-the same members at `n ≤ j` (`coe_latticeAnnulusFinset`), and all entries are
-squares, hence nonnegative, so the `0`-floor is not felt. -/
+the same members at `n ≤ j`, and all entries are squares, hence nonnegative, so
+the `0`-floor is not felt. -/
 theorem errorAnnSup_eq_ofReal_errorAnnMax (M : ABKModel d) (s : {s : ℝ // 0 < s})
     {j n : ℤ} (hn : n ≤ j) (omega : Cutoff.CutoffSample d) :
     errorAnnSup M s j n omega = ENNReal.ofReal (errorAnnMax M s j n omega) := by
@@ -307,47 +302,6 @@ theorem notMem_eventG2_iff (M : ABKModel d) (m : ℤ) (s : {s : ℝ // 0 < s}) (
   rw [eventG2_eq_row]
   exact not_le (a := ENNReal.ofReal (s : ℝ) * XrowE M s m omega)
     (b := ENNReal.ofReal (ep ^ 2))
-
-/-- **, as an iff.**  With the manuscript's normalization `Y_m := K₂ε^{−2}·XrowE`,
-the complement of `𝒢₂(m;s,ε)` is exactly `{Y_m > K₂s^{−1}}`.  Both `ε > 0` and
-`K₂ > 0` are genuine premises: at `ε = 0` the threshold conversion is not
-available. -/
-theorem mem_compl_eventG2_iff (M : ABKModel d) (m : ℤ) (s : {s : ℝ // 0 < s})
-    {ep K2 : ℝ} (hep : 0 < ep) (hK2 : 0 < K2) (omega : Cutoff.CutoffSample d) :
-    omega ∉ Support.eventG2 M m s ep ↔
-      ENNReal.ofReal (K2 / (s : ℝ)) <
-        ENNReal.ofReal (K2 * (ep ^ 2)⁻¹) * XrowE M s m omega := by
-  have hs : (0 : ℝ) < (s : ℝ) := s.2
-  have hep2 : (0 : ℝ) < ep ^ 2 := by positivity
-  have hsne : (s : ℝ) ≠ 0 := ne_of_gt hs
-  have hepne : (ep : ℝ) ^ 2 ≠ 0 := ne_of_gt hep2
-  have hc0 : (0 : ℝ) < K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹ := by positivity
-  have hcne : ENNReal.ofReal (K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹) ≠ 0 := by
-    simpa only [ne_eq, ENNReal.ofReal_eq_zero, not_le] using hc0
-  have h1 : ep ^ 2 * (K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹) = K2 / (s : ℝ) := by
-    field_simp
-  have h2 : (s : ℝ) * (K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹) = K2 * (ep ^ 2)⁻¹ := by
-    field_simp
-  have hL : ENNReal.ofReal (ep ^ 2) * ENNReal.ofReal (K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹)
-      = ENNReal.ofReal (K2 / (s : ℝ)) := by
-    rw [← ENNReal.ofReal_mul hep2.le, h1]
-  have hR : ENNReal.ofReal (s : ℝ) * XrowE M s m omega *
-        ENNReal.ofReal (K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹)
-      = ENNReal.ofReal (K2 * (ep ^ 2)⁻¹) * XrowE M s m omega := by
-    rw [mul_right_comm, ← ENNReal.ofReal_mul hs.le, h2]
-  rw [notMem_eventG2_iff]
-  constructor
-  · intro h
-    have hmul := ENNReal.mul_lt_mul_left hcne ENNReal.ofReal_ne_top h
-    rwa [hL, hR] at hmul
-  · intro h
-    by_contra hcon
-    have hle : ENNReal.ofReal (s : ℝ) * XrowE M s m omega ≤ ENNReal.ofReal (ep ^ 2) :=
-      not_lt.1 hcon
-    have hstep := mul_le_mul' hle
-      (le_refl (ENNReal.ofReal (K2 * (ep ^ 2)⁻¹ * (s : ℝ)⁻¹)))
-    rw [hL, hR] at hstep
-    exact absurd hstep (not_le.2 h)
 
 end
 

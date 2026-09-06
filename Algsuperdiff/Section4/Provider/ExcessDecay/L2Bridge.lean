@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ForceTransport
 import Algsuperdiff.Section4.Provider.ExcessDecay.TranslationTransportNorms
@@ -71,29 +71,7 @@ theorem memLp_two_normalizedCubeMeasure_of_h1 (Q : TriadicCube d)
   rw [normalizedCubeMeasure_eq_smul_restrict_openCubeSet]
   exact u.memL2.smul_measure ENNReal.ofReal_ne_top
 
-/-- Its mean-subtracted version is `L²` too (the normalized cube measure is
-finite, so constants are `L²`). -/
-theorem memLp_two_sub_volumeAverage_of_h1 (Q : TriadicCube d)
-    (u : H1Function (openCubeSet Q)) :
-    MemLp (fun y => u.toFun y - volumeAverage (openCubeSet Q) u.toFun) 2
-      (normalizedCubeMeasure Q) := by
-  letI : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
-    ⟨normalizedCubeMeasure_apply_univ Q⟩
-  exact (memLp_two_normalizedCubeMeasure_of_h1 Q u).sub
-    (memLp_const (volumeAverage (openCubeSet Q) u.toFun))
-
 /-! ## 2. The `⨍`-square is the normalized `L²` norm squared -/
-
-theorem normalizedL2SqOnSet_sub_average_eq_eLpNorm_sq (Q : TriadicCube d)
-    (u : H1Function (openCubeSet Q)) :
-    normalizedL2SqOnSet (openCubeSet Q)
-        (fun y => u.toFun y - volumeAverage (openCubeSet Q) u.toFun) =
-      ((eLpNorm (fun y => u.toFun y - volumeAverage (openCubeSet Q) u.toFun) 2
-        (Support.normalizedVolumeMeasureOn (openCubeSet Q))).toReal) ^ (2 : ℕ) := by
-  rw [normalizedL2SqOnSet_openCubeSet_eq_cubeLpNorm_two_sq Q _
-      (memLp_two_sub_volumeAverage_of_h1 Q u),
-    normalizedVolumeMeasureOn_openCubeSet]
-  rfl
 
 /-- The same for a bare function with an explicit `L²` datum (the form in which
 the composed interior estimate consumes it, after the `H¹` carrier has been
@@ -140,34 +118,6 @@ theorem normalizedL2SqOnSet_translate_sub_average_eq_eLpNorm_sq_image_add
       (by norm_num) (by norm_num), havg]
   rw [hnorm]
   exact normalizedL2SqOnSet_sub_average_eq_eLpNorm_sq_of_memLp Q _ hf
-
-/-- **The `L²` carrier bridge.**
-
-Let `u` be the transported solution on the origin cube, i.e. `u.toFun y = f (y
-+ z)` for the anchor's own solution value `f` on `□_m`.  The norm and the
-subtracted mean move together and no constant appears. -/
-theorem normalizedL2SqOnSet_h1_sub_average_eq_eLpNorm_sq_image_add
-    {z : Vec d} (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
-    {f : Vec d → ℝ} (hf : ∀ y, u.toFun y = f (y + z)) :
-    normalizedL2SqOnSet (openCubeSet Q)
-        (fun y => u.toFun y - volumeAverage (openCubeSet Q) u.toFun) =
-      ((eLpNorm
-          (fun y => f y - volumeAverage ((fun y' => z + y') '' openCubeSet Q) f) 2
-          (Support.normalizedVolumeMeasureOn
-            ((fun y' => z + y') '' openCubeSet Q))).toReal) ^ (2 : ℕ) := by
-  have hfun : u.toFun = fun y => f (y + z) := funext hf
-  have havg : volumeAverage ((fun y' => z + y') '' openCubeSet Q) f =
-      volumeAverage (openCubeSet Q) u.toFun := by
-    rw [image_add_eq_translateSet z (openCubeSet Q), hfun]
-    exact normalizedSetAverage_translateSet z (openCubeSet Q) f
-  have hnorm : eLpNorm
-        (fun y => f y - volumeAverage ((fun y' => z + y') '' openCubeSet Q) f) 2
-        (Support.normalizedVolumeMeasureOn ((fun y' => z + y') '' openCubeSet Q)) =
-      eLpNorm (fun y => u.toFun y - volumeAverage (openCubeSet Q) u.toFun) 2
-        (Support.normalizedVolumeMeasureOn (openCubeSet Q)) := by
-    rw [eLpNorm_normalizedVolumeMeasureOn_image_add z (openCubeSet Q)
-      (by norm_num) (by norm_num), havg, hfun]
-  rw [hnorm, normalizedL2SqOnSet_sub_average_eq_eLpNorm_sq Q u]
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Localization.LocalizationAssemblyCore
 import Algsuperdiff.Section3.Provider.MultiscaleEstimate.BadEventPreCeiling
@@ -168,7 +168,7 @@ Printed step 1 (`BadEventPreCeiling.preCeiling_average_le`) extracts the grid
 maximum out of the `L^{d/s}` average; the proved max engine
 (`BadEventMaxSplit.tsum_badMax_le_four_mul_homogenizationErrorOnCube_sq`) then
 pays the whole `l`-sum once against `𝓔²_{s/4}`.  This is the fourth term of the
-revised display, at the printed `max_l 3^{-s(m-l)/2}(⨍_z 1_{¬𝒬})^{s/d}` shape
+printed display, at its `max_l 3^{-s(m-l)/2}(⨍_z 1_{¬𝒬})^{s/d}` shape
 and the pure constant `4` per leg. -/
 
 /-- **The printed bad-event factor at depth `j`**, `(⨍_{z ∈ 3^{m-j} ℤ^d ∩ □_m}

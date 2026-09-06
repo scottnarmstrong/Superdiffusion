@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ReindexEllipticity
 import Algsuperdiff.Section4.Provider.ExcessDecay.ResidueCapGeometry
@@ -301,18 +301,6 @@ theorem ae_forceBracket_rebased_le_gapThree [NeZero d] (M : ABKModel d) (L n : �
   linarith only [hT1, hT2, hT3]
 
 /-! ## 6. The proved statements, recovered -/
-
-/-- **The proved child cap is an instance.**  The anchor's geometry binder implies
-hinge (C), so §1--§5 subsume `ReindexSlot` and `ReindexEllipticity`
-verbatim; nothing is lost by moving to the containment interface. -/
-theorem translateSet_cubeSet_gapThree_of_anchorGeometry {n m : ℤ} {x z : Vec d}
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m)) :
-    translateSet (x - z) (cubeSet (originCube d n)) ⊆
-      cubeSet (originCube d (n + 3)) :=
-  fun _ hp => cubeSet_originCube_add_two_subset d n
-    (translateSet_cubeSet_subset_of_anchorGeometry hgeom hp)
 
 end
 

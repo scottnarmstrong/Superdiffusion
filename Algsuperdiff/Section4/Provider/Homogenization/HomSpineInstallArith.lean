@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineRecutClose
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCloseRecut
@@ -11,7 +11,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCloseRecut
 
 ## What this file supplies
 
-The `SpineDatumCoarseGrainingRecut` carries two arithmetic conditions, `hlevel`
+The re-cut bundle carries two arithmetic conditions, `hlevel`
 and `hlevelDual`, on the printed right-hand side `coarseGrainingFinitePRHS`.
 This file EXPANDS both at the display's own data and reduces them to the
 smallest set of residues, proving every model-side piece outright:
@@ -210,8 +210,8 @@ theorem coarseGrainingFinitePRHS_le_of_energyBound {Ccg s s2 sigma E1 E2 Dg S : 
 
 /-- **THE BUNDLE'S `hlevel`, from the named residues alone.**
 
-The conclusion is byte-identical to the `hlevel` conjunct of
-`SpineDatumCoarseGrainingRecut`. -/
+The conclusion is byte-identical to the `hlevel` conjunct of the re-cut
+bundle. -/
 theorem hlevel_of_energyBound {Ccg s s2 sigma E1 E2 Dg S : ℝ}
     {Cen Cdata Cw EB Kg KhInf Kh A B : ℝ} {m n : ℤ}
     (hsig : 0 < sigma) (hs0 : 0 < s) (hss2 : s < s2)
@@ -295,8 +295,8 @@ theorem cgTestConst_mul_rpow_originCube (d : ℕ) (m : ℤ) (alpha s' t : ℝ) :
 
 /-- **THE BUNDLE'S `hlevelDual`, from the named residues alone.**
 
-The conclusion is byte-identical to the `hlevelDual` conjunct of
-`SpineDatumCoarseGrainingRecut`.  The residues are the SAME three as `hlevel`'s,
+The conclusion is byte-identical to the `hlevelDual` conjunct of the re-cut
+bundle.  The residues are the SAME three as `hlevel`'s,
 read at the dual order `s′` and carrying the one extra factor
 `cgTestConstBase d s s′ p′`. -/
 theorem hlevelDual_of_energyBound {Ccg s s' s2 sigma E1 E2 Dg S : ℝ}

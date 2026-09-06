@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.RepresentativeTransfer
 import Algsuperdiff.Section4.Provider.Proportion.LatticeCount
@@ -29,9 +29,6 @@ Both are bookkeeping, not source gaps, and this module discharges them at the
   over a `Finset` of lattice indices, sent into `[0,infinity]`, is below the
   `[0,infinity]`-valued supremum over any set containing those indices.  No
   nonemptiness is needed (the empty maximum is `0`).
-* `latticeAnnulusSet_nonempty` / `latticeAnnulusFinset_nonempty` — at spacing
-  `3^n` with `n ≤ j − 1` the annulus `□_j ∖ □_{j−1}` does contain a lattice
-  point, namely `3^{j−1} e_0`.
 * `annularErrorLatticeMax`, `shellW2InfLatticeMax`, `shellBlockLatticeReal` —
   the real families the display's two slots are instantiated at, and their
   dominations `ofReal_annularErrorLatticeMax_le`,
@@ -63,17 +60,6 @@ variable {d : ℕ}
 
 /-! ## Part A -- the generic maximum transfers -/
 
-/-- **The `0`-floored finite maximum is attained**, above the floor, as soon as
-the index set is nonempty and the entries are nonnegative. -/
-theorem exists_mem_fmax_eq {iota : Type*} {S : Finset iota} (hS : S.Nonempty)
-    {f : iota → ℝ} (hf : ∀ i ∈ S, 0 ≤ f i) :
-    ∃ i ∈ S, Proportion.fmax S f = f i := by
-  classical
-  obtain ⟨i, hi, hsup⟩ := Finset.exists_mem_eq_sup S hS fun j => (f j).toNNReal
-  refine ⟨i, hi, ?_⟩
-  show ((S.sup fun j => (f j).toNNReal : ℝ≥0) : ℝ) = f i
-  rw [hsup, Real.coe_toNNReal _ (hf i hi)]
-
 /-- No nonemptiness enters — at the empty index set the left side is `0`. -/
 theorem ofReal_fmax_le_iSup {iota : Type*} {S : Finset iota} {T : Set iota}
     (hST : ∀ i ∈ S, i ∈ T) (f : iota → ℝ) :
@@ -92,59 +78,6 @@ theorem ofReal_fmax_le_iSup {iota : Type*} {S : Finset iota} {T : Set iota}
       exact le_iSup (fun k : ↥T => ENNReal.ofReal (f k.1)) ⟨i, hST i hi⟩
     · rw [max_eq_right h, ENNReal.ofReal_zero]
       exact zero_le _
-
-/-! ## Part B -- the lattice annulus is not empty -/
-
-/-- **A triadic lattice point of spacing `3^n` inside `□_j ∖ □_{j−1}`.**  For
-`n ≤ j − 1` the point `3^{j−1} e_0` is one: it lies strictly inside `□_j`
-(whose half-width is `3^j/2 = (3/2) 3^{j−1}`) and strictly outside `□_{j−1}`
-(whose half-width is `3^{j−1}/2`), and it is a lattice point because
-`3^{j−1} = 3^n · 3^{j−1−n}`. -/
-theorem latticeAnnulusSet_nonempty [NeZero d] {n j : ℤ} (hnj : n ≤ j - 1) :
-    (Support.latticeAnnulusSet d n j (j - 1)).Nonempty := by
-  classical
-  obtain ⟨t, ht⟩ : ∃ t : ℕ, (t : ℤ) = j - 1 - n :=
-    ⟨(j - 1 - n).toNat, Int.toNat_of_nonneg (by omega)⟩
-  have h3 : (0 : ℝ) < (3 : ℝ) ^ (j - 1) := zpow_pos (by norm_num) _
-  have hsplit : (3 : ℝ) ^ j = (3 : ℝ) ^ (j - 1) * 3 := by
-    rw [← zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0)]
-    congr 1
-    ring
-  have hprod : (3 : ℝ) ^ n * (((3 : ℤ) ^ t : ℤ) : ℝ) = (3 : ℝ) ^ (j - 1) := by
-    have hcast : (((3 : ℤ) ^ t : ℤ) : ℝ) = (3 : ℝ) ^ (t : ℤ) := by
-      rw [zpow_natCast]
-      norm_cast
-    rw [hcast, ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), ht]
-    congr 1
-    ring
-  have hval : ∀ i : Fin d,
-      Support.triadicLatticePoint n (Pi.single (0 : Fin d) ((3 : ℤ) ^ t)) i
-        = if i = (0 : Fin d) then (3 : ℝ) ^ (j - 1) else 0 := by
-    intro i
-    simp only [Support.triadicLatticePoint]
-    by_cases hi : i = (0 : Fin d)
-    · subst hi
-      rw [Pi.single_eq_same, if_pos rfl, hprod]
-    · rw [Pi.single_eq_of_ne hi, if_neg hi, Int.cast_zero, mul_zero]
-  refine ⟨Pi.single (0 : Fin d) ((3 : ℤ) ^ t), ?_, ?_⟩
-  · rw [mem_openCubeSet_originCube_iff]
-    intro i
-    rw [hval i, hsplit]
-    by_cases hi : i = (0 : Fin d)
-    · rw [if_pos hi]
-      exact ⟨by linarith only [h3], by linarith only [h3]⟩
-    · rw [if_neg hi]
-      exact ⟨by linarith only [h3], by linarith only [h3]⟩
-  · intro hmem
-    have hi0 := (mem_openCubeSet_originCube_iff.mp hmem) (0 : Fin d)
-    rw [hval (0 : Fin d), if_pos rfl] at hi0
-    linarith only [hi0.2, h3]
-
-/-- The `Finset` reading of `latticeAnnulusSet_nonempty`. -/
-theorem latticeAnnulusFinset_nonempty [NeZero d] {n j : ℤ} (hnj : n ≤ j - 1) :
-    (Proportion.latticeAnnulusFinset d n j (j - 1)).Nonempty := by
-  obtain ⟨v, hv⟩ := latticeAnnulusSet_nonempty (d := d) hnj
-  exact ⟨v, (Proportion.mem_latticeAnnulusFinset_iff (by omega)).mpr hv⟩
 
 /-! ## Part C -- the `hE2dom` slot -/
 
@@ -175,18 +108,6 @@ theorem le_annularErrorLatticeMax (M : ABKModel d) (s : {s : ℝ // 0 < s})
     (f := fun v => Support.annularErrorObservable M n s
       (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) ^ 2)
     ((Proportion.mem_latticeAnnulusFinset_iff hn).mpr hv)
-
-/-- **The maximum is attained** at a genuine lattice point of the annulus: with
-`latticeAnnulusFinset_nonempty` this rules out the vacuous reading in which
-`annularErrorLatticeMax` is the empty maximum `0`. -/
-theorem exists_annularErrorLatticeMax_eq [NeZero d] (M : ABKModel d)
-    (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) {j n : ℤ}
-    (hnj : n ≤ j - 1) :
-    ∃ v ∈ Proportion.latticeAnnulusFinset d n j (j - 1),
-      annularErrorLatticeMax M s omega j n
-        = Support.annularErrorObservable M n s
-            (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) ^ 2 :=
-  exists_mem_fmax_eq (latticeAnnulusFinset_nonempty hnj) fun _v _hv => sq_nonneg _
 
 /-- **The `hE2dom` slot.**  The finite lattice maximum, sent into `[0,infinity]`, is
 below the display's `[0,infinity]`-valued lattice supremum. -/

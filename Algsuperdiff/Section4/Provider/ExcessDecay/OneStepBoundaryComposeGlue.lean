@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepDatumZeroTraceCompose
 import Algsuperdiff.Section4.Provider.ExcessDecay.AffineSplitHarmonic
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepDatumZeroTrace
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepPartialReflectionCompose
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepTriangle
 
 /-!
@@ -14,7 +15,7 @@ Two mechanical pieces the boundary branch's assembly needs, and nothing else.
 
 ## 1. The `H¹` algebra of the manuscript competitor
 
-`OneStepDatumZeroTraceCompose.exists_classicalCompetitor_gradientHolder_boundary_datumSplit`
+The boundary producer at the split datum
 takes the manuscript's odd competitor `V_odd = v − ℓ_h − v₁` as a *packaged*
 `H¹` realization `vodd` together with its weak harmonicity `hvharm` and the
 packaging identity `heq`.  Both are supplied here from the chain's own data by
@@ -76,53 +77,6 @@ theorem exists_h1_oddCompetitor_affineSplit {m k : ℤ} {x : Vec d}
       rw [hldef, affineLiftH1_toFun]
     simp only [Homogenization.H1Function.sub_toFun]
     rw [hl]
-
-/-- **The boundary producer at the manuscript competitor, `hzt` discharged and
-the `H¹` packaging supplied.**
-
-`exists_classicalCompetitor_gradientHolder_boundary_datumSplit` with its two
-packaged binders `hvharm`/`heq` produced from the chain's own weak harmonicity
-of the replacement `v` and of the datum corrector `v₁`.  The boundary branch's
-Schauder package now depends on no packaging input at all. -/
-theorem exists_classicalCompetitor_gradientHolder_boundary_affineSplit [NeZero d]
-    (hd : d ≠ 0) {m n : ℤ} {x : Vec d} (hx : x ∈ openCubeSet (originCube d m))
-    (hmn : n - 2 < m) {u h : Vec d → ℝ}
-    (hdat : MemH10 (openCubeSet (originCube d m)) (fun y => u y - h y))
-    {v : H1Function (truncatedWindow x m (n - 2))}
-    (hvharm : IsWeaklyHarmonicOn (truncatedWindow x m (n - 2)) v)
-    (hvu : MemH10 (truncatedWindow x m (n - 2)) (fun y => v.toFun y - u y))
-    {v₁ Ψ : H1Function (truncatedWindow x m (n - 2))}
-    (hv₁harm : IsWeaklyHarmonicOn (truncatedWindow x m (n - 2)) v₁)
-    {cl : ℝ} {Al : Vec d}
-    (hΨ : ∀ y ∈ truncatedWindow x m (n - 2),
-      Ψ.toFun y = h y - affineLift x cl Al y)
-    (hv₁Ψ : MemH10 (truncatedWindow x m (n - 2))
-      (fun y => v₁.toFun y - Ψ.toFun y))
-    {c : ℝ} {A : Vec d} (hodd : IsOddAffineData x m (n - 2) c A) :
-    ∃ V : Vec d → ℝ,
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m (n - 2)) ∧
-      MemLp V 2 (volume : Measure (Vec d)) ∧
-      V =ᵐ[volume.restrict (truncatedWindow x m (n - 2))]
-        (fun y => v.toFun y - affineLift x cl Al y - v₁.toFun y) ∧
-      ∃ K : ℝ, 0 ≤ K ∧
-        (∀ i, IntegrableOn (fun p => gradField V p i)
-          (truncatedWindow x m (n - 3)) volume) ∧
-        HasGradientOn (truncatedWindow x m (n - 3)) V (gradField V) ∧
-        HolderSeminormBoundOn (truncatedWindow x m (n - 3)) (1 / 2 : ℝ) K
-          (gradField V) ∧
-        K ≤ boundaryOddSchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-              * affineExcess (truncatedWindow x m (n - 2)) V
-            + boundaryOddSchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-              * ((3 : ℝ) ^ (-(n - 2)) * oddClassDefect x m n V c A) := by
-  obtain ⟨vodd, hvoddharm, heq⟩ :=
-    exists_h1_oddCompetitor_affineSplit hvharm hv₁harm cl Al
-  obtain ⟨V, hVharm, hVmem, hVae, hK⟩ :=
-    exists_classicalCompetitor_gradientHolder_boundary_datumSplit hd hx hmn hdat hvu
-      hΨ hv₁Ψ vodd hvoddharm heq hodd
-  refine ⟨V, hVharm, hVmem, ?_, hK⟩
-  filter_upwards [hVae] with y hy
-  rw [hy, heq y]
 
 /-! ## 2. The affine-minimizer datum at the consumption window -/
 

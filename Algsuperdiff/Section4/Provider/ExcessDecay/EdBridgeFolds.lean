@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyOneStep
 import Algsuperdiff.Section4.Provider.ExcessDecay.SlopeStabilityEndpoints
@@ -9,7 +9,7 @@ import Algsuperdiff.Section4.Provider.ExcessDecay.SlopeStabilityEndpoints
 /-!
 # The three folds between the anchored one-step and the Step-4 slot
 
-`excessDecay_oneStep_interior_anchored` delivers the one-step contraction
+The anchored interior one-step delivers the one-step contraction
 with the anchor's four printed legs on the right.  The iteration anchor's own
 per-scale hypothesis (`e.Ej.decay.assumption`, named `IterationDecay` by the
 Step-5 provider) asks instead for

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Disorder.Cstar
 import Algsuperdiff.Section3.Observable.CutoffMultiscaleEllipticity
@@ -16,7 +16,7 @@ This module renders `d.good.event.for.lambda` (ABK26) as `Set
 on top of the *public* (measurable) observables of `ShellNorms`,
 `ErrorRepresentative22` and `Observable/CutoffMultiscaleEllipticity`.
 
-## Carrier rulings realized here
+## Carrier conventions realized here
 
 * **Well-definedness.** Every countable interior — the `k`-supremum of `𝒢₀`,
   the `k`- and `n`-sums of `𝒢₁` and `𝒢₂`, and every lattice maximum — is taken
@@ -132,19 +132,6 @@ noncomputable def eventG0 (M : ABKModel d) (Ccg : ℝ) (m : ℤ) :
             ((Annealed.sigmaBar M (k.1 - 3) : ℝ) *
                 lambdaAnnulusAtom M k.1 (triadicLatticePoint (k.1 - 2) v.1) omega -
               Ccg)) ≤ 1}
-
-theorem mem_eventG0_iff (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (omega : Cutoff.CutoffSample d) :
-    omega ∈ eventG0 M Ccg m ↔
-      (⨆ k : {k : ℤ // k ≤ m - 1},
-        ENNReal.ofReal
-            (Real.rpow (3 : ℝ) (-(1 / 4 : ℝ) * M.gamma * ((m - k.1 : ℤ) : ℝ))) *
-          ⨆ v : ↥(latticeAnnulusSet d (k.1 - 2) m k.1),
-            ENNReal.ofReal
-              ((Annealed.sigmaBar M (k.1 - 3) : ℝ) *
-                  lambdaAnnulusAtom M k.1 (triadicLatticePoint (k.1 - 2) v.1) omega -
-                Ccg)) ≤ 1 :=
-  Iff.rfl
 
 theorem measurableSet_eventG0 (M : ABKModel d) (Ccg : ℝ) (m : ℤ) :
     MeasurableSet (eventG0 M Ccg m) := by
@@ -332,15 +319,6 @@ noncomputable def goodEventBase (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
     eventG1 M m (s : ℝ)
       ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹) ∩
     eventG2 M m s ep
-
-theorem mem_goodEventBase_iff (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) (omega : Cutoff.CutoffSample d) :
-    omega ∈ goodEventBase M Ccg m s ep ↔
-      (omega ∈ eventG0 M Ccg m ∧
-        omega ∈ eventG1 M m (s : ℝ)
-          ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹)) ∧
-      omega ∈ eventG2 M m s ep :=
-  Iff.rfl
 
 theorem measurableSet_goodEventBase (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
     (s : {s : ℝ // 0 < s}) (ep : ℝ) :

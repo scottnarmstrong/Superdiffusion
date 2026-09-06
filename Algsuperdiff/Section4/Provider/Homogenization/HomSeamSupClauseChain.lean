@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamGradSpine
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineSupFormRethread
@@ -14,13 +14,11 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSpineSupFormRethread
 Step 3 is realized at the fixed exponent `p = 4d`, and the
 object the route actually produces is the manuscript's own sup-over-depths
 clause (`HomSpineSupFormClause.CoarseGrainingSupMultiscale`), supplied by
-`exists_coarseGrainingSupMultiscale_of_depthConverseOn` from the single-depth
-grid/smooth-dual comparison.  The seam chain consumes the `ℓ^p` clause instead.
+`HomSpineSupFormClause` from the single-depth grid/smooth-dual comparison.  The seam chain consumes the `ℓ^p` clause instead.
 
 The swap is FREE at the point of consumption:
 `HomSpineSupFormRethread.spineClauseC3_of_supMultiscale` produces clause (C3)
-from the sup clause at IDENTICAL constants, and
-`spineClauseC3_of_multiscale_via_sup` is the regression certificate.  This file
+from the sup clause at IDENTICAL constants.  This file
 carries that measurement through the five carriers of the seam chain:
 
 ```text
@@ -30,7 +28,7 @@ carries that measurement through the five carriers of the seam chain:
 ```
 
 Every declaration is the strict re-cut of its original: the fourth
-conjunct's `CoarseGrainingFinitePMultiscale` becomes
+conjunct's `ℓ^p`-over-depths multiscale clause becomes
 `CoarseGrainingSupMultiscale`, and NOTHING else changes -- not a binder, not a
 constant, not an order.  `.toSup` gives the regression (`ℓ^p ⇒ sup`), so
 nothing that was provable before becomes unprovable after.
@@ -51,7 +49,7 @@ variable {d : ℕ}
 
 /-! ## 1. The energy residue and the supply, at the sup clause -/
 
-/-- `HomSeamGradChain.RecutCoreSupplyFluxEnergyGrad` with the multiscale
+/-- The gradient-threaded energy residue with the multiscale
 conjunct re-cut at the print's own sup-over-depths aggregation. -/
 def RecutCoreSupplyFluxEnergySupGrad [NeZero d] (M : ABKModel d)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
@@ -92,22 +90,7 @@ def RecutCoreSupplyFluxEnergySupGrad [NeZero d] (M : ABKModel d)
             (printedLocalEnergy (fluxCorrectedCoeffOn M L m (originCube d m) omega) u)
             G Fflux)
 
-/-- **THE REGRESSION AT THE ENERGY RESIDUE.**  The `ℓ^p` residue implies
-the sup-form residue at the same constants: the re-cut only forgets. -/
-theorem recutCoreSupplyFluxEnergySupGrad_of_energyGrad [NeZero d] (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|) (omega : Cutoff.CutoffSample d)
-    (henergy : RecutCoreSupplyFluxEnergyGrad M Y m Cen0 hd1 hlog omega) :
-    RecutCoreSupplyFluxEnergySupGrad M Y m Cen0 hd1 hlog omega := by
-  have hp : (0 : ℝ) < (recutExponent d hd1).exponent.toReal :=
-    finiteLpExponent_toReal_pos (recutExponent d hd1)
-  intro L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf hgrad
-  obtain ⟨S, Fflux, hS0, hS, hSbound, hCGm⟩ :=
-    henergy L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf hgrad
-  exact ⟨S, Fflux, hS0, hS, hSbound,
-    fun G hG => (hCGm G hG).toSup hp (Annealed.sigmaBar M m).2.le⟩
-
-/-- `HomSeamGradChain.RecutCoreSupplyFluxAtGrad` at the sup clause. -/
+/-- The gradient-threaded core supply, at the sup clause. -/
 def RecutCoreSupplyFluxAtSupGrad [NeZero d] (M : ABKModel d)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 Ccg : ℝ)
     (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
@@ -148,34 +131,9 @@ def RecutCoreSupplyFluxAtSupGrad [NeZero d] (M : ABKModel d)
             G Fflux) ∧
         FluxCorrectedParentIdentification M m (homK M) omega
 
-/-- The one-application interface, at the sup clause. -/
-theorem recutCoreSupplyFluxAtSupGrad_of_energySupGrad [NeZero d] (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|) (omega : Cutoff.CutoffSample d)
-    (henergy : RecutCoreSupplyFluxEnergySupGrad M Y m Cen0 hd1 hlog omega)
-    (hid : FluxCorrectedParentIdentification M m (homK M) omega) :
-    RecutCoreSupplyFluxAtSupGrad M Y m Cen0 (recutPinnedCcgFlux d (recutExponent d hd1))
-      hd1 hlog omega := by
-  intro L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf hgrad
-  obtain ⟨S, Fflux, hS0, hS, hSbound, hCGm⟩ :=
-    henergy L hL u v h g Kg Kh KhInf hsol hcomp hKg hKh hKhInf hgrad
-  exact ⟨S, Fflux, hS0, hS, hSbound, hCGm, hid⟩
-
-/-- The supply, a.e., at the sup clause. -/
-theorem ae_recutCoreSupplyFluxAtSupGrad_of_energySupGrad [NeZero d] (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
-    (henergy : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      RecutCoreSupplyFluxEnergySupGrad M Y m Cen0 hd1 hlog omega) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      RecutCoreSupplyFluxAtSupGrad M Y m Cen0
-        (recutPinnedCcgFlux d (recutExponent d hd1)) hd1 hlog omega := by
-  filter_upwards [henergy, ae_fluxCorrectedParentIdentification M m] with omega he hi
-  exact recutCoreSupplyFluxAtSupGrad_of_energySupGrad M Y m Cen0 hd1 hlog omega he hi
-
 /-! ## 2. The twelve-conjunct core, at the sup clause -/
 
-/-- `HomSeamGradChain.SpineDatumRecutCoreFluxAtHalfGrad` at the sup clause. -/
+/-- The gradient-threaded twelve-conjunct core, at the sup clause. -/
 def SpineDatumRecutCoreFluxAtHalfSupGrad [NeZero d] (M : ABKModel d) (Cgap : ℝ)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (sb : {s : ℝ // 0 < s})
     (sigmaBarM : ℝ) (hsig : 0 < sigmaBarM) (Kabs Ccg : ℝ)
@@ -228,7 +186,7 @@ def SpineDatumRecutCoreFluxAtHalfSupGrad [NeZero d] (M : ABKModel d) (Cgap : ℝ
             (sigmaBarM *
               (Cw * EB * dataBracket sigmaBarM (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh))
 
-/-- `HomSeamGradChain.SpineDatumCoarseGrainingRecutFluxHalfGrad` at the sup
+/-- The gradient-threaded re-cut bundle, at the sup
 clause. -/
 def SpineDatumCoarseGrainingRecutFluxHalfSupGrad [NeZero d] (M : ABKModel d) (Cgap : ℝ)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (sb : {s : ℝ // 0 < s})
@@ -291,7 +249,7 @@ def SpineDatumCoarseGrainingRecutFluxHalfSupGrad [NeZero d] (M : ABKModel d) (Cg
 
 /-! ## 3. The installation, at the sup clause -/
 
-/-- `HomSeamGradChain.spineDatumCoarseGrainingRecutFluxAtHalfGrad_of_core` at
+/-- The bundle's installation from the core, at
 the sup clause. -/
 theorem spineDatumCoarseGrainingRecutFluxAtHalfSupGrad_of_core [NeZero d]
     (M : ABKModel d) (Cgap : ℝ) (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ)
@@ -345,7 +303,7 @@ theorem spineDatumCoarseGrainingRecutFluxAtHalfSupGrad_of_core_pinned [NeZero d]
 
 /-! ## 4. The producer, at the sup clause -/
 
-/-- `HomSeamGradChain.spineDatumRecutCoreFluxAtHalfGrad_of_supply` at the sup
+/-- The core's producer from the supply, at the sup
 clause.  The clause conjunct is a pure pass-through here, so the proof is the
 one verbatim. -/
 theorem spineDatumRecutCoreFluxAtHalfSupGrad_of_supply [NeZero d] (hd1 : 1 ≤ d)

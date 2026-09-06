@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.StepThreeDThree
 
@@ -88,10 +88,6 @@ strengthens every upper-tail statement about it. -/
 def hessInner (M : ABKModel d) (alpha : ℝ) (k : ℤ) (omega : Cutoff.CutoffSample d) : ℝ :=
   (hessInnerE M alpha k omega).toReal
 
-theorem hessInner_nonneg (M : ABKModel d) (alpha : ℝ) (k : ℤ)
-    (omega : Cutoff.CutoffSample d) : 0 ≤ hessInner M alpha k omega :=
-  ENNReal.toReal_nonneg
-
 /-- The lattice maximum at the layer `k − q`, enumerated downwards from the outer
 cube `k`. -/
 def hessDown (M : ABKModel d) (k : ℤ) (q : ℕ) (omega : Cutoff.CutoffSample d) : ℝ :=
@@ -101,21 +97,10 @@ theorem hessDown_nonneg (M : ABKModel d) (k : ℤ) (q : ℕ)
     (omega : Cutoff.CutoffSample d) : 0 ≤ hessDown M k q omega :=
   scoreG1b_nonneg M k (k - (q : ℤ)) omega
 
-theorem measurable_hessDown (M : ABKModel d) (k : ℤ) (q : ℕ) :
-    Measurable (hessDown M k q) := measurable_scoreG1b M k (k - (q : ℤ))
-
 /-- **The layer block at depth `p`**: the finite inner sum of the manuscript's
 display, enumerated downwards from `k`. -/
 def hessBlock (M : ABKModel d) (k : ℤ) (p : ℕ) (omega : Cutoff.CutoffSample d) : ℝ :=
   ∑ q ∈ Finset.range (p + 2), hessDown M k q omega
-
-theorem hessBlock_nonneg (M : ABKModel d) (k : ℤ) (p : ℕ)
-    (omega : Cutoff.CutoffSample d) : 0 ≤ hessBlock M k p omega :=
-  Finset.sum_nonneg fun q _ => hessDown_nonneg M k q omega
-
-theorem measurable_hessBlock (M : ABKModel d) (k : ℤ) (p : ℕ) :
-    Measurable (hessBlock M k p) :=
-  Finset.measurable_sum _ fun q _ => measurable_hessDown M k q
 
 /-- The downward enumeration of the inner `i`-range. -/
 private theorem sum_Icc_eq_sum_range_down (k : ℤ) (p : ℕ) (f : ℤ → ℝ≥0∞) :
@@ -163,15 +148,6 @@ theorem hessInnerE_eq_wsumE (M : ABKModel d) (alpha : ℝ) (k : ℤ)
     hessBlock, ENNReal.ofReal_mul (stepThreeWeight_nonneg alpha p),
     ENNReal.ofReal_sum_of_nonneg (fun q _ => hessDown_nonneg M k q omega)]
   rfl
-
-theorem measurable_hessInner (M : ABKModel d) (alpha : ℝ) (k : ℤ) :
-    Measurable (hessInner M alpha k) := by
-  have hfun : hessInner M alpha k =
-      wsum (fun p => hessBlock M k p) (stepThreeWeight alpha) := by
-    funext omega
-    rw [hessInner, wsum, hessInnerE_eq_wsumE]
-  rw [hfun]
-  exact measurable_wsum fun p => measurable_hessBlock M k p
 
 /-! ## 2. The depth-collapse coefficient -/
 

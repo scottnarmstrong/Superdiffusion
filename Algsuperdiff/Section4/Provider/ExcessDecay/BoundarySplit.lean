@@ -1,11 +1,12 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryDatumTransport
+import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryPoincareWindow
+import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryWindowNormalized
 import Algsuperdiff.Section4.Provider.ExcessDecay.L2Bridge
-import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringPoincare
 
 /-!
 # The boundary Caccioppoli's `L²` object, split
@@ -251,169 +252,6 @@ theorem eLpNorm_normalized_le_dirichletCubePoincare [NeZero d] (j : ℤ)
         refine Finset.sum_congr rfl ?_
         intro i _
         ring
-
-/-! ## 4. The split of the covering cube's `L²` object -/
-
-/-- The normalized `L²` square on an open cube is the square of the anchor's own
-normalized `L²` carrier. -/
-theorem normalizedL2SqOnSet_eq_eLpNorm_sq (Q : TriadicCube d) (f : Vec d → ℝ)
-    (hf : MemLp f 2 (normalizedCubeMeasure Q)) :
-    Ch03.normalizedL2SqOnSet (openCubeSet Q) f =
-      (eLpNorm f 2 (Support.normalizedVolumeMeasureOn (openCubeSet Q))).toReal ^
-        (2 : ℕ) := by
-  rw [Ch03.normalizedL2SqOnSet_openCubeSet_eq_cubeLpNorm_two_sq Q f hf,
-    normalizedVolumeMeasureOn_openCubeSet]
-  rfl
-
-/-- The three-term arithmetic of the split: `(a+b)² ≤ 2a² + 2b²`. -/
-private theorem sq_le_two_add_two {c a b : ℝ} (hc : 0 ≤ c) (h : c ≤ a + b) :
-    c ^ (2 : ℕ) ≤ 2 * a ^ (2 : ℕ) + 2 * b ^ (2 : ℕ) := by
-  have hsq : c ^ (2 : ℕ) ≤ (a + b) ^ (2 : ℕ) := pow_le_pow_left₀ hc h 2
-  have hab : (0 : ℝ) ≤ (a - b) ^ (2 : ℕ) := sq_nonneg _
-  have hexp1 : (a + b) ^ (2 : ℕ) = a ^ (2 : ℕ) + 2 * (a * b) + b ^ (2 : ℕ) := by ring
-  have hexp2 : (a - b) ^ (2 : ℕ) = a ^ (2 : ℕ) - 2 * (a * b) + b ^ (2 : ℕ) := by ring
-  linarith only [hsq, hab, hexp1, hexp2]
-
-/-- **The boundary Caccioppoli's `L²` object, split.**
-
-No coefficient, no ellipticity quantity, no good event. -/
-theorem normalizedL2SqOnSet_coveringCube_sub_le_split [NeZero d] {n m : ℤ}
-    {x z : Vec d} (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m))
-    (hfr : (((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-      frontier (openCubeSet (originCube d m))) ≠ ∅)
-    (u h : H1Function (openCubeSet (originCube d m)))
-    (w : H10Function (openCubeSet (originCube d m)))
-    (hval : ∀ y, w.toFun y = u.toFun y - h.toFun y)
-    (hgrad : ∀ y, w.grad y = u.grad y - h.grad y)
-    (V : H1Function (openCubeSet (originCube d (n + 2))))
-    (sigma : H10Function (openCubeSet (originCube d (n + 2))))
-    (hsigval : ∀ y, sigma.toFun y =
-      V.toFun y - h.toFun (y + wellPlacedCentre x m (n + 2))) :
-    Ch03.normalizedL2SqOnSet (openCubeSet (originCube d (n + 2)))
-        (fun y => u.toFun (y + wellPlacedCentre x m (n + 2)) - V.toFun y) ≤
-      2 * ((3 : ℝ) ^ d * (boundaryWindowPoincareConst d * (3 : ℝ) ^ n) *
-            ∑ i : Fin d,
-              (eLpNorm (fun y => u.grad y i - h.grad y i) 2
-                (Support.normalizedVolumeMeasureOn
-                  ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                    openCubeSet (originCube d m))))).toReal) ^ (2 : ℕ) +
-        2 * (dirichletCubePoincareConst d * (3 : ℝ) ^ (n + 2) *
-            ∑ i : Fin d,
-              (eLpNorm (fun y => sigma.grad y i) 2
-                (Support.normalizedVolumeMeasureOn
-                  (openCubeSet (originCube d (n + 2))))).toReal) ^ (2 : ℕ) := by
-  classical
-  set c : Vec d := wellPlacedCentre x m (n + 2) with hc
-  set mu : Measure (Vec d) :=
-    Support.normalizedVolumeMeasureOn (openCubeSet (originCube d (n + 2))) with hmu
-  -- the transported solution on the covering cube
-  have hsub : translateSet c (openCubeSet (originCube d (n + 2))) ⊆
-      openCubeSet (originCube d m) :=
-    translateSet_wellPlacedCentre_subset x hnm
-  set utr : H1Function (openCubeSet (originCube d (n + 2))) :=
-    H1Function.untranslate c (u.restrict (isOpen_translateSet_openCubeSet c (n + 2)) hsub)
-    with hutr
-  have hutrval : ∀ y, utr.toFun y = u.toFun (y + c) := fun _ => rfl
-  -- the two `L²` data on the covering cube
-  have hmemDiff : MemLp (fun y => utr.toFun y - V.toFun y) 2
-      (normalizedCubeMeasure (originCube d (n + 2))) := by
-    letI : IsProbabilityMeasure (normalizedCubeMeasure (originCube d (n + 2))) :=
-      ⟨normalizedCubeMeasure_apply_univ (originCube d (n + 2))⟩
-    exact (memLp_two_normalizedCubeMeasure_of_h1 (originCube d (n + 2)) utr).sub
-      (memLp_two_normalizedCubeMeasure_of_h1 (originCube d (n + 2)) V)
-  have hmemUh : MemLp (fun y => utr.toFun y - h.toFun (y + c)) 2
-      (normalizedCubeMeasure (originCube d (n + 2))) := by
-    letI : IsProbabilityMeasure (normalizedCubeMeasure (originCube d (n + 2))) :=
-      ⟨normalizedCubeMeasure_apply_univ (originCube d (n + 2))⟩
-    have hsigmem : MemLp sigma.toFun 2 (normalizedCubeMeasure (originCube d (n + 2))) :=
-      memLp_two_normalizedCubeMeasure_of_h1 (originCube d (n + 2)) sigma.toH1Function
-    have hsplit : (fun y => utr.toFun y - h.toFun (y + c)) =
-        fun y => (utr.toFun y - V.toFun y) + sigma.toFun y := by
-      funext y
-      rw [hsigval y]
-      ring
-    rw [hsplit]
-    exact hmemDiff.add hsigmem
-  have hmemSig : MemLp sigma.toFun 2 (normalizedCubeMeasure (originCube d (n + 2))) := by
-    letI : IsProbabilityMeasure (normalizedCubeMeasure (originCube d (n + 2))) :=
-      ⟨normalizedCubeMeasure_apply_univ (originCube d (n + 2))⟩
-    exact memLp_two_normalizedCubeMeasure_of_h1 (originCube d (n + 2)) sigma.toH1Function
-  have hmuEq : mu = normalizedCubeMeasure (originCube d (n + 2)) := by
-    rw [hmu, normalizedVolumeMeasureOn_openCubeSet]
-  -- the triangle inequality in the `ℝ≥0∞` carrier, brought to `ℝ`
-  have hAfin : eLpNorm (fun y => utr.toFun y - h.toFun (y + c)) 2 mu ≠ ⊤ := by
-    rw [hmuEq]; exact hmemUh.eLpNorm_ne_top
-  have hBfin : eLpNorm sigma.toFun 2 mu ≠ ⊤ := by
-    rw [hmuEq]; exact hmemSig.eLpNorm_ne_top
-  have htri : (eLpNorm (fun y => utr.toFun y - V.toFun y) 2 mu).toReal ≤
-      (eLpNorm (fun y => utr.toFun y - h.toFun (y + c)) 2 mu).toReal +
-        (eLpNorm sigma.toFun 2 mu).toReal := by
-    have hfun : (fun y => utr.toFun y - V.toFun y) =
-        (fun y => utr.toFun y - h.toFun (y + c)) - sigma.toFun := by
-      funext y
-      rw [Pi.sub_apply, hsigval y]
-      ring
-    have hmeasA : AEStronglyMeasurable
-        (fun y => utr.toFun y - h.toFun (y + c)) mu := by
-      rw [hmuEq]; exact hmemUh.1
-    have hmeasB : AEStronglyMeasurable sigma.toFun mu := by
-      rw [hmuEq]; exact hmemSig.1
-    have hsum := eLpNorm_sub_le (μ := mu) (p := 2) hmeasA hmeasB (by norm_num)
-    rw [← hfun] at hsum
-    have hRne : eLpNorm (fun y => utr.toFun y - h.toFun (y + c)) 2 mu +
-        eLpNorm sigma.toFun 2 mu ≠ ⊤ := ENNReal.add_ne_top.2 ⟨hAfin, hBfin⟩
-    have hstep := ENNReal.toReal_mono hRne hsum
-    rwa [ENNReal.toReal_add hAfin hBfin] at hstep
-  -- leg one: the boundary Poincaré on the covering cube
-  have hframe : eLpNorm (fun y => utr.toFun y - h.toFun (y + c)) 2 mu =
-      eLpNorm (fun y => u.toFun y - h.toFun y) 2
-        (Support.normalizedVolumeMeasureOn
-          ((fun y => c + y) '' openCubeSet (originCube d (n + 2)))) := by
-    rw [hmu,
-      eLpNorm_normalizedVolumeMeasureOn_image_add c
-        (openCubeSet (originCube d (n + 2))) (by norm_num) (by norm_num)]
-    rfl
-  have hleg1 : (eLpNorm (fun y => utr.toFun y - h.toFun (y + c)) 2 mu).toReal ≤
-      (3 : ℝ) ^ d * (boundaryWindowPoincareConst d * (3 : ℝ) ^ n) *
-        ∑ i : Fin d,
-          (eLpNorm (fun y => u.grad y i - h.grad y i) 2
-            (Support.normalizedVolumeMeasureOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))))).toReal := by
-    rw [hframe]
-    exact eLpNorm_coveringCube_sub_le_boundaryWindowPoincare hnm hx hgeom hfr u h w
-      hval hgrad
-  -- leg two: the Dirichlet Poincaré at the covering scale
-  have hleg2 : (eLpNorm sigma.toFun 2 mu).toReal ≤
-      dirichletCubePoincareConst d * (3 : ℝ) ^ (n + 2) *
-        ∑ i : Fin d,
-          (eLpNorm (fun y => sigma.grad y i) 2
-            (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d (n + 2))))).toReal :=
-    eLpNorm_normalized_le_dirichletCubePoincare (n + 2) sigma
-  -- the square, and the carrier bridge
-  have hsum : (eLpNorm (fun y => utr.toFun y - V.toFun y) 2 mu).toReal ≤
-      ((3 : ℝ) ^ d * (boundaryWindowPoincareConst d * (3 : ℝ) ^ n) *
-          ∑ i : Fin d,
-            (eLpNorm (fun y => u.grad y i - h.grad y i) 2
-              (Support.normalizedVolumeMeasureOn
-                ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                  openCubeSet (originCube d m))))).toReal) +
-        (dirichletCubePoincareConst d * (3 : ℝ) ^ (n + 2) *
-          ∑ i : Fin d,
-            (eLpNorm (fun y => sigma.grad y i) 2
-              (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d (n + 2))))).toReal) :=
-    htri.trans (add_le_add hleg1 hleg2)
-  have hbridge := normalizedL2SqOnSet_eq_eLpNorm_sq (originCube d (n + 2))
-    (fun y => utr.toFun y - V.toFun y) (by rw [← hmuEq] at hmemDiff ⊢; exact hmemDiff)
-  have hfun : (fun y => u.toFun (y + c) - V.toFun y) =
-      fun y => utr.toFun y - V.toFun y := by
-    funext y
-    rw [hutrval y]
-  rw [hfun, hbridge, ← hmu]
-  exact sq_le_two_add_two ENNReal.toReal_nonneg hsum
 
 end
 

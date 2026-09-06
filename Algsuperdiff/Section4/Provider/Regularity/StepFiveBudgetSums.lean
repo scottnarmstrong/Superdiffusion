@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFiveGeometricTail
 import Algsuperdiff.Section4.Provider.Regularity.StepThreeBudget
@@ -32,8 +32,8 @@ read on the `ε` leg instead of the indicator leg.  The manuscript attributes it
 formalization the `X_m(α)` gate is what delivers `GoodScaleWindows`, so the
 implication is exactly the one transcribed here.
 
-The second display is proved in abstract-real form
-(`sum_Icc_delta_le_of_legs`): its three legs are the two geometric tails of
+The second display is proved in abstract-real form: its three legs are the two
+geometric tails of
 `StepFiveGeometricTail` plus one `ε`-sum leg, which is the first display again.
 
 ## Deviations from print
@@ -42,13 +42,12 @@ The second display is proved in abstract-real form
   `Finset.Icc n m`; the manuscript's displays sum over `[n, m-1]`.  The `ε`
   bound below is proved on the larger window `Icc n m` (which is what
   `GoodScaleWindows` gives and what the anchor consumes), hence dominates the
-  printed sum.  `sum_Icc_delta_le_of_legs` is stated on the printed window `Icc
-  n (m-1)`.
+  printed sum.
 * **D2 (constant).** `GoodScaleWindows` yields `δ((m-n)+1)`, not `δ(m-n)`.  With
   the Step-3 window gate `14 ≤ m-n` this is `≤ 2δ(m-n)`, i.e. the printed
   `C δ (m-n)` at the explicit `C = 2`.  Recorded, not hidden.
 * ** (binding).** The boundary leg `ε_j ‖∇h‖_{L^∞} 1_{z∉□_{m-1}}` is carried
-  explicitly through `sum_Icc_delta_le_of_legs`; it is NOT discarded.
+  explicitly through the three-leg budget; it is NOT discarded.
 
 ## References
 
@@ -199,55 +198,5 @@ theorem sum_stepFiveEps_le_two_mul_delta_mul_window {M : ABKModel d} {delta : �
   have h1 := sum_stepFiveEps_le_of_goodScaleWindows hdelta hgood hv
   have h2 := mul_le_mul_of_nonneg_left (toNat_window_add_one_le_two_mul hwin) hdelta
   linarith only [h1, h2]
-
-/-! ## 3. `e.sum.delta.j.bound`, in abstract-real form -/
-
-/-- **`e.sum.delta.j.bound`**, with the three legs abstract.
-
-Then
-
-```text
-   ∑_{j=n}^{m-1} δ_j ≤ K_g r₁/(1-r₁) + ( K_h r₂/(1-r₂) + S_ε H ) 𝟙 ,
-```
-
-with `S_ε` any bound for `∑_{Icc n m} ε_j`, i.e. `e.sum.eps.j.bound`.  The
-boundary leg is carried. -/
-theorem sum_Icc_delta_le_of_legs
-    {δ Ag Ah ε : ℤ → ℝ} {r₁ r₂ Kg Kh Hinf Se ind : ℝ} {n m : ℤ} (hnm : n ≤ m)
-    (hr₁0 : 0 < r₁) (hr₁1 : r₁ < 1) (hr₂0 : 0 < r₂) (hr₂1 : r₂ < 1)
-    (hAg0 : 0 ≤ Ag m) (hAgd : ∀ j : ℤ, j ≤ m → Ag j ≤ Kg * r₁ ^ (m - j))
-    (hAh0 : 0 ≤ Ah m) (hAhd : ∀ j : ℤ, j ≤ m → Ah j ≤ Kh * r₂ ^ (m - j))
-    (hε0 : ∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ ε j)
-    (hSe : ∑ j ∈ Finset.Icc n m, ε j ≤ Se)
-    (hHinf : 0 ≤ Hinf) (hind0 : 0 ≤ ind)
-    (hδ : ∀ j : ℤ, δ j = Ag j + (Ah j + ε j * Hinf) * ind) :
-    ∑ j ∈ Finset.Icc n (m - 1), δ j ≤
-      Kg * r₁ / (1 - r₁) + (Kh * r₂ / (1 - r₂) + Se * Hinf) * ind := by
-  have hgleg : ∑ j ∈ Finset.Icc n (m - 1), Ag j ≤ Kg * r₁ / (1 - r₁) :=
-    sum_Icc_le_of_zpow_dominated hr₁0 hr₁1 hnm hAg0 hAgd
-  have hhleg : ∑ j ∈ Finset.Icc n (m - 1), Ah j ≤ Kh * r₂ / (1 - r₂) :=
-    sum_Icc_le_of_zpow_dominated hr₂0 hr₂1 hnm hAh0 hAhd
-  have hsubset : Finset.Icc n (m - 1) ⊆ Finset.Icc n m := by
-    intro j hj
-    rw [Finset.mem_Icc] at hj ⊢
-    omega
-  have heleg : ∑ j ∈ Finset.Icc n (m - 1), ε j ≤ Se :=
-    le_trans
-      (Finset.sum_le_sum_of_subset_of_nonneg hsubset fun j hj _ => by
-        rw [Finset.mem_Icc] at hj; exact hε0 j hj.1 hj.2)
-      hSe
-  have heq : ∑ j ∈ Finset.Icc n (m - 1), δ j
-      = (∑ j ∈ Finset.Icc n (m - 1), Ag j)
-        + ((∑ j ∈ Finset.Icc n (m - 1), Ah j)
-            + (∑ j ∈ Finset.Icc n (m - 1), ε j) * Hinf) * ind := by
-    rw [Finset.sum_congr rfl fun j _ => hδ j]
-    simp only [Finset.sum_add_distrib, ← Finset.sum_mul]
-  rw [heq]
-  have hmid : (∑ j ∈ Finset.Icc n (m - 1), Ah j)
-      + (∑ j ∈ Finset.Icc n (m - 1), ε j) * Hinf ≤ Kh * r₂ / (1 - r₂) + Se * Hinf := by
-    have := mul_le_mul_of_nonneg_right heleg hHinf
-    linarith only [hhleg, this]
-  have hmul := mul_le_mul_of_nonneg_right hmid hind0
-  linarith only [hgleg, hmul]
 
 end Algsuperdiff.Section4.Provider.Regularity

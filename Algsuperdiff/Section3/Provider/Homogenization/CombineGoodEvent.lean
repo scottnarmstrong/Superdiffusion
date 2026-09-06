@@ -102,8 +102,8 @@ private theorem geom_sum_le_inv_one_sub {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) 
 /-- The Euclidean expansion of a four-term sum. -/
 private theorem sq_add_four_le (x y z w : ℝ) :
     (x + y + z + w) ^ 2 ≤ 4 * (x ^ 2 + y ^ 2 + z ^ 2 + w ^ 2) := by
-  nlinarith [sq_nonneg (x - y), sq_nonneg (x - z), sq_nonneg (x - w), sq_nonneg (y - z),
-    sq_nonneg (y - w), sq_nonneg (z - w)]
+  linarith only [sq_nonneg (x - y), sq_nonneg (x - z), sq_nonneg (x - w),
+    sq_nonneg (y - z), sq_nonneg (y - w), sq_nonneg (z - w)]
 
 /-- **The prefactor gate.**  On the printed good event the upper coarse ellipticity
 times the printed power of the coarse ellipticity ratio is at most four times
@@ -128,8 +128,8 @@ private theorem upperEllipticity_mul_rpow_ratio_le {sigma lam Lam t : ℝ}
   have hrpow : (Lam / lam) ^ t ≤ 2 := by
     rw [← hhalf]
     exact hstep1.trans hstep2
-  have hrpow0 : 0 ≤ (Lam / lam) ^ t := Real.rpow_nonneg hratio0 t
-  nlinarith
+  calc Lam * (Lam / lam) ^ t ≤ Lam * 2 := mul_le_mul_of_nonneg_left hrpow hLam0
+    _ ≤ 4 * sigma := by linarith only [hup]
 
 /-! ## The two geometric scale series -/
 
@@ -211,11 +211,12 @@ private theorem sum_Icc_three_neg_half_le {L m : ℤ} (hLm : L ≤ m) :
     rw [show (5 / 3 : ℝ) = Real.sqrt ((5 / 3 : ℝ) ^ 2) by
       rw [Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 5 / 3)]]
     exact Real.sqrt_le_sqrt (by norm_num)
-  have hsqrtpos : (0 : ℝ) < Real.sqrt 3 := by linarith
   have hprod : (3 : ℝ) ^ (-(1 / 2) : ℝ) * Real.sqrt 3 = 1 := by
     rw [Real.sqrt_eq_rpow, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
     norm_num
-  have hrle : (3 : ℝ) ^ (-(1 / 2) : ℝ) ≤ 3 / 5 := by nlinarith
+  have hrle : (3 : ℝ) ^ (-(1 / 2) : ℝ) ≤ 3 / 5 := by
+    have hmul := mul_le_mul_of_nonneg_left hsqrtlow hr0
+    linarith only [hmul, hprod]
   have hr1 : (3 : ℝ) ^ (-(1 / 2) : ℝ) < 1 := by linarith
   have hbound : ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ)) ≤
       (1 - (3 : ℝ) ^ (-(1 / 2) : ℝ))⁻¹ := by
@@ -227,7 +228,9 @@ private theorem sum_Icc_three_neg_half_le {L m : ℤ} (hLm : L ≤ m) :
   have hcancel : (1 - (3 : ℝ) ^ (-(1 / 2) : ℝ))⁻¹ * (1 - (3 : ℝ) ^ (-(1 / 2) : ℝ)) = 1 :=
     inv_mul_cancel₀ (ne_of_gt hpos)
   have hinvnn : (0 : ℝ) ≤ (1 - (3 : ℝ) ^ (-(1 / 2) : ℝ))⁻¹ := le_of_lt (inv_pos.mpr hpos)
-  nlinarith
+  have hmul2 := mul_le_mul_of_nonneg_left
+    (by linarith only [hrle] : (2 : ℝ) / 5 ≤ 1 - (3 : ℝ) ^ (-(1 / 2) : ℝ)) hinvnn
+  linarith only [hbound, hmul2, hcancel]
 
 /-- Cauchy--Schwarz on the corridor, in the form the two printed scale sums use:
 the display weight is split as a product, the first factor supplies a summable
@@ -272,7 +275,7 @@ private theorem stepOne_assembly {J1 Jm X T1 T2 T3 T4 pref C9 sigma Sd Sv Nc D w
     J1 ≤ 1 / 2 * Jm + C * Sd + C * (sigma * Sv) + C * (sigma * Nc) := by
   have hXsq : X ^ 2 ≤ 4 * (T1 ^ 2 + T2 ^ 2 + T3 ^ 2 + T4 ^ 2) := by
     have hexp := sq_add_four_le T1 T2 T3 T4
-    nlinarith [hX, hX0]
+    exact (pow_le_pow_left₀ hX0 hX 2).trans hexp
   have hstep1 : C9 * pref * X ^ 2 ≤ C9 * (4 * sigma) * X ^ 2 :=
     mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hpref hC9.le) (sq_nonneg X)
   have hstep2 : C9 * (4 * sigma) * X ^ 2 ≤

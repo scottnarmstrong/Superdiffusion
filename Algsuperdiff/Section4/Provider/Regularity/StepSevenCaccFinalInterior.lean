@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccFinalCore
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenVolume
@@ -10,7 +10,8 @@ import Algsuperdiff.Section4.Provider.ExcessDecay.TranslationTransportNorms
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdFinalInputs
 import Algsuperdiff.Section4.Provider.ExcessDecay.BesovBridge
 import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorGlueWindow
-import Algsuperdiff.Section4.Provider.Regularity.StepSevenGradForcedSolution
+import Algsuperdiff.Section4.Provider.ExcessDecay.TranslationTransportAssembly
+import Algsuperdiff.Section4.Provider.Regularity.StepSevenSandwich
 
 namespace Algsuperdiff.Section4.Provider.Regularity
 
@@ -167,8 +168,8 @@ theorem stepSevenGradMass_mono {m : ℤ} {nu : ℝ} (hnu : 0 ≤ nu)
 ```
 
 The volume-factor producer with its one caller-side input — the mass comparison
-— discharged from `u ∈ H¹(□_m)`.  The side condition `n+1 ≤ n'-2` is
-`StepSevenVolume.stepSevenCaccCoreGap`, free at the Step-7a selection. -/
+— discharged from `u ∈ H¹(□_m)`.  The side condition `n+1 ≤ n'-2` is free at
+the Step-7a selection. -/
 theorem stepSevenNuGradNorm_le_volumeRatio (d : ℕ) {m n n' : ℤ} {z : Vec d} {nu : ℝ}
     (hnu : 0 ≤ nu) (hz : z ∈ openCubeSet (originCube d m)) (hnm : n ≤ m)
     (hcore : n + 1 ≤ n' - 2) (u : H1Function (openCubeSet (originCube d m))) :

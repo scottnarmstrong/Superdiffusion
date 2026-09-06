@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenEndPoincare
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccMatching
@@ -20,9 +20,8 @@ named `hcg`:
 ```
 
 Here `exists_stepSevenCgPoincareInput` produces the `hcg` shape verbatim, and
-`exists_stepSevenCgPoincareShom` composes it with `hlambda` into the
-display's first inequality.  `hcg` is therefore no longer a conditional input
-of the Step-7d chain.
+composing it with `hlambda` gives the display's first inequality.  `hcg` is
+therefore no longer a conditional input of the Step-7d chain.
 
 ## The carrier match, binder by binder
 
@@ -93,11 +92,6 @@ slot's `hcg`, and the object `e.lambda.stability.applied` must bound by `C
 noncomputable def stepSevenCgLamInv [NeZero d] (Q : TriadicCube d)
     (a : CoeffFamily d) (s : ℝ) : ℝ :=
   Real.rpow (Ch02.lambdaSq Q (s / 2) (Ch02.MultiscaleExponent.finite 2) a) (-1 : ℝ)
-
-theorem stepSevenCgLamInv_nonneg [NeZero d] (Q : TriadicCube d)
-    (a : CoeffFamily d) {s : ℝ} (hs : 0 < s) : 0 ≤ stepSevenCgLamInv Q a s :=
-  Real.rpow_nonneg
-    (Ch02.lambdaSq_finite_nonneg Q a (by linarith only [hs]) (by norm_num)) _
 
 /-- **The two legs carry ONE ellipticity object.**  The gradient leg's
 `poincareLowerEllipticityFactor Q a (s/2) (.finite 2) = λ_{s/2,2}^{-1/2}` is
@@ -216,12 +210,6 @@ theorem stepSevenCgSPow_eq : Real.rpow stepSevenCgS (-3 : ℝ) = 64 := by
   rw [stepSevenCgS_eq, hcast, hz]
   norm_num
 
-/-- **The pin identifies the lemma's forcing slot with §4.4's own.**  At `s₀ = 1/4`
-the coarse-graining lemma measures `𝐠` in `H̲^{1/4}`, which is `stepOneS` — the
-exponent every §4.4 forcing seminorm is measured at.  This is why option (b) at
-`1/4` makes the printed display literally correct. -/
-theorem stepSevenCgS_eq_stepOneS : stepSevenCgS = stepOneS := rfl
-
 /-- **`l.coarse.graining.RHS` at the §4.4 pin `s₀ = 1/4`.**  The `hcg` shape with the
 prefactor an absolute numeral `64 C`. -/
 theorem exists_stepSevenCgPoincareInput_pinned (d : ℕ) [NeZero d] :
@@ -242,40 +230,6 @@ theorem exists_stepSevenCgPoincareInput_pinned (d : ℕ) [NeZero d] :
   intro Q a g u hg
   have h := hC (a := a) u stepSevenCgS_pos stepSevenCgS_lt_one hg
   rwa [stepSevenCgSPow_eq] at h
-
-/-! ## 5. The display's first inequality, with `hcg` discharged -/
-
-/-- **`e.cg.Poincare.with.rhs.grad.applied`, first inequality, with `hcg`
-discharged.**
-
-`cgPoincareShom_compose` applied to the CoarseGraining producer: the only
-conditional input left in the first inequality is `hlambda`
-(`e.lambda.stability.applied`). -/
-theorem exists_stepSevenCgPoincareShom (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ {Q : TriadicCube d} {a : CoeffFamily d} {s : ℝ} {g : Vec d → Vec d}
-        (u : ForcedCubeSolution Q a g) {Clam shomInv : ℝ},
-        0 < s → s < 1 → ForceBesovRegularity Q s g →
-        0 ≤ Clam → 0 ≤ shomInv →
-        stepSevenCgLamInv Q a s ≤ Clam * shomInv →
-          scaleNormalizedNegativeBesovVectorNorm Q s (Ch02.MultiscaleExponent.finite 2)
-              (forcedSolutionGradientField u) ≤
-            ((C * Real.rpow s (-3 : ℝ)) * (Real.sqrt Clam + Clam)) *
-                (Real.sqrt shomInv * forcedSolutionEnergyNorm Q a u) +
-              ((C * Real.rpow s (-3 : ℝ)) * (Real.sqrt Clam + Clam)) *
-                (shomInv * scaleNormalizedPositiveBesovVectorSeminormTwo Q s g) := by
-  obtain ⟨C, hCpos, hC⟩ := exists_stepSevenCgPoincareInput d
-  refine ⟨C, hCpos, ?_⟩
-  intro Q a s g u Clam shomInv hs hs1 hg hClam hshomInv hlambda
-  have hdata : (0 : ℝ) ≤ scaleNormalizedPositiveBesovVectorSeminormTwo Q s g :=
-    cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove Q s g hg.partialSeminorms_bddAbove
-  have hCcg : (0 : ℝ) ≤ C * Real.rpow s (-3 : ℝ) :=
-    mul_nonneg hCpos.le (Real.rpow_nonneg hs.le _)
-  have hE : (0 : ℝ) ≤ forcedSolutionEnergyNorm Q a u := by
-    rw [forcedSolutionEnergyNorm, h1EnergyNormOnCube]
-    exact Real.sqrt_nonneg _
-  exact cgPoincareShom_compose hCcg hClam hshomInv hE hdata
-    (hC (a := a) u hs hs1 hg) hlambda
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepWindows
 
@@ -156,31 +156,6 @@ theorem exists_isAffineMinimizer_truncatedWindow {m k : ℤ} {x : Vec d}
   obtain ⟨zin, zout, hin, hout⟩ := exists_axisCube_sandwich_truncatedWindow x hx hkm
   exact exists_isAffineMinimizer_of_axisCubeSandwich (zpow_pos (by norm_num) (k - 2))
     (zpow_pos (by norm_num) k) (measurableSet_truncatedWindow x m k) hin hout u hu
-
-/-- **The oscillation-to-excess comparison.**
-
-`3^{-k}‖u - (u)_W‖_{L̲²(W)} ≤ endpointConst d (1/9) · (E(u,W) + |∇ℓ(u,W)|)` on
-the truncated window `W = (x+□_k) ∩ □_m`.  See deviation 2 of the module
-docstring for the constant's placement. -/
-theorem oscillationScaled_truncatedWindow_le (hd : 0 < d) {m k : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k - 1 ≤ m) {u : Vec d → ℝ}
-    (hu : MemLp u 2 (volume.restrict (truncatedWindow x m k))) {c : ℝ} {g : Vec d}
-    (hmin : IsAffineMinimizer (truncatedWindow x m k) u c g) :
-    oscillationScaled k (truncatedWindow x m k) u
-      ≤ endpointConst d (1 / 9 : ℝ)
-        * (affineExcess (truncatedWindow x m k) u + slopeMagnitude g) := by
-  obtain ⟨zin, zout, hin, hout⟩ := exists_axisCube_sandwich_truncatedWindow x hx hkm
-  have hstep1 : oscillationScaled k (truncatedWindow x m k) u
-      ≤ oscillationOn (truncatedWindow x m k) u :=
-    oscillationScaled_le_oscillationOn_of_axisCubeSandwich (d := d) (by omega) hin hout u
-  have h9 : ((3 : ℝ) ^ (-2 : ℤ)) = 1 / 9 := by norm_num
-  have hratio : (1 / 9 : ℝ) * (3 : ℝ) ^ k = (3 : ℝ) ^ (k - 2) := by
-    rw [show k - 2 = k + (-2 : ℤ) by ring, zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), h9]
-    ring
-  have hstep2 := (endpoint_comparisons_of_axisCubeSandwich (d := d) (θ := (1 / 9 : ℝ)) hd
-    (zpow_pos (by norm_num) (k - 2)) (zpow_pos (by norm_num) k) (by norm_num)
-    (le_of_eq hratio) (measurableSet_truncatedWindow x m k) hin hout hu hmin).1
-  exact hstep1.trans hstep2
 
 end
 

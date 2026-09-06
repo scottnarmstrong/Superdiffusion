@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridComposeCover
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridComposeDepth
@@ -273,34 +273,6 @@ theorem offGridErrorFunctional_le {w : Vec d} {P K : TriadicCube d} {g : CoeffFi
   rw [offGridErrorFunctional]
   refine le_trans (Real.sqrt_le_sqrt (le_trans hseries (le_of_eq hconst))) ?_
   rw [hsqrt]
-
-/-- **The composed estimate at the printed slot** `(t,u) = (s/6, s/8)` of
-`e.mathcalE.stability.applied`, with the printed constant: a pure `C(d)`,
-`√(192 d)`, and no `s`-power. -/
-theorem offGridErrorFunctional_le_slot {w : Vec d} {P K : TriadicCube d} {g : CoeffField d}
-    {lam Lam : ℝ} (A : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
-    {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1)
-    (hg : ∀ S : TriadicCube d, (A.coeffOn S).toCoeffField = g)
-    (hEll : IsEllipticFieldOn lam Lam (translateSet w (cubeSet P)) g)
-    (hcontain : translateSet w (cubeSet P) ⊆ cubeSet K) :
-    offGridErrorFunctional w P (s / 6) g a0 ≤
-      Real.sqrt (192 * (d : ℝ)) *
-        ((3 : ℝ) ^ (s / 8 * (((K.scale - P.scale).toNat : ℕ) : ℝ)) *
-          Ch02.HomogenizationErrorOnCube K (s / 8) .infinity (.finite 2) A a0) := by
-  have hu0 : (0 : ℝ) < s / 8 := by linarith only [hs0]
-  have hut : s / 8 < s / 6 := by linarith only [hs0]
-  have ht : s / 6 ≤ 1 / 2 := by linarith only [hs1]
-  have hmain := offGridErrorFunctional_le (t := s / 6) (u := s / 8) A a0 hu0 hut ht hg hEll
-    hcontain
-  refine le_trans hmain ?_
-  have hslot : Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) ≤
-      Real.sqrt (192 * (d : ℝ)) :=
-    Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs0 hs1)
-  have hrest : (0 : ℝ) ≤ (3 : ℝ) ^ (s / 8 * (((K.scale - P.scale).toNat : ℕ) : ℝ)) *
-      Ch02.HomogenizationErrorOnCube K (s / 8) .infinity (.finite 2) A a0 :=
-    mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-      (homogenizationErrorOnCube_infinity_two_nonneg K A a0 hu0)
-  exact mul_le_mul_of_nonneg_right hslot hrest
 
 end
 

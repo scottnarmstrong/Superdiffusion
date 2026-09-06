@@ -55,8 +55,6 @@ open scoped ENNReal NNReal
 /-- Real distance between integer indices, `|k - j|`. -/
 noncomputable def idist (k j : ℤ) : ℝ := |(k : ℝ) - (j : ℝ)|
 
-lemma idist_nonneg (k j : ℤ) : 0 ≤ idist k j := abs_nonneg _
-
 /-- Geometric row weight `3^{-s|k-j|}` (`e.Yk.def.twosided`). -/
 noncomputable def wt (s : ℝ) (k j : ℤ) : ℝ := (3 : ℝ) ^ (-(s * idist k j))
 

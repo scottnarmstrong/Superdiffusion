@@ -20,8 +20,7 @@ distance-two chains.
   the whole chain to lie inside the site set `S`.  The printed form is nominally
   stronger — the chain inside the cluster `A` itself — and one direction is
   recorded here: `connected₂_of_mem_cluster₂` joins any two sites of a 2-cluster
-  by a chain inside `S`, while `Connected₂.mono` with `cluster₂_subset` turns a
-  chain inside the cluster into one inside `S`.
+  by a chain inside `S`.
 * "Maximal subset" is implemented by `cluster₂`, whose membership criterion
   `mem_cluster₂_iff` reads `v ∈ cluster₂ S u ↔ u ∈ S ∧ Connected₂ S u v`: the
   cluster collects *every* site of `S` joined to `u`, and
@@ -127,12 +126,6 @@ theorem Connected₂.trans {S : Finset (Fin d → ℤ)} {u v w : Fin d → ℤ}
     by_cases h1 : i ≤ N
     · rw [if_pos h1]; exact hxS i h1
     · rw [if_neg h1]; exact hyS (i - N) (by omega)
-
-/-- 2-connectedness is monotone in the site set. -/
-theorem Connected₂.mono {S T : Finset (Fin d → ℤ)} (hST : S ⊆ T)
-    {u v : Fin d → ℤ} (h : Connected₂ S u v) : Connected₂ T u v := by
-  obtain ⟨N, x, hx0, hxN, hxp, hxS⟩ := h
-  exact ⟨N, x, hx0, hxN, hxp, fun i hi => hST (hxS i hi)⟩
 
 /-! ### The 2-cluster -/
 

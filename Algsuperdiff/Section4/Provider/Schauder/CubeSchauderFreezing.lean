@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderExistence
 import Algsuperdiff.Section4.Provider.ExcessDecay.AffineSplitHarmonic
@@ -255,20 +255,6 @@ theorem exists_frozenHarmonicReplacement [NeZero d] {U : Set (Vec d)}
 
 /-! ## 5. The freezing gain on a triadic sub-cube -/
 
-/-- The centre of a triadic cube lies in its open realization. -/
-theorem center_mem_openCubeSet (Q : TriadicCube d) :
-    (fun i => (Q.index i : ℝ) * cubeScaleFactor Q) ∈ openCubeSet Q := by
-  have hs : (0 : ℝ) < cubeScaleFactor Q := by
-    rw [cubeScaleFactor]
-    exact zpow_pos (by norm_num) _
-  simp only [openCubeSet, Set.mem_setOf_eq]
-  intro i
-  have hlo : ((Q.index i : ℝ) - 1 / 2) * cubeScaleFactor Q =
-      (Q.index i : ℝ) * cubeScaleFactor Q - cubeScaleFactor Q / 2 := by ring
-  have hhi : ((Q.index i : ℝ) + 1 / 2) * cubeScaleFactor Q =
-      (Q.index i : ℝ) * cubeScaleFactor Q + cubeScaleFactor Q / 2 := by ring
-  exact ⟨by linarith only [hs, hlo], by linarith only [hs, hhi]⟩
-
 /-- **The sup-norm diameter of a triadic cube is its side length.** -/
 theorem norm_sub_le_of_mem_openCubeSet {Q : TriadicCube d} {x y : Vec d}
     (hx : x ∈ openCubeSet Q) (hy : y ∈ openCubeSet Q) :
@@ -326,57 +312,5 @@ theorem vecNormSq_sub_le_of_holderSeminormBoundOn_openCubeSet {Q : TriadicCube d
     rw [← hexp]
     exact mul_le_mul_of_nonneg_left hsq hdnn
   linarith only [hdim, hchain]
-
-/-- **The freezing step at a triadic sub-cube, with the gain made explicit.**
-
-If `u` solves `-Δ u = ∇·G` on a window `W`, `□ = openCubeSet Q ⊆ W` and
-`[G]_{C^{0,1/2}(□)} ≤ KG`, then at every base point `x₀ ∈ □` the zero-trace
-solution `w` of `-Δ w = ∇·(G - G(x₀))` on `□` makes `u - w` weakly harmonic and
-satisfies
-
-```text
-  ∫_□ |∇w|² ≤ d · KG² · 3^{Q.scale} · |□| ,
-```
-
-i.e. `‖∇w‖_{L̲²(□)} ≤ √d · KG · (3^{Q.scale})^{1/2}` after dividing by `|□|`.
-The factor `(3^{Q.scale})^{1/2}` is the **freezing gain**: the harmonic
-approximation error is a positive power of the sub-cube side. -/
-theorem exists_frozenHarmonicReplacement_openCubeSet [NeZero d] {W : Set (Vec d)}
-    (Q : TriadicCube d) (hQW : openCubeSet Q ⊆ W) (u : H1Function W)
-    {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
-    (hGL2 : MemVectorL2 W G)
-    (hG : HolderSeminormBoundOn W (1 / 2) KG G)
-    (hu : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d)) W u G)
-    {x0 : Vec d} (hx0 : x0 ∈ openCubeSet Q) :
-    ∃ w : H10Function (openCubeSet Q),
-      IsDivFormWeakSolutionOn (fun _ => (1 : Mat d)) (openCubeSet Q) w.toH1Function
-          (fun x => G x - G x0) ∧
-        IsWeaklyHarmonicOn (openCubeSet Q)
-            (u.restrict (isOpen_openCubeSet Q) hQW - w.toH1Function) ∧
-          ∫ x in openCubeSet Q, vecNormSq (w.toH1Function.grad x) ∂volume ≤
-            (d : ℝ) * (KG ^ 2 * cubeScaleFactor Q) *
-              (volume (openCubeSet Q)).toReal := by
-  have hQ := isOpenBoundedConvexDomain_openCubeSet Q
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
-    hQ.isFiniteMeasure_restrict_volume
-  have hGQ : MemVectorL2 (openCubeSet Q) G :=
-    hGL2.mono_measure (Measure.restrict_mono hQW le_rfl)
-  have huQ := Algsuperdiff.Section4.Provider.ExcessDecay.isDivFormWeakSolutionOn_restrict
-    (isOpen_openCubeSet Q) hQW hu
-  obtain ⟨w, hweq, hharm, henergy⟩ :=
-    exists_frozenHarmonicReplacement hQ ⟨_, center_mem_openCubeSet Q⟩ _ hGQ huQ (G x0)
-  refine ⟨w, hweq, hharm, henergy.trans ?_⟩
-  have hGc : MemVectorL2 (openCubeSet Q) (fun x => G x - G x0) :=
-    hGQ.sub (memLp_const (G x0))
-  have hint : IntegrableOn (fun x => vecNormSq (G x - G x0)) (openCubeSet Q) volume :=
-    integrableOn_vecNormSq_of_memVectorL2 hGc
-  have hGhol : HolderSeminormBoundOn (openCubeSet Q) (1 / 2) KG G := hG.mono_set hQW
-  have hbd : ∀ x ∈ openCubeSet Q,
-      vecNormSq (G x - G x0) ≤ (d : ℝ) * (KG ^ 2 * cubeScaleFactor Q) := fun x hx =>
-    vecNormSq_sub_le_of_holderSeminormBoundOn_openCubeSet hKG hGhol hx0 hx
-  have hconst : IntegrableOn (fun _ : Vec d => (d : ℝ) * (KG ^ 2 * cubeScaleFactor Q))
-      (openCubeSet Q) volume := integrable_const _
-  have hmono := setIntegral_mono_on hint hconst (measurableSet_openCubeSet Q) hbd
-  rwa [setIntegral_const, smul_eq_mul, mul_comm] at hmono
 
 end Algsuperdiff.Section4.Provider.Schauder

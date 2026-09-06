@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderWeakId
 import Mathlib.MeasureTheory.Group.Integral
@@ -24,7 +24,7 @@ property:
   `u(x) = ⨍_{∂B_r} u`, in the exact form the reproducing convolution needs.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/FluxVanishing.lean ====
+-- ==== flux vanishing ====
 open scoped Real ContDiff
 open MeasureTheory Metric Set InnerProductSpace
 
@@ -182,7 +182,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/FluxIBP.lean ====
+-- ==== flux integration by parts ====
 open scoped Real ContDiff
 open MeasureTheory Metric Set InnerProductSpace
 
@@ -390,7 +390,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/FluxZero.lean ====
+-- ==== vanishing flux ====
 open scoped Real ContDiff Topology
 open MeasureTheory Metric Set InnerProductSpace
 

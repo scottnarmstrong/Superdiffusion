@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderFlux
 import Mathlib.Analysis.Convolution
@@ -16,7 +16,7 @@ gives `u(x₀) = (K_ε ⋆ u)(x₀)` whenever `K_ε` is supported in a ball on w
 convolution, which is the exact form the interior estimates differentiate.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/Reproducing.lean ====
+-- ==== the reproducing formula ====
 open scoped Real
 open MeasureTheory Metric Set InnerProductSpace
 
@@ -115,7 +115,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/ConvolutionRepr.lean ====
+-- ==== the convolution representation ====
 open scoped Real Convolution Topology
 open MeasureTheory Metric Set InnerProductSpace
 

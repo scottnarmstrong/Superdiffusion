@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSixHolderExponent
 
@@ -242,45 +242,6 @@ theorem three_rpow_stepSevenVolume_le (d : ℕ) {C1 alpha delta : ℝ} {B : ℕ}
           1 / 4 * stepSixExponent alpha n m) :=
         Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [h])
     _ = _ := Real.rpow_add h3 _ _
-
-/-- **The volume factor at the sharp gap** `n' - n ≤ |𝓑| + 3`: the constant
-improves to `3^{3d/2 + 1/4}`.  Stated, not substituted; the printed form above
-is the headline. -/
-theorem three_rpow_stepSevenVolumeSharp_le (d : ℕ) {C1 alpha delta : ℝ} {B : ℕ}
-    {n m n' : ℤ}
-    (hC1 : 2 * (d : ℝ) + 2 ≤ C1) (halpha0 : 0 ≤ alpha) (halpha1 : alpha ≤ 1)
-    (hnm : n ≤ m) (hdelta : delta ≤ C1⁻¹ * (1 - alpha))
-    (hgap : n' - n ≤ (B : ℤ) + 3)
-    (hbudget : (B : ℝ) ≤ delta * (((m - n).toNat : ℝ) + 1)) :
-    Real.rpow (3 : ℝ) (((d : ℝ) / 2) * ((n' : ℝ) - (n : ℝ))) ≤
-      Real.rpow (3 : ℝ) (3 * (d : ℝ) / 2 + 1 / 4) *
-        Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) := by
-  have h := stepSevenVolumeExponent_le_of_gap d (G := 3) hC1 halpha0
-    halpha1 hnm hdelta hgap hbudget
-  have h3 : (0 : ℝ) < 3 := by norm_num
-  have hcast : (((3 : ℤ) : ℝ)) = (3 : ℝ) := by norm_num
-  rw [hcast] at h
-  calc Real.rpow (3 : ℝ) (((d : ℝ) / 2) * ((n' : ℝ) - (n : ℝ)))
-      ≤ Real.rpow (3 : ℝ) ((3 * (d : ℝ) / 2 + 1 / 4) +
-          1 / 4 * stepSixExponent alpha n m) :=
-        Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [h])
-    _ = _ := Real.rpow_add h3 _ _
-
-/-- **The volume factor, with the `C₁` floor discharged.**  `stepOneC1` meets
-`2d + 2` unconditionally (`two_mul_dim_le_stepOneC1`), and `stepOneDelta` is
-`C₁⁻¹(1-α)` definitionally, so at the development's own parameters the volume
-factor needs only the window regime and the budget. -/
-theorem three_rpow_stepSevenVolume_le_stepOneC1 (d : ℕ)
-    {Cedos Cann Citer alpha delta : ℝ} {k B : ℕ} {n m n' : ℤ}
-    (halpha0 : 0 ≤ alpha) (halpha1 : alpha ≤ 1) (hnm : n ≤ m)
-    (hdelta : delta ≤ stepOneDelta (stepOneC1 d Cedos Cann Citer k) alpha)
-    (hgap : n' - n ≤ (B : ℤ) + 6)
-    (hbudget : (B : ℝ) ≤ delta * (((m - n).toNat : ℝ) + 1)) :
-    Real.rpow (3 : ℝ) (((d : ℝ) / 2) * ((n' : ℝ) - (n : ℝ))) ≤
-      Real.rpow (3 : ℝ) (3 * (d : ℝ) + 1 / 4) *
-        Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) :=
-  three_rpow_stepSevenVolume_le d (two_mul_dim_le_stepOneC1 d Cedos Cann Citer k)
-    halpha0 halpha1 hnm (by rw [stepOneDelta] at hdelta; exact hdelta) hgap hbudget
 
 end
 

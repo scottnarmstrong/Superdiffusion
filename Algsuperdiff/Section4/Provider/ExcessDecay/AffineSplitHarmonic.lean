@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.AffineSplitLift
 
@@ -209,42 +209,6 @@ theorem isWeaklyHarmonicOn_sub {V : Set (Vec d)} {u v : H1Function V}
     _ = 0 := by rw [hu φ, hv φ, sub_zero]
 
 /-! ## 4. The affine split -/
-
-/-- **The affine split `v = v₀ + w + ℓ_h`** (draft item 2).
-
-Given the harmonic comparison function `v` on the truncated window `V` and the
-harmonic residual corrector `w`, the difference `v₀ := v - w - ℓ_h` is again
-harmonic, and the three pieces reconstruct `v` pointwise, in values and in
-gradients.  The `ℓ_h`-leg contributes exactly the constant slope `A = (∇h)_{W_0}`
-to the gradient identity — the anchor's `‖(∇h)_W‖` slot.
-
-The corrector `w` is an input here, as it is in the draft (which defines it by a
-Dirichlet problem on `V`); nothing in this statement asserts its existence. -/
-theorem exists_affineSplit {V : Set (Vec d)} (hV : IsOpenBoundedConvexDomain V)
-    (x : Vec d) (c : ℝ) (A : Vec d) {v w : H1Function V}
-    (hv : IsWeaklyHarmonicOn V v) (hw : IsWeaklyHarmonicOn V w) :
-    ∃ v0 : H1Function V,
-      IsWeaklyHarmonicOn V v0 ∧
-        (∀ y, v.toFun y = v0.toFun y + w.toFun y + affineLift x c A y) ∧
-        (∀ y, v.grad y = v0.grad y + w.grad y + A) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
-  set l : H1Function V := affineLiftH1 hV.isSobolevRegularDomain x c A with hldef
-  refine ⟨v - w - l, ?_, ?_, ?_⟩
-  · exact isWeaklyHarmonicOn_sub
-      (isWeaklyHarmonicOn_sub hv hw)
-      (isWeaklyHarmonicOn_affineLiftH1 hV.isSobolevRegularDomain x c A)
-  · intro y
-    have hl : l.toFun y = affineLift x c A y := by
-      rw [hldef, affineLiftH1_toFun]
-    simp only [H1Function.sub_toFun]
-    rw [hl]
-    ring
-  · intro y
-    have hl : l.grad y = A := by
-      rw [hldef, affineLiftH1_grad]
-    simp only [H1Function.sub_grad]
-    rw [hl]
-    abel
 
 end
 

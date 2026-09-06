@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryLaneMaxPrinciple
 import Algsuperdiff.Section4.Provider.ExcessDecay.HarmonicReplacement
@@ -226,25 +226,6 @@ theorem exists_residualCorrector [NeZero d] {V : Set (Vec d)}
   rw [H1Function.neg_toFun]
   show -Φ.toFun y ≤ M
   linarith only [hlower y]
-
-/-- **The residual corrector on the boundary lane's own window.**
-
-`V = (x+□_k) ∩ □_m` is open, bounded, convex and nonempty as soon as `x ∈ □_m`
-(`BoundaryLaneWindows`), so the corrector exists there.  With `k = n-2` and `M`
-the residual bound `2 d [∇h]_{C^{0,1/2}} (3^n/2)^{3/2}` of
-`AffineSplitLift.abs_sub_affineLift_volumeAverage_le`, this is the draft's
-item 2 corrector. -/
-theorem exists_residualCorrector_truncatedWindow [NeZero d] {m k : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m))
-    (Φ : H1Function (truncatedWindow x m k)) {M : ℝ}
-    (hupper : ∀ y, Φ.toFun y ≤ M) (hlower : ∀ y, -M ≤ Φ.toFun y) :
-    ∃ w : H1Function (truncatedWindow x m k),
-      IsWeaklyHarmonicOn (truncatedWindow x m k) w ∧
-      MemH10 (truncatedWindow x m k) (fun y => w.toFun y - Φ.toFun y) ∧
-      HasBoundaryUpperBoundOn (truncatedWindow x m k) w M ∧
-      HasBoundaryUpperBoundOn (truncatedWindow x m k) (-w) M :=
-  exists_residualCorrector (isOpenBoundedConvexDomain_truncatedWindow x m k)
-    (truncatedWindow_nonempty k hx) Φ hupper hlower
 
 end
 

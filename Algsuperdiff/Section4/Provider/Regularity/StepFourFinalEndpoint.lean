@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFourFinalBudget
 
@@ -22,7 +22,8 @@ frozen statements and the supply events, and the two budgets by
 * the `δ`-family is the interior `g`-leg alone, at the root's own Hölder datum
   `K_g` rather than the `W̲^{1/2,∞}` seminorm it dominates;
 * `dataH = 0` — the interior clause carries no `∇h` leg and no boundary
-  indicator, so the whole `1_{z ∉ □_{m-1}}` half of `stepFiveDataH` is absent.
+  indicator, so the whole `1_{z ∉ □_{m-1}}` half of the printed `dataH` slot is
+  absent.
   This is the pay-off of gating at `z ∈ □_{m-1}`: on that half of the lattice
   the printed indicator is `0` and the interior route reproduces it exactly.
 
@@ -44,16 +45,6 @@ open Homogenization Algsuperdiff.Section4.Support MeasureTheory
 open Algsuperdiff.Section4.Provider.ExcessDecay
 
 noncomputable section
-
-/-- **The printed `dataH` vanishes on the interior branch.**  `stepFiveDataH` carries
-the factor `1_{z ∉ □_{m-1}}`, which is `0` exactly on the region the interior
-route covers.  So the `dataH := 0` of the endpoint below is not a weakening of
-the Step-5 pinning — it is that pinning's own value there. -/
-theorem stepFiveDataH_eq_zero_of_mem_inner {d : ℕ} {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] (C : ℝ) {m : ℤ} {z : Vec d}
-    (hz : z ∈ openCubeSet (originCube d (m - 1))) (gradh : Vec d → E) (Se : ℝ) :
-    stepFiveDataH C m z gradh Se = 0 := by
-  rw [stepFiveDataH, stepFiveBoundaryIndicator, if_pos hz, mul_zero]
 
 /-- **`e.oscillation.iteration.result` on the interior branch, `hstep4` GONE.**
 

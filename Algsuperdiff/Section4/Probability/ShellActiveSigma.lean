@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Probability.LayerIndependence
 import Algsuperdiff.Section3.Cutoff.CutoffSampleRange
@@ -95,13 +95,6 @@ kept as the per-`(index, shell)` read region and its sigma-field.
 * `iIndep_cutoffSampleLocalSigma_of_varyingLevel`: the producer on the genuine
   cutoff carrier.
 * `iIndepFun_of_local_cutoffSample`: **the producer**, observable form.
-* `measurable_cutoffSampleLocalSigma_of_cutoff_le` and
-  `measurable_cutoffSampleLocalSigma_of_coefficientCutoff_le`: a functional of
-  *any* truncation at or below `m`, respectively of the coefficient field
-  `a_{L'} = nu I + k_{L'}` at any such level, local in `U`, is measurable for
-  the single sigma-field `cutoffSampleLocalSigma M m U` -- so a whole series of
-  such reads, one per inner scale, stays inside it and needs no further
-  probabilistic input.
 -/
 
 namespace Algsuperdiff.Section4.Probability
@@ -403,37 +396,6 @@ theorem iIndepFun_of_local_cutoffSample (M : ABKModel d) (Lidx : iota → ℤ)
     (iIndep_cutoffSampleLocalSigma_of_varyingLevel M Lidx hU hsep) hPhi
 
 /-! ## Placing a read of any lower truncation inside the one sigma-field -/
-
-/-- **The atom shape ABK26 actually uses, made local-sigma measurable.**  A
-functional `F` of the coefficient carrier that is measurable for the
-integral-local sigma-field of `U`, read at *any* truncation level `L' ≤ m`, is
-measurable for the single sigma-field `cutoffSampleLocalSigma M m U`.  Hence a
-*series* of such reads, one per inner scale, stays inside that one sigma-field
-and needs no further probabilistic input. -/
-theorem measurable_cutoffSampleLocalSigma_of_cutoff_le (M : ABKModel d) {L' m : ℤ}
-    (hL' : L' ≤ m) (U : Set (Vec d)) {F : RegCoeffField d → ℝ}
-    (hF : @Measurable (RegCoeffField d) ℝ (LocalSigmaR U) inferInstance F) :
-    @Measurable (CutoffSample d) ℝ (cutoffSampleLocalSigma M m U) inferInstance
-      (fun omega : CutoffSample d => F (cutoff L' omega)) :=
-  (hF.comp (measurable_cutoff_local M L' U)).mono
-    (Algsuperdiff.Section3.Provider.BadEvents.cutoffSampleLocalSigma_mono M hL'
-      (subset_refl U))
-    le_rfl
-
-/-- The same statement for the actual coefficient field `a_{L'} = nu I + k_{L'}`,
-which is what ABK26's atoms read.  The deterministic `nu I` shift preserves the
-integral-local information (proved as
-`Cutoff.measurable_coefficientCutoff_local`), so nothing beyond the level
-comparison is involved. -/
-theorem measurable_cutoffSampleLocalSigma_of_coefficientCutoff_le (M : ABKModel d)
-    {L' m : ℤ} (hL' : L' ≤ m) (U : Set (Vec d)) {F : RegCoeffField d → ℝ}
-    (hF : @Measurable (RegCoeffField d) ℝ (LocalSigmaR U) inferInstance F) :
-    @Measurable (CutoffSample d) ℝ (cutoffSampleLocalSigma M m U) inferInstance
-      (fun omega : CutoffSample d => F (coefficientCutoff M.nu L' omega)) :=
-  (hF.comp (measurable_coefficientCutoff_local M L' U)).mono
-    (Algsuperdiff.Section3.Provider.BadEvents.cutoffSampleLocalSigma_mono M hL'
-      (subset_refl U))
-    le_rfl
 
 end
 

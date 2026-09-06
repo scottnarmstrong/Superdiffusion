@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.GammaTenInteriorCellInputs
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.Step5InputGradMoment
@@ -93,7 +93,8 @@ private theorem add_pow_four_le_eight (x y : ℝ) :
     nlinarith [sq_nonneg (x ^ (2 : ℕ) - y ^ (2 : ℕ))]
   have h0 : (0 : ℝ) ≤ (x + y) ^ (2 : ℕ) := sq_nonneg _
   calc (x + y) ^ (4 : ℕ) = ((x + y) ^ (2 : ℕ)) ^ (2 : ℕ) := by ring
-    _ ≤ (2 * (x ^ (2 : ℕ) + y ^ (2 : ℕ))) ^ (2 : ℕ) := by gcongr
+    _ ≤ (2 * (x ^ (2 : ℕ) + y ^ (2 : ℕ))) ^ (2 : ℕ) :=
+      pow_le_pow_left₀ h0 h1 2
     _ = 4 * ((x ^ (2 : ℕ) + y ^ (2 : ℕ)) ^ (2 : ℕ)) := by ring
     _ ≤ 4 * (2 * (x ^ (4 : ℕ) + y ^ (4 : ℕ))) := by linarith
     _ = 8 * (x ^ (4 : ℕ) + y ^ (4 : ℕ)) := by ring
@@ -212,7 +213,7 @@ private theorem originCubeFourthEnergy_shift_le {d : ℕ} (K : ℤ) (c : Vec d)
     cubeEuclideanLpNorm_nonneg _ _ _
   calc originCubeFourthEnergy K (fun x => c + u x)
       ≤ cubeEuclideanLpNorm (originCube d K) 8 (fun x => c + u x) ^ (4 : ℕ) := h1
-    _ ≤ (a + b) ^ (4 : ℕ) := by gcongr
+    _ ≤ (a + b) ^ (4 : ℕ) := pow_le_pow_left₀ hnn h2 4
     _ ≤ 8 * (a ^ (4 : ℕ) + b ^ (4 : ℕ)) := add_pow_four_le_eight a b
 
 /-! ## The `K`-uniform majorant -/
@@ -362,10 +363,12 @@ theorem exists_strip_fourthEnergy_majorant (d : ℕ) [NeZero d] (hd : 2 ≤ d)
       cubeEuclideanLpNorm_nonneg _ _ _
     have hsq1 : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
         (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e) ^ (2 : ℕ)
-        ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) := by gcongr
+        ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) :=
+      pow_le_pow_left₀ hfD0 hfD 2
     have hsq2 : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
         (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e') ^ (2 : ℕ)
-        ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) := by gcongr
+        ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) :=
+      pow_le_pow_left₀ hfN0 hfN 2
     have hcross : (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) +
         (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) ≤
         (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by

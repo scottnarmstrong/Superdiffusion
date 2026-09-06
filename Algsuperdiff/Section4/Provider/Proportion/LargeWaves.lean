@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G1AtomTails
 import Algsuperdiff.Section4.Provider.Proportion.G1Engine
@@ -11,8 +11,8 @@ import Algsuperdiff.Section4.Support.GaugeBridge
 # Step 1 of `l.ratio.of.good.scales.for.k`: the large-waves lane
 
 This module realizes the `𝒢₁a` half of `l.ratio.of.good.scales.for.k`: the
-scale-counting variable `X_k`, its cube-comparison link to the first condition
-of `𝒢₁`, and the resulting proportion tail `e.large.waves.scale.counting`.
+scale-counting variable `X_k` and its cube-comparison link to the first
+condition of `𝒢₁`.
 
 ## The link `e.counting.scales.G1.Xk.link`
 
@@ -35,8 +35,7 @@ row-summability of the engine needs.
 The graph's correction records that the application is at level `θ/2` and that
 the printed rate denominator `32` over-claims by a bounded factor.  Here
 nothing is rounded: the lane is run at the honest rate produced by the proved
-`p.concentration.for.scales`, through `ratioTail_of_shellArray`, and the `θ/2`
-level is supplied by the caller (the `½θ` split lives in `G1RatioTail`).
+`p.concentration.for.scales`, and the `θ/2` level is supplied by the caller.
 
 ## References
 
@@ -195,66 +194,6 @@ theorem lt_rowGE_of_notMem_eventG1a (M : ABKModel d) {sprime T : ℝ}
     ENNReal.ofReal T < rowGE (arrayG1a M) sprime m omega := by
   rw [eventG1a, Set.mem_setOf_eq, not_le] at hnot
   exact hnot.trans_le (eventG1a_lhs_le_rowGE M hsle m omega)
-
-/-- **The `hreduce` slot of `ratioTail_of_shellArray` for the large-waves lane**,
-on the null-enlarged family.  `hthr` is the lane's threshold condition: the
-Appendix-D level, scaled by the normalizer, must sit below the event's `T`. -/
-theorem hreduce_eventG1a (M : ABKModel d) {sprime T D p theta : ℝ}
-    (hsle : sprime ≤ 1 - M.gamma) (hD : 0 < D)
-    (hlam : 0 ≤ 9 * sprime⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p))
-    (hthr : D * (9 * sprime⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)) ≤ T)
-    (m : ℤ) (_hm : 0 ≤ m) (omega : Cutoff.CutoffSample d)
-    (homega : omega ∈
-      (eventG1a M m T ∪ (goodRowG (arrayG1a M) sprime)ᶜ)ᶜ) :
-    9 * sprime⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) <
-      Yk (fun m k omega => D⁻¹ * arrayG1a M m k omega) sprime m omega := by
-  have h1 : omega ∉ eventG1a M m T := fun hc => homega (Or.inl hc)
-  have h2 : omega ∈ goodRowG (arrayG1a M) sprime := by
-    by_contra hc
-    exact homega (Or.inr hc)
-  refine lt_Yk_of_lt_rowGE hD hlam m (fun j => arrayG1a_nonneg M m j omega) (h2 m) ?_
-  exact lt_of_le_of_lt (ENNReal.ofReal_le_ofReal hthr)
-    (lt_rowGE_of_notMem_eventG1a M hsle m h1)
-
-/-! ## 5. `e.large.waves.scale.counting` -/
-
-/-- **The large-waves proportion tail (`e.large.waves.scale.counting`), at the
-caller's level and rate.**
-
-The hypotheses are: the weight-rate window (`0 < s' ≤ 1 - γ` and `2s' ≤ 1`),
-the concentration proposition's own parameter conditions, the Appendix-D
-normalizer condition `hnorm`, and the lane's threshold condition `hthr`.
-Everything probabilistic is discharged: the atoms' `Γ₂` tails come from the
-Section 3 surface through `isBigOWith_atomG1a`, the independence from (J1) at
-the caller's `r ≥ 1`, and the a.s. row finiteness from first moments. -/
-theorem ratioTail_eventG1a (M : ABKModel d)
-    {sprime T D p theta c1 Q : ℝ} {r : ℕ}
-    (hs0 : 0 < sprime) (hs2 : 2 * sprime ≤ 1) (hsle : sprime ≤ 1 - M.gamma)
-    (hD : 0 < D) (hp : 1 ≤ p) (hsp : 1 ≤ sprime * p)
-    (hr1 : 1 ≤ r) (hQ : 1 ≤ Q) (htheta0 : 0 < theta)
-    (hthetar : theta * ((r : ℝ) + 1) < 1) (hc1 : 0 ≤ c1)
-    (hrate : Real.log (Q * (r : ℝ)) + c1 * (r : ℝ) ≤ sprime * p * theta / (16 * (r : ℝ)))
-    (hnorm : gammaMomentConst 2 * p ^ (2 : ℝ)⁻¹ * 1 ≤ D)
-    (hlam : 0 ≤ 9 * sprime⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p))
-    (hthr : D * (9 * sprime⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)) ≤ T)
-    (n : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | theta < scaleProp (fun k => (eventG1a M k T)ᶜ) n omega}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / Q) := by
-  have hs'1 : sprime ≤ 1 := by linarith only [hs0, hs2]
-  have hnull : (Cutoff.cutoffSampleLaw M).toMeasure
-      (goodRowG (arrayG1a M) sprime)ᶜ = 0 :=
-    measure_compl_goodRowG M (by norm_num) one_pos hs0 hs2
-      (fun m k omega => arrayG1a_nonneg M m k omega)
-      (fun m k => measurable_arrayG1a M m k) (fun m k => isBigOWith_arrayG1a M m k)
-  refine le_trans (measure_scaleProp_le_of_null_enlargement _ _ _ hnull n) ?_
-  exact ratioTail_of_shellArray M
-    (fun k => eventG1a M k T ∪ (goodRowG (arrayG1a M) sprime)ᶜ) (arrayG1a M)
-    (by norm_num) one_pos hD hp hs0 hs'1 hsp hr1 hQ htheta0 hthetar hc1 hrate
-    (fun m k omega => arrayG1a_nonneg M m k omega)
-    (fun m k => shellLocal_arrayG1a M m k)
-    (fun m k => isBigOWith_arrayG1a M m k) hnorm
-    (fun m hm omega homega => hreduce_eventG1a M hsle hD hlam hthr m hm omega homega) n
 
 end
 

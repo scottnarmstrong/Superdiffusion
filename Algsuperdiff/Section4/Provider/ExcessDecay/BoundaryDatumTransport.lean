@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringTrace
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringVolume
@@ -133,79 +133,6 @@ theorem localizedZeroTraceFunctionOn_wellPlacedCube_untranslate {m k : ℤ}
 
 /-! ## 3. The equation transports -/
 
-/-- **The anchor's equation on the covering cube, in the covering cube's own
-frame.**
-
-Restriction to `c + □_k` (legitimate because the covering cube never leaves
-`□_m`), the `A4` untranslation to `□_k` at the translated sample, and the
-antisymmetric flux shift, composed.  The conclusion is CoarseGraining's
-`IsForcedEquation` at `originCube d k`, which is what
-`BoundaryForcedCaccioppoliDatum` and `DirichletForcedCubeSolution` consume.
-
-Unlike `TranslationTransportAssembly.isForcedEquation_fluxCorrectedCoeffFamily_translated`
-this needs **no** frontier-empty gate: the covering cube fits by construction,
-which is the whole point of `wellPlacedCentre`. -/
-theorem isForcedEquation_wellPlacedCube {m k : ℤ} (M : ABKModel d) (L : ℤ)
-    (x : Vec d) (omega : Cutoff.CutoffSample d)
-    {u : H1Function (openCubeSet (originCube d m))} {g : Vec d → Vec d}
-    (hkm : k ≤ m)
-    (heq : Support.IsDivFormWeakSolutionOn
-      (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-      (openCubeSet (originCube d m)) u g) :
-    IsForcedEquation (originCube d k)
-      (Support.fluxCorrectedCoeffFamily M L k (originCube d k)
-        (Cutoff.translateCutoffSample (wellPlacedCentre x m k) omega))
-      (H1Function.untranslate (wellPlacedCentre x m k)
-        (u.restrict (isOpen_translateSet_openCubeSet (wellPlacedCentre x m k) k)
-          (translateSet_wellPlacedCentre_subset x hkm)))
-      (fun y => -g (y + wellPlacedCentre x m k)) := by
-  have hrestrict := isDivFormWeakSolutionOn_restrict
-    (isOpen_translateSet_openCubeSet (wellPlacedCentre x m k) k)
-    (translateSet_wellPlacedCentre_subset x hkm) heq
-  have huntrans := isDivFormWeakSolutionOn_translateCutoffSample M L
-    (wellPlacedCentre x m k) omega hrestrict
-  have hshift := isDivFormWeakSolutionOn_fluxCorrectedField M L k
-    (originCube d k) (Cutoff.translateCutoffSample (wellPlacedCentre x m k) omega)
-    huntrans
-  refine isForcedEquation_neg_of_isDivFormWeakSolutionOn ?_
-  rw [fluxCorrectedCoeffFamily_coeffOn_toCoeffField M L k (originCube d k)
-    (originCube d k) (Cutoff.translateCutoffSample (wellPlacedCentre x m k) omega)]
-  exact hshift
-
-/-- The same, entered at the frozen theorem's `IsDirichletSolutionOn` datum. -/
-theorem isForcedEquation_wellPlacedCube_of_isDirichletSolutionOn {m k : ℤ}
-    (M : ABKModel d) (L : ℤ) (x : Vec d) (omega : Cutoff.CutoffSample d)
-    {u hdat : H1Function (openCubeSet (originCube d m))} {g : Vec d → Vec d}
-    (hkm : k ≤ m)
-    (hsol : Support.IsDirichletSolutionOn
-      (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m) u hdat g) :
-    IsForcedEquation (originCube d k)
-      (Support.fluxCorrectedCoeffFamily M L k (originCube d k)
-        (Cutoff.translateCutoffSample (wellPlacedCentre x m k) omega))
-      (H1Function.untranslate (wellPlacedCentre x m k)
-        (u.restrict (isOpen_translateSet_openCubeSet (wellPlacedCentre x m k) k)
-          (translateSet_wellPlacedCentre_subset x hkm)))
-      (fun y => -g (y + wellPlacedCentre x m k)) :=
-  isForcedEquation_wellPlacedCube M L x omega hkm hsol.2
-
-/-- The transported solution reads pointwise as `u(· + c)` — no modification. -/
-theorem untranslate_wellPlacedCube_toFun {m k : ℤ} {x : Vec d}
-    (u : H1Function (openCubeSet (originCube d m))) (hkm : k ≤ m) (p : Vec d) :
-    (H1Function.untranslate (wellPlacedCentre x m k)
-        (u.restrict (isOpen_translateSet_openCubeSet (wellPlacedCentre x m k) k)
-          (translateSet_wellPlacedCentre_subset x hkm))).toFun p =
-      u.toFun (p + wellPlacedCentre x m k) :=
-  rfl
-
-/-- The transported solution's gradient reads pointwise as `∇u(· + c)`. -/
-theorem untranslate_wellPlacedCube_grad {m k : ℤ} {x : Vec d}
-    (u : H1Function (openCubeSet (originCube d m))) (hkm : k ≤ m) (p : Vec d) :
-    (H1Function.untranslate (wellPlacedCentre x m k)
-        (u.restrict (isOpen_translateSet_openCubeSet (wellPlacedCentre x m k) k)
-          (translateSet_wellPlacedCentre_subset x hkm))).grad p =
-      u.grad (p + wellPlacedCentre x m k) :=
-  rfl
-
 /-! ## 4. The covering inequality, in the covering cube's own frame -/
 
 /-- **The covering step, transported.**
@@ -246,26 +173,6 @@ theorem normalizedSetAverage_const_mul (V : Set (Vec d)) (c : ℝ) (f : Vec d �
   rw [normalizedSetAverage, normalizedSetAverage, volumeAverage, volumeAverage,
     integral_const_mul]
   ring
-
-/-- **The flux-corrected coefficient energy is `ν |∇u|²`.**
-
-The antisymmetric flux shift does not touch the symmetric part, and the cutoff
-coefficient's symmetric part is `ν Id`, so CoarseGraining's
-`localizedCoeffEnergyValue` at the flux-corrected family is exactly `ν` times
-the normalized average of `|∇u|²`.  Both frames therefore carry the *same*
-scalar quantity, which is what makes the covering transport of §4 an identity
-rather than an estimate. -/
-theorem localizedCoeffEnergyValue_fluxCorrected_eq {k : ℤ} (M : ABKModel d)
-    (L : ℤ) (Q R : TriadicCube d) (omega : Cutoff.CutoffSample d)
-    (V : Set (Vec d)) (u : H1Function (Ch02.cubeDomain R : Set (Vec d))) :
-    localizedCoeffEnergyValue V
-        ((Support.fluxCorrectedCoeffFamily M L k Q omega).coeffOn R) u =
-      M.nu * normalizedSetAverage V (fun y => vecNormSq (u.grad y)) := by
-  rw [localizedCoeffEnergyValue, ← normalizedSetAverage_const_mul]
-  refine congrArg (normalizedSetAverage V) ?_
-  funext y
-  rw [fluxCorrectedCoeffFamily_coeffOn_toCoeffField M L k Q R omega]
-  exact vecDot_matVecMul_symmPart_fluxCorrectedField M L k Q omega y (u.grad y)
 
 end
 

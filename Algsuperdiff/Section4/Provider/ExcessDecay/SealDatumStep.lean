@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringVolume
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryClauseSkeleton
@@ -512,86 +512,6 @@ theorem abs_volumeAverage_datum_sub_le_datumStep {n m : ℤ} {x z c' : Vec d}
   exact le_trans hfinal hbig
 
 /-! ## 7. The frozen window is a box of eccentricity at most two -/
-
-/-- The lower endpoint of the frozen window `((z+□_j) ∩ □_m)` in coordinate `i`. -/
-def anchorWindowLo (z : Vec d) (m j : ℤ) (i : Fin d) : ℝ :=
-  max (z i - (1 / 2 : ℝ) * (3 : ℝ) ^ j) (-((1 / 2 : ℝ) * (3 : ℝ) ^ m))
-
-/-- The upper endpoint of the frozen window `((z+□_j) ∩ □_m)` in coordinate `i`. -/
-def anchorWindowHi (z : Vec d) (m j : ℤ) (i : Fin d) : ℝ :=
-  min (z i + (1 / 2 : ℝ) * (3 : ℝ) ^ j) ((1 / 2 : ℝ) * (3 : ℝ) ^ m)
-
-/-- **The frozen window is an axis-aligned box, coordinatewise.** -/
-theorem mem_anchorWindow_coord_iff {j m : ℤ} {z y : Vec d} :
-    y ∈ ((((fun y' => z + y') '' openCubeSet (originCube d j)) ∩
-        openCubeSet (originCube d m))) ↔
-      ∀ i, anchorWindowLo z m j i < y i ∧ y i < anchorWindowHi z m j i := by
-  constructor
-  · rintro ⟨hcube, hdom⟩ i
-    obtain ⟨hlo, hhi⟩ := mem_image_add_openCubeSet_coord_iff.mp hcube i
-    obtain ⟨hdlo, hdhi⟩ := mem_openCubeSet_originCube_iff.mp hdom i
-    refine ⟨max_lt (by linarith only [hlo]) (by linarith only [hdlo]), ?_⟩
-    exact lt_min (by linarith only [hhi]) (by linarith only [hdhi])
-  · intro hy
-    constructor
-    · refine mem_image_add_openCubeSet_coord_iff.mpr fun i => ?_
-      obtain ⟨h1, h2⟩ := hy i
-      rw [anchorWindowLo] at h1
-      rw [anchorWindowHi] at h2
-      exact ⟨by linarith only [(max_lt_iff.mp h1).1], by linarith only [(lt_min_iff.mp h2).1]⟩
-    · refine mem_openCubeSet_originCube_iff.mpr fun i => ?_
-      obtain ⟨h1, h2⟩ := hy i
-      rw [anchorWindowLo] at h1
-      rw [anchorWindowHi] at h2
-      exact ⟨by linarith only [(max_lt_iff.mp h1).2], (lt_min_iff.mp h2).2⟩
-
-/-- **The clamped-interval edge bound.**
-
-A symmetric interval of half-length `r` about an interior point `t` of
-`(-R, R)`, clamped to `(-R, R)`, has length strictly greater than `r` and at most
-`2r`, provided `r ≤ R`.  The doubly-truncated regime is vacuous: it would force
-`R < r`. -/
-theorem clampedInterval_length_bounds {r R t : ℝ} (hr : 0 < r) (hrR : r ≤ R)
-    (hlo : -R < t) (hhi : t < R) :
-    r < min (t + r) R - max (t - r) (-R) ∧
-      min (t + r) R - max (t - r) (-R) ≤ 2 * r := by
-  rcases le_total (t + r) R with h1 | h1
-  · rw [min_eq_left h1]
-    rcases le_total (-R) (t - r) with h2 | h2
-    · rw [max_eq_left h2]
-      exact ⟨by linarith only [hr], by linarith only⟩
-    · rw [max_eq_right h2]
-      exact ⟨by linarith only [hlo], by linarith only [h2]⟩
-  · rw [min_eq_right h1]
-    rcases le_total (-R) (t - r) with h2 | h2
-    · rw [max_eq_left h2]
-      exact ⟨by linarith only [hhi], by linarith only [h1]⟩
-    · rw [max_eq_right h2]
-      exact ⟨by linarith only [hr, hrR, h1, h2], by linarith only [h1, h2]⟩
-
-/-- **The frozen window has eccentricity at most two.**
-
-Every edge of `W' = (z+□_{n+3}) ∩ □_m` has length in `(½·3^{n+3}, 3^{n+3}]`,
-uniformly over every configuration the anchor's binders allow.  Nothing in
-sections 1--6 uses it; it is recorded here because it is the fact that keeps
-the `W'`-Poincaré fallback alive. -/
-theorem anchorWindow_edge_bounds {n m : ℤ} (hnm : n + 3 ≤ m) {z : Vec d}
-    (hz : z ∈ openCubeSet (originCube d m)) (i : Fin d) :
-    (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 3) <
-        anchorWindowHi z m (n + 3) i - anchorWindowLo z m (n + 3) i ∧
-      anchorWindowHi z m (n + 3) i - anchorWindowLo z m (n + 3) i ≤ (3 : ℝ) ^ (n + 3) := by
-  have hr : (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 3) := by
-    have := zpow_pos (by norm_num : (0 : ℝ) < 3) (n + 3)
-    linarith only [this]
-  have hrR : (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 3) ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-    have := zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 3) hnm
-    linarith only [this]
-  obtain ⟨hlo, hhi⟩ := mem_openCubeSet_originCube_iff.mp hz i
-  obtain ⟨hA, hB⟩ := clampedInterval_length_bounds (r := (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 3))
-    (R := (1 / 2 : ℝ) * (3 : ℝ) ^ m) (t := z i) hr hrR
-    (by linarith only [hlo]) (by linarith only [hhi])
-  rw [anchorWindowHi, anchorWindowLo]
-  exact ⟨hA, by linarith only [hB]⟩
 
 end
 

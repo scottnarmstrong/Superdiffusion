@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.Dirichlet
 
@@ -53,8 +53,6 @@ variable {d : ℕ}
 /-- The `1`-Lipschitz retraction of `ℝ` onto `[-B, B]`. -/
 def clampAbs (B t : ℝ) : ℝ := max (-B) (min B t)
 
-theorem clampAbs_def (B t : ℝ) : clampAbs B t = max (-B) (min B t) := rfl
-
 /-- The clamp lands in `[-B, B]`. -/
 theorem abs_clampAbs_le {B : ℝ} (hB : 0 ≤ B) (t : ℝ) : |clampAbs B t| ≤ B := by
   rw [abs_le]
@@ -84,10 +82,6 @@ theorem abs_clampAbs_sub_clampAbs_le (B t u : ℝ) :
 `m(x) = inf_{y ∈ A} (f(y) + K‖x - y‖^α)`. -/
 def mcShaneInf (A : Set (Vec d)) (K alpha : ℝ) (f : Vec d → ℝ) (x : Vec d) : ℝ :=
   ⨅ y : A, (f (y : Vec d) + K * ‖x - (y : Vec d)‖ ^ alpha)
-
-theorem mcShaneInf_def (A : Set (Vec d)) (K alpha : ℝ) (f : Vec d → ℝ) (x : Vec d) :
-    mcShaneInf A K alpha f x =
-      ⨅ y : A, (f (y : Vec d) + K * ‖x - (y : Vec d)‖ ^ alpha) := rfl
 
 /-- The McShane family is bounded below by `-B` whenever `|f| ≤ B` on `A`. -/
 private theorem bddBelow_mcShane {A : Set (Vec d)} {K alpha B : ℝ} {f : Vec d → ℝ}

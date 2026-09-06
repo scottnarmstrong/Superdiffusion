@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.Ambient.Basic
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
@@ -73,12 +73,6 @@ theorem annulusRadius_succ (R : ℝ) (i : ℕ) :
 theorem annulusRadius_eq_pow (R : ℝ) (i : ℕ) : annulusRadius R i = R * (1 / 3 : ℝ) ^ i := by
   rw [annulusRadius, Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_natCast, one_div,
     inv_pow]
-
-theorem annulusRadius_succ_lt {R : ℝ} (hR : 0 < R) (i : ℕ) :
-    annulusRadius R (i + 1) < annulusRadius R i := by
-  have hpos := annulusRadius_pos hR i
-  rw [annulusRadius_succ]
-  linarith only [hpos]
 
 /-- **The `i`-th triadic annulus** `{ R·3^{-i-1} ≤ |x-y| < R·3^{-i} }` around `x`. -/
 def triadicAnnulus (x : Vec d) (R : ℝ) (i : ℕ) : Set (Vec d) :=
@@ -307,13 +301,6 @@ theorem lintegral_ball_dist_rpow_neg_le {x : Vec d} {R beta : ℝ} (hR : 0 < R)
   refine ENNReal.ofReal_le_ofReal (le_of_eq ?_)
   rw [annulusTerm_zero hR beta, radialKernelConst]
   field_simp
-
-/-- **The radial kernel integral on a subset of a ball.** -/
-theorem lintegral_dist_rpow_neg_le_of_subset_ball {x : Vec d} {R beta : ℝ} {A : Set (Vec d)}
-    (hA : A ⊆ Metric.ball x R) (hR : 0 < R) (hbeta : 0 < beta) (hbd : beta < (d : ℝ)) :
-    ∫⁻ y in A, ENNReal.ofReal (dist x y ^ (-beta)) ∂volume ≤
-      ENNReal.ofReal (radialKernelConst d beta * (R ^ d * R ^ (-beta))) :=
-  (lintegral_mono_set hA).trans (lintegral_ball_dist_rpow_neg_le hR hbeta hbd)
 
 /-! ## 5. The `ℝ≥0∞`-native form -/
 

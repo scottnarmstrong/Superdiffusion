@@ -152,8 +152,8 @@ theorem bigLambda_sensitivity {d : ℕ} (dimension : 2 ≤ d) :
       positivity
     have hKle : K ≤ bigLambdaConst d * h.w1Infinity ^ 2 := by
       rw [hK]
-      have := two_mul_potCubeConstA_sq_le_bigLambdaConst d
-      nlinarith [sq_nonneg h.w1Infinity]
+      exact mul_le_mul_of_nonneg_right
+        (two_mul_potCubeConstA_sq_le_bigLambdaConst d) (sq_nonneg _)
     have := mul_le_mul_of_nonneg_right hKle hpolenn
     calc 4 * Ch02.LambdaSq (originCube d 0) s (.finite 2) F +
           K * (3 / 8 - s)⁻¹ * (unitCubeLambda s (.finite 2) a)⁻¹
@@ -255,16 +255,20 @@ theorem bigLambda_sensitivity_at_delta {d : ℕ} (dimension : 2 ≤ d) :
           (h.gradientW1Infinity * (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹) := by
         rw [hβ]; ring
       have := mul_le_mul_of_nonneg_right hBle hgL
-      rw [hc, h2β]
-      nlinarith [this]
+      rw [hc, h2β, mul_assoc (bigLambdaConst d) h.gradientW1Infinity
+        (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹]
+      exact add_le_add le_rfl this
     -- the energy comparison
     have hKle : K ≤ bigLambdaConst d * δ⁻¹ * h.w1Infinity ^ 2 := by
       have hAle : 2 * potCubeConstA d ^ 2 ≤ bigLambdaConst d :=
         two_mul_potCubeConstA_sq_le_bigLambdaConst d
       have hrest : (0 : ℝ) ≤ δ⁻¹ * h.w1Infinity ^ 2 := by positivity
-      have := mul_le_mul_of_nonneg_right hAle hrest
       rw [hK]
-      nlinarith [this]
+      calc 2 * δ⁻¹ * potCubeConstA d ^ 2 * h.w1Infinity ^ 2
+          = 2 * potCubeConstA d ^ 2 * (δ⁻¹ * h.w1Infinity ^ 2) := by ring
+        _ ≤ bigLambdaConst d * (δ⁻¹ * h.w1Infinity ^ 2) :=
+            mul_le_mul_of_nonneg_right hAle hrest
+        _ = bigLambdaConst d * δ⁻¹ * h.w1Infinity ^ 2 := by ring
     have hfirst := mul_le_mul_of_nonneg_right hccomp hLnn
     have hsecond := mul_le_mul_of_nonneg_right hKle hpolenn
     calc c * Ch02.LambdaSq (originCube d 0) s (.finite 2) F +

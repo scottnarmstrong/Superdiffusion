@@ -9,8 +9,8 @@ import Algsuperdiff.Probability.CesaroWindow
 
 (`avsum_{k=n}^m` in ABK26, §4.2) together with the `rpow` bookkeeping and the
 `Γ_σ` centering layer, but proves nothing about the average as a linear
-functional.  This module supplies that basic A: additivity, constants, scalar
-multiples, monotonicity, nonnegativity, and a four-term convenience form
+functional.  This module supplies that basic API: additivity, constants, scalar
+multiples, monotonicity, and a four-term convenience form
 matching the `D₁ + D₂ + D₃ + const` shape of the `l.minimal.scale.sep`
 decomposition.
 
@@ -61,11 +61,6 @@ theorem cesaroAvg_const_mul (c : ℝ) (f : ℤ → ℝ) (n m : ℤ) :
   simp only [cesaroAvg, ← Finset.mul_sum]
   ring
 
-/-- `smul` spelling of `cesaroAvg_const_mul`. -/
-theorem cesaroAvg_smul (c : ℝ) (f : ℤ → ℝ) (n m : ℤ) :
-    cesaroAvg (fun k => c • f k) n m = c • cesaroAvg f n m := by
-  simpa [smul_eq_mul] using cesaroAvg_const_mul c f n m
-
 /-- The average of a constant over a nonempty window is that constant. -/
 theorem cesaroAvg_const (hnm : n ≤ m) (c : ℝ) :
     cesaroAvg (fun _ => c) n m = c := by
@@ -80,13 +75,6 @@ theorem cesaroAvg_mono (hnm : n ≤ m) (h : ∀ k ∈ Finset.Icc n m, f k ≤ g 
   simp only [cesaroAvg]
   have hinv : (0 : ℝ) ≤ 1 / ((m - n + 1 : ℤ) : ℝ) := by positivity
   exact mul_le_mul_of_nonneg_left (Finset.sum_le_sum h) hinv
-
-/-- A nonnegative integrand has a nonnegative Cesàro average. -/
-theorem cesaroAvg_nonneg (hnm : n ≤ m) (h : ∀ k ∈ Finset.Icc n m, 0 ≤ f k) :
-    0 ≤ cesaroAvg f n m := by
-  have hzero : cesaroAvg (fun _ => (0 : ℝ)) n m = 0 := cesaroAvg_const hnm 0
-  calc (0 : ℝ) = cesaroAvg (fun _ => (0 : ℝ)) n m := hzero.symm
-    _ ≤ cesaroAvg f n m := cesaroAvg_mono hnm h
 
 /-- Three summands plus an additive constant — the shape produced by the
 `D₁ + D₂ + D₃` decomposition of `l.minimal.scale.sep`. -/

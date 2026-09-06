@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G1AtomTails
 import Algsuperdiff.Section4.Provider.Proportion.G1Engine
@@ -182,8 +182,6 @@ theorem g1bConst_pos {s : ℝ} (hs : 0 < s) : 0 < g1bConst s := by
   unfold g1bConst
   have h2 : (0 : ℝ) < 12 / s := by positivity
   exact mul_pos (rpow_pos_three _) h2
-
-theorem g1bConst_nonneg {s : ℝ} (hs : 0 < s) : 0 ≤ g1bConst s := (g1bConst_pos hs).le
 
 private theorem gwG1b_split (s : ℝ) (m k n : ℤ) :
     Real.rpow (3 : ℝ) (-(1 / 4 : ℝ) * s * ((m - n : ℤ) : ℝ)) =

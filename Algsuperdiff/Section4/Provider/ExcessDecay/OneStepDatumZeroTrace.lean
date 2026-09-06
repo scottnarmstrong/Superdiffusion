@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionWindow
 import Homogenization.Sobolev.H1.LocalizedZeroTrace
@@ -280,59 +280,6 @@ theorem localizedZeroTraceFunctionOn_congr {Ω V : Set (Vec d)}
     LocalizedZeroTraceFunctionOn Ω V g := by
   have h : f = g := funext hfg
   rwa [h] at hf
-
-/-! ## 5. The `hzt` supplier -/
-
-/-- **The `hzt` supplier for the datum-split competitor** (residue (1), supplier
-side).
-
-* `hdat` — the anchor's Dirichlet datum, `u − h ∈ H¹₀(□_m)`
-  (`IsDirichletSolutionOn`'s `HasZeroTraceDifferenceOn` component);
-* `hvu` — the same-boundary-data replacement, `v − u ∈ H¹₀(U₂)`;
-* `hΨ`, `hv₁Ψ` — the datum corrector's trace structure: `v₁` carries the
-  trace of `Ψ`, and `Ψ` agrees on `U₂` with the datum's deviation `h − ℓ`
-  (`OneStepDatumSplit.exists_datumCorrector` composed with the clamp match
-  and the `H¹` realization identity).
-
-The conclusion is exactly the `hzt` slot of
-`Schauder.exists_classicalCompetitor_gradientHolder_boundary_zeroTrace`
-at `k := n − 2`. -/
-theorem localizedZeroTraceFunctionOn_datumSplit {m k : ℤ} {x : Vec d}
-    {u h ℓ : Vec d → ℝ}
-    (hdat : MemH10 (openCubeSet (originCube d m)) (fun y => u y - h y))
-    {v : H1Function (truncatedWindow x m k)}
-    (hvu : MemH10 (truncatedWindow x m k) (fun y => v.toFun y - u y))
-    {v₁ Ψ : H1Function (truncatedWindow x m k)}
-    (hΨ : ∀ y ∈ truncatedWindow x m k, Ψ.toFun y = h y - ℓ y)
-    (hv₁Ψ : MemH10 (truncatedWindow x m k)
-      (fun y => v₁.toFun y - Ψ.toFun y)) :
-    LocalizedZeroTraceFunctionOn (truncatedWindow x m k)
-      (reflectedWindow x m k)
-      (fun y => v.toFun y - ℓ y - v₁.toFun y) := by
-  have h1 : LocalizedZeroTraceFunctionOn (truncatedWindow x m k)
-      (reflectedWindow x m k) (fun y => v.toFun y - u y) :=
-    localizedZeroTraceFunctionOn_of_memH10 hvu
-  have h2 : LocalizedZeroTraceFunctionOn (truncatedWindow x m k)
-      (reflectedWindow x m k) (fun y => u y - h y) :=
-    localizedZeroTraceFunctionOn_truncatedWindow_of_memH10_cube x hdat
-  have h3 : LocalizedZeroTraceFunctionOn (truncatedWindow x m k)
-      (reflectedWindow x m k) (fun y => h y - ℓ y - Ψ.toFun y) :=
-    localizedZeroTraceFunctionOn_of_forall_eq_zero
-      (isOpen_truncatedWindow x m k).measurableSet
-      (fun y hy => by rw [hΨ y hy]; ring)
-  have h4 : LocalizedZeroTraceFunctionOn (truncatedWindow x m k)
-      (reflectedWindow x m k) (fun y => Ψ.toFun y - v₁.toFun y) := by
-    have hneg := memH10_neg hv₁Ψ
-    refine localizedZeroTraceFunctionOn_of_memH10 ?_
-    have hfun : (fun y => -(v₁.toFun y - Ψ.toFun y))
-        = fun y => Ψ.toFun y - v₁.toFun y := by
-      funext y
-      ring
-    rwa [hfun] at hneg
-  have h12 := localizedZeroTraceFunctionOn_add h1 h2
-  have h34 := localizedZeroTraceFunctionOn_add h3 h4
-  have h := localizedZeroTraceFunctionOn_add h12 h34
-  exact localizedZeroTraceFunctionOn_congr (fun y => by ring) h
 
 end
 

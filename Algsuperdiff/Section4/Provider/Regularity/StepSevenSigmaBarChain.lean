@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenSigmaBar
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenWireChain
@@ -12,13 +12,13 @@ import Algsuperdiff.Section4.Provider.Regularity.StepSevenWireChain
 ## What this module does
 
 The fifth and last of the sites where the proved chain hard-codes the printed
-`σ̄_{n'} ≤ 2 σ̄_m`: `StepSevenWireChain.exists_stepSevenEnd_chain_of_lambda`.
+`σ̄_{n'} ≤ 2 σ̄_m` is the narrowed Step-7d chain.
 
-`exists_stepSevenEnd_chain_of_lambda_sigmaBarFour` then closes's `hcomp` gap
-outright: the `σ̄` comparison is discharged inside from the frozen Section-3
-`inductionState` by `sigmaBar_le_four_mul_sigmaBar`, so the chain no longer
-asks its caller for a comparison it cannot supply.  The output constant picks
-up `√4 = 2` where print writes `√2`.
+Making the comparison constant a parameter closes the `hcomp` gap: the `σ̄`
+comparison can then be discharged from the frozen Section-3 `inductionState` by
+`sigmaBar_le_four_mul_sigmaBar`, so the chain no longer asks its caller for a
+comparison it cannot supply.  The output constant picks up `√4 = 2` where print
+writes `√2`.
 
 ## References
 
@@ -36,7 +36,7 @@ noncomputable section
 /-- **Step 7d, end to end, with `hcg`/`hembed`/`hbridge` discharged and the `σ̄`
 comparison generic.**
 
-`exists_stepSevenEnd_chain_of_lambda` with the printed constant `2` replaced
+The narrowed Step-7d chain with the printed constant `2` replaced
 by a parameter `Ccmp`; the remaining conditional inputs are still exactly
 `hlambda` (`e.lambda.stability.applied`) and the Step-7c gradient display
 `hgrad`. -/
@@ -108,63 +108,6 @@ theorem exists_stepSevenEnd_chain_of_lambda_gen (d : ℕ) [NeZero d] :
   exact stepSevenEnd_chain_gen hCg hCmean (stepSevenEmbeddingConst_nonneg d)
     (stepSevenBridgeConst_nonneg stepSevenCgS) hCcmp hshomM hoscTrunc hW hG hH hcomp
     hgrad hmean hembed hbridge hpoincare
-
-/-- **The narrowed chain at the proved `σ̄` comparison `Ccmp = 4`.**
-
-`exists_stepSevenEnd_chain_of_lambda_gen` with `shomNp := σ̄_{n'}`, `shomM:=
-σ̄_m`, and `e.shom.m.vs.shom.n` discharged inside from the frozen Section-3
-`inductionState`.  The `hcomp` gap is closed here: the caller no longer supplies
-a comparison, it supplies the induction state it already owns. -/
-theorem exists_stepSevenEnd_chain_of_lambda_sigmaBarFour (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ {M : ABKModel d} {m0 : ℤ} {Ecap : {E : ℝ // 1 ≤ E}},
-        Algsuperdiff.Frozen.Section3.inductionState M m0 Ecap →
-      ∀ {alpha : ℝ} {n m n' : ℤ} {Q : TriadicCube d} {a : CoeffFamily d}
-        {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g)
-        {Cg Cmean Clam Kg Kd Ks Ctr shomMp
-          gradLoc oscTrunc gradM dataG dataM W G H : ℝ},
-        n' ≤ m → m ≤ m0 →
-        0 ≤ Cg → 0 ≤ Cmean → 0 ≤ Clam → 0 ≤ Ks → 0 ≤ shomMp →
-        0 ≤ oscTrunc → 0 ≤ gradM → 0 ≤ dataG → 0 ≤ W → 0 ≤ G → 0 ≤ H →
-        ForceBesovRegularity Q stepSevenCgS g →
-        stepSevenCgLamInv Q a stepSevenCgS ≤ Clam * shomMp →
-        forcedSolutionEnergyNorm Q a u ≤ Kg * gradM →
-        scaleNormalizedPositiveBesovVectorSeminormTwo Q stepSevenCgS g ≤ Kd * dataG →
-        shomMp ≤ Ks * ((Annealed.sigmaBar M m : ℝ))⁻¹ →
-        Real.sqrt Ks * Kg ≤ Ctr * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) →
-        Ks * Kd ≤ Ctr * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) →
-        oscTrunc ≤ Cmean * ((cubeScaleFactor Q)⁻¹ *
-          cubeBesovOscillation Q (2 : ℝ≥0∞) (fun x => u.toH1.toFun x)) →
-        gradLoc ≤ Cg * Real.sqrt (Annealed.sigmaBar M n' : ℝ) *
-            Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) * oscTrunc +
-          Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-            (Real.sqrt (Annealed.sigmaBar M n' : ℝ) *
-              (W * (((Annealed.sigmaBar M m : ℝ))⁻¹ * G + H)) + dataM) →
-          gradLoc ≤
-            Cg * 2 *
-                (Cmean * stepSevenEmbeddingConst d * stepSevenBridgeConst stepSevenCgS *
-                  (C * 64 * (Real.sqrt Clam + Clam)) * Ctr) *
-                Real.rpow (3 : ℝ) (stepSixExponent alpha n m) *
-                (gradM + Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ * dataG) +
-              Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-                (2 * (W * ((Real.sqrt (Annealed.sigmaBar M m : ℝ))⁻¹ * G +
-                  Real.sqrt (Annealed.sigmaBar M m : ℝ) * H)) + dataM) := by
-  obtain ⟨C, hCpos, hC⟩ := exists_stepSevenEnd_chain_of_lambda_gen d
-  refine ⟨C, hCpos, ?_⟩
-  intro M m0 Ecap hS alpha n m n' Q a g u Cg Cmean Clam Kg Kd Ks Ctr shomMp
-    gradLoc oscTrunc gradM dataG dataM W G H
-    hnm hm hCg hCmean hClam hKs hshomMp hoscTrunc hgradM hdataG hW hG hH
-    hforce hlambda htrGrad htrData htrShom hKgb hKdb hmean hgrad
-  have hshomM : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ) := (Annealed.sigmaBar M m).2
-  have hcomp := sigmaBar_le_four_mul_sigmaBar M hS hnm hm
-  have h := hC (Ccmp := 4) u hCg hCmean hClam hKs (by norm_num) hshomMp hshomM hoscTrunc
-    hgradM hdataG hW hG hH hforce hlambda htrGrad htrData htrShom hKgb hKdb hmean
-    hcomp hgrad
-  have hfour : Real.sqrt (4 : ℝ) = 2 := by
-    rw [show (4 : ℝ) = 2 ^ (2 : ℕ) by norm_num]
-    exact Real.sqrt_sq (by norm_num)
-  rw [hfour] at h
-  exact h
 
 end
 

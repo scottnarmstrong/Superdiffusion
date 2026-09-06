@@ -54,9 +54,8 @@ private theorem upperPolyProfile_pred_le
       exact_mod_cast Nat.pred_le n
     linarith
   have hsq : ((n.pred : ℝ) + 1) ^ 2 ≤ ((n : ℝ) + 1) ^ 2 := by
-    have hn0 : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
     have hp0 : (0 : ℝ) ≤ (n.pred : ℝ) := Nat.cast_nonneg n.pred
-    nlinarith
+    exact pow_le_pow_left₀ (by linarith only [hp0]) hpred 2
   have hexp : gamma * (n.pred : ℝ) ≤ gamma * (n : ℝ) :=
     mul_le_mul_of_nonneg_left (by exact_mod_cast Nat.pred_le n) hgamma
   have hpow : (3 : ℝ) ^ (gamma * (n.pred : ℝ)) ≤
@@ -68,7 +67,9 @@ private theorem upperPolyProfile_pred_le
     A * (((n.pred : ℝ) + 1) ^ 2) * (3 : ℝ) ^ (gamma * (n.pred : ℝ))
         ≤ A * (((n : ℝ) + 1) ^ 2) *
             (3 : ℝ) ^ (gamma * (n.pred : ℝ)) := by
-          gcongr
+          exact mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hsq hA)
+            (Real.rpow_nonneg (by norm_num) _)
     _ ≤ A * (((n : ℝ) + 1) ^ 2) * (3 : ℝ) ^ (gamma * (n : ℝ)) := by
           exact mul_le_mul_of_nonneg_left hpow
             (mul_nonneg hA (sq_nonneg _))
@@ -85,8 +86,9 @@ private theorem endpointWeight_mul_upperPolyProfile_le
   have hn0 : (0 : ℝ) ≤ (n : ℝ) := by positivity
   have hhalf : (3 : ℝ) ^ (-(rho / 2) * (n : ℝ)) ≤ 1 := by
     refine Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) ?_
-    have := hrho.le
-    nlinarith
+    have hprod : (0 : ℝ) ≤ rho / 2 * (n : ℝ) :=
+      mul_nonneg (by linarith only [hrho.le]) hn0
+    linarith only [hprod]
   have hrewrite : endpointWeight (2 * s) n * upperPolyProfile A gamma n =
       A * (((n : ℝ) + 1) ^ 2) * (3 : ℝ) ^ (-(rho) * (n : ℝ)) := by
     rw [endpointWeight_eq_rpow, upperPolyProfile]
@@ -143,7 +145,9 @@ private theorem endpointWeight_mul_upperPolyProfile_le
         ≤ 96 * A * rho⁻¹ ^ 2 := hbase
     _ = 96 * A * (rho * rho⁻¹ ^ 3) := by rw [hconvert]
     _ ≤ 96 * A * (2 * s * rho⁻¹ ^ 3) := by
-      gcongr
+      exact mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right hrho_le (pow_nonneg hinv 3))
+        (mul_nonneg (by norm_num) hA)
     _ = 192 * A * s * (2 * s - gamma)⁻¹ ^ 3 := by
       dsimp [rho]
       ring
@@ -796,7 +800,7 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
               (2 / (r : ℝ)) := by simpa only [hrootExp] using hMink.2
         _ ≤ Cblock + Yone omega + Yexp omega := by
           rw [hDnorm]
-          gcongr
+          exact add_le_add (add_le_add_right hOnorm Cblock) hEnorm
     simpa only [mu, Bone, A, rho, gamma] using
       (exists_pointwise_of_ae_threeTermSplit
         ((Observable.measurable_cutoffUpperEllipticity M m m s hs
@@ -828,7 +832,7 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
         have hcoef : 192 * A * s * rho⁻¹ ^ 3 ≤ Bone := by
           have hbase0 : 0 ≤ A * s * rho⁻¹ ^ 3 := by positivity
           dsimp [Bone]
-          nlinarith
+          linarith only [hbase0]
         exact hfirst.trans <| calc
           endpointWeight (2 * s) n * (upperPolyProfile A gamma n * V omega) =
               endpointWeight (2 * s) n * upperPolyProfile A gamma n * V omega := by
@@ -850,7 +854,8 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
           _ = endpointWeight (2 * s) n * Cblock +
               endpointWeight (2 * s) n * Odepth n omega +
               endpointWeight (2 * s) n * Edepth n omega := by ring
-          _ ≤ Cblock + Yone omega + Yexp omega := by gcongr
+          _ ≤ Cblock + Yone omega + Yexp omega :=
+            add_le_add (add_le_add hdet hordinary) hrareTerm
       calc
         scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
             Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
@@ -932,7 +937,7 @@ private theorem foldedBlockPole_normalized_rare_gate_le
   have hC0 : 0 ≤ 128 * (ctop + 720) := by positivity
   have hC : 128 * (ctop + 720) ≤ 4 * (1658880 : ℝ) ^ 2 := by
     calc
-      128 * (ctop + 720) ≤ 128 * (9 + 720) := by nlinarith
+      128 * (ctop + 720) ≤ 128 * (9 + 720) := by linarith only [hctop]
       _ ≤ 4 * (1658880 : ℝ) ^ 2 := by norm_num
   have hcoef :
       T ^ 2 * (1 * G) * (128 * (ctop + 720)) ≤ Krare := by

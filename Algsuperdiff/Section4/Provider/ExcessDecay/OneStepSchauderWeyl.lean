@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderLapTransfer
 import Algsuperdiff.Section4.Support.Dirichlet
@@ -40,7 +40,7 @@ radius pair is needed; and the Euclidean ball is contained in the sup ball, so
 the `HarmonicOnNhd` conclusion holds on `Metric.ball (toEuc x₀) r`.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/WeylWeakLaplacian.lean ====
+-- ==== Weyl: the weak Laplacian ====
 open MeasureTheory
 open Homogenization (Vec basisVec vecDot H1Function H10Function euclideanGradient
   euclideanCoordDeriv euclideanCoordSecondDeriv euclideanCoordLaplacian)
@@ -134,7 +134,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/WeylMollification.lean ====
+-- ==== Weyl: mollification ====
 open scoped Convolution
 open MeasureTheory InnerProductSpace
 open Homogenization (Vec H1Function IsConvexApproxKernel IsOpenBoundedConvexDomain
@@ -150,74 +150,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ### Support geometry of the scaled mollifier -/
-
-/-- A scaled convex-approximation kernel is supported in the correspondingly scaled sup-metric
-ball. -/
-theorem tsupport_scaledConvexApproxKernel_subset_closedBall {ρ : Vec d → ℝ}
-    (hρ : IsConvexApproxKernel ρ) {a : ℝ} (ha : 0 < a) :
-    tsupport (scaledConvexApproxKernel ρ a) ⊆ Metric.closedBall (0 : Vec d) a := by
-  have hsupport :
-      Function.support (scaledConvexApproxKernel ρ a) ⊆ Metric.closedBall (0 : Vec d) a := by
-    intro y hy
-    have hyρ_nonzero : ρ (a⁻¹ • y) ≠ 0 := by
-      intro hzero
-      exact hy (by simp [Homogenization.scaledConvexApproxKernel, hzero])
-    have hyρ : a⁻¹ • y ∈ tsupport ρ := subset_tsupport ρ hyρ_nonzero
-    have hnorm : ‖a⁻¹ • y‖ ≤ 1 := by
-      simpa [Metric.mem_closedBall, dist_eq_norm] using hρ.support_subset_closedBall hyρ
-    rw [Metric.mem_closedBall, dist_eq_norm]
-    have hy_eq : y = a • (a⁻¹ • y) := by
-      rw [smul_smul, mul_inv_cancel₀ ha.ne', one_smul]
-    calc ‖y - 0‖ = ‖y‖ := by simp
-      _ = ‖a • (a⁻¹ • y)‖ := congrArg norm hy_eq
-      _ = a * ‖a⁻¹ • y‖ := by rw [norm_smul, Real.norm_eq_abs, abs_of_pos ha]
-      _ ≤ a * 1 := mul_le_mul_of_nonneg_left hnorm ha.le
-      _ = a := by ring
-  exact closure_minimal hsupport Metric.isClosed_closedBall
-
-/-- **The reflected mollifier stays inside the ball.**  If `y` lies in the sup-metric closed ball
-`Metric.closedBall x₀ r` and `0 < ε ≤ 1`, then the support of the reflected `ε r`-scaled kernel
-around the contracted sample point `A = (1-ε) • y + ε • x₀` is contained in the *same* closed ball
-`Metric.closedBall x₀ r`.
-
-The two contributions add exactly: `dist z A ≤ ε r` (kernel support) and
-`dist A x₀ = (1-ε) · dist y x₀ ≤ (1-ε) r` (contraction). -/
-theorem tsupport_scaledConvexApproxKernel_reflect_subset_closedBall {ρ : Vec d → ℝ}
-    (hρ : IsConvexApproxKernel ρ) {x₀ y : Vec d} {r ε : ℝ}
-    (hy : y ∈ Metric.closedBall x₀ r) (hr : 0 < r) (hε0 : 0 < ε) (hε1 : ε ≤ 1) :
-    tsupport (fun z : Vec d =>
-        scaledConvexApproxKernel ρ (ε * r) (((1 - ε) • y + ε • x₀) - z))
-      ⊆ Metric.closedBall x₀ r := by
-  intro z hz
-  set A : Vec d := (1 - ε) • y + ε • x₀ with hA
-  set K : Vec d → ℝ := scaledConvexApproxKernel ρ (ε * r) with hKdef
-  have hεr_pos : 0 < ε * r := mul_pos hε0 hr
-  have hzA_support : A - z ∈ tsupport K := by
-    have hz' : z ∈ tsupport (K ∘ Homeomorph.subLeft A) := by
-      simpa [K, A, Function.comp_def] using hz
-    rwa [tsupport_comp_eq_preimage K (Homeomorph.subLeft A)] at hz'
-  have hzA_closed : A - z ∈ Metric.closedBall (0 : Vec d) (ε * r) :=
-    tsupport_scaledConvexApproxKernel_subset_closedBall hρ hεr_pos hzA_support
-  have hdist_zA : dist z A ≤ ε * r := by
-    have hswap : dist z A = dist (A - z) (0 : Vec d) := by
-      simp [dist_eq_norm, norm_sub_rev]
-    rw [hswap]
-    simpa [Metric.mem_closedBall] using hzA_closed
-  have hA_sub : A - x₀ = (1 - ε) • (y - x₀) := by
-    funext i
-    simp only [hA, Pi.sub_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    ring
-  have hdist_Ax : dist A x₀ = (1 - ε) * dist y x₀ := by
-    rw [dist_eq_norm, dist_eq_norm, hA_sub, norm_smul,
-      Real.norm_of_nonneg (sub_nonneg.mpr hε1)]
-  have hyx : dist y x₀ ≤ r := by simpa [Metric.mem_closedBall] using hy
-  have hdist_Ax_le : dist A x₀ ≤ (1 - ε) * r := by
-    rw [hdist_Ax]
-    exact mul_le_mul_of_nonneg_left hyx (sub_nonneg.mpr hε1)
-  rw [Metric.mem_closedBall]
-  calc dist z x₀ ≤ dist z A + dist A x₀ := dist_triangle z A x₀
-    _ ≤ ε * r + (1 - ε) * r := add_le_add hdist_zA hdist_Ax_le
-    _ = r := by ring
 
 /-! ### The convolution harmonicity core -/
 
@@ -261,90 +193,6 @@ theorem euclideanCoordLaplacian_convolution_indicator_eq_zero {U : Set (Vec d)}
       u.toFun).trans hweak_zero'
 
 /-! ### The CoarseGraining convex smoothing is harmonic on the ball -/
-
-/-- **The convex smoothing of a weakly harmonic function has vanishing Laplacian on the ball.**
-This is the coordinate form of the mollified-harmonicity core: the smoothing operator is the
-convolution `K_{εr} ⋆ (𝟙_U u)` read at the contracted point `(1-ε) • y + ε • x₀`,
-so its Laplacian is
-`(1-ε)²` times the convolution Laplacian there, which vanishes by
-`euclideanCoordLaplacian_convolution_indicator_eq_zero` and the support geometry. -/
-theorem euclideanCoordLaplacian_convexApproxSmoothRepresentative_eq_zero {U : Set (Vec d)}
-    (hUopen : IsOpen U) {u : H1Function U} (hu : IsWeaklyHarmonicOn U u)
-    {ρ : Vec d → ℝ} (hρ : IsConvexApproxKernel ρ) {x₀ : Vec d} {r ε : ℝ} (hr : 0 < r)
-    (hball : Metric.closedBall x₀ r ⊆ U) (hε0 : 0 < ε) (hε1 : ε ≤ 1)
-    {y : Vec d} (hy : y ∈ Metric.closedBall x₀ r) :
-    euclideanCoordLaplacian (convexApproxSmoothRepresentative U ρ u.toFun x₀ r ε) y = 0 := by
-  have hUm : MeasurableSet U := hUopen.measurableSet
-  have hεr_pos : 0 < ε * r := mul_pos hε0 hr
-  set K : Vec d → ℝ := scaledConvexApproxKernel ρ (ε * r) with hKdef
-  have hK : ContDiff ℝ (⊤ : ℕ∞) K := Homogenization.contDiff_scaledConvexApproxKernel hρ _
-  have hK_supp : HasCompactSupport K :=
-    Homogenization.hasCompactSupport_scaledConvexApproxKernel hρ.compactSupport hεr_pos
-  have hmem_indicator : MemLp (Set.indicator U u.toFun) 2 volume := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hUm]
-    exact u.memL2
-  have hloc_indicator : LocallyIntegrable (Set.indicator U u.toFun) volume :=
-    hmem_indicator.locallyIntegrable (by norm_num)
-  set F : Vec d → ℝ :=
-    K ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] Set.indicator U u.toFun with hFdef
-  have hF : ContDiff ℝ (⊤ : ℕ∞) F :=
-    HasCompactSupport.contDiff_convolution_left (L := ContinuousLinearMap.lsmul ℝ ℝ)
-      (μ := volume) hK_supp hK hloc_indicator
-  have hrepr : convexApproxSmoothRepresentative U ρ u.toFun x₀ r ε
-      = fun x => F ((1 - ε) • x + ε • x₀) := rfl
-  rw [hrepr, euclideanCoordLaplacian_comp_smul_add hF (1 - ε) (ε • x₀) y]
-  have hzero : euclideanCoordLaplacian F ((1 - ε) • y + ε • x₀) = 0 :=
-    euclideanCoordLaplacian_convolution_indicator_eq_zero hUopen hu hK_supp hK _
-      ((tsupport_scaledConvexApproxKernel_reflect_subset_closedBall hρ hy hr hε0 hε1).trans hball)
-  rw [hzero, mul_zero]
-
-/-- The concrete CoarseGraining convex `H¹` smoothing has a globally `C^∞`
-representative. -/
-theorem contDiff_convexApproxSmoothH1 {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
-    (u : H1Function U) (x₀ : Vec d) {r : ℝ} (hr : 0 < r) (n : ℕ) :
-    ContDiff ℝ (⊤ : ℕ∞)
-      ((Homogenization.H1Function.convexApproxSmoothH1 (U := U) hU u x₀ hr n : Vec d → ℝ)) := by
-  rw [Homogenization.H1Function.convexApproxSmoothH1_toFun]
-  exact Homogenization.contDiff_convexApproxSmoothRepresentative
-    (U := U) (ρ := unitConvexApproxKernel (d := d)) (u := u.toFun) (p := (2 : ENNReal))
-    (x0 := x₀) (r := r) (ε := unitConvexApproxScale n)
-    hU.isOpen.measurableSet (Homogenization.isConvexApproxKernel_unitConvexApproxKernel (d := d))
-    (by norm_num : (1 : ENNReal) ≤ 2) u.memL2 hr
-    (by dsimp [Homogenization.unitConvexApproxScale]; positivity)
-
-/-- **Vanishing Laplacian of the CoarseGraining convex smoothing**, on the whole
-sup-metric ball. -/
-theorem euclideanCoordLaplacian_convexApproxSmoothH1_eq_zero {U : Set (Vec d)}
-    (hU : IsOpenBoundedConvexDomain U) {u : H1Function U} (hu : IsWeaklyHarmonicOn U u)
-    {x₀ : Vec d} {r : ℝ} (hr : 0 < r) (hball : Metric.closedBall x₀ r ⊆ U) (n : ℕ)
-    {y : Vec d} (hy : y ∈ Metric.closedBall x₀ r) :
-    euclideanCoordLaplacian
-      ((Homogenization.H1Function.convexApproxSmoothH1 (U := U) hU u x₀ hr n : Vec d → ℝ)) y
-      = 0 := by
-  rw [Homogenization.H1Function.convexApproxSmoothH1_toFun]
-  refine euclideanCoordLaplacian_convexApproxSmoothRepresentative_eq_zero hU.isOpen hu
-    (Homogenization.isConvexApproxKernel_unitConvexApproxKernel (d := d)) hr hball ?_ ?_ hy
-  · dsimp [Homogenization.unitConvexApproxScale]; positivity
-  · exact Homogenization.unitConvexApproxScale_le_one n
-
-/-- **Mollified-harmonicity core, in mathlib vocabulary.**  For `u` weakly harmonic
-on the open bounded convex domain `U` and `Metric.closedBall x₀ r ⊆ U`, every
-CoarseGraining convex smoothing of `u` is a genuine
-`InnerProductSpace.HarmonicOnNhd` function on the Euclidean ball `Metric.ball
-(toEuc x₀) r` (after transport across the coordinate identification `toEuc`). -/
-theorem harmonicOnNhd_convexApproxSmoothH1_of_weaklyHarmonic {U : Set (Vec d)}
-    (hU : IsOpenBoundedConvexDomain U) {u : H1Function U} (hu : IsWeaklyHarmonicOn U u)
-    {x₀ : Vec d} {r : ℝ} (hr : 0 < r) (hball : Metric.closedBall x₀ r ⊆ U) (n : ℕ) :
-    HarmonicOnNhd
-      (((Homogenization.H1Function.convexApproxSmoothH1 (U := U) hU u x₀ hr n : Vec d → ℝ))
-        ∘ toEuc.symm)
-      (Metric.ball (toEuc x₀) r) := by
-  have hcd : ContDiff ℝ 2
-      ((Homogenization.H1Function.convexApproxSmoothH1 (U := U) hU u x₀ hr n : Vec d → ℝ)) :=
-    (contDiff_convexApproxSmoothH1 hU u x₀ hr n).of_le (by norm_cast)
-  refine harmonicOnNhd_ball_comp_toEuc_symm hcd hr fun y hy => ?_
-  exact euclideanCoordLaplacian_convexApproxSmoothH1_eq_zero hU hu hr hball n
-    (Metric.ball_subset_closedBall hy)
 
 /-! ### The `L²` approximation apex -/
 

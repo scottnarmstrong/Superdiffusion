@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.AffineMinimizerExistence
 import Algsuperdiff.Section4.Provider.ExcessDecay.SandwichNondegeneracy
@@ -345,26 +345,6 @@ theorem exists_isAffineMinimizer_of_axisCubeSandwich {W : Set (Vec d)} {zin zout
     (fun c g => memLp_affineEval_of_sandwich hLout hWm hout c g)
     (fun c g => normalizedL2On_affineEval_ge_norm_of_sandwich hLin hLout hin hout c g)
     (fun c g => normalizedL2On_affineEval_le_of_sandwich hLin hLout hWm hin hout c g) u hu
-
-/-- **Attainment on the §4.3 consumption class (the triadic cube sandwich).**
-
-The §4.3 windows are the truncated cubes `U_j = (x + □_j) ∩ □_m`, whose stated
-geometry is the sandwich `x + □_{j-2} ⊆ U_j ⊆ y + □_j` (`l.iteration.lemma`
-hypothesis (iii), scoped to `j ≤ m`).  On every such window the affine minimum
-of `e.excess.def` is **attained**: the source's `ℓ(u,U_j) = argmin` exists.
-
-Only the two inclusions are used --- the scale relation `Q₁.scale = Q₂.scale - 2` is not needed for
-attainment (it is needed for the *scale-free* constants of `SandwichNondegeneracy.lean`), so it is
-not assumed here.  No uniqueness is claimed: the source's `argmin` notation is not backed by an
-argument, and no §4.3 estimate needs one. -/
-theorem exists_isAffineMinimizer_of_cubeSandwich {W : Set (Vec d)} {Q₁ Q₂ : TriadicCube d}
-    (hWm : MeasurableSet W) (hin : openCubeSet Q₁ ⊆ W) (hout : W ⊆ openCubeSet Q₂)
-    (u : Vec d → ℝ) (hu : MemLp u 2 (volume.restrict W)) :
-    ∃ (c : ℝ) (g : Vec d), IsAffineMinimizer W u c g := by
-  rw [openCubeSet_eq_axisCube Q₁] at hin
-  rw [openCubeSet_eq_axisCube Q₂] at hout
-  exact exists_isAffineMinimizer_of_axisCubeSandwich (cubeScaleFactor_pos Q₁)
-    (cubeScaleFactor_pos Q₂) hWm hin hout u hu
 
 end
 

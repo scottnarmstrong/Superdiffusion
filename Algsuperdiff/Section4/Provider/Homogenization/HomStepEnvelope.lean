@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.FluxCorrectedTwoScale
 import Algsuperdiff.Section4.Provider.BoundsEaL.MomentHolder
@@ -38,7 +38,7 @@ observable
 `L`-supremum and the flux correction `ã_{L,m} = a_L - (k_L - k_m)_{□_m}`, takes
 values in `[0,∞]`, so that no convergence side condition enters the statement,
 and reduces at a matched index pair `n = m` to the one-argument observable by
-`rfl` (`fluxCorrectedTwoScaleErrorObservableSup_self`).  The one-argument
+`rfl`.  The one-argument
 `𝓔_{1/4,∞,2}(□_m; ·)` of the middle factor is therefore rendered as the
 two-argument observable at `n = m`, exactly as the source's own convention
 prescribes.
@@ -117,16 +117,6 @@ theorem homS_le_quarter {M : ABKModel d} (hlog : 4 ≤ |Real.log M.gamma|) :
 theorem one_sub_homAlpha (M : ABKModel d) : 1 - homAlpha M = homS M / 2 := by
   rw [homAlpha]; ring
 
-/-- `s - s₁ = 1 - α`, the identity Step 2b reads. -/
-theorem homS_sub_homHalf (M : ABKModel d) :
-    homS M - homS M / 2 = 1 - homAlpha M := by
-  rw [one_sub_homAlpha]; ring
-
-theorem homAlpha_lt_one {M : ABKModel d} (hlog : 0 < |Real.log M.gamma|) :
-    homAlpha M < 1 := by
-  have := homS_pos (M := M) hlog
-  rw [homAlpha]; linarith only [this]
-
 theorem homAlpha_pos {M : ABKModel d} (hlog : 4 ≤ |Real.log M.gamma|) :
     0 < homAlpha M := by
   have h := homS_le_quarter (M := M) hlog
@@ -172,41 +162,6 @@ def ethmB (M : ABKModel d) (Cgap : ℝ) (Y : Cutoff.CutoffSample d → ℝ≥0�
       + ENNReal.ofReal (Cgap * M.gamma ^ (5 : ℕ)) *
           (1 +
             fluxCorrectedTwoScaleErrorObservableSup M m n (homQuarterOf s) omega ^ (2 : ℝ))
-
-/-- The printed §4.5 instance: the base exponent is `s = |log γ|⁻¹` and the
-mesoscale is `n = m - ⌈10|log γ|⌉`. -/
-def ethmBSectionFive (M : ABKModel d) (Cgap : ℝ) (Y : Cutoff.CutoffSample d → ℝ≥0∞)
-    (m : ℤ) (hs : 0 < homS M) : Cutoff.CutoffSample d → ℝ≥0∞ :=
-  ethmB M Cgap Y m (homN M m) ⟨homS M, hs⟩
-
-theorem ethmB_eq (M : ABKModel d) (Cgap : ℝ) (Y : Cutoff.CutoffSample d → ℝ≥0∞)
-    (m n : ℤ) (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
-    ethmB M Cgap Y m n s omega =
-      ENNReal.ofReal ((s : ℝ)⁻¹) *
-          (Y omega *
-            (fluxCorrectedTwoScaleErrorObservableSup M m n (homHalf s) omega *
-              (1 + fluxCorrectedTwoScaleErrorObservableSup M m m homQuarter omega)))
-        + ENNReal.ofReal (Cgap * M.gamma ^ (5 : ℕ)) *
-            (1 +
-              fluxCorrectedTwoScaleErrorObservableSup M m n (homQuarterOf s) omega ^
-                (2 : ℝ)) :=
-  rfl
-
-/-- The inequality, visible but unused: the witness is bounded BELOW
-by `C γ⁵`.  Stated so that "no lower bound is added to the statement" is
-machine-checkable rather than asserted. -/
-theorem ethmB_ge_gap (M : ABKModel d) (Cgap : ℝ) (Y : Cutoff.CutoffSample d → ℝ≥0∞)
-    (m n : ℤ) (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
-    ENNReal.ofReal (Cgap * M.gamma ^ (5 : ℕ)) ≤ ethmB M Cgap Y m n s omega := by
-  rw [ethmB_eq]
-  refine le_trans ?_ (le_add_self)
-  calc ENNReal.ofReal (Cgap * M.gamma ^ (5 : ℕ))
-      = ENNReal.ofReal (Cgap * M.gamma ^ (5 : ℕ)) * 1 := (mul_one _).symm
-    _ ≤ ENNReal.ofReal (Cgap * M.gamma ^ (5 : ℕ)) *
-          (1 +
-            fluxCorrectedTwoScaleErrorObservableSup M m n (homQuarterOf s) omega ^
-              (2 : ℝ)) := by
-        exact mul_le_mul' (le_refl _) le_self_add
 
 theorem measurable_ethmB (M : ABKModel d) (Cgap : ℝ) {Y : Cutoff.CutoffSample d → ℝ≥0∞}
     (hY : Measurable Y) {m n : ℤ} (hnm : n ≤ m) (s : {s : ℝ // 0 < s}) :

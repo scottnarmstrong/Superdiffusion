@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderCampanato
 
@@ -162,9 +162,6 @@ the same set get the same minimizer, which is exactly what the far-apart case
 of the two-point Hölder estimate uses. -/
 def affineMinimizerPair (W : Set (Vec d)) (u : Vec d → ℝ) : ℝ × Vec d :=
   Classical.epsilon fun p : ℝ × Vec d => IsAffineMinimizer W u p.1 p.2
-
-theorem affineMinimizerPair_congr {W W' : Set (Vec d)} (h : W = W') (u : Vec d → ℝ) :
-    affineMinimizerPair W u = affineMinimizerPair W' u := by rw [h]
 
 theorem isAffineMinimizer_affineMinimizerPair {W : Set (Vec d)} {u : Vec d → ℝ}
     (h : ∃ p : ℝ × Vec d, IsAffineMinimizer W u p.1 p.2) :

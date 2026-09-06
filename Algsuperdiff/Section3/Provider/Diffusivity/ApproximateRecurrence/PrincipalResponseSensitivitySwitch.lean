@@ -42,12 +42,11 @@ event.
 
 ## The three readings this makes explicit
 
-* **The sign/7540.**  The printed `+ 2 p_z . q_z` is off by a sign; see the
-  module docstring of
-  `ApproximateRecurrence.PrincipalResponseSensitivityAlgebra`, where the
-  correction is derived and its (nil) downstream effect is recorded.  The chain
-  below carries the corrected sign; the manuscript's absorption still works,
-  with `+2 delta (p_z . q_z)` in place of `-2 delta (p_z . q_z)`.
+* **The pairing term.**  The second equality of Step 3 carries `- 2 p_z . q_z`;
+  see the module docstring of
+  `ApproximateRecurrence.PrincipalResponseSensitivityAlgebra`, where it is
+  derived.  The chain below carries it, and the manuscript's absorption
+  consumes it.
 * The frozen statement `Algsuperdiff.Frozen.Section24.responseJ_sensitivity`
   already reflects both, and nothing is restated here.
 
@@ -91,8 +90,7 @@ variable {d : ℕ}
 /-- **ABK26 at the unit-cube carrier**, conditional on the smallness gate `hgate`
 of `l.J.sensitivity` for the centered perturbation.
 
-The two `2 X_1 . X_2` terms are the manuscript's `2 p_z . q_z`, with the sign
-corrected as recorded in
+The two `2 X_1 . X_2` terms are the manuscript's `2 p_z . q_z`, derived in
 `ApproximateRecurrence.PrincipalResponseSensitivityAlgebra`; they are kept
 explicit rather than absorbed into the remainder. -/
 theorem blockVecDot_coarseBlockMatrix_le_gauge_switch_of_sensitivityGate

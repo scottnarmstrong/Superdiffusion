@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepEnvelope
 
@@ -144,18 +144,6 @@ variable (M : ABKModel d)
 /-- `s = |log γ|⁻¹` is positive under the `|log γ| ≥ 4` gate. -/
 theorem homS_pos_of_four (h : 4 ≤ |Real.log M.gamma|) : 0 < homS M :=
   homS_pos (by linarith only [h])
-
-/-- `(s/2)⁻¹ = 2|log γ|`. -/
-theorem inv_homS_half (h : 0 < |Real.log M.gamma|) :
-    (homS M / 2)⁻¹ = 2 * |Real.log M.gamma| := by
-  rw [homS]
-  field_simp
-
-/-- `(s/4)⁻¹ = 4|log γ|`. -/
-theorem inv_homS_quarter (h : 0 < |Real.log M.gamma|) :
-    (homS M / 4)⁻¹ = 4 * |Real.log M.gamma| := by
-  rw [homS]
-  field_simp
 
 /-- `√k ≤ 2|log γ|` under the `|log γ| ≥ 4` gate. -/
 theorem sqrt_homK_le (h : 4 ≤ |Real.log M.gamma|) :

@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFourFinalInterior
-import Algsuperdiff.Section4.Provider.Regularity.StepFiveConcreteEndpoint
+import Algsuperdiff.Section4.Provider.Regularity.StepFiveDeltaSum
+import Algsuperdiff.Section4.Provider.Regularity.StepFiveIterationResult
 
 /-!
 # `hstep4`, discharged on the interior branch
@@ -25,9 +26,8 @@ from the frozen statements and the supply events alone:
 `ε_j` is `StepFiveBudgetSums.stepFiveEps` — the Step-5 slot itself, at the
 unshifted index `j` (the interior clause reads its event and its flux
 representative at the printed index), carrying the coefficient
-`C_ε = edFinalEpsCoeff`.  `δ_j` is the `g`-leg of
-`StepFiveDeltaFamily.stepFiveDelta` at the root's own
-Hölder datum `K_g`: there is no `∇h` leg and no boundary indicator, so the
+`C_ε = edFinalEpsCoeff`.  `δ_j` is the `g`-leg of the Step-5 family at the
+root's own Hölder datum `K_g`: there is no `∇h` leg and no boundary indicator, so the
 ungated non-decaying flat leg does not arise either.
 
 ## The three pins
@@ -184,14 +184,6 @@ theorem stepFourDecay_interior_of_anchors (d : ℕ) [NeZero d] (hd : d ≠ 0) :
 
 /-! ## 2. The Step-1 pin `s = 1/4`, and the identification of the two events -/
 
-/-- **The excess-decay supply event IS the Step-3 good event** at the Step-1 pin `s
-= 1/4`: the same `goodEventAt` term, constant for constant. -/
-theorem event_pin {d : ℕ} (M : ABKModel d) (delta : ℝ) (j : ℤ) (z : Vec d)
-    (hs : (0 : ℝ) < stepOneS) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) j z
-        ⟨stepOneS / 8, by linarith only [hs]⟩ (stepOneS / 8 * Real.sqrt delta) =
-      stepThreeGoodEvent M delta j z := rfl
-
 theorem stepOneS_mem_Icc {d : ℕ} {M : ABKModel d} (hgamma : M.gamma ≤ 1 / 256) :
     stepOneS ∈ Set.Icc (64 * M.gamma) 1 := by
   rw [stepOneS]
@@ -295,26 +287,6 @@ theorem stepFourDecay_interior_pinned (d : ℕ) [NeZero d] (hd : d ≠ 0) :
     (c j) (slope j) (hmin j (by omega))
   rw [stepFiveTheta_pow]
   exact hres
-
-/-! ## 4. `IterationDecay`, produced -/
-
-theorem iterationDecay_interior_of_pinned {d : ℕ} {M : ABKModel d} {C : ℝ} {k : ℕ}
-    {delta : ℝ} {m n : ℤ} {z : Vec d} {omega : Cutoff.CutoffSample d} [NeZero d]
-    {u : Vec d → ℝ} {slope : ℤ → Vec d} {Kg : ℝ}
-    (hstep4 : ∀ j : ℤ, n + (k : ℤ) ≤ j → j ≤ m - 1 →
-      j ∉ stepThreeBadSet M delta n m z omega →
-        affineExcess (stepThreeWindow z m (j - (k : ℤ))) u ≤
-          stepFiveTheta ^ k * affineExcess (stepThreeWindow z m j) u +
-            (edFinalEpsCoeff d C k stepOneS * stepFiveEps M j z delta omega) *
-              slopeMagnitude (slope j) +
-            edFinalDelta M (edFinalDeltaConst d C k stepOneS)
-              (Kg * stepFourGagliardoConst d stepOneS) j) :
-    IterationDecay (stepThreeWindow z m) u slope k stepFiveTheta
-      (fun j => edFinalEpsCoeff d C k stepOneS * stepFiveEps M j z delta omega)
-      (fun j => edFinalDelta M (edFinalDeltaConst d C k stepOneS)
-        (Kg * stepFourGagliardoConst d stepOneS) j)
-      (stepFiveBadSet (stepThreeBadSet M delta n m z omega) n m k) n m :=
-  iterationDecay_of_stepFourDecay hstep4
 
 end
 

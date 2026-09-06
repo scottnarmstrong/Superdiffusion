@@ -7,8 +7,8 @@ import Algsuperdiff.Section3.Provider.Tail.TailSqrt
 /-!
 # Provider: the parameter web of `p.multiscale.estimate`
 
-This module collects the *parameter-discharge* obligations that the Section 3.6
-development accumulated across its proved packets and routes all of them
+This module collects the *parameter-discharge* obligations accumulated across
+the proved Section 3.6 modules and routes all of them
 through a single arithmetic core: the two scalar binders of the multiscale
 proposition's own hypothesis list,
 

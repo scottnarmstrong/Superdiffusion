@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.FractionalPoincare
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryLaneWindows
@@ -204,43 +204,6 @@ theorem eLpNorm_sub_integral_truncatedWindow_le
     (V := (volume (truncatedWindow x m k)).toReal) d h3k
     (volume_toReal_truncatedWindow_half_ge hx hkm)
 
-/-- **At the anchor's window `k = n+3` and the development range `0 ≤ s ≤ 1`**: the
-numeral `2^{d/2}·27·3^{ns}`. -/
-theorem eLpNorm_sub_integral_anchorWindow_le
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    {x : Vec d} {m n : ℤ} {s : ℝ} {f : Vec d → E}
-    (hx : x ∈ openCubeSet (originCube d m)) (hnm : n + 3 ≤ m) (hs : 0 ≤ s) (hs1 : s ≤ 1)
-    (hf : Integrable f (volume.restrict (truncatedWindow x m (n + 3)))) :
-    eLpNorm (fun y => f y -
-          ∫ p, f p ∂(normalizedVolumeMeasureOn (truncatedWindow x m (n + 3)))) 2
-        (normalizedVolumeMeasureOn (truncatedWindow x m (n + 3)))
-      ≤ ENNReal.ofReal ((2 : ℝ) ^ ((d : ℝ) / 2) * 27 * (3 : ℝ) ^ ((n : ℝ) * s))
-          * normalizedGagliardoESeminormOn (truncatedWindow x m (n + 3)) s f := by
-  refine (eLpNorm_sub_integral_truncatedWindow_le hx hnm hs hf).trans
-    (mul_le_mul_left (ENNReal.ofReal_le_ofReal ?_) _)
-  have h2 : (0 : ℝ) ≤ (2 : ℝ) ^ ((d : ℝ) / 2) := Real.rpow_nonneg (by norm_num) _
-  have hsplit : (3 : ℝ) ^ (((n + 3 : ℤ) : ℝ) * s)
-      = (3 : ℝ) ^ ((n : ℝ) * s) * (3 : ℝ) ^ (3 * s) := by
-    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    congr 1
-    push_cast
-    ring
-  have h27 : (3 : ℝ) ^ (3 * s) ≤ 27 := by
-    have hle : (3 : ℝ) ^ (3 * s) ≤ (3 : ℝ) ^ (3 : ℝ) :=
-      Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [hs1])
-    have h3 : (3 : ℝ) ^ (3 : ℝ) = 27 := by
-      rw [show (3 : ℝ) = ((3 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
-      norm_num
-    linarith only [hle, h3]
-  have hbase : (0 : ℝ) ≤ (3 : ℝ) ^ ((n : ℝ) * s) := Real.rpow_nonneg (by norm_num) _
-  rw [hsplit, ← mul_assoc]
-  have hstep : (2 : ℝ) ^ ((d : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) * s) * (3 : ℝ) ^ (3 * s)
-      ≤ (2 : ℝ) ^ ((d : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) * s) * 27 :=
-    mul_le_mul_of_nonneg_left h27 (mul_nonneg h2 hbase)
-  calc (2 : ℝ) ^ ((d : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) * s) * (3 : ℝ) ^ (3 * s)
-      ≤ (2 : ℝ) ^ ((d : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) * s) * 27 := hstep
-    _ = (2 : ℝ) ^ ((d : ℝ) / 2) * 27 * (3 : ℝ) ^ ((n : ℝ) * s) := by ring
-
 /-! ## 5. The development's `Vec d`-valued carrier -/
 
 /-- The same estimate with the average written as CoarseGraining's
@@ -255,21 +218,6 @@ theorem eLpNorm_sub_volumeAverageVec_truncatedWindow_le
       ≤ ENNReal.ofReal ((2 : ℝ) ^ ((d : ℝ) / 2) * (3 : ℝ) ^ ((k : ℝ) * s))
           * normalizedGagliardoESeminormOn (truncatedWindow x m k) s f := by
   have hav := integral_normalizedVolumeMeasureOn_eq_volumeAverageVec hf
-  rw [← hav]
-  exact eLpNorm_sub_integral_truncatedWindow_le hx hkm hs hf
-
-/-- The scalar form, with the average written as CoarseGraining's `volumeAverage` —
-the literal left-hand side of the frozen theorem's `L̲²` leg. -/
-theorem eLpNorm_sub_volumeAverage_truncatedWindow_le
-    {x : Vec d} {m k : ℤ} {s : ℝ} {f : Vec d → ℝ}
-    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k ≤ m) (hs : 0 ≤ s)
-    (hf : Integrable f (volume.restrict (truncatedWindow x m k))) :
-    eLpNorm (fun y => f y - volumeAverage (truncatedWindow x m k) f) 2
-        (normalizedVolumeMeasureOn (truncatedWindow x m k))
-      ≤ ENNReal.ofReal ((2 : ℝ) ^ ((d : ℝ) / 2) * (3 : ℝ) ^ ((k : ℝ) * s))
-          * normalizedGagliardoESeminormOn (truncatedWindow x m k) s f := by
-  have hav := integral_normalizedVolumeMeasureOn_eq_volumeAverage
-    (truncatedWindow x m k) f
   rw [← hav]
   exact eLpNorm_sub_integral_truncatedWindow_le hx hkm hs hf
 

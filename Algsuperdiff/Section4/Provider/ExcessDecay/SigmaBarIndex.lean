@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.SigmaBarBudget
 import Algsuperdiff.Section4.Provider.GoodEvents.InductionState
@@ -52,18 +52,6 @@ variable {d : ℕ}
 
 /-! ## 1. Two arithmetic helpers -/
 
-/-- See the duplication disclosure. -/
-private theorem three_rpow_mono {x y : ℝ} (h : x ≤ y) :
-    (3 : ℝ) ^ x ≤ (3 : ℝ) ^ y :=
-  Real.rpow_le_rpow_of_exponent_le (by norm_num) h
-
-/-- The two-scale window ratio at the standing `γ ≤ 1/4`. -/
-private theorem three_rpow_four_gamma_le_three {gam : ℝ} (hgam : gam ≤ 1 / 4) :
-    (3 : ℝ) ^ (4 * gam) ≤ 3 := by
-  have h : (3 : ℝ) ^ (4 * gam) ≤ (3 : ℝ) ^ (1 : ℝ) :=
-    three_rpow_mono (by linarith only [hgam])
-  rwa [Real.rpow_one] at h
-
 /-- The regime bridge: the anchor prints `γ ≤ C^{-1} c⋆^{10}`, the induction
 state producer asks for `γ ≤ (C₀^{-1})^{10} c⋆^{10}`. -/
 private theorem regime_bridge {C0 gam c : ℝ} (h : gam ≤ (C0 ^ (10 : ℕ))⁻¹ * c) :
@@ -87,80 +75,6 @@ theorem inv_sigmaBar_add_two_le_of_inductionState (M : ABKModel d) {m0 : ℤ}
   rw [mul_assoc, mul_inv_cancel₀ (ne_of_gt hB), mul_one] at hstep
   exact hstep
 
-/-- **The converse reading.**  From the induction state at the landmark `n+2`:
-`σ̄_{n+2} ≤ 7 σ̄_n`, in inverse form.  The extra factor over the increasing
-direction is the window's own two-scale ratio `3^{4γ} ≤ 3`. -/
-theorem inv_sigmaBar_le_of_inductionState (M : ABKModel d) {m0 : ℤ}
-    {E : {E : ℝ // 1 ≤ E}} (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 E)
-    {n : ℤ} (hn : n + 2 ≤ m0) :
-    ((Annealed.sigmaBar M n : ℝ))⁻¹ ≤ 7 * ((Annealed.sigmaBar M (n + 2) : ℝ))⁻¹ := by
-  have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hg14 : M.gamma ≤ 1 / 4 := M.shellPrefix.gamma_le_quarter
-  have hA : (0 : ℝ) < (Annealed.sigmaBar M (n + 2) : ℝ) := (Annealed.sigmaBar M (n + 2)).2
-  have hB : (0 : ℝ) < (Annealed.sigmaBar M n : ℝ) := (Annealed.sigmaBar M n).2
-  have hlow := (hS.1 n (by linarith only [hn])).1
-  have hup := (hS.1 (n + 2) hn).2
-  have hcs0 : (0 : ℝ) ≤ Disorder.cstar M * M.gamma⁻¹ :=
-    mul_nonneg (Disorder.cstar_characterization M).1.le (inv_nonneg.2 hg0.le)
-  have hnu : (0 : ℝ) ≤ M.nu ^ 2 := sq_nonneg _
-  have h4g : (0 : ℝ) < (3 : ℝ) ^ (4 * M.gamma) := Real.rpow_pos_of_pos (by norm_num) _
-  have hshift : (3 : ℝ) ^ (2 * M.gamma * (((n + 2 : ℤ)) : ℝ)) =
-      (3 : ℝ) ^ (4 * M.gamma) * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)) := by
-    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    congr 1
-    push_cast
-    ring
-  have hone : (1 : ℝ) ≤ (3 : ℝ) ^ (4 * M.gamma) := by
-    have h := three_rpow_mono (x := (0 : ℝ)) (y := 4 * M.gamma)
-      (by linarith only [hg0])
-    rwa [Real.rpow_zero] at h
-  have hmax : max (Disorder.cstar M * M.gamma⁻¹ *
-        (3 : ℝ) ^ (2 * M.gamma * (((n + 2 : ℤ)) : ℝ))) (M.nu ^ 2)
-      ≤ (3 : ℝ) ^ (4 * M.gamma) *
-        max (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)))
-          (M.nu ^ 2) := by
-    refine max_le ?_ ?_
-    · rw [hshift]
-      have hle : Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)) ≤
-          max (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)))
-            (M.nu ^ 2) := le_max_left _ _
-      have := mul_le_mul_of_nonneg_left hle h4g.le
-      linarith only [this]
-    · have hle : M.nu ^ 2 ≤
-          max (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)))
-            (M.nu ^ 2) := le_max_right _ _
-      have h1 := mul_le_mul_of_nonneg_left hle h4g.le
-      have h2 := mul_le_mul_of_nonneg_right hone hnu
-      linarith only [h1, h2]
-  have hmaxnn : (0 : ℝ) ≤
-      max (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)))
-        (M.nu ^ 2) := le_trans hnu (le_max_right _ _)
-  have hthree := three_rpow_four_gamma_le_three hg14
-  have hmax3 : (3 : ℝ) ^ (4 * M.gamma) *
-      max (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)))
-        (M.nu ^ 2) ≤
-      3 * max (Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (2 * M.gamma * (n : ℝ)))
-        (M.nu ^ 2) := mul_le_mul_of_nonneg_right hthree hmaxnn
-  have hsq : (Annealed.sigmaBar M (n + 2) : ℝ) ^ 2 ≤
-      (7 * (Annealed.sigmaBar M n : ℝ)) ^ 2 := by
-    have hexpand : (7 * (Annealed.sigmaBar M n : ℝ)) ^ 2 =
-        49 * (Annealed.sigmaBar M n : ℝ) ^ 2 := by ring
-    have hBsq : (0 : ℝ) < (Annealed.sigmaBar M n : ℝ) ^ 2 := by positivity
-    rw [hexpand]
-    linarith only [hup, hlow, hmax, hmax3, hBsq]
-  have hle : (Annealed.sigmaBar M (n + 2) : ℝ) ≤ 7 * (Annealed.sigmaBar M n : ℝ) :=
-    le_of_pow_le_pow_left₀ (n := 2) (by norm_num) (by linarith only [hB]) hsq
-  have hratio : ((Annealed.sigmaBar M n : ℝ))⁻¹ *
-      (Annealed.sigmaBar M (n + 2) : ℝ) ≤ 7 := by
-    have hinvn : (0 : ℝ) ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ := (inv_pos.2 hB).le
-    calc ((Annealed.sigmaBar M n : ℝ))⁻¹ * (Annealed.sigmaBar M (n + 2) : ℝ)
-        ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ * (7 * (Annealed.sigmaBar M n : ℝ)) :=
-          mul_le_mul_of_nonneg_left hle hinvn
-      _ = 7 := by field_simp
-  have hstep := mul_le_mul_of_nonneg_right hratio (inv_nonneg.2 hA.le)
-  rw [mul_assoc, mul_inv_cancel₀ (ne_of_gt hA), mul_one] at hstep
-  exact hstep
-
 /-! ## 3. The binder-free exports -/
 
 /-- **The `σ̄` index conversion the anchor's force leg needs, binder-free.**
@@ -177,18 +91,6 @@ theorem exists_inv_sigmaBar_add_two_le (d : ℕ) :
   intro M hreg n
   obtain ⟨E, -, hall⟩ := hC M (regime_bridge hreg)
   exact inv_sigmaBar_add_two_le_of_inductionState M (E := E) (hall (n + 2)) le_rfl
-
-/-- **The converse conversion, binder-free**: `σ̄_n^{-1} ≤ 7 σ̄_{n+2}^{-1}`. -/
-theorem exists_inv_sigmaBar_le_add_two (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ M : ABKModel d, M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        ∀ n : ℤ, ((Annealed.sigmaBar M n : ℝ))⁻¹ ≤
-          7 * ((Annealed.sigmaBar M (n + 2) : ℝ))⁻¹ := by
-  obtain ⟨C0, hC0, hC⟩ := GoodEvents.exists_allScalesInductionState d
-  refine ⟨C0 ^ (10 : ℕ), by positivity, ?_⟩
-  intro M hreg n
-  obtain ⟨E, -, hall⟩ := hC M (regime_bridge hreg)
-  exact inv_sigmaBar_le_of_inductionState M (E := E) (hall (n + 2)) le_rfl
 
 end
 

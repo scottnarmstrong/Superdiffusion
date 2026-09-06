@@ -81,6 +81,20 @@ open Algsuperdiff.Section3.Provider.Diffusivity.RecurrenceIntegration
 
 noncomputable section
 
+private lemma gamma_sq_le_one_twenty_eighth {gamma : ℝ}
+    (hgamma : 0 < gamma) (hgamma128 : gamma ≤ 1 / 128) :
+    gamma ^ 2 ≤ gamma / 128 := by
+  calc
+    gamma ^ 2 = gamma * gamma := by rw [pow_two]
+    _ ≤ gamma * (1 / 128) := mul_le_mul_of_nonneg_left hgamma128 hgamma.le
+    _ = gamma / 128 := by ring
+
+private lemma plateau_final_chunk {c cp X : ℝ} (hcp : 0 < cp)
+    (hkey : 81 * c ^ 2 ≤ 243 / 2 * cp) (hX : 0 ≤ X) :
+    81 * c ^ 2 * X / (2 * cp) ≤ 243 / 4 * X := by
+  rw [div_le_iff₀ (mul_pos (by norm_num) hcp)]
+  nlinarith only [hkey, hX]
+
 /-! ## Scalar algebra
 
 The three lemmas of this section are pure real algebra: no `rpow`, `exp` or
@@ -112,11 +126,20 @@ private lemma plateau_pair_bounds
   -- dropping the factor `L ≥ 1` gives `c+ gn ≤ nu² gamma³ / 2`.
   have haux : 0 ≤ (L - 1) * (cstarPlus * gn) :=
     mul_nonneg (by linarith) (mul_pos hcp hgn).le
-  have hgnb : cstarPlus * gn ≤ nu ^ 2 * gamma ^ 3 / 2 := by nlinarith [hLgn, haux]
+  have hgnb : cstarPlus * gn ≤ nu ^ 2 * gamma ^ 3 / 2 := by
+    calc
+      cstarPlus * gn ≤ (cstarPlus * gn) * L :=
+        le_mul_of_one_le_right (mul_pos hcp hgn).le hL
+      _ = cstarPlus * (L * gn) := by ring
+      _ ≤ nu ^ 2 * gamma ^ 3 / 2 := hLgn
   have hgmb : cstarPlus * gm ≤ 81 * (nu ^ 2 * gamma ^ 3 / 2) := by
     have h1 : cstarPlus * gm ≤ cstarPlus * (81 * gn) :=
       mul_le_mul_of_nonneg_left hgmn hcp.le
-    nlinarith [h1, hgnb]
+    calc
+      cstarPlus * gm ≤ cstarPlus * (81 * gn) := h1
+      _ = 81 * (cstarPlus * gn) := by ring
+      _ ≤ 81 * (nu ^ 2 * gamma ^ 3 / 2) :=
+        mul_le_mul_of_nonneg_left hgnb (by norm_num)
   have hcoef : (0 : ℝ) ≤ (nu ^ 2)⁻¹ * gamma⁻¹ :=
     mul_nonneg (inv_nonneg.mpr hnu2.le) hginv.le
   refine ⟨?_, ?_, ?_⟩
@@ -134,7 +157,12 @@ private lemma plateau_pair_bounds
       rw [le_div_iff₀ (by positivity)]
       linarith [hLgn]
     have hkey : 81 * cstar ^ 2 ≤ 243 / 2 * cstarPlus := by
-      nlinarith [mul_le_mul hcstar32 hcc hcstar.le (by norm_num : (0 : ℝ) ≤ 3 / 2)]
+      have hmul := mul_le_mul hcstar32 hcc hcstar.le (by norm_num : (0 : ℝ) ≤ 3 / 2)
+      calc
+        81 * cstar ^ 2 = 81 * (cstar * cstar) := by rw [pow_two]
+        _ ≤ 81 * ((3 / 2) * cstarPlus) :=
+          mul_le_mul_of_nonneg_left hmul (by norm_num)
+        _ = 243 / 2 * cstarPlus := by ring
     calc cstar * L * d0 * gm
         ≤ cstar * L * (cstar * gamma⁻¹) * gm :=
           mul_le_mul_of_nonneg_right
@@ -151,8 +179,8 @@ private lemma plateau_pair_bounds
       _ = 81 * cstar ^ 2 * nu ^ 2 * gamma ^ 2 / (2 * cstarPlus) := by
           field_simp
       _ ≤ 243 / 4 * nu ^ 2 * gamma ^ 2 := by
-          rw [div_le_iff₀ (by positivity)]
-          nlinarith [hkey, mul_nonneg (sq_nonneg nu) (sq_nonneg gamma)]
+          simpa only [mul_assoc] using plateau_final_chunk hcp hkey
+            (mul_nonneg (sq_nonneg nu) (sq_nonneg gamma))
 
 /-- `e.assump.upper` on the plateau: the whole increment term is spare. -/
 private lemma upper_binder_of_plateau
@@ -160,13 +188,14 @@ private lemma upper_binder_of_plateau
     (hnu : 0 < nu) (hgamma : 0 < gamma) (hgamma128 : gamma ≤ 1 / 128) (hE : 1 ≤ E)
     (hx : x ≤ (1 + 81 * gamma ^ 2 / 2) * nu) (hy : nu ≤ y) (ht : 0 ≤ t) :
     x ≤ (1 + E * gamma) * y + t := by
-  have hsq : gamma ^ 2 ≤ gamma / 128 := by nlinarith
-  have hEg : gamma ≤ E * gamma := by nlinarith
+  have hsq : gamma ^ 2 ≤ gamma / 128 :=
+    gamma_sq_le_one_twenty_eighth hgamma hgamma128
+  have hEg : gamma ≤ E * gamma := le_mul_of_one_le_left hgamma.le hE
   have h1 : 81 * gamma ^ 2 / 2 ≤ E * gamma := by linarith
   have h2 : (1 + 81 * gamma ^ 2 / 2) * nu ≤ (1 + E * gamma) * nu :=
     mul_le_mul_of_nonneg_right (by linarith) hnu.le
   have h3 : (1 + E * gamma) * nu ≤ (1 + E * gamma) * y :=
-    mul_le_mul_of_nonneg_left hy (by nlinarith)
+    mul_le_mul_of_nonneg_left hy (add_nonneg zero_le_one (mul_nonneg (by linarith) hgamma.le))
   linarith
 
 /-- `e.assump.lower.modified` on the plateau: the subtracted `F`-term is not
@@ -179,20 +208,22 @@ private lemma lower_binder_of_plateau
     (1 - E * gamma) * y + a * x - t ≤ x := by
   have hxpos : 0 < x := lt_of_lt_of_le hnu hx
   have hEg0 : 0 ≤ E * gamma := mul_nonneg (by linarith) hgamma.le
-  have hsq : gamma ^ 2 ≤ gamma / 128 := by nlinarith
-  have hEg : gamma ≤ E * gamma := by nlinarith
+  have hsq : gamma ^ 2 ≤ gamma / 128 :=
+    gamma_sq_le_one_twenty_eighth hgamma hgamma128
+  have hEg : gamma ≤ E * gamma := le_mul_of_one_le_left hgamma.le hE
   have h1 : a * x ≤ 243 / 4 * gamma ^ 2 * x :=
     mul_le_mul_of_nonneg_right ha' hxpos.le
   have h2 : E * gamma * nu ≤ E * gamma * y := mul_le_mul_of_nonneg_left hynu hEg0
   have h3 : (1 - E * gamma) * y ≤ (1 + gamma ^ 2 / 2) * nu - E * gamma * nu := by
-    nlinarith [hy, h2]
+    linarith only [hy, h2]
   have h5 : 245 / 4 * gamma ^ 2 ≤ E * gamma := by linarith
-  have h6 : (0 : ℝ) ≤ 1 - 243 / 4 * gamma ^ 2 := by nlinarith
+  have h6 : (0 : ℝ) ≤ 1 - 243 / 4 * gamma ^ 2 := by
+    linarith only [hsq, hgamma128]
   have h7 : nu * (1 - 243 / 4 * gamma ^ 2) ≤ x * (1 - 243 / 4 * gamma ^ 2) :=
     mul_le_mul_of_nonneg_right hx h6
   have h8 : 0 ≤ nu * (E * gamma - 245 / 4 * gamma ^ 2) :=
     mul_nonneg hnu.le (by linarith)
-  nlinarith [h1, h3, h7, h8, ht]
+  nlinarith only [h1, h3, h7, h8, ht]
 
 /-! ## The two binders below the landmark -/
 
@@ -372,13 +403,16 @@ theorem integrate_approx_recurrence_of_landmark_floored
       mul_nonneg (inv_nonneg.mpr (sq_nonneg cstar)) hcp.le
     linarith
   have hTheta : (1 : ℝ) ≤ E * (1 + (cstar ^ 2)⁻¹ * F + (cstar ^ 2)⁻¹ * cstarPlus) := by
-    nlinarith [hE, hbracket]
+    exact one_le_mul_of_one_le_of_one_le hE hbracket
   have hprod : (128 : ℝ) ≤ recurrenceIntegrationConstant
       * (E * (1 + (cstar ^ 2)⁻¹ * F + (cstar ^ 2)⁻¹ * cstarPlus)) := by
     have hC : recurrenceIntegrationConstant = 320000000008 :=
       recurrenceIntegrationConstant_eq
-    rw [hC]
-    nlinarith [hTheta]
+    calc
+      (128 : ℝ) ≤ recurrenceIntegrationConstant := by rw [hC]; norm_num
+      _ ≤ recurrenceIntegrationConstant *
+          (E * (1 + (cstar ^ 2)⁻¹ * F + (cstar ^ 2)⁻¹ * cstarPlus)) :=
+        le_mul_of_one_le_right (by rw [hC]; norm_num) hTheta
   have hgamma128 : gamma ≤ 1 / 128 := by
     refine hthr.trans ?_
     have := inv_anti₀ (by norm_num : (0 : ℝ) < 128) hprod
@@ -391,7 +425,7 @@ theorem integrate_approx_recurrence_of_landmark_floored
     refine le_trans ?_ hmss
     refine Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) ?_
     have hnR : (n : ℝ) ≤ (mss : ℝ) := by exact_mod_cast hn
-    nlinarith [hgamma, hnR]
+    exact mul_le_mul_of_nonneg_left hnR (mul_nonneg (by norm_num) hgamma.le)
   have hupper' : ∀ n m : ℤ, m ≤ m0 → n ≤ m →
       (m : ℝ) ≤ (n : ℝ) + cstar * gamma⁻¹ →
       s m ≤ (1 + E * gamma) * s n +
@@ -430,7 +464,12 @@ theorem cstar_le_cstarPlus (M : ABKModel d) :
   have hd : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast M.shellPrefix.dimension
   have hpos : 0 < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hdim := Disorder.dim_mul_cstar_le_cstarPlus M
-  nlinarith [hdim, hpos, hd]
+  calc
+    Disorder.cstar M ≤ 2 * Disorder.cstar M :=
+      le_mul_of_one_le_left hpos.le (by norm_num)
+    _ ≤ (d : ℝ) * Disorder.cstar M :=
+      mul_le_mul_of_nonneg_right hd hpos.le
+    _ ≤ Disorder.cstarPlus M := hdim
 
 /-- **The seam, at the genuine carriers.**
 

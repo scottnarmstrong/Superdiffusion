@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionAssembly
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepWeylRepresentative
@@ -81,61 +81,7 @@ theorem exists_classicalCompetitor_reflectedWindow [NeZero d] (x : Vec d) (m k :
 
 /-! ## 2. Restriction to the branch's own window -/
 
-/-- The classical harmonicity on the doubled window restricts to the branch's own window — the
-shape the Schauder producer consumes. -/
-theorem harmonicOnNhd_truncatedWindow_of_classicalCompetitor {x : Vec d} {m k : ℤ}
-    {V : Vec d → ℝ}
-    (hV : HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m k)) :
-    HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' truncatedWindow x m k) :=
-  hV.mono (Set.image_mono (truncatedWindow_subset_reflectedWindow x m k))
-
 /-! ## 3. The one-met-face compositions -/
-
-/-- **The boundary competitor, upper met face.**  From a weakly harmonic competitor on the window
-`V = (x + □_k) ∩ □_m` which meets exactly the upper `i`-face of `∂□_m`, together with the `H¹`
-packaging of its odd extension, one obtains a globally square-integrable function which is
-*classically* harmonic on the whole doubled window — in particular on `V` itself. -/
-theorem exists_classicalCompetitor_reflectedWindow_of_meetsUpperFace [NeZero d] {x : Vec d}
-    {m k : ℤ} (hkm : k < m) {i : Fin d} (hup : MeetsUpperFace x m k i)
-    (hother : ∀ j, j ≠ i → ¬ MeetsUpperFace x m k j ∧ ¬ MeetsLowerFace x m k j)
-    (v : H1Function (truncatedWindow x m k))
-    (hv : IsWeaklyHarmonicOn (truncatedWindow x m k) v)
-    (w : H1Function (reflectedWindow x m k))
-    (hw : ∀ y, w.grad y = oddFaceExtendGrad ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-      (zeroExtendGrad (truncatedWindow x m k) v.grad) y) :
-    ∃ V : Vec d → ℝ,
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m k) ∧
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' truncatedWindow x m k) ∧
-      MemLp V 2 (volume : Measure (Vec d)) ∧
-      V =ᵐ[volume.restrict (reflectedWindow x m k)] w.toFun := by
-  obtain ⟨V, hVharm, hVmem, hVae⟩ := exists_classicalCompetitor_reflectedWindow x m k
-    (isWeaklyHarmonicOn_reflectedWindow_of_meetsUpperFace hkm hup hother v hv w hw)
-  exact ⟨V, hVharm, harmonicOnNhd_truncatedWindow_of_classicalCompetitor hVharm, hVmem, hVae⟩
-
-/-- **The boundary competitor, lower met face.**  The lower-face twin of
-`exists_classicalCompetitor_reflectedWindow_of_meetsUpperFace`. -/
-theorem exists_classicalCompetitor_reflectedWindow_of_meetsLowerFace [NeZero d] {x : Vec d}
-    {m k : ℤ} (hkm : k < m) {i : Fin d} (hlow : MeetsLowerFace x m k i)
-    (hother : ∀ j, j ≠ i → ¬ MeetsUpperFace x m k j ∧ ¬ MeetsLowerFace x m k j)
-    (v : H1Function (truncatedWindow x m k))
-    (hv : IsWeaklyHarmonicOn (truncatedWindow x m k) v)
-    (w : H1Function (reflectedWindow x m k))
-    (hw : ∀ y, w.grad y = oddFaceExtendGrad (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-      (zeroExtendGrad (truncatedWindow x m k) v.grad) y) :
-    ∃ V : Vec d → ℝ,
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m k) ∧
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' truncatedWindow x m k) ∧
-      MemLp V 2 (volume : Measure (Vec d)) ∧
-      V =ᵐ[volume.restrict (reflectedWindow x m k)] w.toFun := by
-  obtain ⟨V, hVharm, hVmem, hVae⟩ := exists_classicalCompetitor_reflectedWindow x m k
-    (isWeaklyHarmonicOn_reflectedWindow_of_meetsLowerFace hkm hlow hother v hv w hw)
-  exact ⟨V, hVharm, harmonicOnNhd_truncatedWindow_of_classicalCompetitor hVharm, hVmem, hVae⟩
 
 end
 

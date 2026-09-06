@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section4.GoodEvents
 import Algsuperdiff.Section4.Provider.GoodEvents.Translate
@@ -12,21 +12,12 @@ import Algsuperdiff.Section4.Provider.GoodEvents.Translate
 `Algsuperdiff.Frozen.Section4.goodEventAt` (`d.good.event.for.lambda`) is a
 *final frozen definition*: the translated good event is the
 `Cutoff.translateCutoffSample y` preimage of the Section 4 support layer's
-`goodEventBase`.  This module supplies the four things every Section 4 lane
-does with it:
+`goodEventBase`.  This module supplies the operations on it used below:
 
-* **read it** — `mem_goodEventAt_iff`, the three-component membership
-  characterization obtained by composing the support layer's
-  `mem_goodEventBase_iff` with the translate preimage;
 * **measure it** — `measurableSet_goodEventAt`;
 * **compare two of them** — monotonicity in the coarse-ellipticity constant
   `Ccg` and in the threshold `ε` (and hence in the `𝒢₁` threshold
-  `s ε c⋆^{1/2} γ^{-1/2}`, which is increasing in `ε`), plus the three
-  component projections;
-
-The last item is the input of every lattice maximum in §4.1--§4.2: the union
-bound over `z ∈ 3^j ℤ^d ∩ S` needs each summand's mass to be the mass at the
-origin.
+  `s ε c⋆^{1/2} γ^{-1/2}`, which is increasing in `ε`).
 
 ## What is *not* here
 
@@ -62,14 +53,6 @@ once. -/
 def goodEventThreshold (M : ABKModel d) (s : {s : ℝ // 0 < s}) (ep : ℝ) : ℝ :=
   (s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹
 
-theorem goodEventBase_eq (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    Support.goodEventBase M Ccg m s ep =
-      (Support.eventG0 M Ccg m ∩
-          Support.eventG1 M m (s : ℝ) (goodEventThreshold M s ep)) ∩
-        Support.eventG2 M m s ep :=
-  rfl
-
 /-- The threshold is nonnegative as soon as the printed `ε` is. -/
 theorem goodEventThreshold_nonneg (M : ABKModel d) (s : {s : ℝ // 0 < s})
     {ep : ℝ} (hep : 0 ≤ ep) : 0 ≤ goodEventThreshold M s ep :=
@@ -95,27 +78,6 @@ theorem goodEventAt_eq_preimage (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec 
       Cutoff.translateCutoffSample y ⁻¹' Support.goodEventBase M Ccg m s ep :=
   rfl
 
-/-- Membership in the translated event is membership of the translated sample in
-the untranslated event. -/
-theorem mem_goodEventAt_iff_mem_goodEventBase (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (y : Vec d) (s : {s : ℝ // 0 < s}) (ep : ℝ) (omega : Cutoff.CutoffSample d) :
-    omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep ↔
-      Cutoff.translateCutoffSample y omega ∈ Support.goodEventBase M Ccg m s ep :=
-  Iff.rfl
-
-/-- **The membership characterization.**  The support layer's
-`mem_goodEventBase_iff` composed with the translate preimage: `ω` lies in
-`𝒢(m, y; s, ε)` exactly when the translated sample lies in each of `𝒢₀(m)`,
-`𝒢₁(m; s, s ε √c⋆ (√γ)⁻¹)` and `𝒢₂(m; s, ε)`. -/
-theorem mem_goodEventAt_iff (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) (omega : Cutoff.CutoffSample d) :
-    omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep ↔
-      (Cutoff.translateCutoffSample y omega ∈ Support.eventG0 M Ccg m ∧
-          Cutoff.translateCutoffSample y omega ∈
-            Support.eventG1 M m (s : ℝ) (goodEventThreshold M s ep)) ∧
-        Cutoff.translateCutoffSample y omega ∈ Support.eventG2 M m s ep :=
-  Support.mem_goodEventBase_iff M Ccg m s ep (Cutoff.translateCutoffSample y omega)
-
 /-- **The translated event is measurable.**  The support layer's measurability
 transported through the proved measurability of `translateCutoffSample`. -/
 theorem measurableSet_goodEventAt (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
@@ -123,39 +85,6 @@ theorem measurableSet_goodEventAt (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Ve
     MeasurableSet (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep) :=
   (Support.measurableSet_goodEventBase M Ccg m s ep).preimage
     (Cutoff.measurable_translateCutoffSample y)
-
-/-! ## 3. The component decomposition -/
-
-/-- The translated event is the intersection of the three translated
-components. -/
-theorem goodEventAt_eq_inter (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep =
-      (Cutoff.translateCutoffSample y ⁻¹' Support.eventG0 M Ccg m ∩
-          Cutoff.translateCutoffSample y ⁻¹'
-            Support.eventG1 M m (s : ℝ) (goodEventThreshold M s ep)) ∩
-        Cutoff.translateCutoffSample y ⁻¹' Support.eventG2 M m s ep := by
-  rw [goodEventAt_eq_preimage, goodEventBase_eq, Set.preimage_inter,
-    Set.preimage_inter]
-
-theorem goodEventAt_subset_eventG0 (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep ⊆
-      Cutoff.translateCutoffSample y ⁻¹' Support.eventG0 M Ccg m :=
-  Set.preimage_mono (Support.goodEventBase_subset_eventG0 M Ccg m s ep)
-
-theorem goodEventAt_subset_eventG1 (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep ⊆
-      Cutoff.translateCutoffSample y ⁻¹'
-        Support.eventG1 M m (s : ℝ) (goodEventThreshold M s ep) :=
-  Set.preimage_mono (Support.goodEventBase_subset_eventG1 M Ccg m s ep)
-
-theorem goodEventAt_subset_eventG2 (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep ⊆
-      Cutoff.translateCutoffSample y ⁻¹' Support.eventG2 M m s ep :=
-  Set.preimage_mono (Support.goodEventBase_subset_eventG2 M Ccg m s ep)
 
 /-! ## 4. Monotonicity in the two displayed parameters -/
 
@@ -181,15 +110,6 @@ theorem goodEventAt_subset_of_le (M : ABKModel d) (m : ℤ) (y : Vec d)
       Algsuperdiff.Frozen.Section4.goodEventAt M Ccg' m y s ep' :=
   Set.preimage_mono (goodEventBase_subset_of_le M m s hC hep heple)
 
-/-- Monotonicity in `C_{(e.cg.ellip.lower)}` alone. -/
-theorem goodEventAt_mono_Ccg (M : ABKModel d) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) {Ccg Ccg' : ℝ} (hC : Ccg ≤ Ccg') :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep ⊆
-      Algsuperdiff.Frozen.Section4.goodEventAt M Ccg' m y s ep :=
-  Set.preimage_mono
-    (Set.inter_subset_inter_left _
-      (Set.inter_subset_inter_left _ (Support.eventG0_subset_of_le M m hC)))
-
 /-- Monotonicity in the threshold `ε` alone. -/
 theorem goodEventAt_mono_ep (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
     (s : {s : ℝ // 0 < s}) {ep ep' : ℝ} (hep : 0 ≤ ep) (heple : ep ≤ ep') :
@@ -205,70 +125,6 @@ theorem goodEventAt_zero (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
     Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (0 : Vec d) s ep =
       Support.goodEventBase M Ccg m s ep :=
   preimage_translateCutoffSample_zero _
-
-/-- Translating the translated event adds the vectors. -/
-theorem preimage_translateCutoffSample_goodEventAt (M : ABKModel d) (Ccg : ℝ)
-    (m : ℤ) (y z : Vec d) (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    Cutoff.translateCutoffSample z ⁻¹'
-        Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep =
-      Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (y + z) s ep :=
-  preimage_translateCutoffSample_preimage z y _
-
-/-! ## 6. The per-`z` transfer of the probability
-
-The lattice maxima of §4.1--§4.2 are unions over `z ∈ 3^j ℤ^d ∩ S`; a union
-bound needs each term's mass at the origin.  The proved real-translation
-invariance of `cutoffSampleLaw` supplies it without any lattice hypothesis. -/
-
-/-- **The good event has the same probability at every centre.** -/
-theorem measure_goodEventAt (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep) =
-      (Cutoff.cutoffSampleLaw M).toMeasure (Support.goodEventBase M Ccg m s ep) :=
-  measure_preimage_translateCutoffSample M y
-    (Support.measurableSet_goodEventBase M Ccg m s ep)
-
-/-- **`P[𝒢(m, y; s, ε)] = P[𝒢(m, 0; s, ε)]`** — the per-`z` tail transfer every
-lattice maximum consumes. -/
-theorem measure_goodEventAt_eq_measure_goodEventAt_zero (M : ABKModel d)
-    (Ccg : ℝ) (m : ℤ) (y : Vec d) (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep) =
-      (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (0 : Vec d) s ep) := by
-  rw [measure_goodEventAt, goodEventAt_zero]
-
-/-- The complementary form: the *bad* event has the same probability at every
-centre.  This is the shape a union bound over a lattice consumes. -/
-theorem measure_compl_goodEventAt (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (y : Vec d)
-    (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep)ᶜ =
-      (Cutoff.cutoffSampleLaw M).toMeasure
-        (Support.goodEventBase M Ccg m s ep)ᶜ :=
-  measure_compl_preimage_translateCutoffSample M y
-    (Support.measurableSet_goodEventBase M Ccg m s ep)
-
-/-- The complementary transfer, stated between two centres. -/
-theorem measure_compl_goodEventAt_eq_zero (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (y : Vec d) (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m y s ep)ᶜ =
-      (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (0 : Vec d) s ep)ᶜ := by
-  rw [measure_compl_goodEventAt, goodEventAt_zero]
-
-/-- The transfer read at the triadic lattice points that index the maxima of
-`d.good.event.for.lambda` (`Support.latticeCubeSet` / `latticeAnnulusSet`). -/
-theorem measure_goodEventAt_triadicLatticePoint (M : ABKModel d) (Ccg : ℝ)
-    (m j : ℤ) (v : Fin d → ℤ) (s : {s : ℝ // 0 < s}) (ep : ℝ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m
-          (Support.triadicLatticePoint j v) s ep) =
-      (Cutoff.cutoffSampleLaw M).toMeasure
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg m (0 : Vec d) s ep) :=
-  measure_goodEventAt_eq_measure_goodEventAt_zero M Ccg m _ s ep
 
 end
 

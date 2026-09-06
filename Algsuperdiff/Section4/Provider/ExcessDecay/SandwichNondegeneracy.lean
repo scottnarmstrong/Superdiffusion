@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CubeMoments
 
@@ -90,7 +90,8 @@ theorem ndConst_mono {θ θ' : ℝ} (hθ : 0 < θ) (hle : θ ≤ θ') :
     Real.sqrt_le_sqrt (pow_le_pow_left₀ hθ.le hle d)
   have hs0 : 0 ≤ Real.sqrt (θ ^ d) := Real.sqrt_nonneg _
   rw [ndConst, ndConst]
-  gcongr
+  exact div_le_div_of_nonneg_right
+    (mul_le_mul hs hle hθ.le (Real.sqrt_nonneg _)) (by positivity)
 
 /-- `oscConst` is antitone in the aspect ratio. -/
 theorem oscConst_anti {θ θ' : ℝ} (hθ : 0 < θ) (hle : θ ≤ θ') :
@@ -101,7 +102,10 @@ theorem oscConst_anti {θ θ' : ℝ} (hθ : 0 < θ) (hle : θ ≤ θ') :
     Real.sqrt_le_sqrt (pow_le_pow_left₀ hθ.le hle d)
   have hs0 : 0 < Real.sqrt (θ ^ d) := Real.sqrt_pos.2 (pow_pos hθ d)
   rw [oscConst, oscConst]
-  gcongr
+  exact div_le_div_of_nonneg_left zero_le_one
+    (mul_pos (mul_pos hs0 hθ) (by positivity))
+    (mul_le_mul_of_nonneg_right (mul_le_mul hs hle hθ.le (Real.sqrt_nonneg _))
+      (by positivity))
 
 /-! ### Volume bookkeeping for a sandwich -/
 
@@ -171,8 +175,8 @@ theorem sqrt_volume_ratio_inner_le {W : Set (Vec d)} {zin zout : Vec d} {Lin Lou
   have hb : (0 : ℝ) < Lin ^ d := pow_pos hLin d
   have hle : (volume W).toReal / (volume (axisCube zin Lin)).toReal ≤ ((Lin / Lout) ^ d)⁻¹ := by
     rw [volume_axisCube_toReal zin hLin.le, div_pow, inv_div]
-    gcongr
-    exact volume_toReal_le_pow_of_sandwich hLout.le hout
+    exact div_le_div_of_nonneg_right
+      (volume_toReal_le_pow_of_sandwich hLout.le hout) hb.le
   calc Real.sqrt ((volume W).toReal / (volume (axisCube zin Lin)).toReal)
       ≤ Real.sqrt (((Lin / Lout) ^ d)⁻¹) := Real.sqrt_le_sqrt hle
     _ = (Real.sqrt ((Lin / Lout) ^ d))⁻¹ := Real.sqrt_inv _
@@ -188,8 +192,8 @@ private theorem sqrt_ratio_outer_le {W : Set (Vec d)} {zin zout : Vec d} {Lin Lo
   have hle : (volume (axisCube zout Lout)).toReal / (volume W).toReal
       ≤ ((Lin / Lout) ^ d)⁻¹ := by
     rw [volume_axisCube_toReal zout hLout.le, div_pow, inv_div]
-    gcongr
-    exact pow_le_volume_toReal_of_sandwich hLin.le hin hout
+    exact div_le_div_of_nonneg_left hout0 hb
+      (pow_le_volume_toReal_of_sandwich hLin.le hin hout)
   calc Real.sqrt ((volume (axisCube zout Lout)).toReal / (volume W).toReal)
       ≤ Real.sqrt (((Lin / Lout) ^ d)⁻¹) := Real.sqrt_le_sqrt hle
     _ = (Real.sqrt ((Lin / Lout) ^ d))⁻¹ := Real.sqrt_inv _
@@ -401,29 +405,6 @@ theorem triadic_aspect (j : ℤ) : (1 / 9 : ℝ) * (3 : ℝ) ^ j = (3 : ℝ) ^ (
   rw [zpow_sub₀ (by norm_num : (3 : ℝ) ≠ 0)]
   rw [show ((3 : ℝ) ^ (2 : ℤ)) = 9 by norm_num]
   ring
-
-private theorem sqrt_one_ninth_pow (d : ℕ) :
-    Real.sqrt ((1 / 9 : ℝ) ^ d) = (1 / 3 : ℝ) ^ d := by
-  have h : ((1 / 3 : ℝ) ^ d) ^ 2 = (1 / 9 : ℝ) ^ d := by
-    rw [← pow_mul, mul_comm, pow_mul]
-    norm_num
-  rw [← h, Real.sqrt_sq (by positivity)]
-
-/-- The explicit triadic nondegeneracy constant: `c₀ = 3^{-d}/9/(2√3) = 3^{-d-2}/(2√3)`. -/
-theorem ndConst_one_ninth (d : ℕ) :
-    ndConst d (1 / 9 : ℝ) = (1 / 3 : ℝ) ^ d / 9 / (2 * Real.sqrt 3) := by
-  rw [ndConst, sqrt_one_ninth_pow]
-  ring
-
-/-- The explicit triadic diameter constant: `K = 3^d · 9/(2√3) = 3^{d+2}/(2√3)`. -/
-theorem oscConst_one_ninth (d : ℕ) :
-    oscConst d (1 / 9 : ℝ) = (3 : ℝ) ^ d * 9 / (2 * Real.sqrt 3) := by
-  have h3 : Real.sqrt 3 ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (by norm_num))
-  have hp : ((1 : ℝ) / 3) ^ d ≠ 0 := by positivity
-  rw [oscConst, sqrt_one_ninth_pow]
-  field_simp
-  rw [← mul_pow]
-  norm_num
 
 end
 

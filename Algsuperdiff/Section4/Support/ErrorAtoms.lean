@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Annealed.RunningDiffusivity.Definition
 import Algsuperdiff.Section3.Observable.CutoffHomogenizationErrorRaw
@@ -50,8 +50,8 @@ moved cube is asserted here; that is provider content.
 * `annularErrorAtom` — the `𝒢₂` atom `𝓔_{s,2,2}(□_n; a_{n−2}, σ̄_{n−2} Id)`.
 * `fluxIncrementAverage` — the constant matrix `(k_L − k_m)_Q`.
 * `fluxCorrectedCoeffOn` — the coefficient `a_L − (k_L − k_m)_Q` on `Q`.
-* `fluxCorrectedError`, `fluxCorrectedErrorSup` — the `(∞,2)` functional of
-  the flux-corrected coefficient and its `L ≥ m` supremum in `[0,∞]`.
+* `fluxCorrectedError` — the `(∞,2)` functional of the flux-corrected
+  coefficient, in `[0,∞]`.
 
 ## Measurability
 
@@ -126,15 +126,6 @@ noncomputable def homogenizationErrorAtScale22 [NeZero d]
     s (.finite 2) (.finite 2) (unitRescaledCoeffOn m a)
     (isotropicComparatorMatrix sigma)
 
-theorem homogenizationErrorAtScale22_def [NeZero d]
-    (m : ℤ) (s : ℝ) (a : CoeffOn (cubeDomain (originCube d m)))
-    (sigma : PositiveScalar) :
-    homogenizationErrorAtScale22 m s a sigma =
-      Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
-        s (.finite 2) (.finite 2) (unitRescaledCoeffOn m a)
-        (isotropicComparatorMatrix sigma) :=
-  rfl
-
 /-- Characterization by the manuscript's literal `𝓔_{s,2,2}` on `□_m`, with
 the scalar gauge `σ Id` exhibited.  This mirrors
 `Observable.homogenizationErrorAtScale_characterization` at the new
@@ -203,16 +194,6 @@ noncomputable def cutoffHomogenizationErrorRaw22 [NeZero d]
       (originCube d domainScale))
     sigma
 
-theorem cutoffHomogenizationErrorRaw22_def [NeZero d]
-    (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    cutoffHomogenizationErrorRaw22 M coefficientScale domainScale s sigma omega =
-      homogenizationErrorAtScale22 domainScale s
-        (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
-          (originCube d domainScale))
-        sigma :=
-  rfl
-
 /-- The raw `(2,2)` cutoff expression is exactly the manuscript's
 homogenization error on the genuine compatible cutoff family. -/
 theorem cutoffHomogenizationErrorRaw22_characterization [NeZero d]
@@ -252,11 +233,6 @@ theorem annularErrorAtom_def [NeZero d]
     annularErrorAtom M n s omega =
       cutoffHomogenizationErrorRaw22 M (n - 2) n s (Annealed.sigmaBar M (n - 2)) omega :=
   rfl
-
-theorem annularErrorAtom_nonneg [NeZero d]
-    (M : ABKModel d) (n : ℤ) {s : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
-    0 ≤ annularErrorAtom M n s omega :=
-  cutoffHomogenizationErrorRaw22_nonneg M (n - 2) n hs (Annealed.sigmaBar M (n - 2)) omega
 
 /-! ## The cube-averaged flux increment `(k_L − k_m)_Q` -/
 
@@ -533,60 +509,11 @@ noncomputable def fluxCorrectedError [NeZero d] (M : ABKModel d) (L k : ℤ) (s 
   homogenizationErrorAtScale k s
     (fluxCorrectedCoeffOn M L k (originCube d k) omega) (Annealed.sigmaBar M k)
 
-theorem fluxCorrectedError_def [NeZero d] (M : ABKModel d) (L k : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) :
-    fluxCorrectedError M L k s omega =
-      homogenizationErrorAtScale k s
-        (fluxCorrectedCoeffOn M L k (originCube d k) omega) (Annealed.sigmaBar M k) :=
-  rfl
-
 theorem fluxCorrectedError_nonneg [NeZero d] (M : ABKModel d) (L k : ℤ) {s : ℝ}
     (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
     0 ≤ fluxCorrectedError M L k s omega :=
   homogenizationErrorAtScale_nonneg k hs
     (fluxCorrectedCoeffOn M L k (originCube d k) omega) (Annealed.sigmaBar M k)
-
-/-- The core of the left-hand side of `e.mathcalE.annular.decomp`: the genuine
-`ℤ`-indexed supremum `sup_{L ≥ m}` of the flux-corrected error, taken in `[0,∞]`
-so that no convergence side condition enters the event. -/
-noncomputable def fluxCorrectedErrorSup [NeZero d] (M : ABKModel d) (m : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) : ℝ≥0∞ :=
-  ⨆ L : {L : ℤ // m ≤ L}, ENNReal.ofReal (fluxCorrectedError M L.1 m s omega)
-
-theorem fluxCorrectedErrorSup_def [NeZero d] (M : ABKModel d) (m : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) :
-    fluxCorrectedErrorSup M m s omega =
-      ⨆ L : {L : ℤ // m ≤ L}, ENNReal.ofReal (fluxCorrectedError M L.1 m s omega) :=
-  rfl
-
-theorem le_fluxCorrectedErrorSup [NeZero d] (M : ABKModel d) (m : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) {L : ℤ} (hL : m ≤ L) :
-    ENNReal.ofReal (fluxCorrectedError M L m s omega) ≤
-      fluxCorrectedErrorSup M m s omega :=
-  le_iSup
-    (fun L : {L : ℤ // m ≤ L} => ENNReal.ofReal (fluxCorrectedError M L.1 m s omega))
-    ⟨L, hL⟩
-
-theorem fluxCorrectedErrorSup_le [NeZero d] (M : ABKModel d) (m : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) {t : ℝ≥0∞}
-    (h : ∀ L : ℤ, m ≤ L → ENNReal.ofReal (fluxCorrectedError M L m s omega) ≤ t) :
-    fluxCorrectedErrorSup M m s omega ≤ t :=
-  iSup_le fun L => h L.1 L.2
-
-/-- The squared sibling of `fluxCorrectedErrorSup`: the genuine `ℤ`-indexed
-supremum `sup_{L ≥ m}` of the *squared* flux-corrected error.  This is the
-left-hand side of the main display of `e.mathcalE.annular.decomp` read
-literally — the square sits inside the supremum, exactly as printed. -/
-noncomputable def fluxCorrectedErrorSqSup [NeZero d] (M : ABKModel d) (m : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) : ℝ≥0∞ :=
-  ⨆ L : {L : ℤ // m ≤ L}, ENNReal.ofReal (fluxCorrectedError M L.1 m s omega ^ 2)
-
-theorem fluxCorrectedErrorSqSup_def [NeZero d] (M : ABKModel d) (m : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) :
-    fluxCorrectedErrorSqSup M m s omega =
-      ⨆ L : {L : ℤ // m ≤ L},
-        ENNReal.ofReal (fluxCorrectedError M L.1 m s omega ^ 2) :=
-  rfl
 
 end
 

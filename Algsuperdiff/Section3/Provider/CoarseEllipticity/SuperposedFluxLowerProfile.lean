@@ -27,11 +27,27 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem sq_le_one_of_nonneg_of_le_one {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
+    x ^ 2 ≤ 1 := by
+  simpa only [pow_two, mul_one] using mul_self_le_mul_self hx0 hx1
+
+private theorem sharp_good_exponent_chunk {g p q s : ℝ}
+    (hg : g ≤ 1 / 20) (hp : g * p ≤ s / 16) (hq : g * q ≤ s / 2)
+    (hs : 0 ≤ s) :
+    3 * g * (p + 1) + 3 * g * q ≤ 2 * s + 2 := by
+  calc
+    3 * g * (p + 1) + 3 * g * q = 3 * (g * p + g) + 3 * (g * q) := by ring
+    _ ≤ 3 * (s / 16 + 1 / 20) + 3 * (s / 2) := by
+      exact add_le_add
+        (mul_le_mul_of_nonneg_left (add_le_add hp hg) (by norm_num))
+        (mul_le_mul_of_nonneg_left hq (by norm_num))
+    _ ≤ 2 * s + 2 := by linarith only [hs]
+
 private theorem inv_sq_le_one_of_one_le {E : ℝ} (hE : 1 ≤ E) :
     E⁻¹ ^ 2 ≤ 1 := by
   have h0 : 0 ≤ E⁻¹ := (inv_pos.mpr (lt_of_lt_of_le zero_lt_one hE)).le
   have h1 : E⁻¹ ≤ 1 := inv_le_one_of_one_le₀ hE
-  nlinarith
+  exact sq_le_one_of_nonneg_of_le_one h0 h1
 
 private theorem gamma_mul_superposedFluxRate (M : ABKModel d) (E : ℝ) :
     M.gamma * superposedFluxRate M E = siteRateBase d / 2 * E⁻¹ ^ 2 := by
@@ -65,7 +81,12 @@ private theorem sharp_good_power_le (M : ABKModel d) {E : ℝ}
   have hkp' : M.gamma * (kp : ℝ) ≤ siteRateBase d / 16 := by
     have hmul := mul_le_mul_of_nonneg_left hkp hg0
     have hrate := gamma_mul_superposedFluxRate_le M hE
-    nlinarith
+    calc
+      M.gamma * (kp : ℝ) ≤ M.gamma * (superposedFluxRate M E / 8) := hmul
+      _ = (M.gamma * superposedFluxRate M E) / 8 := by ring
+      _ ≤ (siteRateBase d / 2) / 8 :=
+        div_le_div_of_nonneg_right hrate (by norm_num)
+      _ = siteRateBase d / 16 := by ring
   have hk₀' : M.gamma * (k₀ : ℝ) ≤ siteRateBase d / 2 :=
     (mul_le_mul_of_nonneg_left hk₀ hg0).trans
       (gamma_mul_superposedFluxRate_le M hE)
@@ -74,7 +95,13 @@ private theorem sharp_good_power_le (M : ABKModel d) {E : ℝ}
       M.gamma * (k : ℝ) + 3 * M.gamma * ((kp : ℝ) + 1) +
           3 * M.gamma * (k₀ : ℝ) ≤
         M.gamma * (k : ℝ) + (2 * siteRateBase d + 2) := by
-    nlinarith
+    calc
+      M.gamma * (k : ℝ) + 3 * M.gamma * ((kp : ℝ) + 1) +
+          3 * M.gamma * (k₀ : ℝ) =
+        M.gamma * (k : ℝ) +
+          (3 * M.gamma * ((kp : ℝ) + 1) + 3 * M.gamma * (k₀ : ℝ)) := by ring
+      _ ≤ M.gamma * (k : ℝ) + (2 * siteRateBase d + 2) :=
+        add_le_add_right (sharp_good_exponent_chunk hgamma20 hkp' hk₀' hsite0) _
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
     ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
     ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
@@ -94,7 +121,7 @@ private theorem sharp_collar_power_le (M : ABKModel d) {E beta : ℝ}
   have hsite0 : 0 ≤ siteRateBase d := (siteRateBase_pos d).le
   have hexp : M.gamma * (k : ℝ) + 2 * beta + 3 * M.gamma * (k₀ : ℝ) ≤
       M.gamma * (k : ℝ) + (2 * siteRateBase d + 2) := by
-    nlinarith
+    linarith only [hbeta9, hk₀', hsite0]
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
     ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
     ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
@@ -227,7 +254,7 @@ theorem superposedFluxSharpRare_le_exp_rate (M : ABKModel d)
       _ = (3 / 64 : ℝ) * bfaProfileB := by ring
   have hbeta : superposedFluxRateBeta M ≤ (35 / 32 : ℝ) * bfaProfileB := by
     unfold superposedFluxRateBeta
-    nlinarith
+    linarith only [hgammaB]
   have hbeta0 : 0 ≤ superposedFluxRateBeta M := by
     unfold superposedFluxRateBeta
     exact add_nonneg bfaProfileB_pos.le
@@ -259,7 +286,7 @@ theorem superposedFluxSharpRare_le_exp_rate (M : ABKModel d)
         superposedFluxRate M E / 576 := by
     have hmulDepth := mul_le_mul hcoef hk₀ (Nat.cast_nonneg _)
       (by norm_num : (0 : ℝ) ≤ 1 / 576)
-    nlinarith
+    simpa only [div_eq_mul_inv, one_mul, mul_assoc, mul_comm, mul_left_comm] using hmulDepth
   have hrareFloor : superposedFluxRate M E / 8 - 1 ≤
       (superposedFluxRareDepth M E : ℝ) := by
     linarith
@@ -268,7 +295,7 @@ theorem superposedFluxSharpRare_le_exp_rate (M : ABKModel d)
           (superposedFluxPrimaryDepth M E : ℝ) * Real.log 3 -
           (superposedFluxRareDepth M E : ℝ) / 36 ≤
         1 / 36 - superposedFluxRate M E / 576 := by
-    nlinarith
+    linarith only [hprimary, hrareFloor]
   have hrateEq : superposedFluxRate M E / 576 =
       superposedFluxSharpRareRate d * (E⁻¹ ^ 2 * M.gamma⁻¹) := by
     unfold superposedFluxRate superposedFluxSharpRareRate
@@ -278,7 +305,7 @@ theorem superposedFluxSharpRare_le_exp_rate (M : ABKModel d)
     ← Real.exp_add]
   apply Real.exp_le_exp.mpr
   rw [← hrateEq]
-  nlinarith
+  linarith only [hexponent]
 
 /-! ## Uniform constants on the fixed B parameter window -/
 
@@ -300,7 +327,12 @@ private theorem hsepTailConst_le_profile {sigma : ℝ}
         (1 - sigma) * bfaProfileB * Real.log 3 := by
     have hbLog : 0 ≤ bfaProfileB * Real.log 3 :=
       mul_nonneg bfaProfileB_pos.le (lt_trans zero_lt_one one_lt_log_three).le
-    nlinarith
+    calc
+      (1 - (1 / 8 : ℝ)) * bfaProfileB * Real.log 3 =
+          (1 - (1 / 8 : ℝ)) * (bfaProfileB * Real.log 3) := by ring
+      _ ≤ (1 - sigma) * (bfaProfileB * Real.log 3) :=
+        mul_le_mul_of_nonneg_right (sub_le_sub_left hsigma 1) hbLog
+      _ = (1 - sigma) * bfaProfileB * Real.log 3 := by ring
   have hleftPos : 0 < 1 - Real.exp
       (-((1 - (1 / 8 : ℝ)) * bfaProfileB * Real.log 3)) := by
     rw [sub_pos, Real.exp_lt_one_iff]
@@ -359,7 +391,7 @@ theorem gammaTriangleConst_le_superposedFluxTriangleConst {tau : ℝ}
     gammaTriangleConst tau ≤ superposedFluxTriangleConst := by
   have htau0 : 0 < tau := lt_of_lt_of_le (by norm_num) htau
   have hinv : tau⁻¹ ≤ (4 : ℝ) :=
-    (inv_le_iff_one_le_mul₀ htau0).2 (by nlinarith)
+    (inv_le_iff_one_le_mul₀ htau0).2 (by linarith only [htau])
   have hinv0 : 0 ≤ tau⁻¹ := (inv_pos.mpr htau0).le
   have hbase : 1 + tau⁻¹ ≤ (5 : ℝ) := by linarith
   have hp1 : (1 + tau⁻¹) ^ tau⁻¹ ≤ (5 : ℝ) ^ tau⁻¹ :=
@@ -391,7 +423,12 @@ theorem one_fourth_le_bfaTau_of_eighth_window {sigma gam b : ℝ}
   have hp0 : 0 < bfaPower gam b := bfaPower_pos hgam hb
   have hp3 : bfaPower gam b ≤ 3 := bfaPower_le_three hb hgamb
   rw [bfaTau, le_div_iff₀ hp0]
-  nlinarith
+  calc
+    1 / 4 * bfaPower gam b ≤ 1 / 4 * 3 :=
+      mul_le_mul_of_nonneg_left hp3 (by norm_num)
+    _ = 3 / 4 := by norm_num
+    _ ≤ 3 / 4 + sigma := le_add_of_nonneg_right hsigma0.le
+    _ ≤ 1 - sigma := by linarith only [hsigma]
 
 theorem gammaProductConst_le_sixteen_of_eighth_window {sigma gam b : ℝ}
     (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 8)
@@ -403,7 +440,7 @@ theorem gammaProductConst_le_sixteen_of_eighth_window {sigma gam b : ℝ}
   have htau : 1 / 4 ≤ bfaTau sigma gam b :=
     one_fourth_le_bfaTau_of_eighth_window hsigma0 hsigma hgam hb hgamb
   have hinv : (bfaTau sigma gam b)⁻¹ ≤ (4 : ℝ) :=
-    (inv_le_iff_one_le_mul₀ htau0).2 (by nlinarith)
+    (inv_le_iff_one_le_mul₀ htau0).2 (by linarith only [htau])
   change (2 : ℝ) ^
       (((1 - sigma) * bfaSigmaTwo sigma gam b /
         ((1 - sigma) + bfaSigmaTwo sigma gam b))⁻¹) ≤ 16
@@ -422,7 +459,7 @@ theorem hsepAmplitude_rpow_bfaPower_le_profile_cube {sigma gam : ℝ}
     hsepAmplitude_le_superposedFluxHsepConst hsigma0 hsigma
   have hKone : 1 ≤ hsepAmplitude sigma bfaProfileB := by
     unfold hsepAmplitude
-    nlinarith [sq_nonneg (1 + Real.log (hsepTailConst sigma bfaProfileB))]
+    linarith only [sq_nonneg (1 + Real.log (hsepTailConst sigma bfaProfileB))]
   have hp3 : bfaPower gam bfaProfileB ≤ 3 :=
     bfaPower_le_three bfaProfileB_pos hgamb
   have hpow : hsepAmplitude sigma bfaProfileB ^ bfaPower gam bfaProfileB ≤
@@ -454,7 +491,7 @@ private theorem three_rpow_neg_b_floor_le {b gam : ℝ}
   rw [Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 3), ← Real.exp_add]
   apply Real.exp_le_exp.mpr
   rw [← hargEq]
-  nlinarith
+  linarith only [hmulLog]
 
 private theorem truncationIndicatorScale_le_profile {sigma gam : ℝ}
     (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 8)
@@ -506,7 +543,8 @@ private theorem truncationIndicatorScale_le_profile {sigma gam : ℝ}
   have hHpos : 0 < superposedFluxHsepConst := superposedFluxHsepConst_pos
   have hxsq : x ^ 2 ≤ (superposedFluxHsepConst * r) ^ 2 :=
     pow_le_pow_left₀ hxpos.le hxle 2
-  have hrSq : r ^ 2 ≤ r := by nlinarith [hrpos.le]
+  have hrSq : r ^ 2 ≤ r := by
+    simpa only [pow_two] using mul_le_of_le_one_right hrpos.le hrle
   have hHrSq : (superposedFluxHsepConst * r) ^ 2 ≤
       superposedFluxHsepConst ^ 2 * r := by
     rw [mul_pow]

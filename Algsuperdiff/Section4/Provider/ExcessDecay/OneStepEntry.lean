@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepGoodScales
 import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
@@ -73,66 +73,9 @@ theorem le_of_indicator_goodEventAt_le_of_le {M : ABKModel d} {Ccg : ℝ} {j : �
     Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M Ccg j z t hep0 hle
   rwa [Set.indicator_of_mem (hsub hmem)] at h
 
-/-- The proved literal form is exactly the `ε_ev = 1/2` instance — so the
-generalization is strict, and every proved consumer keeps working verbatim. -/
-theorem le_of_indicator_goodEventAt_le_recovered {M : ABKModel d} {Ccg : ℝ} {j : ℤ}
-    {z : Vec d} {t : {t : ℝ // 0 < t}} {ep : ℝ} (hep0 : 0 ≤ ep) (heple : ep ≤ 1 / 2)
-    {F : Cutoff.CutoffSample d → ℝ≥0∞} {B : ℝ≥0∞} {omega : Cutoff.CutoffSample d}
-    (hmem : omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t ep)
-    (h : Set.indicator (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (1 / 2)) F omega
-      ≤ B) :
-    F omega ≤ B :=
-  le_of_indicator_goodEventAt_le_of_le hep0 heple hmem h
-
 /-! ## 2. The two reachability instantiations -/
 
-/-- **The excess-decay supply reaches the frozen event.**
-
-The printed good-scale slot `ε = (s/8)√δ` sits inside the frozen event as
-soon as the consumer's `δ` is re-priced at `δ ≤ 64 C⁻² s⁶`. -/
-theorem goodScaleSupply_subset_clauseEvent (M : ABKModel d) (Ccg : ℝ) (j : ℤ) (z : Vec d)
-    (t : {t : ℝ // 0 < t}) {s delta Cv : ℝ} (hs : 0 ≤ s) (hCv : 0 < Cv)
-    (hprice : delta ≤ 64 * (Cv ^ (2 : ℕ))⁻¹ * s ^ (6 : ℕ)) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (s / 8 * Real.sqrt delta) ⊆
-      Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (Cv⁻¹ * s ^ (4 : ℕ)) :=
-  Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M Ccg j z t
-    (mul_nonneg (by linarith only [hs]) (Real.sqrt_nonneg _))
-    (excessDecayDelta_repriced hCv hs hprice)
-
-/-- **The minimal-scale supply reaches the frozen event.**
-
-The minimal-scale anchor carries the tolerance `ε = s√δ`; it sits inside the
-frozen event as soon as `δ ≤ (C⁻¹ s³)²`, and `RebaseEpsilon`'s
-`minimalScaleEpsilon_eq_clauseEpsilon` shows that price is *sharp*. -/
-theorem minimalScaleSupply_subset_clauseEvent (M : ABKModel d) (Ccg : ℝ) (j : ℤ) (z : Vec d)
-    (t : {t : ℝ // 0 < t}) {s delta Cv : ℝ} (hs : 0 ≤ s) (hCv : 0 < Cv)
-    (hprice : delta ≤ (Cv⁻¹ * s ^ (3 : ℕ)) ^ (2 : ℕ)) :
-    Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (s * Real.sqrt delta) ⊆
-      Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (Cv⁻¹ * s ^ (4 : ℕ)) :=
-  Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M Ccg j z t
-    (mul_nonneg hs (Real.sqrt_nonneg _))
-    (minimalScaleEpsilon_le_clauseEpsilon hCv hs hprice)
-
 /-! ## 3. The entry point at the frozen threshold `C⁻¹ s⁴` -/
-
-/-- **The `δ`-repriced entry point.**
-
-The composition of §1 and §2: an anchor display carried by the frozen event's
-indicator is consumed pathwise at every `ω` of the development's own good-scale
-event, under the single arithmetic price `δ ≤ 64 C⁻² s⁶`. -/
-theorem le_of_indicator_goodEventAt_le_regated {M : ABKModel d} {Ccg : ℝ} {j : ℤ}
-    {z : Vec d} {t : {t : ℝ // 0 < t}} {s delta Cv : ℝ} (hs : 0 ≤ s) (hCv : 0 < Cv)
-    (hprice : delta ≤ 64 * (Cv ^ (2 : ℕ))⁻¹ * s ^ (6 : ℕ))
-    {F : Cutoff.CutoffSample d → ℝ≥0∞} {B : ℝ≥0∞} {omega : Cutoff.CutoffSample d}
-    (hmem : omega ∈
-      Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (s / 8 * Real.sqrt delta))
-    (h : Set.indicator
-        (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j z t (Cv⁻¹ * s ^ (4 : ℕ))) F omega
-      ≤ B) :
-    F omega ≤ B :=
-  le_of_indicator_goodEventAt_le_of_le
-    (mul_nonneg (by linarith only [hs]) (Real.sqrt_nonneg _))
-    (excessDecayDelta_repriced hCv hs hprice) hmem h
 
 end
 

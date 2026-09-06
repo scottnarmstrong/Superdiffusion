@@ -246,7 +246,7 @@ theorem integrable_setIntegral_normSq_localGradApprox_sub (Q : TriadicCube d) (L
       ‖HilbertVec.ofVec (localGradApprox Q L φ q ω x) - realize q ω x‖ ^ 2
       ≤ ∫ x in cubeSet Q, (2 * ‖realize q ω x‖ ^ 2
         + 2 * gradBound Q L ^ 2 * ‖realize φ ω x‖ ^ 2) := by
-    refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => by positivity)
+    refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => sq_nonneg _)
       ((hqi.const_mul 2).add (hφi.const_mul (2 * gradBound Q L ^ 2))) ?_
     filter_upwards with x
     have hle := norm_localGradApprox_sub_realize_le Q L φ q ω x
@@ -255,7 +255,7 @@ theorem integrable_setIntegral_normSq_localGradApprox_sub (Q : TriadicCube d) (L
     have hring : 2 * (gradBound Q L * ‖realize φ ω x‖) ^ 2
         = 2 * gradBound Q L ^ 2 * ‖realize φ ω x‖ ^ 2 := by ring
     linarith only [hkey, hring]
-  rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun x => by positivity)]
+  rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun x => sq_nonneg _)]
   refine hbound.trans (le_of_eq ?_)
   rw [integral_add (hqi.const_mul 2) (hφi.const_mul (2 * gradBound Q L ^ 2)),
     integral_const_mul, integral_const_mul]
@@ -287,7 +287,8 @@ theorem integral_setIntegral_normSq_localGradApprox_sub_target_le (Q : TriadicCu
           ‖HilbertVec.ofVec (localGradApprox Q L φ q ω x) - realize q ω x‖ ^ 2)
         + (1 + δ⁻¹) * ∫ x in cubeSet Q,
           ‖realize (fun ω' => q ω' - p ω') ω x‖ ^ 2) ∂μ := by
-    refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun ω => by positivity)
+    refine integral_mono_of_nonneg
+        (Filter.Eventually.of_forall fun ω => integral_nonneg fun x => sq_nonneg _)
       ((hIq.const_mul (1 + δ)).add (hIr.const_mul (1 + δ⁻¹))) ?_
     filter_upwards [ae_memLp_localGradApprox_sub (μ := μ) Q L hφm hφ hqm hq,
       ae_memLp_two_realize (μ := μ) hQfin hZm hZ] with ω hErr hRem
@@ -304,7 +305,7 @@ theorem integral_setIntegral_normSq_localGradApprox_sub_target_le (Q : TriadicCu
         ≤ ∫ x in cubeSet Q, ((1 + δ) *
             ‖HilbertVec.ofVec (localGradApprox Q L φ q ω x) - realize q ω x‖ ^ 2
           + (1 + δ⁻¹) * ‖realize (fun ω' => q ω' - p ω') ω x‖ ^ 2) := by
-      refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => by positivity)
+      refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => sq_nonneg _)
         ((hEi.const_mul (1 + δ)).add (hRi.const_mul (1 + δ⁻¹))) ?_
       filter_upwards with x
       rw [localGradApprox_sub_realize_split]
@@ -356,9 +357,9 @@ theorem integral_cubeLpNorm_localGradApprox_sub_target_le (Q : TriadicCube d) (L
     hφm hφ hqm hq hpm hp
   have hbase := integral_setIntegral_normSq_localGradApprox_sub_le (μ := μ) Q L hφm hφ hqm hq
   have hstrip := volume_boundaryStripSet_toReal_le (d := d) Q L
-  have hqnn : 0 ≤ ∫ ω, ‖q ω‖ ^ 2 ∂μ := integral_nonneg fun ω => by positivity
-  have hφnn : 0 ≤ ∫ ω, ‖φ ω‖ ^ 2 ∂μ := integral_nonneg fun ω => by positivity
-  have hZnn : 0 ≤ ∫ ω, ‖q ω - p ω‖ ^ 2 ∂μ := integral_nonneg fun ω => by positivity
+  have hqnn : 0 ≤ ∫ ω, ‖q ω‖ ^ 2 ∂μ := integral_nonneg fun ω => sq_nonneg _
+  have hφnn : 0 ≤ ∫ ω, ‖φ ω‖ ^ 2 ∂μ := integral_nonneg fun ω => sq_nonneg _
+  have hZnn : 0 ≤ ∫ ω, ‖q ω - p ω‖ ^ 2 ∂μ := integral_nonneg fun ω => sq_nonneg _
   have hinv : (0 : ℝ) < (cubeVolume Q)⁻¹ := inv_pos.2 hvolpos
   have hmul : (volume (boundaryStripSet Q L)).toReal * ∫ ω, ‖q ω‖ ^ 2 ∂μ
       ≤ (d : ℝ) * (3 : ℝ) ^ (-(L : ℤ)) / 2 * cubeVolume Q * ∫ ω, ‖q ω‖ ^ 2 ∂μ :=
@@ -376,7 +377,7 @@ theorem integral_cubeLpNorm_localGradApprox_sub_target_le (Q : TriadicCube d) (L
   refine hchain.trans ?_
   have hgb := gradBound_nonneg Q L
   have hδ1 : (0 : ℝ) < 1 + δ := by linarith only [hδ]
-  have hδ2 : (0 : ℝ) < 1 + δ⁻¹ := by positivity
+  have hδ2 : (0 : ℝ) < 1 + δ⁻¹ := add_pos_of_pos_of_nonneg one_pos (inv_pos.mpr hδ).le
   have hexp : (cubeVolume Q)⁻¹ * ((1 + δ) * (2 * ((volume (boundaryStripSet Q L)).toReal
               * ∫ ω, ‖q ω‖ ^ 2 ∂μ)
             + 2 * gradBound Q L ^ 2 * (cubeVolume Q * ∫ ω, ‖φ ω‖ ^ 2 ∂μ))
@@ -470,7 +471,7 @@ theorem integrable_cubeLpNorm_localGradApprox_sub_target (Q : TriadicCube d) (L 
         ≤ ∫ x in cubeSet Q,
           (2 * ‖HilbertVec.ofVec (localGradApprox Q L φ q ω x) - realize q ω x‖ ^ 2
             + 2 * ‖realize (fun ω' => q ω' - p ω') ω x‖ ^ 2) := by
-      refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => by positivity)
+      refine integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => sq_nonneg _)
         ((hEi.const_mul 2).add (hRi.const_mul 2)) ?_
       filter_upwards with x
       rw [localGradApprox_sub_realize_split]
@@ -478,7 +479,7 @@ theorem integrable_cubeLpNorm_localGradApprox_sub_target (Q : TriadicCube d) (L 
         (HilbertVec.ofVec (localGradApprox Q L φ q ω x) - realize q ω x)
         (realize (fun ω' => q ω' - p ω') ω x)
       simpa [inv_one, one_add_one_eq_two] using this
-    rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun x => by positivity)]
+    rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun x => sq_nonneg _)]
     refine hbound.trans (le_of_eq ?_)
     rw [integral_add (hEi.const_mul 2) (hRi.const_mul 2),
       integral_const_mul, integral_const_mul]
@@ -539,34 +540,41 @@ theorem exists_family_bound (L : ℕ) {η : ℝ} (hη : 0 < η)
   have hPsq : ∫ ω, ‖p ω‖ ^ 2 ∂μ = P ^ 2 := integral_normSq_eq_norm_sq_toLp hp
   have hD0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
   -- the two smallness parameters
-  have hX1 : (0 : ℝ) < 3 * ((d : ℝ) * (P + 1) ^ 2 + 1) := by positivity
-  have hX2 : (0 : ℝ) < 3 * ((d : ℝ) * (2 * P + 1) + 1) := by positivity
+  have hden1 : (0 : ℝ) < (d : ℝ) * (P + 1) ^ 2 + 1 :=
+    add_pos_of_nonneg_of_pos (mul_nonneg hD0 (sq_nonneg _)) one_pos
+  have hden2 : (0 : ℝ) < (d : ℝ) * (2 * P + 1) + 1 :=
+    add_pos_of_nonneg_of_pos (mul_nonneg hD0 (by linarith only [hP0])) one_pos
+  have hX1 : (0 : ℝ) < 3 * ((d : ℝ) * (P + 1) ^ 2 + 1) :=
+    mul_pos (by norm_num) hden1
+  have hX2 : (0 : ℝ) < 3 * ((d : ℝ) * (2 * P + 1) + 1) :=
+    mul_pos (by norm_num) hden2
   set δ : ℝ := min 1 (η / (3 * ((d : ℝ) * (P + 1) ^ 2 + 1))) with hδdef
-  have hδ0 : 0 < δ := lt_min one_pos (by positivity)
+  have hδ0 : 0 < δ := lt_min one_pos (div_pos hη hX1)
   have hδ1 : δ ≤ 1 := min_le_left _ _
   have hδbound : δ * ((d : ℝ) * (P + 1) ^ 2 + 1) ≤ η / 3 := by
     have hle : δ ≤ η / (3 * ((d : ℝ) * (P + 1) ^ 2 + 1)) := min_le_right _ _
-    have hne : ((d : ℝ) * (P + 1) ^ 2 + 1) ≠ 0 := by positivity
+    have hne : ((d : ℝ) * (P + 1) ^ 2 + 1) ≠ 0 := ne_of_gt hden1
     calc δ * ((d : ℝ) * (P + 1) ^ 2 + 1)
         ≤ (η / (3 * ((d : ℝ) * (P + 1) ^ 2 + 1))) * ((d : ℝ) * (P + 1) ^ 2 + 1) :=
-          mul_le_mul_of_nonneg_right hle (by positivity)
+          mul_le_mul_of_nonneg_right hle hden1.le
       _ = η / 3 := by field_simp
   set s : ℝ := min 1 (min (η / (3 * ((d : ℝ) * (2 * P + 1) + 1))) (δ * η / 6)) with hsdef
-  have hs0 : 0 < s := lt_min one_pos (lt_min (by positivity) (by positivity))
+  have hs0 : 0 < s :=
+    lt_min one_pos (lt_min (div_pos hη hX2) (div_pos (mul_pos hδ0 hη) (by norm_num)))
   have hs1 : s ≤ 1 := min_le_left _ _
   have hsbound : s * ((d : ℝ) * (2 * P + 1) + 1) ≤ η / 3 := by
     have hle : s ≤ η / (3 * ((d : ℝ) * (2 * P + 1) + 1)) :=
       le_trans (min_le_right _ _) (min_le_left _ _)
-    have hne : ((d : ℝ) * (2 * P + 1) + 1) ≠ 0 := by positivity
+    have hne : ((d : ℝ) * (2 * P + 1) + 1) ≠ 0 := ne_of_gt hden2
     calc s * ((d : ℝ) * (2 * P + 1) + 1)
         ≤ (η / (3 * ((d : ℝ) * (2 * P + 1) + 1))) * ((d : ℝ) * (2 * P + 1) + 1) :=
-          mul_le_mul_of_nonneg_right hle (by positivity)
+          mul_le_mul_of_nonneg_right hle hden2.le
       _ = η / 3 := by field_simp
   have hsδ : s ≤ δ * η / 6 := le_trans (min_le_right _ _) (min_le_right _ _)
   -- the mollified approximant
   obtain ⟨r, hr, φ, hφm, hφ, hclose⟩ :=
     exists_mollifyGrad_integral_normSq_sub_le (μ := μ) hp hmem
-      (ε := s ^ 2) (by positivity)
+      (ε := s ^ 2) (pow_pos hs0 2)
   set ρ : Mollifier d := Mollifier.ofRadius d hr with hρdef
   set ψ : Ω → ℝ := mollify ρ.toFun φ with hψdef
   have hψm : StronglyMeasurable ψ := stronglyMeasurable_mollify ρ.continuous hφm
@@ -590,17 +598,19 @@ theorem exists_family_bound (L : ℕ) {η : ℝ} (hη : 0 < η)
       pow_le_pow_left₀ (norm_nonneg _) hnorm 2
     linarith only [hEq, hsq]
   -- the Young transfer
-  have hM0 : (0 : ℝ) ≤ (d : ℝ) * (3 : ℝ) ^ (-(L : ℤ)) := by
-    have := (three_zpow_neg_pos L).le
-    positivity
+  have hM0 : (0 : ℝ) ≤ (d : ℝ) * (3 : ℝ) ^ (-(L : ℤ)) :=
+    mul_nonneg hD0 (three_zpow_neg_pos L).le
   have hMD : (d : ℝ) * (3 : ℝ) ^ (-(L : ℤ)) ≤ (d : ℝ) := by
     have h1 := three_zpow_neg_le_one L
     calc (d : ℝ) * (3 : ℝ) ^ (-(L : ℤ)) ≤ (d : ℝ) * 1 :=
           mul_le_mul_of_nonneg_left h1 hD0
       _ = (d : ℝ) := mul_one _
+  have hδ0nn : (0 : ℝ) ≤ 1 + δ := (add_pos_of_pos_of_nonneg one_pos hδ0.le).le
   refine ⟨fun K ω => localGradApprox (originCube d (K : ℤ)) L ψ q ω,
     fun K => (1 + δ) * (2 * gradBound (originCube d (K : ℤ)) L ^ 2 * ∫ ω, ‖ψ ω‖ ^ 2 ∂μ),
-    fun K => by positivity, ?_, ?_,
+    fun K => mul_nonneg hδ0nn
+      (mul_nonneg (mul_nonneg zero_le_two (sq_nonneg _))
+        (integral_nonneg fun ω => sq_nonneg _)), ?_, ?_,
     fun K => integrable_cubeLpNorm_localGradApprox_sub_target (μ := μ)
       (originCube d (K : ℤ)) L hψm hψ hqm hq hpm hp, ?_⟩
   · have hinvK : Filter.Tendsto (fun K : ℕ => ((3 : ℝ) ^ K)⁻¹) Filter.atTop (nhds 0) := by

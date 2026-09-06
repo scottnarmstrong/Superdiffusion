@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.ErrorTransport
 import Algsuperdiff.Section4.Provider.Annular.EventBudgets
@@ -189,17 +189,6 @@ theorem isUglyJEstimate_mono_gradM
     mul_nonneg (mul_nonneg (mul_nonneg hC0 hcstar0) hgam0) hwgam0
   have hstep := mul_le_mul_of_nonneg_left hgrad hbase
   linarith only [h, hstep]
-
-/-- **The `Jval`-slot antitonicity of the five-term display.**  A smaller left
-side is easier; this is how the lattice-cube estimate feeds an annulus maximum
-once the maximizing cube has been selected. -/
-theorem isUglyJEstimate_mono_Jval
-    {Jval Jval' E2 sigDiff L2 gradN gradM cstar gam w wgam C : ℝ}
-    (hJ : Jval' ≤ Jval)
-    (h : IsUglyJEstimate Jval E2 sigDiff L2 gradN gradM cstar gam w wgam C) :
-    IsUglyJEstimate Jval' E2 sigDiff L2 gradN gradM cstar gam w wgam C := by
-  unfold IsUglyJEstimate at h ⊢
-  linarith only [h, hJ]
 
 /-! ## Part B -- the composed per-cube estimate at a lattice cube -/
 

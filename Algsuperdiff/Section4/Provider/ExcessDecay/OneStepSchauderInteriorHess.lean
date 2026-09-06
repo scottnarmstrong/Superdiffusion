@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderInteriorGrad
 
@@ -31,7 +31,7 @@ Hessian by its sup `(ε^{d+2})⁻¹ · B`, integrate `|u−c|`, upgrade `∫|·|
 with radii `r/4 < r/2` and pays `2^d` for enlarging the averaging ball.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/InteriorSecondDerivL2Native.lean ====
+-- ==== interior second-derivative estimate, `L²` form ====
 open scoped Real Convolution Topology
 open MeasureTheory Metric Set InnerProductSpace
 open Homogenization (Vec euclideanBall volumeAverage)

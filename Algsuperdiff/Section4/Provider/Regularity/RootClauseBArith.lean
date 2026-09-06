@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootAssemblyChain
 import Algsuperdiff.Section4.Provider.Regularity.StepSixInteriorEndpoint
@@ -45,23 +45,6 @@ theorem edFinalDataOscG_nonneg {Kg : ℝ} (hKg : 0 ≤ Kg) (m : ℤ) :
     0 ≤ edFinalDataOscG Kg m :=
   mul_nonneg (Real.rpow_nonneg (by norm_num) _) hKg
 
-/-- **Item (ii)**:'s Step-6 data leg IS the Step-7 chain's `dataOsc` slot.
-
-```text
-   edFinalDataG M C_δ K_g m  =  W · ( σ̄_m^{-1}·G + H ) ,
-   W = 4C_δ/(1 - r₁) ,   G = 3^{m/2}K_g ,   H = 0 .
-```
-
-A identity — no positivity, no estimate, no unit conversion (`σ̄` is neither
-introduced nor removed; it sits inside one inverse on both sides). -/
-theorem edFinalDataG_eq_dataOsc (M : ABKModel d) (Cdel Kg : ℝ) (m : ℤ) :
-    edFinalDataG M Cdel Kg m =
-      edFinalDataOscW M Cdel *
-        (((Annealed.sigmaBar M m : ℝ))⁻¹ * edFinalDataOscG Kg m + 0) := by
-  have hpow : Real.rpow (3 : ℝ) ((m : ℝ) / 2) = (3 : ℝ) ^ ((m : ℝ) / 2) := rfl
-  rw [edFinalDataG, edFinalKgTop, edFinalDataOscW, edFinalDataOscG, hpow]
-  ring
-
 /-- **Item (ii)'s own argument.**  The Step-6 interior endpoint states its data leg
 as `edFinalDataG M C_δ (K_g·C_{S4.4}) m + 0`, so the chain's `dataOsc` slot is
 met at the weight `W = (4C_δ/(1-r₁))·C_{S4.4}` and the printed datum `G =
@@ -101,7 +84,7 @@ chain concludes
           + Kdata·3^{3E/4}·(Ccol·(W·((√σ̄_m)^{-1}·G + √σ̄_m·H)) + dataM) ,
 ```
 
-with `H = 0` on the interior branch ('s `stepFiveDataH_eq_zero_of_mem_inner`),
+with `H = 0` on the interior branch,
 and `e.energy.density.estimate` prints ONE power of three and the SINGLE data
 leg `Lg = 3^{m/2}K_g`.  Three DOMINATIONS collapse the former onto the latter —
 the Poincaré-leg datum (`dataG ≤ CdG·Lg`), the oscillation-leg datum (`W·G

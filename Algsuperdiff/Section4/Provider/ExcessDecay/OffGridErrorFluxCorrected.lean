@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridComposeAssembly
 import Algsuperdiff.Section4.Support.FluxCorrectedRepresentative
@@ -150,77 +150,12 @@ def fluxCorrectedMaxDescendantAtRoot [NeZero d] (M : ABKModel d) (L m : ℤ)
   fun omega => Ch02.finsetSupReal (descendantsAtScale root k)
     (fun R => fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0 omega)
 
-theorem fluxCorrectedMaxDescendantAtRoot_nonneg [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (Q root : TriadicCube d) (k : ℤ) (a0 : Mat d) (omega : Cutoff.CutoffSample d) :
-    0 ≤ fluxCorrectedMaxDescendantAtRoot M L m Q root k a0 omega := by
-  refine Ch02.finsetSupReal_nonneg _ _ fun R _ => ?_
-  exact fluxCorrectedNormalizedBlockResponseRepresentative_nonneg M L m Q R a0 omega
-
-/-- Duplicate of `FluxCorrectedRepresentative`'s `private measurable_finset_sup'`. -/
-private theorem measurable_finsetSup' {Omega iota : Type*} [MeasurableSpace Omega]
-    {S : Finset iota} (hS : S.Nonempty) {f : iota → Omega → ℝ}
-    (hf : ∀ i ∈ S, Measurable (f i)) :
-    Measurable (S.sup' hS f) :=
-  Finset.sup'_induction (s := S) (H := hS) (f := f)
-    (p := fun g => Measurable g)
-    (fun _ hf' _ hg' => hf'.sup hg')
-    (fun i hi => hf i hi)
-
-theorem measurable_fluxCorrectedMaxDescendantAtRoot [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (Q root : TriadicCube d) {k : ℤ} (hk : k ≤ root.scale) (a0 : Mat d) :
-    Measurable (fluxCorrectedMaxDescendantAtRoot M L m Q root k a0) := by
-  classical
-  have hS : (descendantsAtScale root k).Nonempty := descendantsAtScale_nonempty root hk
-  have hsup : Measurable
-      ((descendantsAtScale root k).sup' hS
-        (fun R => fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0)) :=
-    measurable_finsetSup' hS fun R _ =>
-      measurable_fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0
-  have hfun : fluxCorrectedMaxDescendantAtRoot M L m Q root k a0 =
-      (descendantsAtScale root k).sup' hS
-        (fun R => fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0) := by
-    funext omega
-    rw [Finset.sup'_apply]
-    exact Ch04.RestrictionLawCarrier.finsetSupReal_eq_sup' (descendantsAtScale root k) hS
-      (fun R => fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0 omega)
-  rw [hfun]
-  exact hsup
-
 /-- **The `F1'` error functional.**  `𝓔_{s,∞,2}` at the cube `root`, taken with the
 flux correction and the comparator of the *parent* index. -/
 def fluxCorrectedErrorFunctionalAtRoot [NeZero d] (M : ABKModel d) (L m : ℤ)
     (Q root : TriadicCube d) (s : ℝ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     fluxCorrectedMaxDescendantAtRoot M L m Q root (root.scale - (l : ℤ)) a0 omega)
-
-theorem fluxCorrectedErrorFunctionalAtRoot_nonneg [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (Q root : TriadicCube d) (s : ℝ) (a0 : Mat d) (omega : Cutoff.CutoffSample d) :
-    0 ≤ fluxCorrectedErrorFunctionalAtRoot M L m Q root s a0 omega :=
-  Real.sqrt_nonneg _
-
-theorem measurable_fluxCorrectedErrorFunctionalAtRoot [NeZero d] (M : ABKModel d)
-    (L m : ℤ) (Q root : TriadicCube d) {s : ℝ} (hs : 0 < s) (a0 : Mat d) :
-    Measurable (fluxCorrectedErrorFunctionalAtRoot M L m Q root s a0) := by
-  have hterm : ∀ l : ℕ, Measurable
-      (fun omega => Ch02.geometricWeight s 2 l *
-        fluxCorrectedMaxDescendantAtRoot M L m Q root (root.scale - (l : ℤ)) a0 omega) :=
-    fun l => (measurable_fluxCorrectedMaxDescendantAtRoot M L m Q root
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le l)) a0).const_mul _
-  exact Real.continuous_sqrt.measurable.comp
-    (measurable_tsum_of_nonneg _ hterm (fun l omega => by
-      refine mul_nonneg ?_ (fluxCorrectedMaxDescendantAtRoot_nonneg M L m Q root _ a0 omega)
-      simpa only [Ch02.geometricWeight_eq_old] using
-        Homogenization.geometricWeight_nonneg l
-          (mul_nonneg hs.le (by norm_num : (0 : ℝ) ≤ 2))))
-
-/-- **The `F1'` reduction.**  At the matched index the generalized functional is the
-proved `fluxCorrectedErrorFunctional`, definitionally. -/
-theorem fluxCorrectedErrorFunctionalAtRoot_eq [NeZero d] (M : ABKModel d) (L k : ℤ)
-    (s : ℝ) :
-    fluxCorrectedErrorFunctionalAtRoot M L k (originCube d k) (originCube d k) s
-        (isotropicComparatorMatrix (Annealed.sigmaBar M k)) =
-      fluxCorrectedErrorFunctional M L k s :=
-  rfl
 
 /-! ## 3. The representative identification, at every root -/
 

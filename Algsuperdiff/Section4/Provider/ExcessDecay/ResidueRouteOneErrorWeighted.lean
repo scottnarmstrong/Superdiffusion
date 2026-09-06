@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ResidueEnergyLeg
 import Algsuperdiff.Section4.Provider.ExcessDecay.ResidueCapChild
@@ -172,18 +172,20 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
   obtain ⟨CB, KE, hCBpos, hKEpos, hEnergyLeg⟩ :=
     ae_h1EnergyNormOnCube_boundary_le_anchorLegs_atHinges d
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := by positivity
+  have hkappa : 0 ≤ kappa := mul_nonneg (Real.sqrt_nonneg _) (by norm_num)
   set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
-  have he0 : 0 ≤ e0 := mul_nonneg hkappa (by positivity)
+  have he0 : 0 ≤ e0 := mul_nonneg hkappa (mul_nonneg hCEpos.le (by norm_num))
   set k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1) with hk0def
-  have hk0 : 0 ≤ k0 := by positivity
+  have hk0 : 0 ≤ k0 :=
+    mul_nonneg (mul_nonneg zero_le_two (Nat.cast_nonneg d))
+      (add_nonneg (sq_nonneg e0) zero_le_one)
   set b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0 with hb0def
-  have hb0 : 0 ≤ b0 := by positivity
+  have hb0 : 0 ≤ b0 :=
+    add_nonneg (mul_nonneg (Real.sqrt_nonneg _) he0) (mul_nonneg zero_le_two hk0)
   set cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d with hcgdef
-  have hcg : 0 ≤ cg := by
-    have h1 : 0 < negNormBaseConst d := negNormBaseConst_pos d
-    have h2 : 0 < coarseGrainingP2Const d := coarseGrainingP2Const_pos d
-    positivity
+  have hcg : 0 ≤ cg :=
+    mul_nonneg (mul_nonneg (by norm_num) (negNormBaseConst_pos d).le)
+      (coarseGrainingP2Const_pos d).le
   set A1 : ℝ := cg * 216 * (kappa * KE) with hA1def
   have hA1 : 0 ≤ A1 := by
     rw [hA1def]
@@ -202,21 +204,28 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
     have h3 : 0 < flushWindowConst d := flushWindowConst_pos d
     rw [hA3def]
     exact mul_nonneg h1.le h3.le
-  have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 := by positivity
-  have hCE3 : (0 : ℝ) ≤ CE * (1 / 2) * A1 := by positivity
+  have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 :=
+    mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg hCEpos.le (by norm_num))) hA1
+  have hCE3 : (0 : ℝ) ≤ CE * (1 / 2) * A1 :=
+    mul_nonneg (mul_nonneg hCEpos.le (by norm_num)) hA1
   refine ⟨max CE CB,
     A1 + 9 * (CE * (1 / 2)) * A1 + CE * (1 / 2) * A1 + A2 + A3 + 1,
-    lt_of_lt_of_le hCEpos (le_max_left _ _), by positivity, ?_⟩
+    lt_of_lt_of_le hCEpos (le_max_left _ _),
+    add_pos_of_nonneg_of_pos
+      (add_nonneg (add_nonneg (add_nonneg (add_nonneg hA1 hCE2) hCE3) hA2) hA3)
+      zero_lt_one, ?_⟩
   intro M s hsrange hregime hsmall hs L m n hmL hnm z hz i sigma hsigma hover
   have hs1 : s ≤ 1 := hsrange.2
   have hnm2 : n + 2 ≤ m := by omega
   have hregimeCE : M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
+    refine hregime.trans
+      (mul_le_mul_of_nonneg_right ?_ (Even.pow_nonneg (by norm_num) _))
     have h1 := one_div_le_one_div_of_le hCEpos (le_max_left CE CB)
     rw [one_div, one_div] at h1
     exact h1
   have hregimeCB : M.gamma ≤ CB⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
+    refine hregime.trans
+      (mul_le_mul_of_nonneg_right ?_ (Even.pow_nonneg (by norm_num) _))
     have h1 := one_div_le_one_div_of_le hCBpos (le_max_right CE CB)
     rw [one_div, one_div] at h1
     exact h1
@@ -358,7 +367,8 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
   have hKble : 2 * (d : ℝ) * (Eb ^ 2 + 1) ≤ k0 := by
     rw [hk0def]
     have hsq : Eb ^ 2 ≤ e0 ^ 2 := pow_le_pow_left₀ hEb0 hEbe0 2
-    exact mul_le_mul_of_nonneg_left (by linarith only [hsq]) (by positivity)
+    exact mul_le_mul_of_nonneg_left (by linarith only [hsq])
+      (mul_nonneg zero_le_two (Nat.cast_nonneg d))
   have hbrkCap : coarseGrainingForceBracket (originCube d n)
       (parentRebasedFamily M L (n + 3) (flushSubCentre z m n i sigma) z omega)
       (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) ≤ b0 := by
@@ -492,18 +502,20 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
       216 * (s⁻¹) ^ (4 : ℕ) *
         (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
           Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))) :=
-    mul_le_mul_of_nonneg_left hET (by positivity)
+    mul_le_mul_of_nonneg_left hET
+      (mul_nonneg (by norm_num) (pow_nonneg (inv_nonneg.mpr hs.le) 4))
   have hleg2 : 1944 * (s⁻¹) ^ (6 : ℕ) * FT ≤
       1944 * (s⁻¹) ^ (6 : ℕ) *
         (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))) :=
-    mul_le_mul_of_nonneg_left hFT (by positivity)
+    mul_le_mul_of_nonneg_left hFT
+      (mul_nonneg (by norm_num) (pow_nonneg (inv_nonneg.mpr hs.le) 6))
   have hleg3 : interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild ≤
       interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
         (flushWindowConst d * Gs) :=
     mul_le_mul_of_nonneg_left hYchild3 hccorr0
   have hmono := add_le_add (mul_le_mul_of_nonneg_left (add_le_add hleg1 hleg2) hcg) hleg3
   clear_value Lhs X Gs Hs Hn Ychild ET FT Erep Eb sig P2 Q3s Q3sn Q1s R3n S4 S7 S6
-    Sm3 Sm2
+    Sm3 Sm2 A3 A2 A1 cg b0 k0 e0 kappa
   -- (g) the regrouping
   have hS4eq : (s⁻¹) ^ (4 : ℕ) = S4 := by
     rw [hS4def, inv_pow_eq_rpow_neg hs 4]
@@ -549,7 +561,7 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
           A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * ((sig⁻¹ * sig) * (Sm2 * (R3n * Hn))))) := by
       rw [hA1def]; ring
     rw [hsplit, hsinv]
-    have hsinv4 : (0 : ℝ) ≤ (s⁻¹) ^ (4 : ℕ) := by positivity
+    have hsinv4 : (0 : ℝ) ≤ (s⁻¹) ^ (4 : ℕ) := pow_nonneg (inv_nonneg.mpr hs.le) 4
     have hi : A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * (1 * ((R3n * P2) * X)))) ≤
         A1 * (S4 * Erep * X) := by
       have h1 : (R3n * P2) * X ≤ X := by

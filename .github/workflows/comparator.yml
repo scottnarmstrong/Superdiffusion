@@ -1,14 +1,17 @@
 name: Comparator audit
 
-# Runs the official leanprover/comparator on both Audit/<X> pairs: for each
+# Runs the official leanprover/comparator on every SuperdiffusionAudit/<X> pair: for each
 # pair it checks that Solution proves a statement whose full dependency
 # closure matches Challenge's, uses only the permitted axioms, and is
 # accepted by BOTH the Lean kernel (replay) and the independent nanoda
 # kernel (enable_nanoda flipped on for the CI run only).
 #
-# Mathlib olean artifacts come from `lake exe cache get`; the CoarseGraining
-# dependency and the project build are cached between runs.  The FIRST run on
-# an empty cache builds everything and may take several hours.
+# GitHub-hosted runners (`ubuntu-latest`: 4 vCPU, 16 GB RAM, 6 h per job).
+# Mathlib olean artifacts come from `lake exe cache get`; CoarseGraining and
+# MarkovProcess are compiled by the `deps` job and cached; the four verification
+# tools are cached under their pinned revisions.  The project's own `.lake/build`
+# is restored when the CI workflow has already banked it for this or an earlier
+# commit, and rebuilt from source otherwise.
 
 on:
   push:
@@ -26,41 +29,129 @@ env:
   LANDRUN_REV: "811cfff"         # Zouuup/landrun commit (v0.1.18)
 
 jobs:
-  comparator:
-    runs-on: [self-hosted, linux]
-    timeout-minutes: 360
+  # ---------------------------------------------------------------------------
+  # Job 1 — the two source dependencies, byte-for-byte the `deps` job of
+  # `build.yml` and sharing its cache key, so whichever workflow runs first
+  # pays for them and the other one restores.
+  # ---------------------------------------------------------------------------
+  deps:
+    name: Dependency oleans
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Reclaim runner disk space
+        shell: bash
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /usr/local/.ghcup /usr/local/share/powershell \
+                      /usr/share/swift /usr/local/share/boost || true
+          sudo docker image prune --all --force >/dev/null 2>&1 || true
+          df -h /
 
-      # Provision the toolchain and mathlib EXACTLY as the CI workflow does
-      # (the same action, the same cache), so the lake build artifacts the two
-      # workflows exchange through their shared cache keys replay instead of
-      # being invalidated by a divergent mathlib context.
-      - name: Set up Lean and Mathlib cache
+      - name: Enlarge swap
+        shell: bash
+        run: |
+          sudo swapoff -a || true
+          swapdir=/mnt
+          [ -d "$swapdir" ] || swapdir="${RUNNER_TEMP:-/tmp}"
+          sudo rm -f "$swapdir/lean-swapfile"
+          sudo fallocate -l 16G "$swapdir/lean-swapfile"
+          sudo chmod 600 "$swapdir/lean-swapfile"
+          sudo mkswap "$swapdir/lean-swapfile"
+          sudo swapon "$swapdir/lean-swapfile"
+          free -h
+
+      - name: Set up Lean and fetch the Mathlib cache
         uses: leanprover/lean-action@v1
         with:
           build: false
           use-mathlib-cache: true
 
-      # Restore/save are split so the save runs even when a later step fails,
-      # banking completed modules.  The CI workflow's cache is a valid
-      # fallback: both workflows cache the same paths.
-      - name: Restore project and dependency build artifacts
-        id: cache-restore
+      - name: Restore the dependency build cache
+        id: deps-cache
         uses: actions/cache/restore@v4
         with:
           path: |
-            .lake/build
             .lake/packages/CoarseGraining/.lake/build
-          key: lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-deps-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      - name: Build the dependency packages
+        run: lake build @CoarseGraining @MarkovProcess
+
+      - name: Save the dependency build cache
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/packages/CoarseGraining/.lake/build
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-deps-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+  # ---------------------------------------------------------------------------
+  # Job 2 — the audit surfaces, the four tools, and the three comparator runs.
+  # ---------------------------------------------------------------------------
+  comparator:
+    name: Comparator over the three pairs
+    needs: deps
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Reclaim runner disk space
+        shell: bash
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /usr/local/.ghcup /usr/local/share/powershell \
+                      /usr/share/swift /usr/local/share/boost || true
+          sudo docker image prune --all --force >/dev/null 2>&1 || true
+          df -h /
+
+      - name: Enlarge swap
+        shell: bash
+        run: |
+          sudo swapoff -a || true
+          swapdir=/mnt
+          [ -d "$swapdir" ] || swapdir="${RUNNER_TEMP:-/tmp}"
+          sudo rm -f "$swapdir/lean-swapfile"
+          sudo fallocate -l 16G "$swapdir/lean-swapfile"
+          sudo chmod 600 "$swapdir/lean-swapfile"
+          sudo mkswap "$swapdir/lean-swapfile"
+          sudo swapon "$swapdir/lean-swapfile"
+          free -h
+
+      - name: Set up Lean and fetch the Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+
+      - name: Restore the dependency build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/packages/CoarseGraining/.lake/build
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-deps-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # Restore only, never save: the CI workflow owns this key, and one copy of
+      # `.lake/build` in the repository's 10 GB cache quota is enough.  A miss
+      # here just means this job compiles the library itself.
+      - name: Restore project build artifacts
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/build
+          key: lake-proj-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
-            lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
-            lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lake-proj-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
       - name: Build the library and the audit surfaces
-        run: lake build Audit
+        run: lake build SuperdiffusionAudit
 
       - name: Restore verification tools
         id: tools-cache
@@ -69,6 +160,8 @@ jobs:
           path: ~/tools
           key: cmp-tools-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}
 
+      # The comparator pins its own `lean-toolchain`, which is *not* this
+      # project's; elan installs that second toolchain on demand here.
       - name: Build comparator
         if: steps.tools-cache.outputs.cache-hit != 'true'
         run: |
@@ -113,11 +206,44 @@ jobs:
           git -C ~/tools/nanoda_lib checkout "$NANODA_REV"
           cd ~/tools/nanoda_lib && PATH="$HOME/.cargo/bin:$PATH" cargo +stable build --release
 
+      # Saved only on success, so a half-built tool tree can never be banked
+      # under the pinned key and skipped by the next run.
+      - name: Save verification tools
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/tools
+          key: cmp-tools-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}
+
+      # The comparator invokes landrun with `--best-effort`, which on a kernel
+      # without Landlock runs the solution build UNSANDBOXED and still exits 0.
+      # That would silently void the audit's isolation property, so the sandbox
+      # is proved to be enforcing here instead: landrun is given exactly the
+      # comparator's flags and asked to write outside the permitted set.  The
+      # write must be refused.  (`--best-effort` is required, not optional:
+      # landrun 0.1.18 demands Landlock ABI v5 without it, and the runner image
+      # can be older than that while still enforcing at ABI v4.)
+      - name: Prove the landrun sandbox is enforcing
+        shell: bash
+        run: |
+          set -euo pipefail
+          uname -r
+          sudo cat /sys/kernel/security/lsm 2>/dev/null || echo "(securityfs unreadable)"
+          probe="${RUNNER_TEMP:-/tmp}/landrun-escape-probe"
+          rm -f "$probe"
+          "$HOME/tools/bin/landrun" --best-effort --ro / --rw /dev -ldd -add-exec \
+            -- /bin/sh -c "echo escaped > '$probe'" || true
+          if [ -e "$probe" ]; then
+            echo "landrun did NOT enforce: a write outside the sandbox succeeded."
+            exit 1
+          fi
+          echo "landrun is enforcing: the out-of-sandbox write was refused."
+
       - name: Enable the nanoda kernel check (CI-only, on the workspace copy)
         run: |
-          sed -i 's/"enable_nanoda": false/"enable_nanoda": true/' Audit/*/comparator.json
+          sed -i 's/"enable_nanoda": false/"enable_nanoda": true/' SuperdiffusionAudit/*/comparator.json
 
-      - name: Run the comparator on both pairs
+      - name: Run the comparator on every pair
         run: |
           set -euo pipefail
           # Resolve the tool paths from the runner's real home, never a
@@ -125,10 +251,18 @@ jobs:
           export COMPARATOR_LANDRUN="$HOME/tools/bin/landrun"
           export COMPARATOR_LEAN4EXPORT="$HOME/tools/lean4export/.lake/build/bin/lean4export"
           export COMPARATOR_NANODA="$HOME/tools/nanoda_lib/target/release/nanoda_bin"
+          for tool in "$COMPARATOR_LANDRUN" "$COMPARATOR_LEAN4EXPORT" "$COMPARATOR_NANODA" \
+                      "$HOME/tools/comparator/.lake/build/bin/comparator"; do
+            test -x "$tool" || { echo "missing tool: $tool"; exit 1; }
+          done
           fail=0
-          for X in GeneratorRenormalization AnomalousRegularity; do
+          for X in GeneratorRenormalization AnomalousRegularity Superdiffusivity; do
+            if [ ! -f "SuperdiffusionAudit/$X/Solution.lean" ]; then
+              echo "$X: no Solution.lean, skipped"
+              continue
+            fi
             echo "::group::$X"
-            if lake env ~/tools/comparator/.lake/build/bin/comparator "Audit/$X/comparator.json" \
+            if lake env ~/tools/comparator/.lake/build/bin/comparator "SuperdiffusionAudit/$X/comparator.json" \
                  | tee "/tmp/comparator-$X.log" \
                && grep -q "Your solution is okay!" "/tmp/comparator-$X.log"; then
               echo "$X: OK"
@@ -139,22 +273,6 @@ jobs:
             echo "::endgroup::"
           done
           exit "$fail"
-
-      - name: Save project and dependency build artifacts
-        if: always() && steps.cache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            .lake/build
-            .lake/packages/CoarseGraining/.lake/build
-          key: lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
-
-      - name: Save verification tools
-        if: always() && steps.tools-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ~/tools
-          key: cmp-tools-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}
 
       - name: Upload comparator logs
         if: always()

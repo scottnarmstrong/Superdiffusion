@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFourBoundaryBudget
 
@@ -54,9 +54,9 @@ constant `C_bd`), and the window sum loses its `W`-linear term outright:
    ∑_{j=n}^{m} δ_j ≤ K_g/(1-r₁) + ( K_h/(1-r₂) + S_ε · (2 C_bd K_hinf) ) .
 ```
 
-`S_ε` is bought by the `ε`-budget, so the proved
-`StepBoundaryAbsorption.stepSixFlat_epsFunded_absorb_stepOneC1` — which is
-ABSOLUTELY `α`-, `γ`- and `δ`-free, at `8/(C₁ log 3) ≤ 4/log 3` — absorbs it.
+`S_ε` is bought by the `ε`-budget, so the proved flat-price absorption of
+`StepBoundaryAbsorption` — which is ABSOLUTELY `α`-, `γ`- and `δ`-free, at
+`8/(C₁ log 3) ≤ 4/log 3` — absorbs it.
 The `γ^{-1/2}` price of `StepFourBoundaryBudget`'s honest stop is therefore
 GONE, and Theorem C's boundary `∇h` leg closes at the printed `α`-free
 constant.
@@ -136,70 +136,6 @@ theorem stepFourDeltaOutErrorWeighted_le_boundaryThreeLegs
   have hm4 := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hc4 hCV) hf1
   rw [stepFourDeltaOutErrorWeighted, stepFourBoundaryDeltaConst]
   linarith only [hm1, hm2, hm3, hm4]
-
-/-! ## 2. The window sum, with the `W`-linear term GONE -/
-
-/-- **The error-weighted Step-4 boundary output, summed over the iteration
-window.**
-
-```text
-   ∑_{j=n}^{m} δ_j ≤ K_g/(1-r₁) + ( K_h/(1-r₂) + S_ε · (2 C_bd K_hinf) ) ,
-```
-
-with **no** `W`-linear summand — contrast
-`StepFourBoundaryBudget.sum_Icc_top_stepFourDeltaOut_le`, whose last term is `W
-· (C_bd K_hinf)`.  `S_ε` is the `ε`-budget, so the proved
-`stepSixFlat_epsFunded_absorb_stepOneC1` absorbs the whole bracket
-`α`-freely. -/
-theorem sum_Icc_top_stepFourDeltaOutErrorWeighted_le
-    {Crem Vd Cst s Khinf Kg Kh Se : ℝ} {SigInvN eps δ Ag Ah : ℤ → ℝ} {r₁ r₂ : ℝ}
-    {n m : ℤ} (hnm : n ≤ m) (hCV : 0 ≤ Crem * Vd) (hCst : 0 ≤ Cst) (hs : 0 < s)
-    (hKhinf : 0 ≤ Khinf) (hr₁0 : 0 < r₁) (hr₁1 : r₁ < 1) (hr₂0 : 0 < r₂) (hr₂1 : r₂ < 1)
-    (hAg0 : 0 ≤ Ag m) (hAgd : ∀ j : ℤ, j ≤ m → Ag j ≤ Kg * r₁ ^ (m - j))
-    (hAh0 : 0 ≤ Ah m) (hAhd : ∀ j : ℤ, j ≤ m → Ah j ≤ Kh * r₂ ^ (m - j))
-    (hSe : ∑ j ∈ Finset.Icc n m, eps j ≤ Se)
-    (hAgdef : ∀ j : ℤ, Ag j = stepFourBoundaryDeltaConst Crem Vd Cst s *
-      ((3 : ℝ) ^ ((j : ℝ) / 2) * SigInvN j * Kg))
-    (hAhdef : ∀ j : ℤ, Ah j = stepFourBoundaryDeltaConst Crem Vd Cst s *
-      ((3 : ℝ) ^ ((j : ℝ) / 2) * Kh))
-    (hδdef : ∀ j : ℤ,
-      δ j = stepFourDeltaOutErrorWeighted Crem Vd Cst s (eps j) Khinf (SigInvN j) Kg Kh j)
-    (heps0 : ∀ j : ℤ, 0 ≤ eps j) (hSig0 : ∀ j : ℤ, 0 ≤ SigInvN j) (hKg0 : 0 ≤ Kg)
-    (hKh0 : 0 ≤ Kh) :
-    ∑ j ∈ Finset.Icc n m, δ j ≤
-      Kg / (1 - r₁) +
-        (Kh / (1 - r₂) + Se * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf)) := by
-  have hCbd : 0 ≤ stepFourBoundaryDeltaConst Crem Vd Cst s :=
-    stepFourBoundaryDeltaConst_nonneg hCV hCst hs
-  have hHinf : 0 ≤ 2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf :=
-    mul_nonneg (by linarith only [hCbd]) hKhinf
-  have hstep : ∀ j : ℤ, δ j ≤
-      Ag j + (Ah j + eps j * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf) + 0) * 1 := by
-    intro j
-    have h := stepFourDeltaOutErrorWeighted_le_boundaryThreeLegs (Crem := Crem) (Vd := Vd)
-      (Cst := Cst) (s := s) (epsj := eps j) (Khinf := Khinf) (SigInvN := SigInvN j)
-      (Kg := Kg) (Kh := Kh) (n := j) hCV hCst hs (heps0 j) hKhinf (hSig0 j) hKg0 hKh0
-    rw [hδdef j, hAgdef j, hAhdef j]
-    linarith only [h]
-  have hsum : ∑ j ∈ Finset.Icc n m, δ j ≤
-      ∑ j ∈ Finset.Icc n m,
-        (Ag j + (Ah j + eps j * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf) +
-          0) * 1) :=
-    Finset.sum_le_sum fun j _ => hstep j
-  have hkit := sum_Icc_top_boundaryDelta_le_of_legs (Ag := Ag) (Ah := Ah) (ε := eps)
-    (δ := fun j => Ag j +
-      (Ah j + eps j * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf) + 0) * 1)
-    (Kg := Kg) (Kh := Kh)
-    (Hinf := 2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf) (Flat := 0)
-    (Se := Se) (W := ((m : ℝ) - (n : ℝ)) + 1) (ind := 1) hnm hr₁0 hr₁1 hr₂0 hr₂1
-    hAg0 hAgd hAh0 hAhd hSe hHinf zero_le_one rfl (fun j => by ring)
-  have hzero : Kg / (1 - r₁) +
-      (Kh / (1 - r₂) + Se * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf) +
-        (((m : ℝ) - (n : ℝ)) + 1) * 0) * 1 =
-      Kg / (1 - r₁) +
-        (Kh / (1 - r₂) + Se * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf)) := by
-    ring
-  linarith only [hsum, hkit, hzero]
 
 end
 

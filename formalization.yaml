@@ -27,43 +27,58 @@ status:
     renormalization of the effective diffusivity across scales (the
     superdiffusive asymptotics), the renormalization of the generator
     (quantitative homogenization of the Dirichlet problem at every scale,
-    Theorem B), and the anomalous large-scale regularity theory (Theorem C),
-    together with the sensitivity and coarse-matrix-derivative theory of
-    Section 2.4 and the full Section 3 diffusivity recursion.  The
-    formalization consumes the public CoarseGraining homogenization library
-    (a 600k+-line development by the same authors) as its analytic base.
-    SCOPE BOUNDARY: this repository gives complete formalizations of the
-    paper's PDE statements -- Sections 1-4 of the paper; Section 5 is not yet
-    formalized, and of the introduction's main results Theorems B and C are
-    proved while Theorem A (a statement about the diffusion process itself)
-    is not yet formalized, solely because the theory of diffusion processes
-    is not yet developed in Mathlib.  The headline theorems are exposed
-    publicly in Algsuperdiff/MainTheorems.lean; Theorems B and C are
-    additionally checked by the Lean comparator (Audit/).
+    Theorem B), the anomalous large-scale regularity theory (Theorem C), and
+    the power-law superdiffusivity of the diffusion process itself
+    (Theorem A), together with the sensitivity and coarse-matrix-derivative
+    theory of Section 2.4, the full Section 3 diffusivity recursion, and the
+    Section 5 theory of the diffusion process of a divergence-form generator
+    with a W^{1,infinity} antisymmetric part.  The formalization consumes the
+    public CoarseGraining homogenization library (a 600k+-line development by
+    the same authors) as its analytic base, and the public MarkovProcess
+    library (also by the same authors, a pinned git dependency) for the
+    general theory of continuous strong Markov processes of Feller
+    semigroups.
+    SCOPE BOUNDARY: Sections 1-5 of the paper are formalized, and of the
+    introduction's main results Theorems A, B and C are all proved, each
+    stated for the actual (un-cutoff) coefficient field a = nu I + k in its
+    introduction-level form.  The infrared-cutoff forms of
+    Theorems B and C, uniform in the cutoff, are the more general statements the paper proves
+    first; they remain public as Algsuperdiff.Frozen.Section4.*, and the
+    quantitative Section 3 form of the diffusivity asymptotics remains public
+    as Algsuperdiff.Frozen.Section3.diffusivity_asymptotics.  One construction
+    is left open: no instance of the model structure ABKModel is built
+    anywhere in the repository, so the three theorems are certified as
+    implications, holding for every model that satisfies the paper's
+    assumptions; the paper's Gaussian example is not formalized here.  The
+    headline theorems are exposed publicly in Algsuperdiff/MainTheorems.lean,
+    and all three have Mathlib-only comparator challenge/solution pairs under
+    SuperdiffusionAudit/, covered by the public comparator workflow.
   sorry_count: 0
+  sorry_count_scope: "Algsuperdiff production library only"
+  comparator_challenge_sorry_count: 3
   sorry_in_definitions: 0
   axioms:
     - "propext"
     - "Classical.choice"
     - "Quot.sound"
   main_results:
-    - declaration: "Algsuperdiff.diffusivity_asymptotics"
+    - declaration: "Algsuperdiff.superdiffusivity"
       file: "Algsuperdiff/MainTheorems.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: ""
+      comparator_config: "SuperdiffusionAudit/Superdiffusivity/comparator.json"
       literature_dependencies: []
     - declaration: "Algsuperdiff.generator_renormalization"
       file: "Algsuperdiff/MainTheorems.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/GeneratorRenormalization/comparator.json"
+      comparator_config: "SuperdiffusionAudit/GeneratorRenormalization/comparator.json"
       literature_dependencies: []
     - declaration: "Algsuperdiff.anomalous_regularity"
       file: "Algsuperdiff/MainTheorems.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/AnomalousRegularity/comparator.json"
+      comparator_config: "SuperdiffusionAudit/AnomalousRegularity/comparator.json"
       literature_dependencies: []
 
 automation:
@@ -76,46 +91,46 @@ automation:
         - "gpt-5.6-terra"
       framework: "Claude Code (Anthropic) and Codex (OpenAI) agentic coding harnesses; most code by the Claude models"
       tool_setup: >-
-        Lake builds under leanprover/lean4:v4.26.0 with Mathlib v4.26.0 and the
-        public CoarseGraining library at a pinned revision.  A frozen-statement
-        manifest with content hashes bound the certified statement surface
-        during development; every sealed theorem was certified by a two-key
-        process (a prover chain plus an independent adversarial audit by a
-        fresh model instance).  Multiple read-only subagents were used for
-        hostile statement audits, dependency-order verification, and dead-code
-        analysis.  The Lean comparator was run locally (leanprover/comparator
-        commit 5756749, lean4export commit
-        3e1cdfe206ec3f54bae4a548d814ce9b2c1bb43d at the v4.26.0 tag, landrun
-        811cfff); both Audit pairs are accepted ("Your solution is okay!").
+        Lake builds under leanprover/lean4:v4.26.0 with Mathlib v4.26.0, the
+        public CoarseGraining library and the public MarkovProcess library,
+        both at pinned revisions.  The public CI builds the three headline
+        theorems, prints their axiom dependencies, and runs their Mathlib-only
+        comparator challenge/solution pairs.  The comparator workflow pins
+        leanprover/comparator commit 5756749, lean4export v4.26.0, and landrun
+        commit 811cfff; its configuration is shipped under .github/workflows/.
       cost:
         wall_time: "approximately two weeks of agentic work"
         accounts: "roughly three Claude Pro and three ChatGPT Pro accounts were used in parallel"
         spend_usd: "not separately tracked (subscription accounts)"
         hardware: "a 16-CPU / 124 GB RAM Ubuntu machine"
       prompting_notes: >-
-        Human-directed agent work, closely supervised by the authors, with
-        author rulings recorded verbatim for every statement-level decision.
+        Human-directed agent work, closely supervised by the authors; public
+        statement differences from the paper are disclosed below.
   spend_usd: "not separately tracked (Claude subscription)"
   notes: >-
     All Lean code in this repository was written by the listed models under
     the close supervision of the authors.  Every proof is checked by the Lean
     kernel and Mathlib; the verified library contains no sorry and no custom
-    axiom.  The Mathlib-only comparator challenge files
-    (Audit/*/Challenge.lean) each contain exactly one intentional
-    statement-level sorry (the theorem body), which is filled by the
-    corresponding Audit/*/Solution.lean and checked by leanprover/comparator.
+    axiom.  The three Mathlib-only comparator challenge files
+    (SuperdiffusionAudit/*/Challenge.lean) each contain exactly one
+    intentional statement-level sorry (the theorem body), which is filled by
+    the corresponding SuperdiffusionAudit/*/Solution.lean and checked by
+    leanprover/comparator.
 
 fidelity:
   divergences: >-
-    The formalized statements match the paper as published: every
-    statement-level correction found during the formalization was
-    incorporated into the paper before release.  Rendering conventions (not
-    divergences): the paper's "random variable" phrasing is rendered as
-    explicit measurability hypotheses, and function-class memberships are
-    rendered as their defining bounds.  The Theorem C comparator challenge
-    presents the renormalized diffusivity existentially, carrying the profile
-    band that Theorem B certifies, rather than naming the library's canonical
-    construction; the library proves the canonical instance.
+    One formalized statement differs from the paper: the model structure
+    ABKModel requires the shell field of the random flow to have a continuous
+    second derivative (C^2), where the paper's local-regularity assumption on
+    that field is C^{1,1}_loc, so the three theorems are certified for the
+    slightly smaller class of models the formal assumption admits.
+    Rendering conventions (not divergences): the paper's "random variable"
+    phrasing is rendered as explicit measurability hypotheses, and
+    function-class memberships are rendered as their defining bounds.  The
+    Theorem C comparator challenge presents the renormalized diffusivity
+    existentially, carrying the profile band that Theorem B certifies, rather
+    than naming the library's canonical construction; the library proves the
+    canonical instance.
 
 review:
   status: "author-verified"
@@ -123,37 +138,48 @@ review:
     - "Scott Armstrong"
     - "Tuomo Kuusi"
   notes: >-
-    Correctness of every proof is guaranteed by the Lean kernel and Mathlib
-    (no sorry, no custom axiom).  The authors reviewed the public statements
-    and ruled on every statement-level decision during development; each of
-    the two root theorems was additionally certified by an independent
-    adversarial audit of the sealed statement and its proof cone.  This is
-    not external peer review.
+    Correctness of every production-library proof is checked by the Lean kernel
+    and Mathlib (no sorry, no custom axiom).  The authors reviewed the public
+    statements and the disclosed differences from the paper.  This is not
+    external peer review.
 
 alignment:
   namespace: "Algsuperdiff"
   statements:
-    - source: "The effective-diffusivity asymptotics (Section 3)"
-      lean: "Algsuperdiff.diffusivity_asymptotics"
+    - source: "Theorem A (superdiffusivity of the diffusion process)"
+      lean: "Algsuperdiff.superdiffusivity"
       module: "Algsuperdiff.MainTheorems"
       status: "proved"
-      note: "Stated in full; with Theorem B, a PDE input to Theorem A."
-    - source: "Theorem A (superdiffusivity of the diffusion process)"
-      lean: ""
-      module: ""
-      status: "not-formalized"
-      note: "Its PDE inputs (Theorem B and the diffusivity asymptotics) are proved; the probabilistic statement awaits diffusion-process theory in Mathlib; no other obstruction."
+      note: "Stated for the coefficient field itself. Comparator surface: SuperdiffusionAudit/Superdiffusivity/."
     - source: "Theorem B (renormalization of the generator)"
       lean: "Algsuperdiff.generator_renormalization"
       module: "Algsuperdiff.MainTheorems"
       status: "proved"
-      note: "Comparator-audited via Audit/GeneratorRenormalization/."
+      note: "Comparator surface: SuperdiffusionAudit/GeneratorRenormalization/."
     - source: "Theorem C (anomalous regularity)"
       lean: "Algsuperdiff.anomalous_regularity"
       module: "Algsuperdiff.MainTheorems"
       status: "proved"
-      note: "Comparator-audited via Audit/AnomalousRegularity/."
+      note: "Comparator surface: SuperdiffusionAudit/AnomalousRegularity/."
+    - source: "Theorem B for the infrared cutoffs a_L, uniformly in the cutoff (Section 4)"
+      lean: "Algsuperdiff.Frozen.Section4.generator_renormalization"
+      module: "Algsuperdiff.Frozen.Section4.GeneratorRenormalization"
+      status: "proved"
+      note: "The more general statement the paper proves first; the field version above follows in the limit L to infinity."
+    - source: "Theorem C for the infrared cutoffs a_L, uniformly in the cutoff (Section 4)"
+      lean: "Algsuperdiff.Frozen.Section4.anomalous_regularity"
+      module: "Algsuperdiff.Frozen.Section4.AnomalousRegularity"
+      status: "proved"
+      note: "The more general statement the paper proves first; the field version above follows in the limit L to infinity."
+    - source: "The effective-diffusivity asymptotics (Section 3)"
+      lean: "Algsuperdiff.Frozen.Section3.diffusivity_asymptotics"
+      module: "Algsuperdiff.Frozen.Section3.DiffusivityAsymptotics"
+      status: "proved"
+      note: "The quantitative Section 3 form; its introduction-level content is the first display of Theorem B, and it is a PDE input to Theorem A."
 
 acknowledgements: >-
-  Built on Lean 4, Mathlib, Lake, the CoarseGraining library, and
-  leanprover/comparator.  # TODO(author): funding acknowledgements.
+  Built on Lean 4, Mathlib, Lake, the CoarseGraining library, the MarkovProcess
+  library, and leanprover/comparator.  Scott Armstrong and Tuomo Kuusi were
+  supported by the European Research Council (ERC) under the European Union's
+  Horizon Europe research and innovation programme, grant agreement
+  No. 101200828.

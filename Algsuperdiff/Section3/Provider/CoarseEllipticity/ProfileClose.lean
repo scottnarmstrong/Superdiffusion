@@ -282,37 +282,8 @@ theorem exp_neg_frozen_le_one {Clow E gamma : ℝ} (hClow : 0 < Clow)
   have h4 : (0 : ℝ) ≤ Clow⁻¹ * (E⁻¹) ^ 2 * gamma⁻¹ := mul_nonneg (mul_nonneg h1 h2) h3
   linarith
 
-/-! ## 4. The deterministic slot -/
 
 
-/-! ## 5. The collar passage, run through the two summations
-
-`hgrid` arrives at the raw pole `rho` (`2s` at the source's data) with the
-un-normalized grid family `G`.  On the lower side, `hcollar` is
-`e.slstar.multiscale`'s own whole-payload normalization `G_k <= 3^{g(k+1)}
-H_k`, and the first theorem delivers every lower slot at the collar-absorbed
-pole `rho - g` (`2s - gamma`).  The second theorem is the corresponding
-generic three-term inequality.  In the source's upper route, it is used only
-for the two random lanes; the deterministic term remains at the raw pole.
-
-`hgrid`, `hsplit` and `hcollar` are explicit proof obligations carried
-unchanged from the two consumers; neither theorem proves any of them. -/
-
-
-/-! ## 6. The upper `Gamma_1` lane -/
-
-
-/-- `cstar <= 3/2` (`Provider.Disorder.cstar_le_three_halves`) gives
-`2/3 <= cstar^{-1}`, which is what lets a dimension-only constant be priced into
-the frozen `Cup cstar^{-1}` amplitude. -/
-theorem two_thirds_le_cstar_inv {d : ℕ} (M : ABKModel d) :
-    (2 : ℝ) / 3 ≤ (Disorder.cstar M)⁻¹ := by
-  have hpos : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hle : Disorder.cstar M ≤ 3 / 2 := Provider.Disorder.cstar_le_three_halves M
-  have hinv : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ := (inv_pos.2 hpos).le
-  have h := mul_le_mul_of_nonneg_left hle hinv
-  rw [inv_mul_cancel₀ (ne_of_gt hpos)] at h
-  linarith
 
 
 end

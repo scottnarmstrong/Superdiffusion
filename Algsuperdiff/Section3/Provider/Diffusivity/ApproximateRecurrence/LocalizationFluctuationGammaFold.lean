@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationFluctuationMeshTransfer
@@ -74,8 +74,8 @@ constants once `gamma` is small -- again the manuscript's "increasing `M`".
 
 ## Auxiliary
 
-`sq_cubeFamilyAverage_le` and its `descendantsAverage` form are the grid
-Cauchy--Schwarz `(avsum F)^2 <= avsum F^2`, the step that passes from the grid
+The `descendantsAverage` form of the grid
+Cauchy--Schwarz `(avsum F)^2 <= avsum F^2` is the step that passes from the grid
 average of squared oscillation cells (the majorant of the Besov depth average)
 to the grid average of their fourth powers, which is what
 `e.lower.bound.oscillations` controls.
@@ -119,37 +119,6 @@ private theorem gammaFold_holderConjugate_two_two : (2 : ℝ).HolderConjugate 2 
   constructor <;> norm_num
 
 /-! ## Fold 1: the eighth-moment envelope of the mesh boundary remainder -/
-
-/-- **Cauchy--Schwarz on a finite grid.**  The square of a grid average is below
-the grid average of the squares.  Unconditional.
-
-This is the step that passes from the grid average of the squared oscillation
-cells -- the quantity the Besov depth average is bounded by -- to the grid
-average of their fourth powers, which is what `e.lower.bound.oscillations`
-controls. -/
-theorem sq_cubeFamilyAverage_le (I : Finset (TriadicCube d)) (F : TriadicCube d → ℝ) :
-    (cubeFamilyAverage I F) ^ (2 : ℕ) ≤ cubeFamilyAverage I (fun R => F R ^ (2 : ℕ)) := by
-  classical
-  rcases Nat.eq_zero_or_pos I.card with hI0 | hIpos
-  · have hIempty : I = ∅ := Finset.card_eq_zero.mp hI0
-    subst hIempty
-    simp [cubeFamilyAverage]
-  have hN : (0 : ℝ) < (I.card : ℝ) := by exact_mod_cast hIpos
-  have hcheb := sq_sum_le_card_mul_sum_sq (s := I) (f := F)
-  unfold cubeFamilyAverage
-  rw [mul_pow]
-  have hstep : ((I.card : ℝ))⁻¹ ^ (2 : ℕ) * (∑ R ∈ I, F R) ^ (2 : ℕ) ≤
-      ((I.card : ℝ))⁻¹ ^ (2 : ℕ) * ((I.card : ℝ) * ∑ R ∈ I, F R ^ 2) :=
-    mul_le_mul_of_nonneg_left hcheb (by positivity)
-  refine hstep.trans (le_of_eq ?_)
-  field_simp
-
-/-- The same, at the `descendantsAverage` carrier of the localization split. -/
-theorem sq_descendantsAverage_le (Q : TriadicCube d) (j : ℕ) (F : TriadicCube d → ℝ) :
-    (descendantsAverage Q j F) ^ (2 : ℕ) ≤
-      descendantsAverage Q j (fun R => F R ^ (2 : ℕ)) := by
-  rw [descendantsAverage_eq_cubeFamilyAverage, descendantsAverage_eq_cubeFamilyAverage]
-  exact sq_cubeFamilyAverage_le _ F
 
 /-- **Cauchy--Schwarz in the sample.**  On a probability space the square of a
 fourth moment is below the eighth moment.  This is the step that turns the

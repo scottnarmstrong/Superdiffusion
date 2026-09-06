@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2Moments
 
@@ -182,18 +182,6 @@ theorem lintegral_rpow_le_of_twoTerm_gammaTwoHalf {mu : Measure Omega}
   rw [gammaTwoHalfMomentBound_eq] at hR
   exact lintegral_rpow_le_of_twoTerm_of_ae_le (by norm_num) (by norm_num) hp hX0 h
     hF hR
-
-/-- The `(Γ_2, Γ_{1/2})` splitter with the observable taken to be
-`ENNReal.ofReal ∘ X` itself. -/
-theorem lintegral_ofReal_rpow_le_of_twoTerm_gammaTwoHalf {mu : Measure Omega}
-    [IsProbabilityMeasure mu] {X : Omega → ℝ} {A1 A2 p R : ℝ} (hp : 1 ≤ p)
-    (hX0 : ∀ omega, 0 ≤ X omega)
-    (h : Probability.IsTwoTermBigOWith mu (gammaSigma 2) (gammaSigma (1 / 2))
-      X A1 A2)
-    (hR : gammaTwoHalfMomentBound p A1 A2 ≤ R) :
-    ∫⁻ omega, ENNReal.ofReal (X omega) ^ p ∂mu ≤ ENNReal.ofReal R ^ p :=
-  lintegral_rpow_le_of_twoTerm_gammaTwoHalf hp hX0 h
-    (Filter.Eventually.of_forall fun _ => le_refl _) hR
 
 end
 

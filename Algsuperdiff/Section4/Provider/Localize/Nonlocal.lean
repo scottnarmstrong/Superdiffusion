@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.Events
 
@@ -160,73 +160,7 @@ theorem cgExcess_le_of_mem_eventG0 (M : ABKModel d) (Ccg : ℝ) {m n : ℤ}
   rw [cgExcess_sub_two, ← hX, ← rpow_weight_inv M m n, ← hw]
   exact max_le hXle (inv_nonneg.mpr hwpos.le)
 
-/-- The per-point bound on the source's full range `n ≤ m`.  At `n = m` the
-annulus `□_m ∖ □_m` carries no lattice point, so the hypothesis is vacuous. -/
-theorem cgExcess_le_of_mem_eventG0_of_le (M : ABKModel d) (Ccg : ℝ) {m n : ℤ}
-    (hn : n ≤ m) {omega : Cutoff.CutoffSample d}
-    (homega : omega ∈ Support.eventG0 M Ccg m)
-    (v : ↥(Support.latticeAnnulusSet d (n - 2) m n)) :
-    cgExcess M Ccg (n - 2) (Support.triadicLatticePoint (n - 2) v.1) omega ≤
-      Real.rpow (3 : ℝ) ((1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ)) := by
-  rcases eq_or_lt_of_le hn with hnm | hnm
-  · exfalso
-    have hv : Support.triadicLatticePoint (n - 2) v.1 ∈
-        openCubeSet (originCube d m) \ openCubeSet (originCube d n) := v.2
-    have hset : openCubeSet (originCube d n) = openCubeSet (originCube d m) := by
-      rw [hnm]
-    exact hv.2 (by rw [hset]; exact hv.1)
-  · exact cgExcess_le_of_mem_eventG0 M Ccg (by omega) homega v
-
 /-! ## 4. The display, at the lattice supremum and with the indicator -/
-
-/-- **`e.localize.lambdas.for.regularity.nonlocal`, on the event.**
-
-```
-max_{z ∈ 3^{n−2}ℤ^d ∩ (□_m ∖ □_n)} 𝒳_{n−2}(z) ≤ 3^{γ(m−n)/4}   on 𝒢₀(m),
-```
-
-the lattice maximum being the `ℝ≥0∞` supremum over the proved enumeration
-`Support.latticeAnnulusSet`.  The range is the source's `n ≤ m`; at `n = m`
-the index set is empty. -/
-theorem iSup_cgExcess_le_of_mem_eventG0 (M : ABKModel d) (Ccg : ℝ) {m n : ℤ}
-    (hn : n ≤ m) {omega : Cutoff.CutoffSample d}
-    (homega : omega ∈ Support.eventG0 M Ccg m) :
-    (⨆ v : ↥(Support.latticeAnnulusSet d (n - 2) m n),
-        ENNReal.ofReal
-          (cgExcess M Ccg (n - 2)
-            (Support.triadicLatticePoint (n - 2) v.1) omega)) ≤
-      ENNReal.ofReal
-        (Real.rpow (3 : ℝ) ((1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ))) := by
-  rcases eq_or_lt_of_le hn with hnm | hnm
-  · -- `n = m`: the annulus `□_m ∖ □_m` carries no lattice point.
-    have hempty : Support.latticeAnnulusSet d (n - 2) m n = (∅ : Set (Fin d → ℤ)) := by
-      rw [Support.latticeAnnulusSet, hnm, Set.diff_self]
-      exact Set.eq_empty_of_forall_notMem fun _ hv => hv
-    have : IsEmpty ↥(Support.latticeAnnulusSet d (n - 2) m n) := by
-      rw [hempty]; exact Set.isEmpty_coe_sort.mpr rfl
-    rw [iSup_of_empty]
-    exact bot_le
-  · refine iSup_le fun v => ENNReal.ofReal_le_ofReal ?_
-    exact cgExcess_le_of_mem_eventG0 M Ccg (by omega) homega v
-
-/-- **`e.localize.lambdas.for.regularity.nonlocal`, in the printed indicator
-form.**  Off `𝒢₀(m)` the indicator is `0`; on it, the previous bound. -/
-theorem indicator_iSup_cgExcess_le (M : ABKModel d) (Ccg : ℝ) {m n : ℤ}
-    (hn : n ≤ m) (omega : Cutoff.CutoffSample d) :
-    (Support.eventG0 M Ccg m).indicator
-        (fun w : Cutoff.CutoffSample d =>
-          ⨆ v : ↥(Support.latticeAnnulusSet d (n - 2) m n),
-            ENNReal.ofReal
-              (cgExcess M Ccg (n - 2)
-                (Support.triadicLatticePoint (n - 2) v.1) w))
-        omega ≤
-      ENNReal.ofReal
-        (Real.rpow (3 : ℝ) ((1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ))) := by
-  by_cases homega : omega ∈ Support.eventG0 M Ccg m
-  · rw [Set.indicator_of_mem homega]
-    exact iSup_cgExcess_le_of_mem_eventG0 M Ccg hn homega
-  · rw [Set.indicator_of_notMem homega]
-    exact zero_le _
 
 end
 

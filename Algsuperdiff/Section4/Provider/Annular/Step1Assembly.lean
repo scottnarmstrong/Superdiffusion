@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.CarrierIdentification
 
@@ -46,7 +46,7 @@ with `T` the weighted diagonal sum.  On `s ≤ 1/4` and `ρ ≥ 9` the contracti
 factor is at most `7/36`, whence `S ≤ (36/29) T`, and `T = 3^{2s}` times the
 diagonal slice in the spelling `Step1.annularDecompPre_of` expects.  Since
 `(36/29)·(7/4) = 63/29 < 3`, `C_cen = 3` closes it.  This is exactly the geometric
-factor `3^{2s}(1 - 3^{2s-d})^{-1}` of `Step1.centre_geom_factor`, evaluated with
+factor `3^{2s}(1 - 3^{2s-d})^{-1}` of the centre interchange, evaluated with
 slack on the printed window; the honest convergence condition `2s < d` is what
 `s ≤ 1/4 < 1 ≤ d/2` supplies.
 

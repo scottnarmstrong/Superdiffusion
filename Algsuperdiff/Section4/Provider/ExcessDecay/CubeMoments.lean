@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.AffineExcess
 import Homogenization.Geometry.CubeMetric
@@ -471,62 +471,6 @@ theorem normalizedL2On_axisCube_affineEval_sub_average (z : Vec d) {L : ℝ} (hL
   rw [hfun, normalizedL2On_axisCube_affineEval z hL, hzero,
     show (0 : ℝ) ^ 2 + L ^ 2 / 12 * vecNormSq g = L ^ 2 / 12 * vecNormSq g by ring,
     Real.sqrt_mul (by positivity), sqrt_sq_div_twelve hL.le, slopeMagnitude]
-
-/-! ### The triadic instance
-
-`l.iteration.lemma`'s windows are sandwiched between *triadic* cubes, so the
-identity is needed at the repository's `TriadicCube`/`openCubeSet` carrier,
-with CoarseGraining's own centre `cubeCenter Q` and side `cubeScaleFactor Q =
-3^{scale}`. -/
-
-/-- CoarseGraining's open triadic cube is an `axisCube` of side `3^{scale}`. -/
-theorem openCubeSet_eq_axisCube (Q : TriadicCube d) :
-    openCubeSet Q
-      = axisCube (fun i => ((Q.index i : ℝ) - 1 / 2) * cubeScaleFactor Q)
-          (cubeScaleFactor Q) := by
-  ext x
-  simp only [openCubeSet, axisCube, Set.mem_setOf_eq, Set.mem_univ_pi, Set.mem_Ioo]
-  refine forall_congr' fun i => ?_
-  constructor
-  · rintro ⟨h1, h2⟩
-    exact ⟨h1, by linarith only [h2]⟩
-  · rintro ⟨h1, h2⟩
-    exact ⟨h1, by linarith only [h2]⟩
-
-/-- The `axisCube` centre of a triadic cube is CoarseGraining's `cubeCenter`. -/
-theorem axisCubeCenter_triadic (Q : TriadicCube d) :
-    axisCubeCenter (fun i => ((Q.index i : ℝ) - 1 / 2) * cubeScaleFactor Q)
-        (cubeScaleFactor Q) = cubeCenter Q := by
-  funext i
-  rw [axisCubeCenter_apply, cubeCenter]
-  ring
-
-theorem cubeScaleFactor_pos (Q : TriadicCube d) : 0 < cubeScaleFactor Q := by
-  rw [cubeScaleFactor]
-  exact zpow_pos (by norm_num) _
-
-/-- **The cube second moment, triadic instance.** `⨍_{□_Q} (c + g·x)² = (c + g·x̄)² +
-(3^{scale})²|g|²/12`, with `x̄ = cubeCenter Q` the centre and `3^{scale} =
-cubeScaleFactor Q` the side length of the triadic cube `Q`. -/
-theorem volumeAverage_openCubeSet_affineEval_sq (Q : TriadicCube d) (c : ℝ) (g : Vec d) :
-    volumeAverage (openCubeSet Q) (fun x => affineEval c g x ^ 2)
-      = affineEval c g (cubeCenter Q) ^ 2 + cubeScaleFactor Q ^ 2 / 12 * vecNormSq g := by
-  rw [openCubeSet_eq_axisCube Q,
-    volumeAverage_axisCube_affineEval_sq _ (cubeScaleFactor_pos Q) c g,
-    axisCubeCenter_triadic Q]
-
-/-- **The mean of an affine function over a triadic cube is its value at the centre.** -/
-theorem volumeAverage_openCubeSet_affineEval (Q : TriadicCube d) (c : ℝ) (g : Vec d) :
-    volumeAverage (openCubeSet Q) (affineEval c g) = affineEval c g (cubeCenter Q) := by
-  rw [openCubeSet_eq_axisCube Q, volumeAverage_axisCube_affineEval _ (cubeScaleFactor_pos Q) c g,
-    axisCubeCenter_triadic Q]
-
-/-- The inverse (Bernstein) inequality on a triadic cube, sharp constant. -/
-theorem normalizedL2On_openCubeSet_affineEval_ge (Q : TriadicCube d) (c : ℝ) (g : Vec d) :
-    cubeScaleFactor Q / (2 * Real.sqrt 3) * slopeMagnitude g
-      ≤ normalizedL2On (openCubeSet Q) (affineEval c g) := by
-  rw [openCubeSet_eq_axisCube Q]
-  exact normalizedL2On_axisCube_affineEval_ge _ (cubeScaleFactor_pos Q) c g
 
 end
 

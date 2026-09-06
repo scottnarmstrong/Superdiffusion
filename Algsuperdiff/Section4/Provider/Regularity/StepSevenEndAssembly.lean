@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenEndEmbedding
 import Algsuperdiff.Section4.Provider.Regularity.StepFourSeminormComparisons
@@ -49,7 +49,7 @@ printed `Ccmp = 2` and the proved `Ccmp = 4` are both instances.
 
 ## The data-bracket collapse is owned here
 
-This module owns the collapse: `stepSevenDataLeg_merge` is applied here, at the
+This module owns the collapse: the data-leg merge is applied here, at the
 same comparison `σ̄_{n'} ≤ Ccmp σ̄_m` that the assembly uses for the
 oscillation leg, so the two consumptions of `e.shom.m.vs.shom.n` are one
 hypothesis.
@@ -59,8 +59,7 @@ hypothesis.
 The endpoint's data leg is `3^{sm}[𝐠]_{H̲^s(□_m)}` while the theorem's data leg
 is `3^{m/2}[𝐠]_{W̲^{1/2,∞}(□_m)}`; the manuscript never displays the passage.
 It is the proved atom `three_rpow_mul_normalizedGagliardoESeminormOn_cube_le`,
-and it is consumed here
-(`stepSevenDataG_le_of_holderHalf`, the real-valued layer), not re-derived: the
+and it is consumed here in the real-valued layer, not re-derived: the
 free `s` cancels out of the scale weight, which is why
 `e.energy.density.estimate` can be `s`-free.
 
@@ -71,9 +70,9 @@ displays; the live conditional inputs are the ones its two arguments carry —'s
 `hcacc`/`hlambda`/`hosc`, `StepSevenEndPoincare`'s `hcg`/`hlambda`, and
 `StepSevenEndEmbedding`'s `hembed`/`hbridge`.
 
-`stepSevenEnd_chain` is the single entry point: it takes each of the three
-proved displays' conclusions V in its hypothesis slots ('s
-`stepSevenGradientWithShom`, `stepSevenCgPoincareApplied_absorbed`, and the
+The end chain is the single entry point: it takes each of the three
+proved displays' conclusions in its hypothesis slots (`stepSevenGradientWithShom`,
+the absorbed coarse-grained Poincaré display, and the
 oscillation endpoint's three links) and produces `e.energy.density.estimate`.
 The unification is syntactic — no massaging, one associativity `ring`.
 
@@ -149,8 +148,8 @@ the theorem's own display follows at the power `R34 · = 3^{(1-α)(m-n)}`:
             + Cg·R34·( √σ̄_{n'}·dataOsc + dataM ) ,
 ```
 
-the second summand being the honest data bracket, which
-`stepSevenEnergyDensityEstimate_merged` collapses to the printed one. -/
+the second summand being the honest data bracket, which the merged form
+collapses to the printed one. -/
 theorem stepSevenEnergyDensityEstimate_compose {Cg Cend Ccmp R34 R14 shomNp shomM
     gradLoc oscTrunc dataOsc dataM gradM dataG : ℝ}
     (hCg : 0 ≤ Cg) (hCcmp : 0 ≤ Ccmp) (hshomM : 0 < shomM)
@@ -178,158 +177,9 @@ theorem stepSevenEnergyDensityEstimate_compose {Cg Cend Ccmp R34 R14 shomNp shom
         (gradM + Real.sqrt shomM⁻¹ * dataG) := by ring
   linarith only [hgrad, hmul, hexp1.ge, hexp1.le, hexp2.ge, hexp2.le]
 
-/-- **`e.energy.density.estimate` with the printed data bracket**.
-
-`stepSevenEnergyDensityEstimate_compose` followed's `stepSevenDataLeg_merge` at
-the SAME comparison `σ̄_{n'} ≤ 2σ̄_m`, so the `e.shom.m.vs.shom.n` edge is
-consumed once.  The second summand's bracket is now the theorem's own
-
-```text
-  3^{m/2}( σ̄_m^{-1/2}[𝐠]_{W̲^{1/2,∞}(□_m)} + σ̄_m^{1/2}‖∇h‖_{W̲^{1/2,∞}(□_m)}1 ) ,
-```
-
-i.e. `dataOsc = W·(σ̄_m⁻¹·G + H)` becomes `W·((√σ̄_m)⁻¹·G + √σ̄_m·H)` at cost
-`√2`. -/
-theorem stepSevenEnergyDensityEstimate_merged {Cg Cend R34 R14 shomNp shomM
-    gradLoc oscTrunc dataM gradM dataG W G H : ℝ}
-    (hCg : 0 ≤ Cg) (hshomM : 0 < shomM)
-    (hR34 : 0 ≤ R34) (hoscTrunc : 0 ≤ oscTrunc)
-    (hW : 0 ≤ W) (hG : 0 ≤ G) (hH : 0 ≤ H)
-    (hcomp : shomNp ≤ 2 * shomM)
-    (hgrad : gradLoc ≤ Cg * Real.sqrt shomNp * R34 * oscTrunc +
-      Cg * R34 * (Real.sqrt shomNp * (W * (shomM⁻¹ * G + H)) + dataM))
-    (hend : oscTrunc ≤ Cend * R14 *
-      (Real.sqrt shomM⁻¹ * (gradM + Real.sqrt shomM⁻¹ * dataG))) :
-    gradLoc ≤ Cg * (Real.sqrt 2 * (Cend * R14)) * R34 *
-        (gradM + Real.sqrt shomM⁻¹ * dataG) +
-      Cg * R34 * (Real.sqrt 2 *
-        (W * ((Real.sqrt shomM)⁻¹ * G + Real.sqrt shomM * H)) + dataM) := by
-  have hbase := stepSevenEnergyDensityEstimate_compose (Ccmp := 2)
-    (dataOsc := W * (shomM⁻¹ * G + H)) hCg (by norm_num) hshomM hR34
-    hoscTrunc hcomp hgrad hend
-  have hmerge := stepSevenDataLeg_merge hshomM hW hG hH hcomp
-  have hpush : Cg * R34 * (Real.sqrt shomNp * (W * (shomM⁻¹ * G + H)) + dataM) ≤
-      Cg * R34 * (Real.sqrt 2 *
-        (W * ((Real.sqrt shomM)⁻¹ * G + Real.sqrt shomM * H)) + dataM) := by
-    refine mul_le_mul_of_nonneg_left ?_ (mul_nonneg hCg hR34)
-    linarith only [hmerge]
-  linarith only [hbase, hpush]
-
-/-! ## 3. The display at the printed exponents -/
-
-/-- **`e.energy.density.estimate` at the printed exponent `3^{(1-α)(m-n)}`.**
-
-The two halves `3^{(3/4)(1-α)(m-n)}` and `3^{(1/4)(1-α)(m-n)}` (the Step-7d
-transport, `StepSevenEndPoincare`) multiply to the theorem's own
-`3^{(1-α)(m-n)}`. -/
-theorem stepSevenEnergyDensityEstimate {alpha : ℝ} {n m : ℤ}
-    {Cg Cend shomNp shomM gradLoc oscTrunc dataM gradM dataG W G H : ℝ}
-    (hCg : 0 ≤ Cg) (hshomM : 0 < shomM)
-    (hoscTrunc : 0 ≤ oscTrunc)
-    (hW : 0 ≤ W) (hG : 0 ≤ G) (hH : 0 ≤ H)
-    (hcomp : shomNp ≤ 2 * shomM)
-    (hgrad : gradLoc ≤
-      Cg * Real.sqrt shomNp *
-          Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) * oscTrunc +
-        Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-          (Real.sqrt shomNp * (W * (shomM⁻¹ * G + H)) + dataM))
-    (hend : oscTrunc ≤
-      Cend * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) *
-        (Real.sqrt shomM⁻¹ * (gradM + Real.sqrt shomM⁻¹ * dataG))) :
-    gradLoc ≤
-      Cg * Real.sqrt 2 * Cend * Real.rpow (3 : ℝ) (stepSixExponent alpha n m) *
-          (gradM + Real.sqrt shomM⁻¹ * dataG) +
-        Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-          (Real.sqrt 2 *
-            (W * ((Real.sqrt shomM)⁻¹ * G + Real.sqrt shomM * H)) + dataM) := by
-  have hR34 : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) :=
-    (Real.rpow_pos_of_pos (by norm_num) _).le
-  have h := stepSevenEnergyDensityEstimate_merged hCg hshomM hR34 hoscTrunc
-    hW hG hH hcomp hgrad hend
-  have hprod : Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) *
-      Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) =
-      Real.rpow (3 : ℝ) (stepSixExponent alpha n m) := by
-    rw [rpow_three_stepSixExponent_mul]
-    norm_num
-  have hrw : Cg * (Real.sqrt 2 *
-        (Cend * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m))) *
-      Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-      (gradM + Real.sqrt shomM⁻¹ * dataG) =
-      Cg * Real.sqrt 2 * Cend *
-        (Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) *
-          Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m)) *
-        (gradM + Real.sqrt shomM⁻¹ * dataG) := by ring
-  rw [hrw, hprod] at h
-  exact h
-
-/-! ## 4. Step 7d end to end -/
-
-/-- **Step 7d, end to end.**  The three displays of the node, chained:
-
-* `hpoincare` — `stepSevenCgPoincareApplied_absorbed`'s conclusion
-  (`e.cg.Poincare.with.rhs.grad.applied` with the transport exponent already
-  absorbed into `Ctr · 3^{(1/4)(1-α)(m-n)}`);
-* `hgrad` —'s `stepSevenGradientWithShom`;
-* `hcomp` — `e.shom.m.vs.shom.n`.
-
-The conclusion is `e.energy.density.estimate` at the printed exponent
-`3^{(1-α)(m-n)}` with the printed data bracket.  The three proved displays
-unify into this statement with NO massaging: each hypothesis below is literally
-the conclusion of the named theorem. -/
-theorem stepSevenEnd_chain {alpha : ℝ} {n m : ℤ}
-    {Cg Cmean Cemb Cbr Cout Ctr shomNp shomM gradLoc oscTrunc oscLoc besovP1 besov
-      dataM gradM dataG W G H : ℝ}
-    (hCg : 0 ≤ Cg) (hCmean : 0 ≤ Cmean) (hCemb : 0 ≤ Cemb) (hCbr : 0 ≤ Cbr)
-    (hshomM : 0 < shomM) (hoscTrunc : 0 ≤ oscTrunc)
-    (hW : 0 ≤ W) (hG : 0 ≤ G) (hH : 0 ≤ H)
-    (hcomp : shomNp ≤ 2 * shomM)
-    (hgrad : gradLoc ≤
-      Cg * Real.sqrt shomNp *
-          Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) * oscTrunc +
-        Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-          (Real.sqrt shomNp * (W * (shomM⁻¹ * G + H)) + dataM))
-    (hmean : oscTrunc ≤ Cmean * oscLoc)
-    (hembed : oscLoc ≤ Cemb * besovP1)
-    (hbridge : besovP1 ≤ Cbr * besov)
-    (hpoincare : besov ≤
-      Cout * (Ctr * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m)) *
-        (Real.sqrt shomM⁻¹ * gradM + shomM⁻¹ * dataG)) :
-    gradLoc ≤
-      Cg * Real.sqrt 2 * (Cmean * Cemb * Cbr * Cout * Ctr) *
-          Real.rpow (3 : ℝ) (stepSixExponent alpha n m) *
-          (gradM + Real.sqrt shomM⁻¹ * dataG) +
-        Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-          (Real.sqrt 2 *
-            (W * ((Real.sqrt shomM)⁻¹ * G + Real.sqrt shomM * H)) + dataM) := by
-  have hshomMinv : (0 : ℝ) ≤ shomM⁻¹ := (inv_pos.mpr hshomM).le
-  have hend0 := stepSevenOscillationEndpoint hCmean hCemb hCbr hshomMinv hmean hembed
-    hbridge hpoincare
-  have hassoc : Cmean * Cemb * Cbr *
-      (Cout * (Ctr * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m))) =
-      Cmean * Cemb * Cbr * Cout * Ctr *
-        Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) := by ring
-  rw [hassoc] at hend0
-  exact stepSevenEnergyDensityEstimate hCg hshomM hoscTrunc hW hG hH hcomp hgrad hend0
-
 /-! ## 5. The data leg in the theorem's own seminorm -/
 
 variable {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-/-- This is the never-displayed passage, consumed rather than re-derived.  `K` is
-the `C^{0,1/2}(□_m)` bound on `𝐠`, i.e. the `W̲^{1/2,∞}` seminorm. -/
-theorem stepSevenDataG_le_of_holderHalf {m : ℤ} {g : Vec d → E} {K s : ℝ}
-    (hd : 1 ≤ d) (hs0 : 0 < s) (hs : s < 1 / 2) (hK : 0 ≤ K)
-    (hg : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K g) :
-    (ENNReal.ofReal ((3 : ℝ) ^ ((m : ℝ) * s)) *
-        Support.normalizedGagliardoESeminormOn (openCubeSet (originCube d m)) s g).toReal ≤
-      K * stepFourGagliardoConst d s * (3 : ℝ) ^ ((m : ℝ) / 2) := by
-  have hbound := three_rpow_mul_normalizedGagliardoESeminormOn_cube_le hd hs0 hs hK hg
-  have hnn : (0 : ℝ) ≤ K * stepFourGagliardoConst d s * (3 : ℝ) ^ ((m : ℝ) / 2) := by
-    have h1 : (0 : ℝ) ≤ K * stepFourGagliardoConst d s :=
-      mul_nonneg hK (stepFourGagliardoConst_nonneg d s)
-    exact mul_nonneg h1 (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) _)
-  have h := ENNReal.toReal_mono ENNReal.ofReal_ne_top hbound
-  rwa [ENNReal.toReal_ofReal hnn] at h
 
 end
 

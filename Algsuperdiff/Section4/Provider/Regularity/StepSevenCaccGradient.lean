@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccVolume
 
@@ -191,10 +191,9 @@ The Caccioppoli at the lowest good scale `n'`, the Hölder bound at that same
 scale, and the volume factor, composed.  The exponent is the printed `3/4 = 1/4
 + 1/2`.
 
-The data bracket is the honest `σ̄_{n'}^{1/2}·dataOsc + dataM`; see
-`stepSevenDataLeg_merge` and the module docstring for the
-(separately proved) collapse to the printed `3^{m/2}(σ̄_m^{-1/2}[𝐠] +
-σ̄_m^{1/2}‖∇h‖1)`.
+The data bracket is the honest `σ̄_{n'}^{1/2}·dataOsc + dataM`; see the module
+docstring for the (separately proved) collapse to the printed
+`3^{m/2}(σ̄_m^{-1/2}[𝐠] + σ̄_m^{1/2}‖∇h‖1)`.
 
 `hcacc`, `hlambda`, `hosc` are the only conditional inputs. -/
 theorem stepSevenGradientWithShom (d : ℕ) {C1 alpha delta : ℝ} {B : ℕ} {n m n' : ℤ}
@@ -236,87 +235,6 @@ theorem stepSevenGradientWithShom (d : ℕ) {C1 alpha delta : ℝ} {B : ℕ} {n 
   have h := gradientWithShom_compose hCvol hCcacc hCosc hClam hR1 hR2one hgradCore
     hoscLo hoscHi hdataOsc hdataM hvol hvolB hcacc hlambda hosc
   rwa [hprod] at h
-
-/-- Recorded, not substituted; the printed form above is the headline. -/
-theorem stepSevenGradientWithShomSharp (d : ℕ) {C1 alpha delta : ℝ} {B : ℕ}
-    {n m n' : ℤ}
-    {Ccacc Cosc Clam gradLoc gradCore oscLo oscHi dataOsc dataM lamLo shomNp : ℝ}
-    (hC1 : 2 * (d : ℝ) + 2 ≤ C1) (halpha0 : 0 ≤ alpha) (halpha1 : alpha ≤ 1)
-    (hnm : n ≤ m) (hdelta : delta ≤ C1⁻¹ * (1 - alpha))
-    (hgap : n' - n ≤ (B : ℤ) + 6)
-    (hbudget : (B : ℝ) ≤ delta * (((m - n).toNat : ℝ) + 1))
-    (hCcacc : 0 ≤ Ccacc) (hCosc : 0 ≤ Cosc) (hClam : 0 ≤ Clam)
-    (hgradCore : 0 ≤ gradCore) (hoscLo : 0 ≤ oscLo) (hoscHi : 0 ≤ oscHi)
-    (hdataOsc : 0 ≤ dataOsc) (hdataM : 0 ≤ dataM)
-    (hvol : gradLoc ≤
-      Real.rpow (3 : ℝ) (((d : ℝ) / 2) * ((n' : ℝ) - (n : ℝ))) * gradCore)
-    (hcacc : gradCore ≤ Ccacc * (Real.sqrt lamLo * oscLo) + Ccacc * dataM)
-    (hlambda : lamLo ≤ Clam * shomNp)
-    (hosc : oscLo ≤
-      Cosc * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) * oscHi +
-        Cosc * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) * dataOsc) :
-    gradLoc ≤
-      (Real.rpow (3 : ℝ) (3 * (d : ℝ) + 1 / 4) * Ccacc *
-          (Cosc * Real.sqrt Clam + 1)) * Real.sqrt shomNp *
-          Real.rpow (3 : ℝ) (1 / 2 * stepSixExponent alpha n m) * oscHi +
-        (Real.rpow (3 : ℝ) (3 * (d : ℝ) + 1 / 4) * Ccacc *
-          (Cosc * Real.sqrt Clam + 1)) *
-          Real.rpow (3 : ℝ) (1 / 2 * stepSixExponent alpha n m) *
-          (Real.sqrt shomNp * dataOsc + dataM) := by
-  have hvolB := three_rpow_stepSevenVolume_le d hC1 halpha0 halpha1 hnm hdelta hgap hbudget
-  have hCvol : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (3 * (d : ℝ) + 1 / 4) :=
-    (Real.rpow_pos_of_pos (by norm_num) _).le
-  have hR1 : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) :=
-    (Real.rpow_pos_of_pos (by norm_num) _).le
-  have hR2one : (1 : ℝ) ≤ Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) :=
-    one_le_rpow_three_stepSixExponent (by norm_num) halpha1 hnm
-  have hprod : Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) *
-      Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m) =
-      Real.rpow (3 : ℝ) (1 / 2 * stepSixExponent alpha n m) := by
-    rw [rpow_three_stepSixExponent_mul]
-    norm_num
-  have h := gradientWithShom_compose hCvol hCcacc hCosc hClam hR1 hR2one hgradCore
-    hoscLo hoscHi hdataOsc hdataM hvol hvolB hcacc hlambda hosc
-  rwa [hprod] at h
-
-/-! ## 3. From the honest data bracket to the printed one -/
-
-/-- **The data-leg collapse.**
-
-Step 6's data leg is `W·(σ̄_m^{-1}[𝐠] + ‖∇h‖1)` and the Caccioppoli multiplies it
-by `σ̄_{n'}^{1/2}`; the Step-7c display prints `W·(σ̄_m^{-1/2}[𝐠] + σ̄_m^{1/2}‖∇h‖1)`.
-The two differ by exactly `σ̄_{n'}^{1/2}` against `σ̄_m^{1/2}`, so the printed form
-needs `e.shom.m.vs.shom.n` — a comparison that belongs to Step 7d and that
-Step 7c never mentions.  At `σ̄_{n'} ≤ 2σ̄_m` the collapse costs `√2`:
-
-```text
-  √σ̄_{n'} · W · (σ̄_m^{-1}G + H)  ≤  √2 · W · ((√σ̄_m)^{-1}G + √σ̄_m·H) .
-``` -/
-theorem stepSevenDataLeg_merge {shomNp shomM W G H : ℝ} (hshomM : 0 < shomM)
-    (hW : 0 ≤ W) (hG : 0 ≤ G) (hH : 0 ≤ H)
-    (hcomp : shomNp ≤ 2 * shomM) :
-    Real.sqrt shomNp * (W * (shomM⁻¹ * G + H)) ≤
-      Real.sqrt 2 * (W * ((Real.sqrt shomM)⁻¹ * G + Real.sqrt shomM * H)) := by
-  have hsm : 0 < Real.sqrt shomM := Real.sqrt_pos.mpr hshomM
-  have hstep : Real.sqrt shomNp ≤ Real.sqrt 2 * Real.sqrt shomM := by
-    calc Real.sqrt shomNp ≤ Real.sqrt (2 * shomM) := Real.sqrt_le_sqrt hcomp
-      _ = Real.sqrt 2 * Real.sqrt shomM := Real.sqrt_mul (by norm_num) shomM
-  have hinv : Real.sqrt shomM * shomM⁻¹ = (Real.sqrt shomM)⁻¹ := by
-    have hsq : Real.sqrt shomM * Real.sqrt shomM = shomM := Real.mul_self_sqrt hshomM.le
-    field_simp
-    linarith only [hsq]
-  have hnn : 0 ≤ W * (shomM⁻¹ * G + H) := by
-    have : 0 ≤ shomM⁻¹ * G + H :=
-      add_nonneg (mul_nonneg (inv_nonneg.mpr hshomM.le) hG) hH
-    exact mul_nonneg hW this
-  have h1 : Real.sqrt shomNp * (W * (shomM⁻¹ * G + H)) ≤
-      (Real.sqrt 2 * Real.sqrt shomM) * (W * (shomM⁻¹ * G + H)) :=
-    mul_le_mul_of_nonneg_right hstep hnn
-  have h2 : (Real.sqrt 2 * Real.sqrt shomM) * (W * (shomM⁻¹ * G + H)) =
-      Real.sqrt 2 * (W * ((Real.sqrt shomM * shomM⁻¹) * G + Real.sqrt shomM * H)) := by
-    ring
-  rw [hinv] at h2
-  linarith only [h1, h2.ge, h2.le]
 
 end
 

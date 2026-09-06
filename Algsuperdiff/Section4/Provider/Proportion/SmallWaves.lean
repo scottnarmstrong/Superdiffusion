@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.LargeWaves
 import Algsuperdiff.Section4.Provider.Proportion.SmallWavesArith
@@ -346,74 +346,6 @@ theorem lt_rowGE_of_notMem_eventG1b (M : ABKModel d) {s T : ℝ} (hs0 : 0 < s)
   by_contra hcon
   push_neg at hcon
   exact absurd hlt (not_lt.2 (mul_le_mul' (le_refl (ENNReal.ofReal (g1bConst s))) hcon))
-
-/-- **The `hreduce` slot of `ratioTail_of_shellArray` for the small-waves lane**,
-on the null-enlarged family. -/
-theorem hreduce_eventG1b (M : ABKModel d) {s T D p theta : ℝ}
-    (hs0 : 0 < s) (hs1 : s ≤ 1) (hD : 0 < D)
-    (hlam : 0 ≤ 9 * (s / 8)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p))
-    (hthr : D * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)) ≤
-      T ^ 2 / g1bConst s)
-    (m : ℤ) (_hm : 0 ≤ m) (omega : Cutoff.CutoffSample d)
-    (homega : omega ∈
-      (eventG1b M m s T ∪ (goodRowG (arrayG1b M s) (s / 8))ᶜ)ᶜ) :
-    9 * (s / 8)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) <
-      Yk (fun m k omega => D⁻¹ * arrayG1b M s m k omega) (s / 8) m omega := by
-  have h1 : omega ∉ eventG1b M m s T := fun hc => homega (Or.inl hc)
-  have h2 : omega ∈ goodRowG (arrayG1b M s) (s / 8) := by
-    by_contra hc
-    exact homega (Or.inr hc)
-  refine lt_Yk_of_lt_rowGE hD hlam m
-    (fun j => arrayG1b_nonneg M s m j omega) (h2 m) ?_
-  exact lt_of_le_of_lt (ENNReal.ofReal_le_ofReal hthr)
-    (lt_rowGE_of_notMem_eventG1b M hs0 hs1 m h1)
-
-/-! ## 4. `e.small.waves.scale.counting` -/
-
-/-- **The small-waves proportion tail (`e.small.waves.scale.counting`), at the
-caller's level and rate.**
-
-The Appendix-D weight rate is `s/8`, exactly as the manuscript takes it; the
-`s ≤ 1` window makes `2(s/8) ≤ 1`, which is what the engine's row summability
-needs.  Everything probabilistic is discharged: the entries' uniform `Γ₁` tails,
-the columns' independence from (J1) at the caller's `r ≥ 1`, and the a.s. row
-finiteness from first moments. -/
-theorem ratioTail_eventG1b (M : ABKModel d)
-    {s T D p theta c1 Q : ℝ} {r : ℕ}
-    (hs0 : 0 < s) (hs1 : s ≤ 1)
-    (hD : 0 < D) (hp : 1 ≤ p) (hsp : 1 ≤ s / 8 * p)
-    (hr1 : 1 ≤ r) (hQ : 1 ≤ Q) (htheta0 : 0 < theta)
-    (hthetar : theta * ((r : ℝ) + 1) < 1) (hc1 : 0 ≤ c1)
-    (hrate : Real.log (Q * (r : ℝ)) + c1 * (r : ℝ) ≤
-      s / 8 * p * theta / (16 * (r : ℝ)))
-    (hnorm : gammaMomentConst 1 * p ^ (1 : ℝ)⁻¹ * smallWaveScale d s ≤ D)
-    (hlam : 0 ≤ 9 * (s / 8)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p))
-    (hthr : D * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)) ≤
-      T ^ 2 / g1bConst s)
-    (n : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | theta < scaleProp (fun k => (eventG1b M k s T)ᶜ) n omega}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / Q) := by
-  have hs8 : 0 < s / 8 := by linarith only [hs0]
-  have hs82 : 2 * (s / 8) ≤ 1 := by linarith only [hs1, hs0]
-  have hs81 : s / 8 ≤ 1 := by linarith only [hs8, hs82]
-  have hnull : (Cutoff.cutoffSampleLaw M).toMeasure
-      (goodRowG (arrayG1b M s) (s / 8))ᶜ = 0 :=
-    measure_compl_goodRowG M (by norm_num) (smallWaveScale_pos d hs0) hs8 hs82
-      (fun m k omega => arrayG1b_nonneg M s m k omega)
-      (fun m k => measurable_arrayG1b M s m k)
-      (fun m k => isBigOWith_arrayG1b M hs0 hs1 m k)
-  refine le_trans (measure_scaleProp_le_of_null_enlargement _ _ _ hnull n) ?_
-  exact ratioTail_of_shellArray M
-    (fun k => eventG1b M k s T ∪ (goodRowG (arrayG1b M s) (s / 8))ᶜ)
-    (arrayG1b M s)
-    (by norm_num) (smallWaveScale_pos d hs0) hD hp hs8 hs81 hsp hr1 hQ htheta0
-    hthetar hc1 hrate
-    (fun m k omega => arrayG1b_nonneg M s m k omega)
-    (fun m k => shellLocal_arrayG1b M s m k)
-    (fun m k => isBigOWith_arrayG1b M hs0 hs1 m k) hnorm
-    (fun m hm omega homega =>
-      hreduce_eventG1b M hs0 hs1 hD hlam hthr m hm omega homega) n
 
 end
 

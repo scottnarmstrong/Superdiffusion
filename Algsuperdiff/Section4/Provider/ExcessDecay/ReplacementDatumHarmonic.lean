@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ReplacementDatum
 
@@ -106,12 +106,6 @@ def harmonicCorrector (a0 : Ch03.ConstantCoeffMatrix d)
   dirichletCorrector a0 u
     (MeasureTheory.memLp_const (μ := volumeMeasureOn (openCubeSet Q))
       (p := (2 : ENNReal)) (0 : Vec d))
-
-theorem harmonicCorrector_toFun (a0 : Ch03.ConstantCoeffMatrix d)
-    (u : H1Function (openCubeSet Q)) (x : Vec d) :
-    (harmonicCorrector a0 u).toH1Function.toFun x =
-      u.toFun x - (harmonicReplacement a0 u).toFun x :=
-  dirichletCorrector_toFun_eq_sub a0 u _ x
 
 /-- The difference of the two correctors, `ρ_g − ρ_0 = v − v_g`. -/
 def replacementCorrection (a0 : Ch03.ConstantCoeffMatrix d)
@@ -275,93 +269,6 @@ theorem replacementCorrection_l2_le {sigma0 : ℝ} (hsigma0 : 0 < sigma0)
           (Real.sqrt (Fintype.card (Fin d) : ℝ) *
             Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo Q s g) :=
         mul_le_mul_of_nonneg_left hforce hfacnonneg
-
-/-! ## 4. The harmonic display -/
-
-/-- **`e.homogenization.L2.interior` against the harmonic replacement.**
-
-For `0 < σ̄`, `0 < s ≤ 1`, `g ∈ L²(W) ∩ H^s(W)` and `u` solving
-`−∇·a∇u = ∇·g` weakly on `W = openCubeSet Q`, with `v = harmonicReplacement`:
-
-```text
-  σ̄ 3^{-scale(Q)} ‖u − v‖_{L̲²(Q)}
-      ≤ 3 C_neg(d) C_cg(d) ( (1024/3) s^{-4} E + (16384/3) s^{-6} F )
-      + 2 C_neg(d) K_s^{1/2} sqrt d · 3^{s·scale(Q)} [g]_{B̲^s_{2,2}(Q)} ,
-```
-
-The two summands are kept separate; see the module docstring for the
-`s`-envelope of the correction. -/
-theorem coarseGraining_l2_slot_harmonic_le {a : Ch03.CoeffFamily d} {sigma0 : ℝ}
-    (hsigma0 : 0 < sigma0) {u : H1Function (openCubeSet Q)} {g : Vec d → Vec d}
-    (hu : Ch03.IsForcedEquation Q a u g)
-    {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) (hg : Ch03.ForceBesovRegularity Q s g) :
-    sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-        cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-          (harmonicCorrector (scalarComparator hsigma0) u).toH1Function.toFun x) ≤
-      3 * negNormBaseConst d * coarseGrainingP2Const d *
-          ((1024 / 3) * (s⁻¹) ^ (4 : ℕ) *
-              coarseGrainingEnergyTerm Q a (scalarComparator hsigma0) (s / 4) u +
-            (16384 / 3) * (s⁻¹) ^ (6 : ℕ) *
-              coarseGrainingForceTerm Q a (scalarComparator hsigma0) (s / 4) s g) +
-        2 * negNormBaseConst d * negativeToL2Factor s *
-          (Real.sqrt (Fintype.card (Fin d) : ℝ) *
-            Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo Q s g) := by
-  have hgL2 : MemVectorL2 (openCubeSet Q) g :=
-    memVectorL2_openCubeSet_of_forceBesovRegularity hg
-  set a0 : Ch03.ConstantCoeffMatrix d := scalarComparator hsigma0 with ha0
-  -- the three scalar `L²` members
-  have hmem0 : MeasureTheory.MemLp
-      (fun x => (harmonicCorrector a0 u).toH1Function.toFun x) 2
-      (normalizedCubeMeasure Q) :=
-    memLp_scalar_normalizedCubeMeasure (harmonicCorrector a0 u).toH1Function.memL2
-  have hmemG : MeasureTheory.MemLp
-      (fun x => (dirichletCorrector a0 u hgL2).toH1Function.toFun x) 2
-      (normalizedCubeMeasure Q) :=
-    memLp_scalar_normalizedCubeMeasure (dirichletCorrector a0 u hgL2).toH1Function.memL2
-  have hmemW : MeasureTheory.MemLp
-      (fun x => (replacementCorrection a0 u hgL2).toH1Function.toFun x) 2
-      (normalizedCubeMeasure Q) :=
-    memLp_scalar_normalizedCubeMeasure
-      (replacementCorrection a0 u hgL2).toH1Function.memL2
-  -- the triangle inequality on the scalar values
-  have htri := cubeLpNorm_two_sub_le Q
-    (f := fun x => (harmonicCorrector a0 u).toH1Function.toFun x)
-    (g := fun x => (dirichletCorrector a0 u hgL2).toH1Function.toFun x)
-    (h := fun x => (replacementCorrection a0 u hgL2).toH1Function.toFun x)
-    (fun x => by
-      simp only [replacementCorrection_toFun]
-      ring) hmemG hmemW
-  have hweight : (0 : ℝ) ≤ cubeBesovScaleWeight (1 : ℝ) Q :=
-    cubeBesovScaleWeight_nonneg (1 : ℝ) Q
-  have hsplit : sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-      cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-        (harmonicCorrector a0 u).toH1Function.toFun x) ≤
-      sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-          cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-            (dirichletCorrector a0 u hgL2).toH1Function.toFun x) +
-        sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-          cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-            (replacementCorrection a0 u hgL2).toH1Function.toFun x) := by
-    have hinner := mul_le_mul_of_nonneg_left htri hweight
-    have houter := mul_le_mul_of_nonneg_left hinner hsigma0.le
-    have hring : sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-        (cubeLpNorm Q (2 : ℝ≥0∞) (fun x =>
-            (dirichletCorrector a0 u hgL2).toH1Function.toFun x) +
-          cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-            (replacementCorrection a0 u hgL2).toH1Function.toFun x)) =
-        sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-            cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-              (dirichletCorrector a0 u hgL2).toH1Function.toFun x) +
-          sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-            cubeLpNorm Q (2 : ℝ≥0∞) fun x =>
-              (replacementCorrection a0 u hgL2).toH1Function.toFun x) := by ring
-    rw [hring] at houter
-    exact houter
-  have hmain := coarseGraining_l2_slot_le_of_isForcedEquation hsigma0 hu hgL2 hs hs1 hg
-  rw [replacementDefect] at hmain
-  rw [H10Function.toCubeSet_toH1Function_toFun] at hmain
-  have hcorr := replacementCorrection_l2_le hsigma0 u hgL2 hs hs1 hg
-  exact hsplit.trans (add_le_add hmain hcorr)
 
 end
 

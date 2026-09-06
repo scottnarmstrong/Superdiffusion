@@ -129,23 +129,6 @@ most one; here in the sup metric (see the module docstring). -/
 def IsLatticePath (x : ℕ → Fin d → ℤ) (N : ℕ) : Prop :=
   ∀ i, i < N → latDist (x i) (x (i + 1)) ≤ 1
 
-/-- A path may be shortened. -/
-theorem IsLatticePath.mono {x : ℕ → Fin d → ℤ} {N M : ℕ} (h : IsLatticePath x N)
-    (hMN : M ≤ N) : IsLatticePath x M := fun i hi => h i (lt_of_lt_of_le hi hMN)
-
-/-- A path may be restarted at any of its sites. -/
-theorem IsLatticePath.shift {x : ℕ → Fin d → ℤ} {N : ℕ} (h : IsLatticePath x N)
-    (a M : ℕ) (hle : a + M ≤ N) : IsLatticePath (fun t => x (a + t)) M := by
-  intro i hi
-  have hlt : a + i < N := by omega
-  simpa [Nat.add_assoc] using h (a + i) hlt
-
-/-- Along a path the sup distance to the starting site grows by at most one per step. -/
-theorem IsLatticePath.latDist_start_succ_le {x : ℕ → Fin d → ℤ} {N : ℕ}
-    (h : IsLatticePath x N) {i : ℕ} (hi : i < N) :
-    latDist (x 0) (x (i + 1)) ≤ latDist (x 0) (x i) + 1 :=
-  le_trans (latDist_triangle _ _ _) (Nat.add_le_add_left (h i hi) _)
-
 /-! ### Truncation at the first exit from a cube -/
 
 /-- If a path ends outside the cube `z + □_k`, it has a first exit index `M`: the
@@ -158,8 +141,6 @@ theorem exists_first_exit {x : ℕ → Fin d → ℤ} {N k : ℕ} {z : Fin d →
   refine ⟨Nat.find hex, Nat.find_le hout, Nat.find_spec hex, fun i hi => ?_⟩
   simpa using Nat.find_min hex hi
 
-
-/-! ### The localisation box and its cardinality -/
 
 
 end Algsuperdiff.Section3.Provider.Percolation

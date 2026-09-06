@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.ErrorTransport
 import Algsuperdiff.Section4.Provider.BoundsEaL.TailSummability
@@ -271,28 +271,6 @@ theorem aemeasurable_lFreeStep3Majorant [NeZero d] (M : ABKModel d) (C : ℝ) (m
     (measurable_lFreeValueSlot m T hT R)
   exact hbase.add (hbase.comp_quasiMeasurePreserving
     (quasiMeasurePreserving_negateCutoffSample M))
-
-/-- **`hGmeas`, at its honest strength.**  The per-scale descendant average of
-`G^{p/2}` at the majorant is a.e. measurable. -/
-theorem aemeasurable_finsetAverageReal_rpow_lFreeStep3Majorant [NeZero d] (M : ABKModel d)
-    (C : ℝ) (m n : ℤ) (s : {s : ℝ // 0 < s}) (hgam : M.gamma ≤ 1 / 8) {p : ℝ}
-    (hp : 0 ≤ p) (T : ℤ → (Fin d → ℤ) → Cutoff.CutoffSample d → ℝ)
-    (hT : ∀ (k : ℤ) (v : Fin d → ℤ), Measurable (T k v)) (l : ℕ) :
-    AEMeasurable (fun omega : Cutoff.CutoffSample d =>
-        Ch02.finsetAverageReal (descendantsAtScale (originCube d m) (n - (l : ℤ)))
-          (fun R => Real.rpow
-            (lFreeStep3Majorant C M m (s : ℝ) (lFreeGradSlot m T) (lFreeValueSlot m T) R
-              omega) (p / 2)))
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
-  have hp2 : (0 : ℝ) ≤ p / 2 := by linarith only [hp]
-  have hsum : AEMeasurable (fun omega : Cutoff.CutoffSample d =>
-      ∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)), Real.rpow
-        (lFreeStep3Majorant C M m (s : ℝ) (lFreeGradSlot m T) (lFreeValueSlot m T) R omega)
-        (p / 2)) (Cutoff.cutoffSampleLaw M).toMeasure :=
-    Finset.aemeasurable_fun_sum _ fun R _ =>
-      (Real.continuous_rpow_const hp2).measurable.comp_aemeasurable
-        (aemeasurable_lFreeStep3Majorant M C m s hgam T hT R)
-  exact hsum.const_mul _
 
 end
 

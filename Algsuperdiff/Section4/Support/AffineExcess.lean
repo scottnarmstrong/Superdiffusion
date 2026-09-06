@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.NormalizedL2
 
@@ -17,10 +17,9 @@ E(u,□_m) := 3^{-m} min_{ℓ ∈ 𝕃} ‖u − ℓ‖_{L̲²(□_m)}          
 
 Both normalizers are consumed downstream --- the iteration lemma runs `E_j` at
 the `|U_j|^{-1/d}` normalizer on truncated windows, while the §4.4 setup and
-the reabsorption constant read `E_j` at `3^{-j}` --- so this module proves
-**both**, together with the comparison that converts one into the other on a
-sandwiched window (`affineExcessScaled_le_affineExcess_of_cubeSandwich` and its
-companion).
+the reabsorption constant read `E_j` at `3^{-j}`.  This module defines both
+normalizations and records the volume estimates used by their downstream
+comparisons on sandwiched windows.
 
 ## Naming
 
@@ -139,10 +138,6 @@ theorem affineExcess_nonneg (W : Set (Vec d)) (u : Vec d → ℝ) :
     0 ≤ affineExcess W u :=
   mul_nonneg (Real.rpow_nonneg ENNReal.toReal_nonneg _) (affineExcessRaw_nonneg W u)
 
-theorem affineExcessScaled_nonneg (j : ℤ) (W : Set (Vec d)) (u : Vec d → ℝ) :
-    0 ≤ affineExcessScaled j W u :=
-  mul_nonneg (by positivity) (affineExcessRaw_nonneg W u)
-
 /-- **The projection inequality.**  The excess minimum is at most the distance to
 *any* affine competitor.  This is the `≤`-half of the source's `min`, and it is
 the inequality every excess estimate is read off against. -/
@@ -222,57 +217,6 @@ theorem rpow_normalizer_bounds (hd : d ≠ 0) {V : ℝ} {j : ℤ}
       rw [← zpow_neg, show -(j - 2) = -j + 2 by ring,
         zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), h9, mul_comm]
     rwa [hid] at h
-
-/-- The outer half of a cube sandwich, at the level of real volumes. -/
-theorem volume_toReal_le_of_subset {W : Set (Vec d)} {j : ℤ} {Q : TriadicCube d}
-    (hQ : Q.scale = j) (hout : W ⊆ openCubeSet Q) :
-    (volume W).toReal ≤ ((3 : ℝ) ^ j) ^ d := by
-  have htop : volume (openCubeSet Q) ≠ ⊤ :=
-    ne_of_lt (Homogenization.volume_openCubeSet_lt_top Q)
-  have h := ENNReal.toReal_mono htop (measure_mono hout)
-  rwa [Homogenization.volume_openCubeSet_toReal, Homogenization.cubeVolume_eq_pow_scale,
-    hQ] at h
-
-/-- The inner half of a cube sandwich, at the level of real volumes.  The outer
-inclusion is needed only to know `|W| < ∞`. -/
-theorem volume_toReal_ge_of_cubeSandwich {W : Set (Vec d)} {j : ℤ}
-    {Q₁ Q₂ : TriadicCube d} (h1 : Q₁.scale = j - 2) (hin : openCubeSet Q₁ ⊆ W)
-    (hout : W ⊆ openCubeSet Q₂) :
-    ((3 : ℝ) ^ (j - 2)) ^ d ≤ (volume W).toReal := by
-  have htop : volume W ≠ ⊤ :=
-    ne_top_of_le_ne_top (ne_of_lt (Homogenization.volume_openCubeSet_lt_top Q₂))
-      (measure_mono hout)
-  have h := ENNReal.toReal_mono htop (measure_mono hin)
-  rwa [Homogenization.volume_openCubeSet_toReal, Homogenization.cubeVolume_eq_pow_scale,
-    h1] at h
-
-/-- **Sandwich comparison, lower half.**  On a window sandwiched between the
-triadic cubes at scales `j-2` and `j`, the `3^{-j}`-normalized excess of
-`e.excess.def.cubes` is at most the `|W|^{-1/d}`-normalized excess of
-`e.excess.def`. -/
-theorem affineExcessScaled_le_affineExcess_of_cubeSandwich (hd : d ≠ 0)
-    {W : Set (Vec d)} {j : ℤ} {Q₁ Q₂ : TriadicCube d}
-    (h1 : Q₁.scale = j - 2) (h2 : Q₂.scale = j) (hin : openCubeSet Q₁ ⊆ W)
-    (hout : W ⊆ openCubeSet Q₂) (u : Vec d → ℝ) :
-    affineExcessScaled j W u ≤ affineExcess W u := by
-  obtain ⟨hlow, _⟩ := rpow_normalizer_bounds (d := d) hd
-    (volume_toReal_ge_of_cubeSandwich h1 hin hout) (volume_toReal_le_of_subset h2 hout)
-  exact mul_le_mul_of_nonneg_right hlow (affineExcessRaw_nonneg W u)
-
-/-- **Sandwich comparison, upper half**, at the printed aspect ratio `3^{-2}`:
-the general normalizer costs at most the factor `3^2 = 9`. -/
-theorem affineExcess_le_affineExcessScaled_of_cubeSandwich (hd : d ≠ 0)
-    {W : Set (Vec d)} {j : ℤ} {Q₁ Q₂ : TriadicCube d}
-    (h1 : Q₁.scale = j - 2) (h2 : Q₂.scale = j) (hin : openCubeSet Q₁ ⊆ W)
-    (hout : W ⊆ openCubeSet Q₂) (u : Vec d → ℝ) :
-    affineExcess W u ≤ 9 * affineExcessScaled j W u := by
-  obtain ⟨_, hhigh⟩ := rpow_normalizer_bounds (d := d) hd
-    (volume_toReal_ge_of_cubeSandwich h1 hin hout) (volume_toReal_le_of_subset h2 hout)
-  have h := mul_le_mul_of_nonneg_right hhigh (affineExcessRaw_nonneg W u)
-  rw [affineExcess, affineExcessScaled]
-  calc ((volume W).toReal) ^ (-(d : ℝ)⁻¹) * affineExcessRaw W u
-      ≤ 9 * (3 : ℝ) ^ (-j) * affineExcessRaw W u := h
-    _ = 9 * ((3 : ℝ) ^ (-j) * affineExcessRaw W u) := by ring
 
 end
 

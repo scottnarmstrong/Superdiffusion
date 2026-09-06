@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBCoarseFrameWellPlaced
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccBoundaryLattice
@@ -22,8 +22,8 @@ variable {d : ℕ}
 /-! ## 1. The `hgradE` identity at the re-based family, at the gate -/
 
 /-- **The `hgradE` identity at the gate, at the re-based family.**
-`RootClauseBGateGeometry.forcedSolutionEnergyNorm_fluxCorrected_eq_nuGradNorm_gate`
-with the child's flux correction replaced by `parentRebasedFamily`: both have
+The gate identity for the child's flux-corrected family, with that family
+replaced by `parentRebasedFamily`: both have
 symmetric part `ν Id`, so the identity is unchanged. -/
 theorem forcedSolutionEnergyNorm_rebased_eq_nuGradNorm_gate (M : ABKModel d)
     (L kk m j : ℤ) {c zr : Vec d} (omega : Cutoff.CutoffSample d)
@@ -49,7 +49,7 @@ theorem forcedSolutionEnergyNorm_rebased_eq_nuGradNorm_gate (M : ABKModel d)
 /-! ## 2. The coarse solution object at the well-placed frame, re-based -/
 
 /-- **The Caccioppoli's coarse solution object at the print's own frame centre, at
-the re-based family.**'s `exists_coarseFrameSolution` with the family moved
+the re-based family.**  The coarse-frame solution object with the family moved
 onto `parentRebasedFamily` through `InteriorRebase`'s equation transport; the
 gate is discharged from `k ≤ m` alone, so no geometry binder survives. -/
 theorem exists_coarseFrameSolutionRebased {m k : ℤ} (M : ABKModel d) (L kk : ℤ)
@@ -82,8 +82,8 @@ theorem exists_coarseFrameSolutionRebased {m k : ℤ} (M : ABKModel d) (L kk : �
 
 /-! ## 3. The energy-norm domination at the well-placed frame, re-based -/
 
-/-- **The coarse `hgradE` slot at the re-based family, at no geometry binder.**'s
-`forcedSolutionEnergyNorm_coarseFrame_le` with the family moved onto
+/-- **The coarse `hgradE` slot at the re-based family, at no geometry binder.**
+The coarse-frame energy-norm domination with the family moved onto
 `parentRebasedFamily`; the constant is still the printed volume ratio
 `rootClauseBTopKg d m k`. -/
 theorem forcedSolutionEnergyNorm_coarseFrameRebased_le (M : ABKModel d)

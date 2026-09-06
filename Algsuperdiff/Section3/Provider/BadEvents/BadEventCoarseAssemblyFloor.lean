@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.CoarseEllipticity.DimensionFloor
 import Algsuperdiff.Section3.Provider.CoarseEllipticity.ProfileConstants
@@ -31,8 +31,8 @@ unnormalized assembly does:
   `ObservableSwapPayoff.isLowerIntegerFamilyOrlicz_cubeLowerEllipticityInv_forall_descendant`.
 
 The output is centered at `originCube d m`, carries the extra conjunct `(d : ℝ)
-^ 6 ≤ Cbase`, and retains precisely the two branch implications authorized by
-the `NLTM` rulings.  Translation of the whole good-local-event probability to
+^ 6 ≤ Cbase`, and retains precisely the two branch implications of the
+non-linear-term bound.  Translation of the whole good-local-event probability to
 the paper's arbitrary spatial translate is outside this module: it is performed
 by the frozen successor `Algsuperdiff.Frozen.Section3.bad_event_estimate`,
 whose proof engine this module is.
@@ -272,7 +272,7 @@ private theorem cubeLowerEllipticityInv_originCube_eighth_le_floor
 floor-normalized coarse theorem supplies both ellipticity branches, and the
 selected constant `Cbase` carries `1 ≤ Cbase` together with the dimension floor
 `(d : ℝ) ^ 6 ≤ Cbase`.  The only branch-specific assumptions left to the caller
-are the author-ruled `NLTM` implications. -/
+are the two non-linear-term implications. -/
 theorem
     exists_measureReal_compl_goodLocalEvent_originCube_le_of_frozenCoarse_dimFloor
     (d : ℕ) :

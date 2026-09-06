@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.ShellIncrementCap
 import Algsuperdiff.Section3.Provider.Diffusivity.RecurrenceIntegration.Core
@@ -158,16 +158,6 @@ theorem shellDrift_eq (M : ABKModel d) (n : ℤ) (h : ℕ) :
         (((Annealed.sigmaBar M n : ℝ)) ^ 2)⁻¹ := by
   unfold shellDrift recurrenceIncrement
   ring
-
-theorem recurrenceIncrement_nonneg (M : ABKModel d) (n : ℤ) (h : ℕ) :
-    0 ≤ recurrenceIncrement (Disorder.cstar M) M.gamma n (n + (h : ℤ)) := by
-  have hlog : (0 : ℝ) ≤ Real.log 3 := (Real.log_pos (by norm_num)).le
-  have hc : (0 : ℝ) ≤ Disorder.cstar M := (Disorder.cstar_characterization M).1.le
-  have hsum : (0 : ℝ) ≤
-      ∑ k ∈ Finset.Icc (n + 1) (n + (h : ℤ)), (3 : ℝ) ^ (2 * M.gamma * (k : ℝ)) :=
-    Finset.sum_nonneg fun k _ => (Real.rpow_pos_of_pos (by norm_num) _).le
-  unfold recurrenceIncrement
-  positivity
 
 /-! ## The upper bridge -/
 

@@ -42,7 +42,7 @@ namespace ShellField
 
 variable {d : ℕ}
 
-instance : CoeFun (ShellField d) (fun _ ↦ Vec d → Mat d) :=
+instance instCoeFunShellField : CoeFun (ShellField d) (fun _ ↦ Vec d → Mat d) :=
   ⟨fun j ↦ j.1.1⟩
 
 /-- The continuous first derivative stored in the exact frozen carrier. -/

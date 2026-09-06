@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section3.StreamDerivativeSumBound
 import Algsuperdiff.Section3.Provider.Orlicz.ProductPower
@@ -183,16 +183,6 @@ def w2Gauge (k : ℤ) (j : Algsuperdiff.Frozen.Assumptions.ShellField d) : ℝ :
   max (shellW1InfGradNorm k j)
     ((3 : ℝ) ^ (-2 * k) * Algsuperdiff.Section3.Cutoff.localCubeControl k j)
 
-theorem shellW2InfNormAt_eq_w2Gauge (z : Vec d) (k : ℤ)
-    (j : Algsuperdiff.Frozen.Assumptions.ShellField d) :
-    shellW2InfNormAt z k j =
-      w2Gauge k (Algsuperdiff.Frozen.Assumptions.ShellField.translate z j) :=
-  rfl
-
-theorem w2Gauge_nonneg (k : ℤ) (j : Algsuperdiff.Frozen.Assumptions.ShellField d) :
-    0 ≤ w2Gauge k j :=
-  le_max_of_le_left (shellW1InfGradNorm_nonneg k j)
-
 theorem measurable_w2Gauge (k : ℤ) :
     Measurable (w2Gauge (d := d) k) :=
   (measurable_shellW1InfGradNorm k).max
@@ -346,23 +336,9 @@ def atomG1b (M : ABKModel d) (k : ℤ) (z : Vec d)
     (omega : Cutoff.CutoffSample d) : ℝ :=
   Real.rpow 3 ((2 - M.gamma) * (k : ℝ)) * shellW2InfNormAt z k (omega.1 k)
 
-theorem atomG1b_nonneg (M : ABKModel d) (k : ℤ) (z : Vec d)
-    (omega : Cutoff.CutoffSample d) : 0 ≤ atomG1b M k z omega :=
-  mul_nonneg (Real.rpow_nonneg (by norm_num) _) (shellW2InfNormAt_nonneg _ _ _)
-
 theorem measurable_atomG1b (M : ABKModel d) (k : ℤ) (z : Vec d) :
     Measurable (atomG1b M k z) :=
   ((measurable_shellW2InfNormAt z k).comp (measurable_shellCoord k)).const_mul _
-
-/-- `atomG1b` at the centre `z` is `atomG1b` at the origin, read at the
-translated sample.  This is resolution A4's convention (translate the sample,
-never the cube) spelled at one shell. -/
-theorem atomG1b_eq_comp_translate (M : ABKModel d) (k : ℤ) (z : Vec d)
-    (omega : Cutoff.CutoffSample d) :
-    atomG1b M k z omega =
-      Real.rpow 3 ((2 - M.gamma) * (k : ℝ)) *
-        w2Gauge k ((Cutoff.translateCutoffSample z omega).1 k) :=
-  rfl
 
 /-- **`e.Xmk.pedant.bound`, in tail form, before the squaring and the lattice
 maximum.**  The small-waves atom has a `Γ₂` upper tail at the amplitude
@@ -401,128 +377,6 @@ theorem isBigOWith_atomG1b (M : ABKModel d) (k : ℤ) (z : Vec d) :
       Real.rpow 3 ((2 - M.gamma) * (k : ℝ)) * w2Gauge k (omega.1 k) :=
     ((measurable_w2Gauge k).comp (measurable_shellCoord k)).const_mul _
   exact Provider.Stream.isBigOWith_comp_translateCutoffSample M z hmeas hbase
-
-/-- **The squared small-waves atom.**  `e.powerofGammasigma` moves the Orlicz
-index from `σ = 2` to `σ = 1` and squares the amplitude — this is why
-`e.Xmk.pedant.bound`'s moment is linear in `p` while
-`e.G1scalecount.Xk.pedant.bound`'s is `p^{1/2}`. -/
-theorem isBigOWith_atomG1b_sq (M : ABKModel d) (k : ℤ) (z : Vec d) :
-    IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 1)
-      (fun omega => atomG1b M k z omega ^ 2) (atomG1bScale ^ 2) := by
-  have h := (Provider.Orlicz.isBigOWith_gammaSigma_sq_iff_of_nonneg
-    (μ := (Cutoff.cutoffSampleLaw M).toMeasure) (X := atomG1b M k z)
-    (K := atomG1bScale) (σ := (2 : ℝ)) atomG1bScale_pos.le
-    (atomG1b_nonneg M k z)).1 (isBigOWith_atomG1b M k z)
-  simpa only [show (2 : ℝ) / 2 = 1 by norm_num] using h
-
-/-! ## 7. The same derivative gauge from the anchor
-
-The chain above consumes the manuscript's own per-shell displays `e.jk.O` and
-`e.nabla.jk.O`, which the repository proves at amplitude constant `1`.  The
-anchor `stream_derivative_sum_bound` gives the derivative half independently,
-at its own dimensional constant, through the one-shell window `(l, n, m) = (k,
-k-1, k)`: the increment sum degenerates to the single term `3^k‖∇j_k‖_{L∞(□_k)}
-+ 3^{2k}‖∇²j_k‖_{L∞(□_k)}` and the anchor's amplitude degenerates to
-`C·min(γ^{-1},1)·3^{γk}`.  Dividing by `3^k` reproduces `e.nabla.jk.O` at
-amplitude `C·3^{(γ-1)k}`.
-
-This is recorded as an independent anchor-rooted route to the large-waves atom
-tail; it is strictly weaker in the constant, and it carries no `Γ₂` statement for
-the value leg (the anchor's `L^∞` clauses are stated for the *square*, at `Γ₁`),
-which is why the main chain is the one above. -/
-
-/-- **The `e.nabla.jk.O` gauge, from the anchor `stream_derivative_sum_bound`
-alone**, at the one-shell window. -/
-theorem exists_isBigOWith_shellDerivGauge_of_anchor (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (k : ℤ),
-        IsBigOWith M.P.toMeasure (gammaSigma 2)
-          (fun omega : Cutoff.ShellSeq d =>
-            Provider.Stream.localCubeDerivNorm k (omega k) +
-              (3 : ℝ) ^ k * Provider.Stream.localCubeSecondDerivNorm k (omega k))
-          (C * Real.rpow 3 ((M.gamma - 1) * (k : ℝ))) := by
-  obtain ⟨C, hCpos, hC⟩ := Algsuperdiff.Frozen.Section3.stream_derivative_sum_bound d
-  refine ⟨C, hCpos, fun M k => ?_⟩
-  have hwin : k - 1 ≤ min k k := by omega
-  have hk := hC M k k (k - 1) hwin
-  have hIoc : Finset.Ioc (k - 1) k = {k} := by
-    ext j
-    simp only [Finset.mem_Ioc, Finset.mem_singleton]
-    omega
-  have hfun : (fun omega : Cutoff.ShellSeq d =>
-      ∑ j ∈ Finset.Ioc (k - 1) k,
-        ((3 : ℝ) ^ j * Provider.Stream.localCubeDerivNorm k (omega j) +
-          (3 : ℝ) ^ (2 * j) *
-            Provider.Stream.localCubeSecondDerivNorm k (omega j))) =
-      fun omega : Cutoff.ShellSeq d =>
-        (3 : ℝ) ^ k *
-          (Provider.Stream.localCubeDerivNorm k (omega k) +
-            (3 : ℝ) ^ k * Provider.Stream.localCubeSecondDerivNorm k (omega k)) := by
-    funext omega
-    rw [hIoc, Finset.sum_singleton, mul_add, ← mul_assoc,
-      ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), two_mul]
-  rw [hfun] at hk
-  have hcast : ((k : ℤ) : ℝ) - (((k - 1 : ℤ)) : ℝ) = 1 := by push_cast; ring
-  rw [hcast, max_self, Real.sqrt_one, mul_one] at hk
-  have hmin : min M.gamma⁻¹ (1 : ℝ) ≤ 1 := min_le_right _ _
-  have hpow : (0 : ℝ) ≤ Real.rpow 3 (M.gamma * (k : ℝ)) := rpow_nonneg_three _
-  have hk2 : IsBigOWith M.P.toMeasure (gammaSigma 2)
-      (fun omega : Cutoff.ShellSeq d =>
-        (3 : ℝ) ^ k *
-          (Provider.Stream.localCubeDerivNorm k (omega k) +
-            (3 : ℝ) ^ k * Provider.Stream.localCubeSecondDerivNorm k (omega k)))
-      (C * Real.rpow 3 (M.gamma * (k : ℝ))) := by
-    refine hk.mono_scale ?_
-    have := mul_le_mul_of_nonneg_right hmin hpow
-    calc C * min M.gamma⁻¹ (1 : ℝ) * Real.rpow 3 (M.gamma * (k : ℝ))
-        = C * (min M.gamma⁻¹ (1 : ℝ) * Real.rpow 3 (M.gamma * (k : ℝ))) := by ring
-      _ ≤ C * (1 * Real.rpow 3 (M.gamma * (k : ℝ))) :=
-          mul_le_mul_of_nonneg_left this hCpos.le
-      _ = C * Real.rpow 3 (M.gamma * (k : ℝ)) := by ring
-  have hscale : (3 : ℝ) ^ (-k) * (C * Real.rpow 3 (M.gamma * (k : ℝ))) =
-      C * Real.rpow 3 ((M.gamma - 1) * (k : ℝ)) := by
-    rw [← rpow_intCast_three (-k)]
-    rw [show Real.rpow 3 (((-k : ℤ)) : ℝ) * (C * Real.rpow 3 (M.gamma * (k : ℝ)))
-        = C * (Real.rpow 3 (((-k : ℤ)) : ℝ) * Real.rpow 3 (M.gamma * (k : ℝ)))
-        from by ring, ← rpow_add_three]
-    congr 2
-    push_cast
-    ring
-  have hmul := hk2.const_mul (c := (3 : ℝ) ^ (-k))
-    (zpow_pos (show (0 : ℝ) < 3 by norm_num) (-k)).le
-  rw [hscale] at hmul
-  refine hmul.of_le fun omega => le_of_eq ?_
-  rw [← mul_assoc, ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
-  simp
-
-/-- **The large-waves atom tail from the anchor alone.**  The same statement as
-`isBigOWith_atomG1a`, with the anchor's dimensional constant in place of the
-amplitude `1`. -/
-theorem exists_isBigOWith_atomG1a_of_anchor (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (k : ℤ),
-        IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-          (atomG1a M k) C := by
-  obtain ⟨C, hCpos, hC⟩ := exists_isBigOWith_shellDerivGauge_of_anchor d
-  refine ⟨C, hCpos, fun M k => ?_⟩
-  refine Provider.Stream.isBigOWith_cutoffSampleLaw_of_forall_eq_comp_val
-    (X := fun omega : Cutoff.ShellSeq d =>
-      Real.rpow 3 ((2 - M.gamma) * (k : ℝ)) * shellW1InfGradNorm k (omega k))
-    (fun _ => rfl) ?_
-  have hbase := (hC M k).const_mul
-    (c := Real.rpow 3 ((1 - M.gamma) * (k : ℝ))) (rpow_nonneg_three _)
-  have hscale : Real.rpow 3 ((1 - M.gamma) * (k : ℝ)) *
-      (C * Real.rpow 3 ((M.gamma - 1) * (k : ℝ))) = C := by
-    rw [show Real.rpow 3 ((1 - M.gamma) * (k : ℝ)) *
-        (C * Real.rpow 3 ((M.gamma - 1) * (k : ℝ)))
-        = C * (Real.rpow 3 ((1 - M.gamma) * (k : ℝ)) *
-            Real.rpow 3 ((M.gamma - 1) * (k : ℝ))) from by ring,
-      ← rpow_add_three,
-      show (1 - M.gamma) * (k : ℝ) + (M.gamma - 1) * (k : ℝ) = 0 from by ring,
-      rpow_zero_three, mul_one]
-  rw [hscale] at hbase
-  exact hbase.of_le fun omega =>
-    three_rpow_mul_shellW1InfGradNorm_le M.gamma k (omega k)
 
 end
 

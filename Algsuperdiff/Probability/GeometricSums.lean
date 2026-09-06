@@ -28,10 +28,8 @@ turns the sharp `min{m − n + 1, Cgeo}` coefficient of
 
 ## Also here
 
-* the one-sided/two-sided `O_{Γ_σ}` dictionary for nonnegative variables, which
-  lets a one-sided geometric tail closure feed a two-sided Cesàro engine;
-* the `ℓ² ↪ ℓ¹` annular square-root layer, i.e. `√(∑ᵢ aᵢ²) ≤ ∑ᵢ aᵢ` in the
-  geometrically weighted form that halves the decay exponent.
+The one-sided/two-sided `O_{Γ_σ}` dictionary for nonnegative variables lets a
+one-sided geometric tail closure feed a two-sided Cesàro engine.
 
 ## Main results
 
@@ -39,7 +37,6 @@ turns the sharp `min{m − n + 1, Cgeo}` coefficient of
 * `Algsuperdiff.Probability.geomTailConst`, `Algsuperdiff.Probability.geomSqrtConst`
 * `Algsuperdiff.Probability.sum_threePow_neg_sqrt_le`
 * `Algsuperdiff.Probability.tsum_threePow_neg_sqrt_le`
-* `Algsuperdiff.Probability.annular_sqrt_domination`
 
 ## References
 
@@ -320,88 +317,6 @@ theorem tsum_threePow_neg_sqrt_le {α : ℝ} (hα : 0 < α) :
       ≤ geomSqrtConst α :=
   (summable_threePow_neg_sqrt hα).tsum_le_of_sum_le
     (fun s => sum_threePow_neg_sqrt_le hα s)
-
-/-! ## The `ℓ² ↪ ℓ¹` annular square-root layer -/
-
-/-- **`√(∑' b²) ≤ ∑' b`** for a nonnegative summable family.  The `ℓ² ↪ ℓ¹`
-inequality in the only form the annular groups need. -/
-theorem sqrt_tsum_sq_le_tsum {b : ℕ → ℝ} (hb : ∀ q, 0 ≤ b q) (hsum : Summable b) :
-    Real.sqrt (∑' q : ℕ, (b q) ^ 2) ≤ ∑' q : ℕ, b q := by
-  set S : ℝ := ∑' q : ℕ, b q with hS
-  have hS0 : 0 ≤ S := tsum_nonneg hb
-  -- each term is at most `S`
-  have hle : ∀ q, b q ≤ S := fun q => hsum.le_tsum q (fun j _ => hb j)
-  -- hence `b q ^ 2 ≤ S * b q` termwise
-  have hterm : ∀ q, (b q) ^ 2 ≤ S * b q := by
-    intro q
-    have hstep := mul_le_mul_of_nonneg_right (hle q) (hb q)
-    calc (b q) ^ 2 = b q * b q := by ring
-      _ ≤ S * b q := hstep
-  have hsq0 : ∀ q, 0 ≤ (b q) ^ 2 := fun q => sq_nonneg _
-  have hmaj : Summable (fun q => S * b q) := hsum.mul_left S
-  have hsumsq : Summable (fun q => (b q) ^ 2) :=
-    Summable.of_nonneg_of_le hsq0 hterm hmaj
-  have hbound : ∑' q : ℕ, (b q) ^ 2 ≤ S ^ 2 := by
-    calc ∑' q : ℕ, (b q) ^ 2 ≤ ∑' q : ℕ, S * b q :=
-          Summable.tsum_le_tsum hterm hsumsq hmaj
-      _ = S * ∑' q : ℕ, b q := tsum_mul_left
-      _ = S ^ 2 := by rw [← hS]; ring
-  calc Real.sqrt (∑' q : ℕ, (b q) ^ 2) ≤ Real.sqrt (S ^ 2) := Real.sqrt_le_sqrt hbound
-    _ = S := Real.sqrt_sq hS0
-
-/-- `(3^x)² = 3^{2x}` — the exponent halving of the annular weights. -/
-private theorem threeRpow_sq (x : ℝ) : ((3 : ℝ) ^ x) ^ 2 = (3 : ℝ) ^ (2 * x) := by
-  rw [← Real.rpow_natCast ((3 : ℝ) ^ x) 2, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-  congr 1
-  push_cast
-  ring
-
-/-- **The annular square root**.  A geometrically weighted square sum at exponent
-`2β` has square root at most the same sum at the **halved** exponent `β`:
-
-`√( A · ∑'_q 3^{−2βq} (T q)² )  ≤  √A · ∑'_q 3^{−βq} T q`. -/
-theorem annular_sqrt_le {A β : ℝ} {T : ℕ → ℝ} (hA : 0 ≤ A) (hT : ∀ q, 0 ≤ T q)
-    (hsum : Summable (fun q : ℕ => (3 : ℝ) ^ (-(β * (q : ℝ))) * T q)) :
-    Real.sqrt (A * ∑' q : ℕ, (3 : ℝ) ^ (-((2 * β) * (q : ℝ))) * (T q) ^ 2)
-      ≤ Real.sqrt A * ∑' q : ℕ, (3 : ℝ) ^ (-(β * (q : ℝ))) * T q := by
-  set b : ℕ → ℝ := fun q => (3 : ℝ) ^ (-(β * (q : ℝ))) * T q with hbdef
-  have hb0 : ∀ q, 0 ≤ b q := fun q =>
-    mul_nonneg (Real.rpow_nonneg (by norm_num) _) (hT q)
-  have hbsq : ∀ q : ℕ, (b q) ^ 2 = (3 : ℝ) ^ (-((2 * β) * (q : ℝ))) * (T q) ^ 2 := by
-    intro q
-    rw [hbdef]
-    simp only [mul_pow]
-    rw [threeRpow_sq]
-    congr 2
-    ring
-  have hrw : (∑' q : ℕ, (3 : ℝ) ^ (-((2 * β) * (q : ℝ))) * (T q) ^ 2)
-      = ∑' q : ℕ, (b q) ^ 2 := tsum_congr (fun q => (hbsq q).symm)
-  rw [hrw, Real.sqrt_mul hA]
-  exact mul_le_mul_of_nonneg_left (sqrt_tsum_sq_le_tsum hb0 hsum) (Real.sqrt_nonneg A)
-
-/-- **The annular domination, at field level.** If a scale-indexed group `G`
-obeys a geometrically weighted square-sum bound at exponent `2β` over the annuli
-`q`, then its square root is dominated by the halved-exponent sum. Generic in the
-sample space: only the real arithmetic of the weights enters. -/
-theorem annular_sqrt_domination {Ω : Type*} {G : ℤ → ℤ → Ω → ℝ}
-    {T : ℕ → ℤ → ℤ → Ω → ℝ} {A β : ℝ} (hA : 0 ≤ A)
-    (hT : ∀ q k m ω, 0 ≤ T q k m ω)
-    (hsum : ∀ k m ω,
-      Summable (fun q : ℕ => (3 : ℝ) ^ (-(β * (q : ℝ))) * T q k m ω))
-    (hG : ∀ k m ω, G k m ω
-      ≤ A * ∑' q : ℕ, (3 : ℝ) ^ (-((2 * β) * (q : ℝ))) * (T q k m ω) ^ 2) :
-    ∀ k m ω, Real.sqrt (G k m ω)
-      ≤ Real.sqrt A * ∑' q : ℕ, (3 : ℝ) ^ (-(β * (q : ℝ))) * T q k m ω := by
-  intro k m ω
-  exact le_trans (Real.sqrt_le_sqrt (hG k m ω))
-    (annular_sqrt_le hA (fun q => hT q k m ω) (hsum k m ω))
-
-/-- **`√(A·S²) = √A·S`** for `A, S ≥ 0` — the `ℓ¹` counterpart of
-`annular_sqrt_le`, with no summability side condition because the shell sum
-enters already squared. -/
-theorem sqrt_mul_sq_of_nonneg {A S : ℝ} (hA : 0 ≤ A) (hS : 0 ≤ S) :
-    Real.sqrt (A * S ^ 2) = Real.sqrt A * S := by
-  rw [Real.sqrt_mul hA, Real.sqrt_sq hS]
 
 end
 

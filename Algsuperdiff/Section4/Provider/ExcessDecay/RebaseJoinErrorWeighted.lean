@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseJoin
+import Algsuperdiff.Section4.Provider.ExcessDecay.HarmonicProviderFinalInterior
 import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
+import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseWeakening
 
 /-!
 # The error-weighted provider assembly, the outer join
@@ -22,7 +23,7 @@ fractional-Poincaré split.
 ## Orientation
 
 **This module is a conditional A, not a source-node closure.**  It is
-`RebaseJoin`'s theorem re-cut at the frozen statement (realized in
+The outer join re-cut at the frozen statement (realized in
 `ProviderEpsFree`, read for comparison, never imported).  Against the
 `(1/2)`-gated display the frozen statement moves **exactly two** literals, both
 at the statement's own existential `C`: the hoisted funding line's
@@ -33,7 +34,7 @@ at the statement's own existential `C`: the hoisted funding line's
 
 `hgen` is a *hypothesis*, and both edits touch its own hypotheses: at the frozen
 text `hgen` is funded less and gated on a smaller event, i.e. it is a
-**weaker** caller obligation than `RebaseJoin`'s.  A weaker hypothesis
+**weaker** caller obligation than the `(1/2)`-gated join's.  A weaker hypothesis
 cannot be fed to the `(1/2)`-gated theorem, so that script is re-run, and the
 two back-ports appear where the constants are chosen:
 

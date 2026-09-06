@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.Geometry.BoundaryLayer
 import Homogenization.Geometry.CubeMeasure
@@ -67,14 +67,6 @@ variable {d : ℕ}
 theorem cubeScaleFactor_pos' (Q : TriadicCube d) : 0 < cubeScaleFactor Q := by
   exact zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale
 
-/-- The membership test for a half-open triadic cube, in the normalized form
-`|x i / 3^scale - index i| < 1/2` used throughout this module. -/
-theorem mem_cubeSet_iff' {Q : TriadicCube d} {x : Vec d} :
-    x ∈ cubeSet Q ↔
-      ∀ i, ((Q.index i : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q ≤ x i ∧
-        x i < ((Q.index i : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q :=
-  Iff.rfl
-
 /-! ## 2. The address map -/
 
 /-- **The triadic address of a point at a given scale.**  This is the unique
@@ -133,13 +125,6 @@ theorem eq_cubeAt_of_mem_cubeSet {Q : TriadicCube d} {x : Vec d} (hx : x ∈ cub
 theorem eq_of_scale_eq_of_mem_of_mem {Q R : TriadicCube d} {x : Vec d}
     (hscale : Q.scale = R.scale) (hQ : x ∈ cubeSet Q) (hR : x ∈ cubeSet R) : Q = R := by
   rw [eq_cubeAt_of_mem_cubeSet hQ, eq_cubeAt_of_mem_cubeSet hR, hscale]
-
-/-- Distinct triadic cubes of the same scale have disjoint half-open cubes. -/
-theorem disjoint_cubeSet_of_scale_eq_of_ne {Q R : TriadicCube d}
-    (hscale : Q.scale = R.scale) (hne : Q ≠ R) : Disjoint (cubeSet Q) (cubeSet R) := by
-  rw [Set.disjoint_left]
-  intro x hQ hR
-  exact hne (eq_of_scale_eq_of_mem_of_mem hscale hQ hR)
 
 /-! ## 3. The parent inclusion -/
 
@@ -248,17 +233,6 @@ theorem cubeSet_subset_of_le_of_mem_of_mem {Q R : TriadicCube d} {x : Vec d}
   have hAR : ancestorCube j Q = R := eq_of_scale_eq_of_mem_of_mem hAscale hxA hR
   have := cubeSet_subset_cubeSet_ancestorCube j Q
   rwa [hAR] at this
-
-/-- Two triadic cubes are nested or disjoint. -/
-theorem cubeSet_subset_or_disjoint (Q R : TriadicCube d) :
-    cubeSet Q ⊆ cubeSet R ∨ cubeSet R ⊆ cubeSet Q ∨ Disjoint (cubeSet Q) (cubeSet R) := by
-  by_cases hdisj : Disjoint (cubeSet Q) (cubeSet R)
-  · exact Or.inr (Or.inr hdisj)
-  · rw [Set.not_disjoint_iff] at hdisj
-    obtain ⟨x, hxQ, hxR⟩ := hdisj
-    rcases le_total Q.scale R.scale with hle | hle
-    · exact Or.inl (cubeSet_subset_of_le_of_mem_of_mem hle hxQ hxR)
-    · exact Or.inr (Or.inl (cubeSet_subset_of_le_of_mem_of_mem hle hxR hxQ))
 
 end
 

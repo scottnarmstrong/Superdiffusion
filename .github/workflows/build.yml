@@ -1,9 +1,12 @@
 name: CI
 
+# Runs on GitHub-hosted runners (`ubuntu-latest`: 4 vCPU, 16 GB RAM, 6 h per
+# job).  No `pull_request` trigger: a fork's pull request would run with this
+# repository's Actions cache in scope, and the cached `.lake` trees are the
+# artifacts every later gate trusts.
 on:
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
 # Cancel superseded runs on the same ref.
@@ -12,39 +15,153 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: [self-hosted, linux]
-    timeout-minutes: 360
+  # ---------------------------------------------------------------------------
+  # Job 1 — the two source dependencies.
+  #
+  # Mathlib ships prebuilt oleans (`lake exe cache get`); CoarseGraining and
+  # MarkovProcess do not, so they are compiled here once per
+  # (`lean-toolchain`, `lake-manifest.json`) pair and cached.  Splitting them
+  # off gives the dependency build and the project build a six-hour budget
+  # each instead of one shared budget.
+  # ---------------------------------------------------------------------------
+  deps:
+    name: Dependency oleans
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Reclaim runner disk space
+        shell: bash
+        run: |
+          # The Lean artifacts of this workspace need ~20 GB; the stock image
+          # leaves ~21 GB free.  Drop the preinstalled SDKs this build cannot
+          # use.  `/opt/hostedtoolcache` is kept: `actions/setup-go` uses it.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /usr/local/.ghcup /usr/local/share/powershell \
+                      /usr/share/swift /usr/local/share/boost || true
+          sudo docker image prune --all --force >/dev/null 2>&1 || true
+          df -h /
 
-      # Install the toolchain from `lean-toolchain` and fetch the Mathlib cache.
-      # The CoarseGraining dependency has no cache service and is built from
-      # source on the first run; project build artifacts are cached between
-      # runs to keep subsequent CI times reasonable.
-      - name: Set up Lean and Mathlib cache
+      - name: Enlarge swap
+        shell: bash
+        run: |
+          # Backstop only.  The deepest modules of this development have been
+          # measured at 6.5-7.1 GiB resident *each*; two of them scheduled
+          # together exceed the runner's 16 GB.  Swap turns that collision into
+          # a slow build instead of an OOM kill.  If OOM kills ever appear
+          # anyway, the documented next step is `lake build -j2`.
+          sudo swapoff -a || true
+          swapdir=/mnt
+          [ -d "$swapdir" ] || swapdir="${RUNNER_TEMP:-/tmp}"
+          sudo rm -f "$swapdir/lean-swapfile"
+          sudo fallocate -l 16G "$swapdir/lean-swapfile"
+          sudo chmod 600 "$swapdir/lean-swapfile"
+          sudo mkswap "$swapdir/lean-swapfile"
+          sudo swapon "$swapdir/lean-swapfile"
+          free -h
+
+      # Installs the toolchain named in `lean-toolchain`, materialises every
+      # package in `lake-manifest.json` (so the dependency working trees exist
+      # before the cache is unpacked into them) and downloads the Mathlib
+      # oleans.
+      - name: Set up Lean and fetch the Mathlib cache
         uses: leanprover/lean-action@v1
         with:
           build: false
           use-mathlib-cache: true
 
-      # Restore/save are split so the save runs even when a later step fails:
-      # a failed or interrupted build still banks its completed modules, and
-      # the next run replays them instead of rebuilding from scratch.  The
-      # comparator workflow's cache is a valid fallback (same cached paths).
-      - name: Restore project and dependency build artifacts
-        id: cache-restore
+      - name: Restore the dependency build cache
+        id: deps-cache
         uses: actions/cache/restore@v4
         with:
           path: |
-            .lake/build
             .lake/packages/CoarseGraining/.lake/build
-          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-deps-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # Always run, cache hit or miss: on a hit this is a hash check of the
+      # dependency sources that costs under a minute and proves the restored
+      # tree is complete, and on a partial restore it finishes the job.
+      - name: Build the dependency packages
+        run: lake build @CoarseGraining @MarkovProcess
+
+      # Saved only when the build above succeeded and the cache had missed, so
+      # a failed run can never bank a partial tree under the stable key and
+      # have the next run treat it as complete.
+      - name: Save the dependency build cache
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/packages/CoarseGraining/.lake/build
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-deps-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+  # ---------------------------------------------------------------------------
+  # Job 2 — the project itself.
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build, warning gate, axiom audit
+    needs: deps
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Reclaim runner disk space
+        shell: bash
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /usr/local/.ghcup /usr/local/share/powershell \
+                      /usr/share/swift /usr/local/share/boost || true
+          sudo docker image prune --all --force >/dev/null 2>&1 || true
+          df -h /
+
+      - name: Enlarge swap
+        shell: bash
+        run: |
+          sudo swapoff -a || true
+          swapdir=/mnt
+          [ -d "$swapdir" ] || swapdir="${RUNNER_TEMP:-/tmp}"
+          sudo rm -f "$swapdir/lean-swapfile"
+          sudo fallocate -l 16G "$swapdir/lean-swapfile"
+          sudo chmod 600 "$swapdir/lean-swapfile"
+          sudo mkswap "$swapdir/lean-swapfile"
+          sudo swapon "$swapdir/lean-swapfile"
+          free -h
+
+      - name: Set up Lean and fetch the Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+
+      # Written by the `deps` job of this same run.
+      - name: Restore the dependency build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/packages/CoarseGraining/.lake/build
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-deps-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # Restore/save are split so the save runs even when a later step fails:
+      # a failed or interrupted build still banks its completed modules, and
+      # the next run replays them instead of rebuilding from scratch.  The
+      # restore key has no sha, so it matches the most recently *created*
+      # entry with the same toolchain and manifest — in practice the parent
+      # commit's — which is what makes an ordinary push an incremental build.
+      - name: Restore project build artifacts
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/build
+          key: lake-proj-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
-            lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
-            lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lake-proj-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
       - name: Enforce warning-free production build
         shell: bash
@@ -56,10 +173,23 @@ jobs:
             exit 1
           fi
 
-      # Build the axiom audit and check its `#print axioms` output: the three
-      # main theorems must depend on exactly the standard mathlib axioms.
-      # `#print axioms` reports as `info:` lines, so the gate exempts exactly
-      # the expected standard-axiom shape and fails on any other output.
+      # The Section 5 percolation facade is inside the default build root; it is
+      # named here as an explicit target so that a change which drops it from the
+      # root's import closure is caught by this workflow rather than by a reader.
+      # Plain `lake build`, not `lake --old build`: the mtimes of a restored
+      # cache are the archived ones, and mtime staleness checking would then
+      # rebuild the whole closure.
+      - name: Build the Section 5 percolation facade
+        run: |
+          lake build Algsuperdiff.Section5.Percolation
+
+      # `Algsuperdiff.Meta.AxiomsAudit` is a CI-only target: it carries three
+      # `#print axioms` commands for the three main theorems and is deliberately
+      # NOT imported by the library root, because such a command re-runs on every
+      # rebuild of the module that carries it.  Each theorem must depend on
+      # exactly the three standard mathlib axioms; `#print axioms` reports as
+      # `info:` lines, so the gate exempts exactly that shape and fails on any
+      # other output, on `sorryAx`, and on a wrong number of reports.
       - name: Axiom audit
         shell: bash
         run: |
@@ -69,9 +199,13 @@ jobs:
             echo "Axiom audit build emitted a warning."
             exit 1
           fi
+          if grep -F 'sorryAx' axioms-audit.log; then
+            echo "Axiom audit reported sorryAx."
+            exit 1
+          fi
           if grep -iE '^info:' axioms-audit.log \
                | grep -vF 'depends on axioms: [propext, Classical.choice, Quot.sound]'; then
-            echo "Axiom audit emitted unexpected output."
+            echo "Axiom audit reported an axiom outside [propext, Classical.choice, Quot.sound]."
             exit 1
           fi
           count=$(grep -cF 'depends on axioms: [propext, Classical.choice, Quot.sound]' axioms-audit.log)
@@ -81,11 +215,9 @@ jobs:
           fi
           grep -F 'depends on axioms' axioms-audit.log
 
-      - name: Save project and dependency build artifacts
+      - name: Save project build artifacts
         if: always() && steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: |
-            .lake/build
-            .lake/packages/CoarseGraining/.lake/build
-          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          path: .lake/build
+          key: lake-proj-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}

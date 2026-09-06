@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.Probability.IndependentSums.GammaSigma.Basic
 
@@ -93,7 +93,7 @@ private theorem pow_eight_add_le {a c : ℝ} (ha : 0 ≤ a) (hc : 0 ≤ c) :
   · have hle : (a + c) ^ (8 : ℕ) ≤ (2 * c) ^ (8 : ℕ) := by
       have h1 : a + c ≤ 2 * c := by linarith
       have h0 : (0 : ℝ) ≤ a + c := by linarith
-      gcongr
+      exact pow_le_pow_left₀ h0 h1 8
     have heq : (2 * c) ^ (8 : ℕ) = 256 * c ^ (8 : ℕ) := by
       rw [mul_pow]; norm_num
     have hnn : (0 : ℝ) ≤ a ^ (8 : ℕ) := pow_nonneg ha 8
@@ -104,7 +104,7 @@ private theorem pow_eight_add_le {a c : ℝ} (ha : 0 ≤ a) (hc : 0 ≤ c) :
   · have hle : (a + c) ^ (8 : ℕ) ≤ (2 * a) ^ (8 : ℕ) := by
       have h1 : a + c ≤ 2 * a := by linarith
       have h0 : (0 : ℝ) ≤ a + c := by linarith
-      gcongr
+      exact pow_le_pow_left₀ h0 h1 8
     have heq : (2 * a) ^ (8 : ℕ) = 256 * a ^ (8 : ℕ) := by
       rw [mul_pow]; norm_num
     have hnn : (0 : ℝ) ≤ c ^ (8 : ℕ) := pow_nonneg hc 8
@@ -282,7 +282,7 @@ theorem integral_rpow_eight_le_of_shift_add_three_orlicz
     have hpow : X omega ^ (8 : ℕ) ≤
         (b + max (Y1 omega) 0 + max (Y2 omega) 0 + max (Y3 omega) 0) ^ (8 : ℕ) := by
       have h0 := hX0 omega
-      gcongr
+      exact pow_le_pow_left₀ h0 hle 8
     exact hpow.trans
       (pow_eight_add_four_le hb (le_max_right _ _) (le_max_right _ _)
         (le_max_right _ _))
@@ -408,7 +408,7 @@ theorem integral_rpow_two_le_of_shift_add_one_orlicz
       linarith
     have hpow : X omega ^ (2 : ℕ) ≤ (b + max (Y omega) 0) ^ (2 : ℕ) := by
       have h0 := hX0 omega
-      gcongr
+      exact pow_le_pow_left₀ h0 hle 2
     exact hpow.trans (pow_two_add_le b (max (Y omega) 0))
   have hmaj : Integrable (fun omega =>
       4 * (b ^ (2 : ℕ) + max (Y omega) 0 ^ (2 : ℕ))) mu :=

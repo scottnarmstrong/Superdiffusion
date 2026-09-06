@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section4.AnnularDecomposition
 import Algsuperdiff.Probability.SepEnvelope
@@ -345,10 +345,6 @@ theorem sqrt_le_one_add {x : ℝ} (hx : 0 ≤ x) : Real.sqrt x ≤ 1 + x := by
     calc x ≤ 1 + 2 * x + x ^ 2 := by linarith only [hx, hsq]
       _ = (1 + x) ^ 2 := by ring
   rwa [Real.sqrt_sq (by linarith only [hx])] at h
-
-theorem ofReal_sqrt_sq {x : ℝ} (hx : 0 ≤ x) :
-    ENNReal.ofReal (Real.sqrt x) ^ 2 = ENNReal.ofReal x := by
-  rw [← ENNReal.ofReal_pow (Real.sqrt_nonneg x), Real.sq_sqrt hx]
 
 /-- The annular prefactor squared: `(√C·√s)² = C·s`. -/
 theorem sqrt_mul_sqrt_sq {C x : ℝ} (hC : 0 ≤ C) (hx : 0 ≤ x) :

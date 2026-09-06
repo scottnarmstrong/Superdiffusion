@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderKernel
 
@@ -23,7 +23,7 @@ Against the `ε^d` change-of-variables Jacobian of an integration in `z`, the
 that becomes the `1/r` (resp. `1/r²`) of the interior estimates.
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/KernelGradientL1.lean ====
+-- ==== the kernel gradient in `L¹` ====
 open scoped Real
 open MeasureTheory Metric
 
@@ -74,7 +74,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/KernelHessL1.lean ====
+-- ==== the kernel Hessian in `L¹` ====
 open scoped Real
 open MeasureTheory Metric
 

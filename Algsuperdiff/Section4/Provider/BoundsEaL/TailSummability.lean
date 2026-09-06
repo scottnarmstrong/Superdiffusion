@@ -1,11 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Orlicz.AESummability
 import Algsuperdiff.Section4.Provider.Annular.NegationSymmetry
-import Algsuperdiff.Section4.Provider.BoundsEaL.AeMajorantTransport
+import Algsuperdiff.Section4.Provider.BoundsEaL.ShellSlotBounds
 
 /-!
 # The upper shell series converges almost surely: `hTae` discharged
@@ -291,48 +291,6 @@ theorem ae_tailLayerSum_le_tailSeriesGauge (M : ABKModel d) (m : ℤ) :
   exact hfirst k v L hL
 
 /-! ## 7. The transport with `hTae` discharged -/
-
-/-- **The anchor's left-hand side at the `L`-free majorant, with the shell-tail
-obligation discharged.**
-
-This is
-`AeMajorantTransport.lintegral_observableSup_rpow_le_tsum_lintegral_lFreeStep3Majorant_of_ae`
-at the canonical gauge `T = tailSeriesGauge m`, with its `hTae` binder removed.
-The single remaining caller obligation is `hGmeas`, the transport's own
-measurability side condition at this majorant. -/
-theorem lintegral_observableSup_rpow_le_tsum_lintegral_tailSeriesGauge (d : ℕ)
-    (dimension : 2 ≤ d) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (m n : ℤ), n ≤ m → ∀ (s : {s : ℝ // 0 < s}),
-        (s : ℝ) ≤ 1 / 4 → M.gamma ≤ 1 / 8 →
-        ∀ p : ℝ, 2 * (d : ℝ) * (s : ℝ)⁻¹ ≤ p →
-          (∀ l : ℕ, Measurable fun omega =>
-            Ch02.finsetAverageReal (descendantsAtScale (originCube d m) (n - (l : ℤ)))
-              (fun R => Real.rpow
-                (lFreeStep3Majorant C M m (s : ℝ) (lFreeGradSlot m (tailSeriesGauge m))
-                  (lFreeValueSlot m (tailSeriesGauge m)) R omega) (p / 2))) →
-          (∫⁻ omega, Support.fluxCorrectedTwoScaleErrorObservableSup M m n s omega ^ p
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-            ENNReal.ofReal (Real.rpow (2 : ℝ) p *
-                Real.rpow (3 : ℝ) (1 / 2 * p * (s : ℝ) * ((m : ℝ) - (n : ℝ))) *
-                Ch02.geometricDiscount (s : ℝ) 1) *
-              ∑' l : ℕ, ENNReal.ofReal (Real.rpow (3 : ℝ) (-(s : ℝ) * (l : ℝ))) *
-                ∫⁻ omega, ENNReal.ofReal
-                    (Ch02.finsetAverageReal
-                      (descendantsAtScale (originCube d m) (n - (l : ℤ)))
-                      (fun R => Real.rpow
-                        (lFreeStep3Majorant C M m (s : ℝ)
-                          (lFreeGradSlot m (tailSeriesGauge m))
-                          (lFreeValueSlot m (tailSeriesGauge m)) R omega) (p / 2)))
-                  ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
-  haveI : NeZero d := ⟨by omega⟩
-  obtain ⟨C, hC, htransport⟩ :=
-    lintegral_observableSup_rpow_le_tsum_lintegral_lFreeStep3Majorant_of_ae d dimension
-  refine ⟨C, hC, ?_⟩
-  intro M m n hnm s hs1 hgam p hp hGmeas
-  exact htransport M m n hnm s hs1 hgam p hp (tailSeriesGauge m)
-    (ae_tailLayerSum_le_tailSeriesGauge M m) hGmeas
 
 end
 

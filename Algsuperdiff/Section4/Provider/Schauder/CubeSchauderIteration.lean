@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderFreezing
 
@@ -117,77 +117,8 @@ theorem excess_le_geometric {E : ℕ → ℝ} {theta rho F : ℝ}
   rw [hexp]
   linarith only [hmain, hlead]
 
-/-- The degenerate-rate variant: when the contraction rate only *matches* the
-forcing rate the iteration still closes, at the cost of a linear-in-`k` factor
-absorbed by any strictly larger rate.  Stated as the explicit two-profile bound
-at a chosen intermediate rate `rho'`. -/
-theorem excess_le_of_recursion_of_le {E : ℕ → ℝ} {theta rho rho' F : ℝ}
-    (htheta : 0 ≤ theta) (hgap : theta < rho') (hrho : rho ≤ rho') (hF : 0 ≤ F)
-    (hrho0 : 0 ≤ rho)
-    (hstep : ∀ k, E (k + 1) ≤ theta * E k + F * rho ^ k) (k : ℕ) :
-    E k ≤ theta ^ k * E 0 + F / (rho' - theta) * rho' ^ k := by
-  refine excess_le_of_recursion htheta hgap hF (fun j => ?_) k
-  have hpow : rho ^ j ≤ rho' ^ j := pow_le_pow_left₀ hrho0 hrho j
-  have hmul : F * rho ^ j ≤ F * rho' ^ j := mul_le_mul_of_nonneg_left hpow hF
-  linarith only [hstep j, hmul]
-
 /-! ## 2. The triadic gauge -/
 
-/-- `3^{-k/2}` as a power of the ratio `3^{-1/2}`: the dictionary between the
-recursion's `rho ^ k` and the frozen statement's `Real.rpow` gauge. -/
-theorem rpow_three_neg_half_pow (k : ℕ) :
-    (Real.rpow 3 (-(1 / 2 : ℝ))) ^ k = Real.rpow 3 (-((k : ℝ) / 2)) := by
-  show ((3 : ℝ) ^ (-(1 / 2 : ℝ))) ^ k = (3 : ℝ) ^ (-((k : ℝ) / 2))
-  rw [← Real.rpow_natCast ((3 : ℝ) ^ (-(1 / 2 : ℝ))) k,
-    ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-  congr 1
-  ring
-
-/-- The freezing rate is strictly inside the unit interval. -/
-theorem rpow_three_neg_half_lt_one : Real.rpow 3 (-(1 / 2 : ℝ)) < 1 := by
-  show (3 : ℝ) ^ (-(1 / 2 : ℝ)) < 1
-  exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
-
-theorem rpow_three_neg_half_pos : (0 : ℝ) < Real.rpow 3 (-(1 / 2 : ℝ)) :=
-  rpow_three_pos _
-
-/-- **The Campanato bound at the development's exponent.**
-
-At the freezing rate `rho = 3^{-1/2}` — the gain of a `C^{0,1/2}` forcing over
-a triadic scale — the iterated excess obeys the `3^{-k/2}` law of the frozen
-conclusion `[∇w]_{C^{0,1/2}} ≤ · KG`. -/
-theorem excess_le_geometric_triadic_half {E : ℕ → ℝ} {theta F : ℝ}
-    (htheta : 0 ≤ theta) (hgap : theta < Real.rpow 3 (-(1 / 2 : ℝ))) (hF : 0 ≤ F)
-    (hE0 : 0 ≤ E 0)
-    (hstep : ∀ k, E (k + 1) ≤ theta * E k + F * Real.rpow 3 (-((k : ℝ) / 2)))
-    (k : ℕ) :
-    E k ≤ (E 0 + F / (Real.rpow 3 (-(1 / 2 : ℝ)) - theta)) *
-      Real.rpow 3 (-((k : ℝ) / 2)) := by
-  have hstep' : ∀ j : ℕ,
-      E (j + 1) ≤ theta * E j + F * (Real.rpow 3 (-(1 / 2 : ℝ))) ^ j := by
-    intro j
-    rw [rpow_three_neg_half_pow j]
-    exact hstep j
-  have h := excess_le_geometric htheta hgap hF hE0 hstep' k
-  rwa [rpow_three_neg_half_pow k] at h
-
 /-! ## 3. The sup-over-scales form -/
-
-/-- The Campanato bound read as a uniform statement over all triadic scales: the
-normalized excess `rho^{-k} E k` is bounded by one constant.  This is the shape
-consumed by the Campanato characterization of `C^{0,alpha}`. -/
-theorem sup_scaled_excess_le {E : ℕ → ℝ} {theta rho F : ℝ}
-    (htheta : 0 ≤ theta) (hgap : theta < rho) (hF : 0 ≤ F)
-    (hE0 : 0 ≤ E 0)
-    (hstep : ∀ k, E (k + 1) ≤ theta * E k + F * rho ^ k) (k : ℕ) :
-    (rho ^ k)⁻¹ * E k ≤ E 0 + F / (rho - theta) := by
-  have hrhopos : 0 < rho := lt_of_le_of_lt htheta hgap
-  have hpk : (0 : ℝ) < rho ^ k := pow_pos hrhopos k
-  have h := excess_le_geometric htheta hgap hF hE0 hstep k
-  have hmul := mul_le_mul_of_nonneg_left h (le_of_lt (inv_pos.2 hpk))
-  have hid : (rho ^ k)⁻¹ * ((E 0 + F / (rho - theta)) * rho ^ k)
-      = E 0 + F / (rho - theta) := by
-    field_simp
-  rwa [hid] at hmul
 
 end Algsuperdiff.Section4.Provider.Schauder

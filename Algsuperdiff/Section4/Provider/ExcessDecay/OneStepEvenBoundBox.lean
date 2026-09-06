@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CubeMoments
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionVolume
@@ -84,11 +84,6 @@ theorem volume_coordBox_ne_top (lo hi : Fin d → ℝ) : volume (coordBox lo hi)
 theorem volume_coordBox_toReal {lo hi : Fin d → ℝ} (hle : ∀ i, lo i ≤ hi i) :
     (volume (coordBox lo hi)).toReal = ∏ i, (hi i - lo i) := by
   rw [coordBox, Real.volume_pi_Ioo_toReal hle]
-
-theorem volume_coordBox_toReal_pos {lo hi : Fin d → ℝ} (hlt : ∀ i, lo i < hi i) :
-    0 < (volume (coordBox lo hi)).toReal := by
-  rw [volume_coordBox_toReal fun i => (hlt i).le]
-  exact Finset.prod_pos fun i _ => by linarith only [hlt i]
 
 /-- A box sits inside the corresponding closed box, which is compact; hence continuous functions
 are integrable on it. -/

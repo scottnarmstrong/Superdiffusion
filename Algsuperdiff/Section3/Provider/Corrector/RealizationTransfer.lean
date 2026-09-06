@@ -10,7 +10,7 @@ cube `Q`,
 
 `E[ ⨍_Q (realize X) · (realize Y) ] = E[X · Y]`,
 
-together with the corollaries the design DAG hangs off it, in particular
+together with the corollaries that hang off it, in particular
 
 `E[ ‖realize X‖²_{L̲²(Q)} ] = E[|X|²]`.
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.PerCubeGaugeBounds
 
@@ -203,13 +203,6 @@ def valueSlotWidth (d : ℕ) : ℝ := valueLinftyConst d + centeringConst d * de
 
 theorem valueSlotWidth_pos {d : ℕ} (hd : 0 < d) : 0 < valueSlotWidth d := by
   have h1 : (0 : ℝ) < valueLinftyConst d := valueLinftyConst_pos hd
-  have h2 : (0 : ℝ) ≤ centeringConst d := centeringConst_nonneg d
-  have h3 : (0 : ℝ) < deepGradBound := deepGradBound_pos
-  rw [valueSlotWidth]
-  positivity
-
-theorem valueSlotWidth_nonneg (d : ℕ) : 0 ≤ valueSlotWidth d := by
-  have h1 : (0 : ℝ) ≤ valueLinftyConst d := valueLinftyConst_nonneg d
   have h2 : (0 : ℝ) ≤ centeringConst d := centeringConst_nonneg d
   have h3 : (0 : ℝ) < deepGradBound := deepGradBound_pos
   rw [valueSlotWidth]

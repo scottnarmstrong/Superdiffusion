@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.ClauseTwo
 
@@ -85,8 +85,8 @@ theorem ofReal_annFamError_tsum_le_clauseOneTermOne (M : ABKModel d) (m : ℤ)
 /-- **The `hsumE` binder of `ClauseOne.clauseOne_bound`, eventlessly.**
 
 If the display's first term is finite at `ω`, the real weighted annular family of
-squared `(2,2)` error maxima is summable at `ω`.  This is the replacement for
-`EventReading.summable_annFam_error_of_eventG2`: no `𝒢₂`, no probability, no
+squared `(2,2)` error maxima is summable at `ω`.  This replaces the
+`𝒢₂`-conditioned reading of that binder: no `𝒢₂`, no probability, no
 threshold. -/
 theorem summable_annFam_error_of_clauseOneTermOne_ne_top (M : ABKModel d) (m : ℤ)
     (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d)

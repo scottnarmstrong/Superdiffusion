@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFourFinalIteration
 
@@ -17,7 +17,7 @@ noncomputable section
 /-- **`e.oscillation.iteration.result` with the `ε`-budget slot generic** ('s
 mismatch (1), fixed's own price): the `ε`-sum is allowed the constant `2 C_ε`
 and the produced iteration constant becomes `C_iter = 2 C₀ (k + 1 + C_ε)`.  At
-`C_ε = 1` this is's `oscillationIterationResult_of_stepFourDecay` verbatim. -/
+`C_ε = 1` this is the pinned iteration result verbatim. -/
 theorem oscillationIterationResult_of_stepFourDecay_generic (d : ℕ) (hd : d ≠ 0)
     (k : ℕ) (hk : 2 ≤ k) {Ceps : ℝ} (hCeps : 0 ≤ Ceps) :
     ∃ C Citer : ℝ, 0 < C ∧ 0 ≤ Citer ∧
@@ -155,23 +155,6 @@ theorem edFinalDeltaConst_nonneg (d : ℕ) [NeZero d] {C : ℝ} (hC : 0 ≤ C) (
     (mul_nonneg (mul_nonneg
       (triangleRemainderConst_nonneg d (schauderWindowConst_nonneg d) k)
       (Real.sqrt_nonneg _)) (mul_nonneg hC (Real.rpow_nonneg hs _)))
-
-/-- **'s uncertainty (2), machine-checked.**  At the Step-1 pin `s = 1/4` the
-interior clause's force exponent contributes the ABSOLUTE numeral
-`(1/4)^{-19/2} = 2^{19} = 524288`. -/
-theorem stepOneS_rpow_neg_nineteen_halves :
-    stepOneS ^ (-(19 / 2 : ℝ)) = 524288 := by
-  have hpos : (0 : ℝ) ≤ stepOneS := by rw [stepOneS]; norm_num
-  have hhalf : stepOneS ^ (-(1 / 2 : ℝ)) = 2 := by
-    rw [stepOneS, Real.rpow_neg (by norm_num), ← Real.sqrt_eq_rpow,
-      show (1 : ℝ) / 4 = (1 / 2 : ℝ) ^ (2 : ℕ) from by norm_num,
-      Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    norm_num
-  have hsplit : (-(19 / 2 : ℝ)) = (-(1 / 2 : ℝ)) * ((19 : ℕ) : ℝ) := by
-    push_cast
-    ring
-  rw [hsplit, Real.rpow_mul hpos, hhalf, Real.rpow_natCast]
-  norm_num
 
 /-- The top-scale constant of the interior `δ`-budget, `4 C_δ 3^{m/2} σ̄_m^{-1}
 K_g`. -/

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomBridgeDataEmbedding
 import Algsuperdiff.Section4.Provider.ExcessDecay.BesovBridge
@@ -16,7 +16,7 @@ quantities `B_g`, `B_h`.  Converting those to the printed `3^{m/2}` runs
 through the bridge
 `ExcessDecay.scaleNormalizedPositiveBesovVectorSeminormTwo_le_gagliardo`
 composed with the embedding
-`three_rpow_mul_normalizedGagliardo_originCube_le_pinned`.  The bridge has two
+`HomBridgeDataEmbedding`'s pinned data embedding.  The bridge has two
 side conditions that existed nowhere, and its `∇h` leg carries a MEAN term that
 a Hölder seminorm alone cannot price.  Those were `M1`, `M2`, `M3`.  All three
 are settled here.
@@ -26,8 +26,8 @@ are settled here.
   Hölder bound gives `ContinuousOn` (hence `AEStronglyMeasurable` on the
   restricted measure) and, against ANY one point of the cube, the pointwise
   bound `‖g x‖ ≤ ‖g 0‖ + K √(3^m)`; a bounded function on a finite measure is
-  `L^∞`, hence `L²`.  This is the essential-sup route used for
-  `stepFiveLinftyNorm_le_of_bound`, run at the `L²` exponent.
+  `L^∞`, hence `L²`.  This is the essential-sup route of the Step-5 data
+  layer, run here at the `L²` exponent.
 * **(M2)** `Gagliardo.MemWsp □_m t 2 g` (`memWsp_of_holderHalf`).  Its
   `eSeminorm < ⊤` half is the embedding atom read through
   `ExcessDecay.normalizedGagliardoESeminormOn_openCubeSet`; the genuinely new
@@ -40,7 +40,7 @@ are settled here.
 * **(M1)+(M2)** discharge `ForceBesovRegularity` — the hypothesis of the coarse-graining right-hand side
   itself — at the §4.5 data (`forceBesovRegularity_of_holderHalf`,
   `forceBesovRegularity_neg_of_holderHalf`), and give the printed data legs
-  `B_g, B_h ≤ C 3^{m/2}` (`besovSeminormTwo_le_of_holderHalf`).
+  `B_g, B_h ≤ C 3^{m/2}`.
 
 ## (M3): the `∇h` leg
 
@@ -62,8 +62,8 @@ and its conclusion displays the `∇h` leg as `(KhInf + 3^{m/2} Kh)` — the NOR
 `L^∞` half plus seminorm half, exactly.  The mean term is priced by `KhInf`
 alone: `‖⨍_Q ∇h‖ ≤ √d · KhInf` (`sqrt_vecNormSq_ cubeAverageVec_le`; the `√d` is
 the ambient sup-norm-versus-Euclidean conversion of `vecNormSq`, the standing
-convention, NOT a new datum).  `besovVectorNormTwo_le_of_holderHalf_of_sup` is
-the composed display and its right-hand side is the root's own bracket.
+convention, NOT a new datum).  The composed display's right-hand side is the
+root's own bracket.
 
 **M3 is therefore NOT a statement-level item and no new binder is needed.**  The
 carrier finding stands (a Hölder SEMINORM alone does not control the mean); what
@@ -262,65 +262,6 @@ theorem forceBesovRegularity_neg_of_holderHalf [NeZero d] {m : ℤ} {K s : ℝ}
     ForceBesovRegularity (originCube d m) s (fun x => -g x) :=
   forceBesovRegularity_of_holderHalf hd hs0 hs hK (holderSeminormBoundOn_neg hg)
 
-/-! ## 5. The printed data legs `B_g, B_h ≤ C 3^{m/2}` -/
-
-/-- `[·]_{H̲^s(□_m)}` is finite under the Hölder bound — the fact that makes the
-`toReal` layer of `CoarseGraining`'s bridge honest. -/
-theorem cubeGagliardoESeminorm_ne_top_of_holderHalf {m : ℤ} {K s : ℝ} {f : Vec d → E}
-    (hd : 1 ≤ d) (hs0 : 0 < s) (hs : s < 1 / 2) (hK : 0 ≤ K)
-    (hf : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K f) :
-    Gagliardo.cubeGagliardoESeminorm (originCube d m) s 2 f ≠ ⊤ :=
-  (memWsp_of_holderHalf hd hs0 hs hK hf).eSeminorm_lt_top.ne
-
-/-- **The embedding in `toReal` form**: `3^{ms} [f]_{H̲^s(□_m)} ≤ K C_data(d)
-3^{m/2}` at the gated constant. -/
-theorem three_rpow_mul_cubeGagliardoSeminorm_le {m : ℤ} {K s : ℝ} {f : Vec d → E}
-    (hd : 1 ≤ d) (hs0 : 0 < s) (hs : s ≤ 1 / 4) (hK : 0 ≤ K)
-    (hf : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K f) :
-    (3 : ℝ) ^ ((m : ℝ) * s) *
-        (Gagliardo.cubeGagliardoESeminorm (originCube d m) s 2 f).toReal ≤
-      K * homDataConst d * (3 : ℝ) ^ ((m : ℝ) / 2) := by
-  have hlt : s < 1 / 2 := by linarith only [hs]
-  have hid := normalizedGagliardoESeminormOn_openCubeSet (originCube d m) s f
-  have hpin := three_rpow_mul_normalizedGagliardo_originCube_le_pinned (E := E) hd hs0 hs hK hf
-  have hne : Gagliardo.cubeGagliardoESeminorm (originCube d m) s 2 f ≠ ⊤ :=
-    cubeGagliardoESeminorm_ne_top_of_holderHalf hd hs0 hlt hK hf
-  have hnn : (0 : ℝ) ≤ K * homDataConst d * (3 : ℝ) ^ ((m : ℝ) / 2) :=
-    mul_nonneg (mul_nonneg hK (homDataConst_nonneg d))
-      (Real.rpow_nonneg (by norm_num) _)
-  have hw : (0 : ℝ) ≤ (3 : ℝ) ^ ((m : ℝ) * s) := Real.rpow_nonneg (by norm_num) _
-  have hreal := ENNReal.toReal_le_of_le_ofReal hnn (hid ▸ hpin)
-  rwa [ENNReal.toReal_mul, ENNReal.toReal_ofReal hw] at hreal
-
-/-- **`B_g ≤ C 3^{m/2}`.**  The Besov data leg of the coarse-graining right-hand side, priced by the §4.5
-Hölder normalization at the `γ`-free constant `C_besov(d) · C_data(d)`. -/
-theorem besovSeminormTwo_le_of_holderHalf [NeZero d] {m : ℤ} {K s : ℝ}
-    {g : Vec d → Vec d} (hd : 1 ≤ d) (hs0 : 0 < s) (hs : s ≤ 1 / 4) (hK : 0 ≤ K)
-    (hg : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K g) :
-    scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d m) s g ≤
-      besovGagliardoConstant d * (K * homDataConst d) * (3 : ℝ) ^ ((m : ℝ) / 2) := by
-  have hlt : s < 1 / 2 := by linarith only [hs]
-  have hbridge := scaleNormalizedPositiveBesovVectorSeminormTwo_le_gagliardo
-    (originCube d m) g hs0 (by linarith only [hlt])
-    (memLp_two_normalizedCubeMeasure_of_holderHalf hK hg)
-    (memWsp_of_holderHalf hd hs0 hlt hK hg)
-  have hweight : cubeBesovScaleWeight (-s) (originCube d m) = (3 : ℝ) ^ ((m : ℝ) * s) := by
-    rw [cubeBesovScaleWeight, cubeScaleFactor, neg_neg]
-    show ((3 : ℝ) ^ (m : ℤ)) ^ s = (3 : ℝ) ^ ((m : ℝ) * s)
-    rw [← Real.rpow_intCast (3 : ℝ) m, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-  have hstep := three_rpow_mul_cubeGagliardoSeminorm_le (E := Vec d) hd hs0 hs hK hg
-  refine hbridge.trans ?_
-  have hCnn : (0 : ℝ) ≤ besovGagliardoConstant d := besovGagliardoConstant_nonneg d
-  calc besovGagliardoConstant d * cubeBesovScaleWeight (-s) (originCube d m) *
-        (Gagliardo.cubeGagliardoESeminorm (originCube d m) s 2 g).toReal
-      = besovGagliardoConstant d *
-          ((3 : ℝ) ^ ((m : ℝ) * s) *
-            (Gagliardo.cubeGagliardoESeminorm (originCube d m) s 2 g).toReal) := by
-        rw [hweight]; ring
-    _ ≤ besovGagliardoConstant d * (K * homDataConst d * (3 : ℝ) ^ ((m : ℝ) / 2)) :=
-        mul_le_mul_of_nonneg_left hstep hCnn
-    _ = besovGagliardoConstant d * (K * homDataConst d) * (3 : ℝ) ^ ((m : ℝ) / 2) := by ring
-
 /-! ## 6. `M3`: the mean term of the `∇h` leg, priced by the root's `KhInf` -/
 
 /-- Each coordinate average of a sup-bounded field is bounded by the same
@@ -390,29 +331,6 @@ theorem sqrt_vecNormSq_cubeAverageVec_le {Q : TriadicCube d} {F : Vec d → Vec 
       ≤ Real.sqrt ((d : ℝ) * K ^ (2 : ℕ)) := Real.sqrt_le_sqrt hsum
     _ = Real.sqrt (d : ℝ) * K := by
         rw [Real.sqrt_mul hdnn, Real.sqrt_sq hK]
-
-/-- **(M3), the display.**  The `∇h` leg's norm — the object the
-coarse-graining right-hand side actually carries — is priced by the frozen root's OWN two binders
-`KhInf` (sup) and `Kh` (Hölder seminorm), in exactly the shape the root's
-conclusion displays, `(K_∞ + 3^{m/2} K)`:
-
-```
-  ‖∇h‖_{B̄, □_m} ≤ √d · K_∞ + C_besov(d) C_data(d) · K · 3^{m/2}.
-```
-
-No new binder is needed; `M3` is NOT a statement-level item. -/
-theorem besovVectorNormTwo_le_of_holderHalf_of_sup [NeZero d] {m : ℤ} {K KInf s : ℝ}
-    {F : Vec d → Vec d} (hd : 1 ≤ d) (hs0 : 0 < s) (hs : s ≤ 1 / 4) (hK : 0 ≤ K)
-    (hKInf : 0 ≤ KInf)
-    (hF : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K F)
-    (hFsup : ∀ x ∈ openCubeSet (originCube d m), ‖F x‖ ≤ KInf) :
-    scaleNormalizedPositiveBesovVectorNormTwo (originCube d m) s F ≤
-      Real.sqrt (d : ℝ) * KInf +
-        besovGagliardoConstant d * (K * homDataConst d) * (3 : ℝ) ^ ((m : ℝ) / 2) := by
-  have hmean := sqrt_vecNormSq_cubeAverageVec_le (Q := originCube d m) hKInf hFsup
-  have hsem := besovSeminormTwo_le_of_holderHalf hd hs0 hs hK hF
-  rw [scaleNormalizedPositiveBesovVectorNormTwo]
-  exact add_le_add hmean hsem
 
 end
 

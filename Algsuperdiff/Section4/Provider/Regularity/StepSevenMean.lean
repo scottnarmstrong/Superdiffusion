@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenSigmaBarChain
 
@@ -14,7 +14,7 @@ import Algsuperdiff.Section4.Provider.Regularity.StepSevenSigmaBarChain
   oscTrunc ≤ Cmean · ( (3^{Q.scale})^{-1} · osc_{L̲²}(Q; u) )
 ```
 
-as a hypothesis of `StepSevenWireChain.exists_stepSevenEnd_chain_of_lambda`.
+as a hypothesis of the narrowed Step-7d chain.
 Producers do exist, in two steps, at `Cmean = √(3^d)`:
 
 * `normalizedL2On_image_add_sub_average_le_cubeBesovOscillation` (the off-grid

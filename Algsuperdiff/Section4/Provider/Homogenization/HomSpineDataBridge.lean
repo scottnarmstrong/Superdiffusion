@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineTopScale
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepThreeData
@@ -167,9 +167,6 @@ seminorm legs; the endpoint blow-up as `t ↑ 1/2` sits in
 `stepFourGagliardoConst`. -/
 def stepTwoDataConst (d : ℕ) (t : ℝ) : ℝ :=
   max (Real.sqrt (d : ℝ)) (besovGagliardoConstant d * stepFourGagliardoConst d t)
-
-theorem stepTwoDataConst_nonneg (d : ℕ) (t : ℝ) : 0 ≤ stepTwoDataConst d t :=
-  le_trans (Real.sqrt_nonneg _) (le_max_left _ _)
 
 /-- The pinned form of the bridge constant (`t ≤ 1/4`, `γ`-free). -/
 def stepTwoDataConstPinned (d : ℕ) : ℝ :=

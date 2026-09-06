@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridErrorCarrier
 import Homogenization.CoarseGraining.Translation
@@ -27,10 +27,10 @@ the coarse-graining apparatus under a *real* translation:
 
 ## What this unblocks (and what it does not)
 
-With this bridge, the child-frame composition of `InteriorAssemblyXFrame` can
+With this bridge, the child-frame composition can
 feed `InteriorGlueCap`'s cap at the root, *provided* the child-frame family is
 built from the **parent's** flux-corrected field rather than the child's own
-(`InteriorAssemblyXFrame.childFluxCorrectedFamily` uses the child's own
+(the child-frame family uses the child's own
 antisymmetric increment, which is a different — equally valid — shift of the same
 equation).  That re-basing, the analogous transport of the coarse-grained
 ellipticity factors `λ_{r,q}`, `Λ_{r,q}`, and the energy-average transport are

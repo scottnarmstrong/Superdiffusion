@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.BadEvents.LambdaCovariance
 import Algsuperdiff.Section4.Provider.GoodEvents.Translate
@@ -35,9 +35,8 @@ identification for the **error** functional.
 * `unitCubeHomogenizationError_unitRescaledCutoffCoeff` — its instance at the
   proved rescaling layer, i.e. the transport at the plain cutoff family
   `Cutoff.coefficientCutoffTriadicCoeffFamily`.
-* `unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw` and
-  `..._eq_cutoffRaw22` — the two literal-observable legs, at `(∞,2)` and at
-  `(2,2)`.
+* `unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw22` — the
+  literal-observable leg at `(2,2)`.
 * `unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAtom` —
   the `𝒢₂` normalization (cutoff level `n − 2`, comparator `σ̄_{n−2} Id`) at a
   lattice cube `⟨n, v⟩`: the unit-cube error at the rescaled coefficient object
@@ -183,20 +182,6 @@ theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff [NeZero d]
     (Cutoff.coefficientCutoffTriadicCoeffFamily M cutoffScale
       (Cutoff.translateCutoffSample (triadicCubeShift Q) omega))
     Q.scale s p q a0
-
-/-- The `(∞,2)` leg, proved at the Section 3 literal observable
-`Observable.cutoffHomogenizationErrorRaw`. -/
-theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw [NeZero d]
-    (M : ABKModel d) (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError s .infinity (.finite 2)
-        (unitRescaledCutoffCoeff M Q cutoffScale omega)
-        (isotropicComparatorMatrix sigma) =
-      Observable.cutoffHomogenizationErrorRaw M cutoffScale Q.scale s sigma
-        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega) := by
-  rw [Observable.cutoffHomogenizationErrorRaw_characterization]
-  exact unitCubeHomogenizationError_unitRescaledCutoffCoeff M Q cutoffScale s
-    .infinity (.finite 2) (isotropicComparatorMatrix sigma) omega
 
 /-- The `(2,2)` leg, proved at the Section 4 literal observable
 `Support.cutoffHomogenizationErrorRaw22`. -/

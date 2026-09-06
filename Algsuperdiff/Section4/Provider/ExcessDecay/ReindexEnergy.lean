@@ -1,15 +1,15 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.ExcessDecay.GeneralClauseInteriorEnergy
+import Algsuperdiff.Section4.Provider.ExcessDecay.ConstantDatumCoreEnergy
 import Algsuperdiff.Section4.Provider.ExcessDecay.ReindexSlot
 
 /-!
 # The interior Caccioppoli energy at the slot `n+3`: the `(n+3)` family on `□_{n+2}`
 
-`GeneralClauseInteriorEnergy` proves the sharpened interior energy estimate at
+The sharpened interior energy estimate is proved at
 the **proved** slot: the coefficient family is `ã_{L,n+2}`, the comparator is
 `σ̄_{n+2}`, and the good event is `𝒢(n+2, z; s/8, 1/2)`.  The frozen general
 clause reads the good event and the flux index at `n+3`, so this module
@@ -44,7 +44,7 @@ variable {d : ℕ}
 /-! ## 1. The display object, in the cube's own frame -/
 
 /-- **The sharpened interior Caccioppoli right-hand side at the `n+3` slot.**
-`GeneralClauseInteriorEnergy.constantDatumEnergyRHS` with the comparator index
+The sharpened interior right-hand side with the comparator index
 moved to `n+3`; the cube and both `3`-power weights are unchanged. -/
 def constantDatumEnergyRHS_addThree (M : ABKModel d) (n : ℤ) (s : ℝ)
     (u : H1Function (Ch02.cubeDomain (originCube d (n + 2)) : Set (Vec d)))
@@ -458,7 +458,7 @@ theorem constantDatumEnergyRHS_le_anchorRHS_addThree [NeZero d] (M : ABKModel d)
 
 /-- **The `(n+3)` interior energy estimate, at the frozen statement's binders.**
 
-Verbatim `GeneralClauseInteriorEnergy.ae_constantDatumEnergy_anchorWindow` — same
+Verbatim the sharpened interior energy estimate — same
 hypotheses (with the frozen binder `n + 3 ≤ m` and the general clause's good
 event),
 same left-hand energy value, same window — with the coefficient family and the

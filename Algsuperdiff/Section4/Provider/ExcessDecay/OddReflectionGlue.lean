@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionSobolev
 import Homogenization.Sobolev.W1p.BasicLemmas
@@ -320,130 +320,11 @@ theorem hasWeakGradientOn_univ_zeroExtend {V : Set (Vec d)}
 
 /-! ## 3. Reflection transport of a global weak gradient -/
 
-private theorem integral_comp_coordFaceReflection (a : ℝ) (i : Fin d)
-    (g : Vec d → ℝ) :
-    ∫ y, g (coordFaceReflection a i y) = ∫ y, g y :=
-  (measurePreserving_coordFaceReflection a i).integral_comp
-    (measurableEmbedding_coordFaceReflection a i) g
-
 theorem coordReflectionLinear_apply_coord (i : Fin d) (v : Vec d) (k : Fin d) :
     coordReflectionLinear i v k = (if k = i then (-1 : ℝ) else 1) * v k := by
   by_cases hki : k = i <;> simp [coordReflectionLinear, hki]
 
-/-- **, step 3: the weak gradient transports under a face reflection.**
-Pre-composing with the reflection `r` in `{yᵢ = a}` turns a global
-weak-gradient graph into the reflected graph: the normal derivative changes
-sign, the tangential ones do not. -/
-theorem hasWeakGradientOn_univ_comp_coordFaceReflection {w : Vec d → ℝ}
-    {G : Vec d → Vec d} (a : ℝ) (i : Fin d)
-    (hw : HasWeakGradientOn Set.univ w G) :
-    HasWeakGradientOn Set.univ (fun y => w (coordFaceReflection a i y))
-      (fun y => coordReflectionLinear i (G (coordFaceReflection a i y))) := by
-  intro k φ hφ hφ_compact _hφ_sub
-  set r : Vec d → Vec d := coordFaceReflection a i with hrdef
-  set ε : ℝ := if k = i then (-1 : ℝ) else 1 with hεdef
-  have hεsq : ε * ε = 1 := by rw [hεdef]; split_ifs <;> norm_num
-  -- the reflected test function
-  have hψsmooth : ContDiff ℝ (⊤ : ℕ∞) (fun y => φ (r y)) := by
-    rw [hrdef]
-    simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection a i)
-  have hψcompact : HasCompactSupport (fun y => φ (r y)) :=
-    hasCompactSupport_comp_coordFaceReflection hφ_compact a i
-  -- the chain rule for the test function's coordinate derivative
-  have hchain : ∀ y : Vec d,
-      (fderiv ℝ φ (r y)) (basisVec k) = ε * (fderiv ℝ (fun z => φ (r z)) y) (basisVec k) := by
-    intro y
-    have hcd := euclideanCoordDeriv_comp_coordFaceReflection hφ a i k y
-    have hcd' : (fderiv ℝ (fun z => φ (r z)) y) (basisVec k) =
-        ε * (fderiv ℝ φ (r y)) (basisVec k) := hcd
-    rw [hcd', ← mul_assoc, hεsq, one_mul]
-  -- the two changes of variables
-  have hcov1 : ∫ y, w (r y) * (fderiv ℝ φ y) (basisVec k) =
-      ∫ y, w y * (fderiv ℝ φ (r y)) (basisVec k) := by
-    have := integral_comp_coordFaceReflection a i
-      (fun z => w z * (fderiv ℝ φ (r z)) (basisVec k))
-    rw [hrdef] at this ⊢
-    simpa using this
-  have hcov2 : ∫ y, G y k * φ (r y) = ∫ y, G (r y) k * φ y := by
-    have := integral_comp_coordFaceReflection a i
-      (fun z => G (r z) k * φ z)
-    rw [hrdef] at this ⊢
-    simpa using this
-  -- the weak-gradient identity against the reflected test
-  have hweak := hw k (fun y => φ (r y)) hψsmooth hψcompact (Set.subset_univ _)
-  simp only [MeasureTheory.Measure.restrict_univ] at hweak ⊢
-  calc ∫ y, w (r y) * (fderiv ℝ φ y) (basisVec k)
-      = ∫ y, w y * (fderiv ℝ φ (r y)) (basisVec k) := hcov1
-    _ = ∫ y, ε * (w y * (fderiv ℝ (fun z => φ (r z)) y) (basisVec k)) := by
-        refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-        show w y * (fderiv ℝ φ (r y)) (basisVec k) =
-          ε * (w y * (fderiv ℝ (fun z => φ (r z)) y) (basisVec k))
-        rw [hchain y]; ring
-    _ = ε * ∫ y, w y * (fderiv ℝ (fun z => φ (r z)) y) (basisVec k) :=
-        integral_const_mul _ _
-    _ = ε * -(∫ y, G y k * φ (r y)) := by rw [hweak]
-    _ = -(ε * ∫ y, G (r y) k * φ y) := by rw [hcov2]; ring
-    _ = -∫ y, coordReflectionLinear i (G (r y)) k * φ y := by
-        rw [← integral_const_mul]
-        refine congrArg Neg.neg (integral_congr_ae (Filter.Eventually.of_forall
-          fun y => ?_))
-        show ε * (G (r y) k * φ y) = coordReflectionLinear i (G (r y)) k * φ y
-        rw [coordReflectionLinear_apply_coord, ← hεdef]
-        ring
-
 /-! ## 4. The one-face odd extension is `H¹` across the interface -/
-
-private theorem holderTriple_two_two : ENNReal.HolderTriple (2 : ℝ≥0∞) 2 1 :=
-  ⟨by rw [inv_one, ENNReal.inv_two_add_inv_two]⟩
-
-private theorem integrable_mul_of_memL2 {u v : Vec d → ℝ}
-    (hu : MemLp u 2 (volume : Measure (Vec d)))
-    (hv : MemLp v 2 (volume : Measure (Vec d))) :
-    Integrable (fun y => u y * v y) (volume : Measure (Vec d)) := by
-  haveI := holderTriple_two_two
-  exact hu.integrable_mul hv
-
-private theorem memL2_fderiv_apply {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
-    (hφc : HasCompactSupport φ) (k : Fin d) :
-    MemLp (fun y => (fderiv ℝ φ y) (basisVec k)) 2 (volume : Measure (Vec d)) := by
-  have hcont : Continuous (fun y => (fderiv ℝ φ y) (basisVec k)) :=
-    (hφ.continuous_fderiv (by norm_num)).clm_apply continuous_const
-  have hsupp : HasCompactSupport (fun y => (fderiv ℝ φ y) (basisVec k)) := by
-    simpa only using hφc.fderiv_apply (𝕜 := ℝ) (basisVec k)
-  exact hcont.memLp_of_hasCompactSupport hsupp
-
-/-- **Weak gradients subtract** (globally `L²` data). -/
-theorem hasWeakGradientOn_univ_sub {u v : Vec d → ℝ} {Du Dv : Vec d → Vec d}
-    (hu2 : MemLp u 2 (volume : Measure (Vec d)))
-    (hv2 : MemLp v 2 (volume : Measure (Vec d)))
-    (hDu2 : ∀ k, MemLp (fun y => Du y k) 2 (volume : Measure (Vec d)))
-    (hDv2 : ∀ k, MemLp (fun y => Dv y k) 2 (volume : Measure (Vec d)))
-    (hu : HasWeakGradientOn Set.univ u Du)
-    (hv : HasWeakGradientOn Set.univ v Dv) :
-    HasWeakGradientOn Set.univ (fun y => u y - v y) (fun y => Du y - Dv y) := by
-  intro k φ hφ hφ_compact hφ_sub
-  have hφ2 : MemLp φ 2 (volume : Measure (Vec d)) :=
-    hφ.continuous.memLp_of_hasCompactSupport hφ_compact
-  have hDφ2 := memL2_fderiv_apply hφ hφ_compact k
-  have hu_eq := hu k φ hφ hφ_compact hφ_sub
-  have hv_eq := hv k φ hφ hφ_compact hφ_sub
-  simp only [MeasureTheory.Measure.restrict_univ] at hu_eq hv_eq ⊢
-  have h1 : ∫ y, (u y - v y) * (fderiv ℝ φ y) (basisVec k) =
-      (∫ y, u y * (fderiv ℝ φ y) (basisVec k)) -
-        ∫ y, v y * (fderiv ℝ φ y) (basisVec k) := by
-    rw [← integral_sub (integrable_mul_of_memL2 hu2 hDφ2)
-      (integrable_mul_of_memL2 hv2 hDφ2)]
-    exact integral_congr_ae (Filter.Eventually.of_forall fun y => by ring)
-  have h2 : ∫ y, (Du y - Dv y) k * φ y =
-      (∫ y, Du y k * φ y) - ∫ y, Dv y k * φ y := by
-    rw [← integral_sub (integrable_mul_of_memL2 (hDu2 k) hφ2)
-      (integrable_mul_of_memL2 (hDv2 k) hφ2)]
-    exact integral_congr_ae (Filter.Eventually.of_forall fun y => by
-      simp only [Pi.sub_apply]; ring)
-  show ∫ y, (u y - v y) * (fderiv ℝ φ y) (basisVec k) =
-    -∫ y, (Du y - Dv y) k * φ y
-  rw [h1, h2, hu_eq, hv_eq]
-  ring
 
 /-- The odd extension of a scalar across the face `{yᵢ = a}`. -/
 def oddFaceExtend (a : ℝ) (i : Fin d) (w : Vec d → ℝ) : Vec d → ℝ :=
@@ -459,43 +340,6 @@ theorem oddFaceExtend_comp_coordFaceReflection (a : ℝ) (i : Fin d)
     oddFaceExtend a i w (coordFaceReflection a i y) = -oddFaceExtend a i w y := by
   simp only [oddFaceExtend, coordFaceReflection_involutive]
   ring
-
-private theorem memL2_comp_coordFaceReflection {w : Vec d → ℝ} (a : ℝ) (i : Fin d)
-    (hw : MemLp w 2 (volume : Measure (Vec d))) :
-    MemLp (fun y => w (coordFaceReflection a i y)) 2 (volume : Measure (Vec d)) :=
-  hw.comp_measurePreserving (measurePreserving_coordFaceReflection a i)
-
-/-- **: the one-face odd extension is `H¹` on all of `ℝᵈ`.**  The weak gradient of
-`w - w ∘ r` is the odd reflection of the weak gradient of `w`: the interface
-hyperplane contributes nothing. -/
-theorem hasWeakGradientOn_univ_oddFaceExtend {w : Vec d → ℝ} {G : Vec d → Vec d}
-    (a : ℝ) (i : Fin d) (hw2 : MemLp w 2 (volume : Measure (Vec d)))
-    (hG2 : ∀ k, MemLp (fun y => G y k) 2 (volume : Measure (Vec d)))
-    (hw : HasWeakGradientOn Set.univ w G) :
-    HasWeakGradientOn Set.univ (oddFaceExtend a i w) (oddFaceExtendGrad a i G) := by
-  refine hasWeakGradientOn_univ_sub hw2 (memL2_comp_coordFaceReflection a i hw2)
-    hG2 (fun k => ?_) hw (hasWeakGradientOn_univ_comp_coordFaceReflection a i hw)
-  have hk : (fun y => coordReflectionLinear i (G (coordFaceReflection a i y)) k) =
-      fun y => (if k = i then (-1 : ℝ) else 1) *
-        (fun z => G z k) (coordFaceReflection a i y) := by
-    funext y
-    rw [coordReflectionLinear_apply_coord]
-  rw [hk]
-  exact ((hG2 k).comp_measurePreserving
-    (measurePreserving_coordFaceReflection a i)).const_mul _
-
-/-- **, assembled.**  The odd extension of the zero extension of an `H¹₀(V)`
-function across the face `{yᵢ = a}` is `H¹` on `ℝᵈ`. -/
-theorem hasWeakGradientOn_univ_oddFaceExtend_zeroExtend {V : Set (Vec d)}
-    (hV : MeasurableSet V) (u : H10Function V) (a : ℝ) (i : Fin d) :
-    HasWeakGradientOn Set.univ
-      (oddFaceExtend a i (zeroExtend V u.toH1Function.toFun))
-      (oddFaceExtendGrad a i (zeroExtendGrad V u.toH1Function.grad)) := by
-  refine hasWeakGradientOn_univ_oddFaceExtend a i (memL2_zeroExtend hV u)
-    (fun k => ?_) (hasWeakGradientOn_univ_zeroExtend hV u)
-  have h : MemLp (fun y => zeroExtendGrad V u.toH1Function.grad y k) 2
-      (volume.restrict (Set.univ : Set (Vec d))) := gradMemL2_zeroExtendGrad hV u k
-  rwa [Measure.restrict_univ] at h
 
 /-! ## 5. The pointwise shape of the one-face odd extension -/
 
@@ -525,12 +369,6 @@ theorem oddFaceExtend_zeroExtend_of_mem {V : Set (Vec d)} (u : Vec d → ℝ)
     (hry : coordFaceReflection a i y ∉ V) :
     oddFaceExtend a i (zeroExtend V u) y = u y := by
   rw [oddFaceExtend, zeroExtend_of_mem u hy, zeroExtend_of_notMem u hry, sub_zero]
-
-theorem oddFaceExtend_zeroExtend_of_notMem {V : Set (Vec d)} (u : Vec d → ℝ)
-    (a : ℝ) (i : Fin d) {y : Vec d} (hy : y ∉ V)
-    (hry : coordFaceReflection a i y ∈ V) :
-    oddFaceExtend a i (zeroExtend V u) y = -u (coordFaceReflection a i y) := by
-  rw [oddFaceExtend, zeroExtend_of_notMem u hy, zeroExtend_of_mem u hry, zero_sub]
 
 /-- On the half itself the odd extension of the zero extension is the original
 function. -/

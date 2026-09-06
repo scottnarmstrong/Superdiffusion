@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.LayerBrackets
 import Algsuperdiff.Probability.CesaroAlgebra
@@ -142,9 +142,6 @@ is `0`, which only strengthens every upper-tail statement about it. -/
 def gradInner (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSample d) : ℝ :=
   (gradInnerE M k omega).toReal
 
-theorem gradInner_nonneg (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSample d) :
-    0 ≤ gradInner M k omega := ENNReal.toReal_nonneg
-
 /-- The inner sum as a `SeriesTail` weighted series: the weight is constant in
 the offset and the atom is the cross-scale gauge. -/
 theorem gradInnerE_eq_wsumE (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSample d) :
@@ -157,16 +154,6 @@ theorem gradInnerE_eq_wsumE (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSam
           (Real.rpow 3 ((2 - M.gamma) * (k : ℝ)) * shellW1InfGradNorm k (omega.1 l.1))),
     wsumE]
   rfl
-
-theorem measurable_gradInner (M : ABKModel d) (k : ℤ) : Measurable (gradInner M k) := by
-  have hfun : gradInner M k =
-      wsum (fun p (w : Cutoff.CutoffSample d) => shellW1InfGradNorm k (w.1 (k + (p : ℤ))))
-        (fun _ => Real.rpow 3 ((2 - M.gamma) * (k : ℝ))) := by
-    funext omega
-    rw [gradInner, wsum, gradInnerE_eq_wsumE]
-  rw [hfun]
-  refine measurable_wsum fun p => ?_
-  exact (measurable_shellW1InfGradNorm k).comp (measurable_shellCoord (k + (p : ℤ)))
 
 /-! ## 3. The majorant layer series -/
 
@@ -186,9 +173,6 @@ def gradSeries (M : ABKModel d) (k : ℤ) : Cutoff.CutoffSample d → ℝ :=
 
 theorem gradSeries_nonneg (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSample d) :
     0 ≤ gradSeries M k omega := wsum_nonneg _ _ omega
-
-theorem measurable_gradSeries (M : ABKModel d) (k : ℤ) : Measurable (gradSeries M k) :=
-  measurable_wsum fun p => measurable_atomG1a M (k + (p : ℤ))
 
 /-- The majorant series in the real `tsum` spelling consumed by the window
 arithmetic of `Algsuperdiff.Probability.WindowRearrange`. -/

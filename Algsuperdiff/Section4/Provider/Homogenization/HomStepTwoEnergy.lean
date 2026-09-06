@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomBridgeDirichlet
 import Algsuperdiff.Section4.Provider.ExcessDecay.LambdaCaps
@@ -79,7 +79,7 @@ Each is visible in the statement; none is absorbed.
    (`Provider.ExcessDecay.scaleNormalizedPositiveBesovVectorSeminormTwo_le_
    gagliardo`); its two side conditions — `MemLp g 2` and `Gagliardo.MemWsp Q t 2 g`
    from a Hölder bound — do NOT exist and are the exact residue
-   (see the module docstring of `HomStepTwoLocal` for their statements).  Since
+   (they are the two Gagliardo-side atoms of the Step-2b family).  Since
    `ForceBesovRegularity` is ALSO a hypothesis of the coarse-graining right-hand side itself, the two
    residues are the same two atoms; nothing else is missing.
 -/
@@ -122,10 +122,6 @@ def homErrorEnvelope (d : ℕ) [NeZero d] (Q : TriadicCube d) (A : CoeffFamily d
   Real.sqrt (2 * (d : ℝ) *
     (Ch02.HomogenizationErrorOnCube Q t .infinity (.finite 2) A
       (scalarMatrix (d := d) sigma) ^ 2 + 1))
-
-theorem homErrorEnvelope_nonneg (d : ℕ) [NeZero d] (Q : TriadicCube d) (A : CoeffFamily d)
-    (t sigma : ℝ) : 0 ≤ homErrorEnvelope d Q A t sigma :=
-  Real.sqrt_nonneg _
 
 /-- **the display bounding the `Λ`'s by the `𝓔`'s, lower half.**  `CoarseGraining`'s `λ_{t,2}^{-1/2}` factor is
 at most `σ^{-1/2} √(2d(𝓔_t² + 1))`. -/

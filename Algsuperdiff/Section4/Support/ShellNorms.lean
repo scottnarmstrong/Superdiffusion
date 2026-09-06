@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Stream.ShellDerivativeControl
 
@@ -107,25 +107,6 @@ any derivative of `j` to the supremum over `□_k` of the same derivative of
 noncomputable def shellW2InfNormAt (z : Vec d) (k : ℤ) (j : ShellField d) : ℝ :=
   max (shellW1InfGradNorm k (ShellField.translate z j))
     ((3 : ℝ) ^ (-2 * k) * localCubeControl k (ShellField.translate z j))
-
-theorem shellW2InfNormAt_def (z : Vec d) (k : ℤ) (j : ShellField d) :
-    shellW2InfNormAt z k j =
-      max (shellW1InfGradNorm k (ShellField.translate z j))
-        ((3 : ℝ) ^ (-2 * k) * localCubeControl k (ShellField.translate z j)) :=
-  rfl
-
-/-- The gauge written out as the literal maximum of its three displayed legs:
-`‖∇²j‖_{L^∞(z+□_k)}`, `3^{-k}‖∇j‖_{L^∞(z+□_k)}` and `3^{-2k}‖j‖_{L^∞(z+□_k)}`. -/
-theorem shellW2InfNormAt_eq_max_three (z : Vec d) (k : ℤ) (j : ShellField d) :
-    shellW2InfNormAt z k j =
-      max (max (localCubeSecondDerivNorm k (ShellField.translate z j))
-          ((3 : ℝ) ^ (-k) * localCubeDerivNorm k (ShellField.translate z j)))
-        ((3 : ℝ) ^ (-2 * k) * localCubeControl k (ShellField.translate z j)) :=
-  rfl
-
-theorem shellW2InfNormAt_nonneg (z : Vec d) (k : ℤ) (j : ShellField d) :
-    0 ≤ shellW2InfNormAt z k j :=
-  le_max_of_le_left (shellW1InfGradNorm_nonneg k (ShellField.translate z j))
 
 theorem measurable_shellW2InfNormAt (z : Vec d) (k : ℤ) :
     Measurable (shellW2InfNormAt (d := d) z k) :=

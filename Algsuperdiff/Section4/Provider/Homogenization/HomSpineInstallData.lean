@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineInstallArith
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepThreeCoarse
@@ -20,7 +20,7 @@ here, at the finite-`p` pin where `s₂` is FORCED strictly below the printed
    root's OWN `C^{0,1/2}` binder on `𝐠`.  This is the `hDgbound` residue; it is
    no longer a hypothesis of the assembly.
 2. **The gap absorption at general `s₂`.**  `homGapAbsorbAt` is
-   `HomStepThreeCoarse.homGapAbsorb` with the printed `s₂ = 1/2` released:
+   the printed gap absorption with `s₂ = 1/2` released:
    ```text
      s^{-9/2} · 3^{s₂(n-m)} ≤ C_gap(s₂) · γ^5,
         C_gap(s₂) = 3125 (10 s₂ log 3 - 5)^{-5},
@@ -34,7 +34,7 @@ here, at the finite-`p` pin where `s₂` is FORCED strictly below the printed
 absorbed at the `γ⁵` rate.  With the printed mesoscale `k = ⌈10|log γ|⌉` the
 absorption's exponent condition is `10 s₂ log 3 > 5`, and
 
-* `gapExponent_fails_at_threeEighths` — the numeral pin `s₂ = 3/8` FAILS it
+* the numeral pin `s₂ = 3/8` FAILS it
   (`10·(3/8)·log 3 < 4.27 < 5`).  The pin cannot reach `γ⁵`;
 * `gapExponent_holds_at_fortyNineHundredths` — `s₂ = 49/100` SATISFIES it
   (`10·(49/100)·log 3 > 5.15 > 5`), and `49/100` is inside the membership band
@@ -146,7 +146,7 @@ theorem overlapSeminorm_toReal_le [NeZero d] (m : ℤ) (s2 : FractionalOrder)
 /-! ## 2. The gap absorption at a general `s₂` -/
 
 /-- **The gap-absorption constant at a general `s₂`**, `3125(10 s₂ log 3 -
-5)^{-5}`.  At the printed `s₂ = 1/2` this is `HomStepThreeCoarse.homGapConst`. -/
+5)^{-5}`, the printed `s₂ = 1/2` constant with `s₂` released. -/
 def homGapConstAt (s2 : ℝ) : ℝ := 3125 / (10 * s2 * Real.log 3 - 5) ^ (5 : ℕ)
 
 /-- **The gap absorption, `s₂` released**.
@@ -269,27 +269,6 @@ theorem log_three_gt : (10529 / 10000 : ℝ) < Real.log 3 := by
   norm_num at h2 ⊢
   linarith only [h2, hup]
 
-/-- A machine-checked upper bound: `log 3 < 1.1363`. -/
-theorem log_three_lt : Real.log 3 < (11363 / 10000 : ℝ) := by
-  have hlow : (1 / 4 : ℝ) ≤ Real.log (4 / 3) := by
-    have h := Real.log_le_sub_one_of_pos (x := (3 / 4 : ℝ)) (by norm_num)
-    have hneg : Real.log (3 / 4) = -Real.log (4 / 3) := by
-      rw [← Real.log_inv]
-      norm_num
-    rw [hneg] at h
-    linarith only [h]
-  have h2 := Real.log_two_lt_d9
-  rw [log_three_eq]
-  norm_num at h2 ⊢
-  linarith only [h2, hlow]
-
-/-- **THE VERDICT (a).**  The numeral pin `s₂ = 3/8` does NOT satisfy the
-gap-absorption exponent condition: `10·(3/8)·log 3 < 5`.  At that pin the
-forcing leg cannot be absorbed into `EthmB(m)`'s `γ⁵` summand. -/
-theorem gapExponent_fails_at_threeEighths : 10 * (3 / 8 : ℝ) * Real.log 3 < 5 := by
-  have h := log_three_lt
-  linarith only [h]
-
 /-- **THE VERDICT (b).**  The pin `s₂ = 49/100` DOES satisfy it:
 `10·(49/100)·log 3 > 5`.  Together with `1/4 < 49/100 < 1/2` (the membership
 band at `p = 4d`) this is an admissible replacement. -/
@@ -297,18 +276,6 @@ theorem gapExponent_holds_at_fortyNineHundredths :
     5 < 10 * (49 / 100 : ℝ) * Real.log 3 := by
   have h := log_three_gt
   linarith only [h]
-
-/-- The threshold, displayed: the condition `10 s₂ log 3 > 5` is exactly
-`s₂ > (2 log 3)^{-1}`. -/
-theorem gapExponent_iff {s2 : ℝ} :
-    5 < 10 * s2 * Real.log 3 ↔ (2 * Real.log 3)⁻¹ < s2 := by
-  have hlog3 : (0 : ℝ) < Real.log 3 := by
-    have h := one_lt_log_three
-    linarith only [h]
-  rw [inv_lt_iff_one_lt_mul₀ (by linarith only [hlog3])]
-  constructor
-  · intro h; linarith only [h]
-  · intro h; linarith only [h]
 
 end
 

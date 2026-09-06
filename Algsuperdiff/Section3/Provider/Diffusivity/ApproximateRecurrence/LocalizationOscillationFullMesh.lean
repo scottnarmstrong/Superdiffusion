@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationFluctuationGammaFold
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationOscillationEndpointSixteen
@@ -245,7 +245,7 @@ theorem exists_gamma0_freshShellDirichlet_fullMeshOscillation_le_gamma_pow_fifte
       rw [le_inv_comm₀ (by norm_num) hgamma0]
       linarith
     have h10 : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) := by norm_num
-    nlinarith [hinv, h10]
+    exact one_le_mul_of_one_le_of_one_le h10 hinv
   have hmK1 : m ≤ K - 1 := by
     have hle : (m : ℝ) + 1 ≤ (K : ℝ) := by linarith
     have : m + 1 ≤ K := by exact_mod_cast hle
@@ -319,7 +319,11 @@ theorem exists_gamma0_freshShellDirichlet_fullMeshOscillation_le_gamma_pow_fifte
     have hsplit : M.gamma ^ (16 : ℕ) = M.gamma * M.gamma ^ (15 : ℕ) := by ring
     have h15nn : (0 : ℝ) ≤ M.gamma ^ (15 : ℕ) := by positivity
     have hhalf : 2 * M.gamma ≤ 1 := by linarith
-    nlinarith [h2515, h15nn, hhalf]
+    calc M.gamma ^ (16 : ℕ) + M.gamma ^ (25 : ℕ)
+        ≤ M.gamma ^ (16 : ℕ) + M.gamma ^ (16 : ℕ) := add_le_add le_rfl h2515
+      _ = 2 * M.gamma * M.gamma ^ (15 : ℕ) := by rw [hsplit]; ring
+      _ ≤ 1 * M.gamma ^ (15 : ℕ) := mul_le_mul_of_nonneg_right hhalf h15nn
+      _ = M.gamma ^ (15 : ℕ) := one_mul _
   unfold gridFourthMomentRoot at hroot hinterior ⊢
   linarith [hroot, hinterior, hbdroot, hfinal]
 

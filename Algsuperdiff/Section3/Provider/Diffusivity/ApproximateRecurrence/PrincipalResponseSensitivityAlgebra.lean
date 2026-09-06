@@ -18,18 +18,17 @@ Source displays in ABK26:
   ```
   P_z . bfA_m(z+cu_n) P_z 1_{Q_z}
     = bfG_{-hbar} P_z . bfA(z+cu_n ; a_m - hbar) bfG_{-hbar} P_z 1_{Q_z}
-    = ( 2 J(z+cu_n, -p_z, q_z - hbar p_z ; a_m - hbar) + 2 p_z . q_z ) 1_{Q_z} .
+    = ( 2 J(z+cu_n, -p_z, q_z - hbar p_z ; a_m - hbar) - 2 p_z . q_z ) 1_{Q_z} .
   ```
 
 The first equality is `blockVecDot_coarseBlockMatrix_sub_const_skew` of
 `ApproximateRecurrence.CoarseGaugeCoarseMatrices`, already proved.  This module
 supplies the second one, and the composite of the two.
 
-## A sign correction to (and to its repetition)
+## The second equality
 
-The manuscript's second equality is **off by `4 p_z . q_z` as printed**: with
-`Y = bfG_{-hbar} P_z = (p_z ; q_z - hbar p_z)`, `e.J.by.means.of.bfA` at the
-load `(p, q) = (-p_z, q_z - hbar p_z)` gives
+With `Y = bfG_{-hbar} P_z = (p_z ; q_z - hbar p_z)`, `e.J.by.means.of.bfA` at
+the load `(p, q) = (-p_z, q_z - hbar p_z)` gives
 
 ```
 J(U, -p_z, q_z - hbar p_z ; c)
@@ -43,17 +42,7 @@ the last step because `hbar` is skew, so `p_z . hbar p_z = 0`.  Hence
 Y . bfA(U ; c) Y = 2 J(U, -p_z, q_z - hbar p_z ; c) - 2 p_z . q_z ,
 ```
 
-with a **minus** sign, not the printed plus.  (The printed plus is what the
-*adjoint* half of `e.J.by.means.of.bfA` gives, at the unsigned first argument
-`+p_z` and the transposed field; the manuscript combines the first argument of
-one reading with the sign of the other.)
-
-The defect does not propagate.  The manuscript's chain uses the identity twice,
-once forwards and once backwards, and the leftover after the two uses is `-2
-delta (p_z. q_z)` at the printed sign and `+2 delta (p_z. q_z)` at the
-corrected sign, where `delta = 3^{-(1/4)(m-h-n)}`.  Both are dominated by the
-printed remainder `C 3^{-(1/4)(m-h-n)} |p_z. q_z|`, so the displayed conclusion is
-unaffected.
+which is the second equality above.
 
 ## Carrier and hypotheses
 
@@ -99,7 +88,7 @@ theorem blockVecDot_coarseBlockMatrix_eq_two_responseJ_sub
   rw [hX] at h
   linarith
 
-/-- **ABK26, sign corrected** (see the module docstring).  The doubled quadratic
+/-- **ABK26** (see the module docstring).  The doubled quadratic
 form at the gauge-sheared load `bfG_{-hbar} X` is twice the response at the
 sheared arguments, minus twice the *unsheared* pairing `X_1 . X_2` -- the shear
 does not change the pairing because `hbar` is skew. -/
@@ -123,7 +112,7 @@ theorem blockVecDot_coarseBlockMatrix_blockGauge_eq_two_responseJ_sub
   rw [hY, blockVecDot_coarseBlockMatrix_eq_two_responseJ_sub U c
     ((X.1, X.2 - matVecMul hbar X.1) : BlockVec d), hcross]
 
-/-- **ABK26 in one line, sign corrected.**  The two opening equalities of Step 3,
+/-- **ABK26 in one line.**  The two opening equalities of Step 3,
 composed: the unsheared quadratic form of the *unshifted* field equals twice
 the response of the *shifted* field at the sheared arguments, minus twice the
 pairing. -/

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.MultiscaleEstimate.BadEventIngredients
 import Homogenization.Book.Ch02.Theorems.HomogenizationError.Finite
@@ -62,7 +62,7 @@ upper bound on `s` at all (only `0 <= s`).  Nothing is forced to `5.2`.
 
 ## 2. The `[0,1]` ceiling is what makes the extracted factor free
 
-records that the revision's `max` is load-bearing: with the max, the extracted
+records that the display's `max` is load-bearing: with the max, the extracted
 second factor `max_l 3^{-s(m-l)/2}(avsum_z 1_{not Q})^{s/d}` is `[0,1]`-valued
 (weight `<= 1`, average `<= 1`, power `<= 1`), so the cross terms of the crude
 bound cost nothing; with the `l`-sum the same factor's ceiling is its total
@@ -405,7 +405,7 @@ the abstract engines. -/
 ```
 
 for any `W` dominating the half-weighted second factors `3^{-s j/2} g j`.  This
-is the revised display's fourth summand with the printed `C E^2_{s/4} max_l` shape
+is the printed display's fourth summand, with its `C E^2_{s/4} max_l` shape
 and the pure constant `4`. -/
 theorem tsum_badMax_le_four_mul_homogenizationErrorOnCube_sq {d : ℕ} [NeZero d]
     (m : ℤ) {s W : ℝ} (hs : 0 < s) (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)

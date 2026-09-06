@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorGlue
 import Algsuperdiff.Section4.Provider.ExcessDecay.TranslationTransportAssembly
@@ -203,36 +203,6 @@ theorem eLpNorm_sub_weaklyHarmonic_eq_harmonicCorrector {sigma0 : ℝ}
     rw [normalizedCubeMeasure_eq_smul_restrict_openCubeSet (originCube d n)]
     exact Measure.ae_smul_measure hae _
   exact eLpNorm_congr_ae hae2
-
-/-- **The identification at the anchor's own spelling of the window.**
-
-The frozen statement writes its child window as `(fun y => x + y) '' □_n` and
-supplies the containment through its geometry binder. -/
-theorem eLpNorm_sub_weaklyHarmonic_eq_harmonicCorrector_anchorGeometry {sigma0 : ℝ}
-    (hsigma0 : 0 < sigma0) {n m : ℤ} {x z : Vec d}
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m))
-    (u : H1Function (openCubeSet (originCube d m)))
-    (v : H1Function ((fun y => x + y) '' openCubeSet (originCube d n)))
-    (w : H10Function ((fun y => x + y) '' openCubeSet (originCube d n)))
-    (hharm : Support.IsWeaklyHarmonicOn
-      ((fun y => x + y) '' openCubeSet (originCube d n)) v)
-    (hval : ∀ y, v.toFun y = u.toFun y - w.toH1Function.toFun y)
-    (hgrad : ∀ y, v.grad y = u.grad y - w.toH1Function.grad y) :
-    eLpNorm (fun y => u.toFun y - v.toFun y) 2
-        (Support.normalizedVolumeMeasureOn
-          ((fun y => x + y) '' openCubeSet (originCube d n))) =
-      eLpNorm (fun y =>
-          (harmonicCorrector (scalarComparator hsigma0)
-              (H1Function.untranslate x
-                (u.restrict (isOpen_translateSet_openCubeSet x n)
-                  (by
-                    rw [← image_add_eq_translateSet x (openCubeSet (originCube d n))]
-                    exact fun p hp => (hgeom hp).2)))).toH1Function.toFun y)
-        2 (normalizedCubeMeasure (originCube d n)) :=
-  eLpNorm_sub_weaklyHarmonic_eq_harmonicCorrector hsigma0
-    (image_add_eq_translateSet x (openCubeSet (originCube d n))) _ u v w hharm hval hgrad
 
 end
 

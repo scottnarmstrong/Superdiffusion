@@ -131,8 +131,8 @@ theorem responseJ_normalizedLoading_shaking_le [NeZero d] (R : TriadicCube d)
     have h2 : (0 : ℝ) ≤ Real.sqrt Jb := Real.sqrt_nonneg _
     linarith
   have hsq : (Real.sqrt Jb + Real.sqrt 2⁻¹ * |μ - 1| * Real.sqrt Vform) ^ 2 ≤
-      (Real.sqrt Jb + Real.sqrt 2⁻¹ * |μ - 1| * Real.sqrt Vg) ^ 2 := by
-    nlinarith [hinner, hnn]
+      (Real.sqrt Jb + Real.sqrt 2⁻¹ * |μ - 1| * Real.sqrt Vg) ^ 2 :=
+    pow_le_pow_left₀ hnn hinner 2
   exact mul_le_mul_of_nonneg_left hsq (inv_pos.mpr hμ).le
 
 /-! ## From a conditional per-cube sensitivity to the aggregation hypothesis -/
@@ -194,14 +194,22 @@ theorem mesoscale_cube_bound_of_conditional_sensitivity [NeZero d]
       K * μ⁻¹ * σ0⁻¹ * Ψ * (Vr + D2 * gr ^ 2) := by
     rw [hinvmul]
     have hnn : (0 : ℝ) ≤ μ⁻¹ * σ0⁻¹ * Ψ * (Vr + D2 * gr ^ 2) := by positivity
-    nlinarith [hK₁K, hnn]
+    calc K₁ * (μ⁻¹ * σ0⁻¹ * Ψ * (Vr + D2 * gr ^ 2))
+        ≤ K * (μ⁻¹ * σ0⁻¹ * Ψ * (Vr + D2 * gr ^ 2)) :=
+          mul_le_mul_of_nonneg_right hK₁K hnn
+      _ = K * μ⁻¹ * σ0⁻¹ * Ψ * (Vr + D2 * gr ^ 2) := by ring
   have herr2 : K₁ * (D2 * Ψ ^ 2 * gr ^ 2) ≤ K * D2 * Ψ ^ 2 * gr ^ 2 := by
     have hnn : (0 : ℝ) ≤ D2 * Ψ ^ 2 * gr ^ 2 := by positivity
-    nlinarith [hK₁K, hnn]
+    calc K₁ * (D2 * Ψ ^ 2 * gr ^ 2) ≤ K * (D2 * Ψ ^ 2 * gr ^ 2) :=
+          mul_le_mul_of_nonneg_right hK₁K hnn
+      _ = K * D2 * Ψ ^ 2 * gr ^ 2 := by ring
   have hshakecoef : 3 * (μ⁻¹ * (μ - 1) ^ 2 * (σ0 * Ψ)) ≤
       K * μ⁻¹ * (μ - 1) ^ 2 * σ0 * Ψ := by
     have hnn : (0 : ℝ) ≤ μ⁻¹ * (μ - 1) ^ 2 * σ0 * Ψ := by positivity
-    nlinarith [h3K, hnn]
+    calc 3 * (μ⁻¹ * (μ - 1) ^ 2 * (σ0 * Ψ))
+        = 3 * (μ⁻¹ * (μ - 1) ^ 2 * σ0 * Ψ) := by ring
+      _ ≤ K * (μ⁻¹ * (μ - 1) ^ 2 * σ0 * Ψ) := mul_le_mul_of_nonneg_right h3K hnn
+      _ = K * μ⁻¹ * (μ - 1) ^ 2 * σ0 * Ψ := by ring
   linarith [hmain, herr1, herr2, hshakecoef]
 
 end

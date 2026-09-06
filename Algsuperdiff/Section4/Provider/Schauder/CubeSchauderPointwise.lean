@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderSlope
 
@@ -121,8 +121,6 @@ theorem campanatoRatio_lt_one : campanatoRatio < 1 := by
   have h : Real.sqrt (1 / 3 : ℝ) < Real.sqrt 1 := by
     refine Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
   rwa [Real.sqrt_one] at h
-
-theorem campanatoRatio_nonneg : 0 ≤ campanatoRatio := Real.sqrt_nonneg _
 
 /-- The slope-stability constant of the truncated window family. -/
 def campanatoStabConst (d : ℕ) : ℝ :=
@@ -273,37 +271,6 @@ theorem campanatoSlopeLimit_tail (hd : 0 < d) {m T j : ℤ} {z : Vec d}
   field_simp
 
 /-! ## 5. The top scale -/
-
-/-- At the degenerate top scale `T = m+1` the slope is the minimizer slope of the
-whole cube, hence independent of the base point. -/
-theorem windowSlope_top_eq {m : ℤ} {x : Vec d} (hx : x ∈ openCubeSet (originCube d m))
-    (u : Vec d → ℝ) :
-    windowSlope m u x (m + 1) = (affineMinimizerPair (openCubeSet (originCube d m)) u).2 := by
-  rw [windowSlope, affineMinimizerPair_congr (truncatedWindow_top_eq hx) u]
-
-/-- **The sup bound off the top-scale slope.** -/
-theorem norm_campanatoSlopeLimit_le (hd : 0 < d) {m T : ℤ} {z : Vec d}
-    (hz : z ∈ openCubeSet (originCube d m)) (hTm : T ≤ m + 1) {u : Vec d → ℝ}
-    (hu : MemLp u 2 (volume.restrict (openCubeSet (originCube d m)))) {K : ℝ}
-    (hK : 0 ≤ K)
-    (hE : ∀ i : ℤ, i ≤ T →
-      affineExcess (truncatedWindow z m i) u ≤ K * Real.sqrt ((3 : ℝ) ^ i)) :
-    ‖campanatoSlopeLimit m T u z‖
-      ≤ slopeMagnitude (windowSlope m u z T)
-        + campanatoTailConst d * K * Real.sqrt ((3 : ℝ) ^ T) := by
-  have htail := campanatoSlopeLimit_tail (u := u) hd hz hTm (le_refl T) hu hK hE
-  have htri : ‖campanatoSlopeLimit m T u z‖
-      ≤ ‖windowSlope m u z T‖
-        + ‖windowSlope m u z T - campanatoSlopeLimit m T u z‖ := by
-    have h := norm_sub_le (windowSlope m u z T)
-      (windowSlope m u z T - campanatoSlopeLimit m T u z)
-    have hid : windowSlope m u z T
-        - (windowSlope m u z T - campanatoSlopeLimit m T u z)
-        = campanatoSlopeLimit m T u z := by abel
-    rwa [hid] at h
-  have hslope : ‖windowSlope m u z T‖ ≤ slopeMagnitude (windowSlope m u z T) :=
-    norm_le_slopeMagnitude _
-  linarith only [htri, htail, hslope]
 
 /-! ## 6. The two-point estimate -/
 

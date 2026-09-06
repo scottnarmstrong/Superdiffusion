@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.Step3Arith
 import Mathlib.Algebra.Order.Chebyshev
@@ -15,8 +15,7 @@ displays, each resumming one of the last three terms of
 `e.mathcalE.annular.decomp.pre.zero`:
 
 The three are produced here at abstract nonnegative fields, in the shapes the
-proved `Step3.annularDecomp_of_preZero` slots `hgrad`, `hL2` and `hsig`
-consume.  All the resummation arithmetic (the annulus multiplicity, the
+Step-3 regrouping slots `hgrad`, `hL2` and `hsig` consume.  All the resummation arithmetic (the annulus multiplicity, the
 scale-weight collapses, the geometric constants) is discharged by `Step3Arith`.
 What is carried as an explicit caller hypothesis is exactly the manuscript's
 own structural input at each display: the triangle inequality over the layer
@@ -52,16 +51,6 @@ which the target sum `sum_v 3^(-s v/2) A(m-v)^2` is written.
 namespace Algsuperdiff.Section4.Provider.Annular
 
 noncomputable section
-
-/-! ## Cauchy--Schwarz on the finite `k`-block -/
-
-/-- **Cauchy--Schwarz on the finite `k`-block**: the square of the block sum is at
-most the block cardinality times the block sum of squares.  This is where the
-manuscript's multiplicity is born. -/
-theorem sq_shell_sum_le (N : ℕ) (b : ℕ → ℝ) :
-    (∑ v ∈ Finset.range N, b v) ^ 2 ≤ (N : ℝ) * ∑ v ∈ Finset.range N, b v ^ 2 := by
-  have h := sq_sum_le_card_mul_sum_sq (s := Finset.range N) (f := b)
-  rwa [Finset.card_range] at h
 
 /-! ## The finite block against the target geometric shell sum -/
 
@@ -426,8 +415,8 @@ theorem step3_sigma_ratio_core {m : ℤ} {s gamma K1 K0 : ℝ} {sig : ℤ → �
     linarith only [hstep, sq_nonneg K0]
   linarith only [hT1, hT2]
 
-/-- **The `sigma-bar` ratio sum, in the `hsig` slot shape of
-`annularDecomp_of_preZero`**.
+/-- **The `sigma-bar` ratio sum, in the `hsig` slot shape of the Step-3
+regrouping**.
 
 The caller supplies `e.shom.m.vs.shom.n` in the manuscript's own shape, at the
 `sigma-bar` index pair `(m, n-2)` (whose two-scale shift is the `2 gamma`

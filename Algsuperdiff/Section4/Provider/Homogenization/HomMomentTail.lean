@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepEnvelope
 
@@ -10,7 +10,7 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomStepEnvelope
 
 ## The target
 
-Step 1's display `exists_ethmB_moment_bound` carries EXACTLY ONE conditional
+Step 1's display carries EXACTLY ONE conditional
 edge, `hY`:
 
 ```
@@ -261,7 +261,7 @@ the Theorem-C factor `Y = 3^{cX}` obeys the moment normal form
 ```
 
 under the three DISPLAYED gates `hratio`, `htrunc`, `hsmall`.  This is exactly
-the shape of the conditional edge `hY`, so `exists_ethmB_moment_bound` becomes
+the shape of the conditional edge `hY`, so Step 1's display becomes
 unconditional once the §4.5 web supplies the gates. -/
 theorem lintegral_homMinimalScaleFactor_rpow_le_two {mu : Measure Omega}
     [IsProbabilityMeasure mu] {X : Omega → ℕ∞} (hX : Measurable X)

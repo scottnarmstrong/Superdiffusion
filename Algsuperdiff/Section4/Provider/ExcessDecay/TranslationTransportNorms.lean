@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.TranslationTransport
 import Homogenization.Book.Ch01.Theorems.NormScaling
@@ -69,16 +69,6 @@ theorem inter_eq_of_frontier_inter_empty {k m : ℤ} {z : Vec d}
   Set.inter_eq_left.mpr
     (image_add_openCubeSet_subset_of_frontier_inter_empty hz hfr)
 
-/-- The same collapse in `translateSet` spelling. -/
-theorem translateSet_inter_eq_of_frontier_inter_empty {k m : ℤ} {z : Vec d}
-    (hz : z ∈ openCubeSet (originCube d m))
-    (hfr : ((fun y => z + y) '' openCubeSet (originCube d k)) ∩
-        frontier (openCubeSet (originCube d m)) = ∅) :
-    translateSet z (openCubeSet (originCube d k)) ∩ openCubeSet (originCube d m) =
-      translateSet z (openCubeSet (originCube d k)) :=
-  Set.inter_eq_left.mpr
-    (translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr)
-
 /-! ## 2. The norm transports -/
 
 /-- The normalized average transports exactly. -/
@@ -103,23 +93,6 @@ theorem normalizedSetAverage_vecNormSq_translateSet (z : Vec d) (U : Set (Vec d)
   Ch01.volumeAverage_translateSet_eq_comp_addRight z U (fun x => vecNormSq (G x))
 
 /-! ## 3. The mean-subtracted `L²` square of the anchor's solution -/
-
-/-- **The first right-hand-side factor of `e.good.scale.homog` is
-frame-independent.**
-
-The mean-subtracted normalized `L²` square of `u` over the parent window is the
-mean-subtracted normalized `L²` square of the transported solution `u(· + z)`
-over `□_{n+2}`: the norm and the subtracted mean move together, with no
-constant. -/
-theorem normalizedL2SqOnSet_sub_volumeAverage_translateSet (z : Vec d)
-    (U : Set (Vec d)) (f : Vec d → ℝ) :
-    normalizedL2SqOnSet (translateSet z U)
-        (fun y => f y - normalizedSetAverage (translateSet z U) f) =
-      normalizedL2SqOnSet U
-        (fun y => f (y + z) - normalizedSetAverage U (fun x => f (x + z))) := by
-  rw [normalizedL2SqOnSet_translateSet z U
-      (fun y => f y - normalizedSetAverage (translateSet z U) f),
-    normalizedSetAverage_translateSet z U f]
 
 end
 

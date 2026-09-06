@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.LargeWaves
 import Algsuperdiff.Section4.Provider.Proportion.ShellColumnIndep
@@ -85,23 +85,6 @@ variable {d : ℕ}
 
 /-! ## 1. The layer gradient tail -/
 
-/-- **The Step-2 layer bracket has a unit-scale `Γ₂` tail**:
-
-`3^{(2−γ)n} ‖∇j_n‖_{W̲^{1,∞}(□_n)} ≤ 𝒪_{Γ₂}(C)`, with `C = 1`.
-
-The displayed form of the proved `Proportion.isBigOWith_atomG1a`; the
-manuscript cites `e.diff.law.shift` and `a.j.reg`, which is exactly the route
-that lemma takes (through `e.nabla.jk.O` at the exact `J2` normalization). -/
-theorem isBigOWith_gradLayer (M : ABKModel d) (l : ℤ) :
-    IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-      (fun omega : Cutoff.CutoffSample d =>
-        Real.rpow 3 ((2 - M.gamma) * (l : ℝ)) * shellW1InfGradNorm l (omega.1 l)) 1 :=
-  isBigOWith_atomG1a M l
-
-theorem gradLayer_nonneg (M : ABKModel d) (l : ℤ) (omega : Cutoff.CutoffSample d) :
-    0 ≤ Real.rpow 3 ((2 - M.gamma) * (l : ℝ)) * shellW1InfGradNorm l (omega.1 l) :=
-  atomG1a_nonneg M l omega
-
 /-- This is `Proportion.score_le_wt_mul_atomG1a` at `sprime = 1 − γ`, with the row
 weight `wt` unfolded.  It never enlarges the cube: the comparison is between
 `□_k` and `□_l` at the *same* centre with both `3^{(2−γ)·}` prefactors
@@ -126,25 +109,6 @@ theorem gradCross_le (M : ABKModel d) {k l : ℤ} (hkl : k ≤ l)
 
 /-! ## 2. The layer Hessian tail -/
 
-/-- **The Step-3 layer bracket has a `Γ₂` tail at every base point**:
-
-`3^{(2−γ)i} ‖j_i‖_{W̲^{2,∞}(z+□_i)} ≤ 𝒪_{Γ₂}(C)`, uniformly in `i` and in `z`,
-at `C = atomG1bScale = 2·gammaTriangleConst 2`.
-
-The displayed form of the proved `Proportion.isBigOWith_atomG1b`.  The
-`z`-uniformity is the proved shell stationarity, i.e. the honest reading. -/
-theorem isBigOWith_hessLayer (M : ABKModel d) (i : ℤ) (z : Vec d) :
-    IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-      (fun omega : Cutoff.CutoffSample d =>
-        Real.rpow 3 ((2 - M.gamma) * (i : ℝ)) * shellW2InfNormAt z i (omega.1 i))
-      atomG1bScale :=
-  isBigOWith_atomG1b M i z
-
-theorem hessLayer_nonneg (M : ABKModel d) (i : ℤ) (z : Vec d)
-    (omega : Cutoff.CutoffSample d) :
-    0 ≤ Real.rpow 3 ((2 - M.gamma) * (i : ℝ)) * shellW2InfNormAt z i (omega.1 i) :=
-  atomG1b_nonneg M i z omega
-
 /-! ## 3. The Step-3 lattice maximum (`e.maxy.bound`) -/
 
 def latticeMaxAmp (d : ℕ) : ℝ := Real.sqrt (1 + (d : ℝ) * Real.log 3) * atomG1bScale
@@ -153,8 +117,6 @@ theorem latticeMaxAmp_pos (d : ℕ) : 0 < latticeMaxAmp d := by
   have hlog : (0 : ℝ) ≤ Real.log 3 := Real.log_nonneg (by norm_num)
   have hbase : (0 : ℝ) < 1 + (d : ℝ) * Real.log 3 := by positivity
   exact mul_pos (Real.sqrt_pos.2 hbase) atomG1bScale_pos
-
-theorem latticeMaxAmp_nonneg (d : ℕ) : 0 ≤ latticeMaxAmp d := (latticeMaxAmp_pos d).le
 
 /-- The union-bound penalty in the manuscript's `(k+1−i)^{1/2}` shape. -/
 private theorem annulusPenalty_two_le (d : ℕ) {i k : ℤ} (hik : i ≤ k) :
@@ -214,19 +176,6 @@ theorem isBigOWith_hessLatticeMax (M : ABKModel d) {i k : ℤ} (hik : i ≤ k) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2) (scoreG1b M k i)
       (latticeMaxAmp d * Real.sqrt (((k + 1 - i : ℤ) : ℝ))) :=
   (isBigOWith_scoreG1b M k i).mono_scale (annulusPenalty_two_le d hik)
-
-theorem scoreG1b_nonneg' (M : ABKModel d) (k i : ℤ) (omega : Cutoff.CutoffSample d) :
-    0 ≤ scoreG1b M k i omega := scoreG1b_nonneg M k i omega
-
-/-- Every single lattice centre is below the lattice maximum: the deterministic
-half of `e.maxy.bound`, at the anchor's own enumeration `latticeCubeSet`. -/
-theorem hessLayer_le_hessLatticeMax (M : ABKModel d) {i k : ℤ} (hik : i ≤ k)
-    {v : Fin d → ℤ} (hv : v ∈ latticeCubeSet d i k) (omega : Cutoff.CutoffSample d) :
-    Real.rpow 3 ((2 - M.gamma) * (i : ℝ)) *
-        shellW2InfNormAt (triadicLatticePoint i v) i (omega.1 i) ≤
-      scoreG1b M k i omega :=
-  le_fmax (f := fun w => atomG1b M i (triadicLatticePoint i w) omega)
-    ((mem_latticeCubeFinset_iff hik).2 hv)
 
 /-! ## 4. Layer independence across shells -/
 

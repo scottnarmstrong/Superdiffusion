@@ -1,0 +1,13 @@
+{
+  "challenge_module": "SuperdiffusionAudit.Superdiffusivity.Challenge",
+  "solution_module": "SuperdiffusionAudit.Superdiffusivity.Solution",
+  "theorem_names": [
+    "Algsuperdiff.StatementAudit.Superdiffusivity.superdiffusivity"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

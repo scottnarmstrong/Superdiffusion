@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepFourPairing
 
@@ -19,8 +19,8 @@ both are proved here, unconditionally:
      ∇u·a∇u - ∇v·σ̄∇v  =  (a∇u - σ̄∇v)·∇v + a∇u·(∇u - ∇v),
    ```
 
-   `vecDot_fluxDiff_add_vecDot_gradDiff` — an identity of `vecDot`, true for
-   every matrix `A`, scalar `σ̄` and pair of vectors.
+   an identity of `vecDot`, true for every matrix `A`, scalar `σ̄` and pair of
+   vectors.
 
 2. **The testing identity**
 
@@ -92,32 +92,6 @@ theorem vecDot_matVecMul_self_of_symmPart_smul_one {A : Mat d} {nu : ℝ}
     vecDot xi (matVecMul A xi) = nu * vecNormSq xi := by
   rw [← vecDot_matVecMul_symmPart A xi, hA, matVecMul_smul_one, vecDot_smul_right]
   congr 1
-
-/-- The scalar comparator's energy density. -/
-theorem vecDot_matVecMul_smul_one_self (c : ℝ) (xi : Vec d) :
-    vecDot xi (matVecMul (c • (1 : Mat d)) xi) = c * vecNormSq xi :=
-  vecDot_matVecMul_self_of_symmPart_smul_one (A := c • (1 : Mat d)) (by
-    funext i j
-    simp only [symmPart, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
-    rcases eq_or_ne i j with h | h
-    · subst h; norm_num
-    · rw [if_neg h, if_neg (Ne.symm h)]; norm_num) xi
-
-/-! ## 2. The pointwise bilinear split -/
-
-/-- **The Step-4 algebraic split**, pointwise:
-
-```text
-  (A p - σ • q) · q  +  A p · (p - q)  =  p · A p - q · (σ • q).
-```
-
-At `p = ∇u`, `q = ∇v`, `A = a_L`, `σ = σ̄_m` this is. -/
-theorem vecDot_fluxDiff_add_vecDot_gradDiff (A : Mat d) (sigma : ℝ) (p q : Vec d) :
-    vecDot (matVecMul A p - sigma • q) q + vecDot (matVecMul A p) (p - q) =
-      vecDot p (matVecMul A p) - vecDot q (sigma • q) := by
-  rw [vecDot_sub_left, vecDot_sub_right, vecDot_smul_left, vecDot_smul_right,
-    vecDot_comm p (matVecMul A p)]
-  ring
 
 /-! ## 3. The `H¹₀` witness for `u - v` -/
 

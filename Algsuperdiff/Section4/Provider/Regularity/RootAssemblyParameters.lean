@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenSelectionPackage
 
@@ -14,8 +14,8 @@ The proved outer chain is → → →, each layer re-exporting its predecessor. 
 structural defects block the root assembly, and both are fixed here at Z
 mathematical cost (no new estimate, no new hypothesis).
 
-**(D1) The chain is lossy.**  `stepThree_windowsAndBadBudget` drops
-`GoodScaleWindows`, and `stepSeven_goodScaleSelection` drops in addition's
+**(D1) The chain is lossy.**  The Step-3 window/budget endpoint drops
+`GoodScaleWindows`, and the Step-7a selection endpoint drops in addition the
 `ε_j` cap.  But `GoodScaleWindows` is *exactly* what's
 `stepFiveConcreteOscillationResult_of_stepFourDecay` demands, at the same `ω`,
 the same `(n,m)` and the same `X`-gate.  Because each layer re-derives its OWN

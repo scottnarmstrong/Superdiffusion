@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.DisplaySlots
 import Algsuperdiff.Section4.Support.GaugeBridge
@@ -47,8 +47,8 @@ bounds the value at every point of its half-open closure
 
 * `exists_mem_latticeCubeSet_sub_mem_cubeSet` -- the tiling.
 * `translate_openCubeSet_originCube_subset` -- the containment.
-* `shellW2InfLatticeMaxOf` and `shellW2InfLatticeMax_eq` -- the lattice
-  maximum of `DisplaySlots`, read at an abstract shell field.
+* `shellW2InfLatticeMaxOf` -- the lattice maximum of `DisplaySlots`, read at an
+  abstract shell field.
 * `shellW1InfGradNorm_translate_le_shellW2InfLatticeMaxOf` -- the enlargement
   at the `W^{1,infinity}` gauge, at the honest factor `max 1 3^{k-n}`.
 
@@ -391,10 +391,6 @@ maximum of the `W^{2,infinity}` gauge over `3^k Z^d ∩ cu_m`. -/
 def shellW2InfLatticeMaxOf (m k : ℤ) (j : ShellField d) : ℝ :=
   Proportion.fmax (latticeCubeFinset d k m)
     fun w => Support.shellW2InfNormAt (Support.triadicLatticePoint k w) k j
-
-theorem shellW2InfLatticeMax_eq (m : ℤ) (omega : Cutoff.CutoffSample d) (k : ℤ) :
-    shellW2InfLatticeMax m omega k = shellW2InfLatticeMaxOf m k (omega.1 k) :=
-  rfl
 
 theorem shellW2InfLatticeMaxOf_nonneg (m k : ℤ) (j : ShellField d) :
     0 ≤ shellW2InfLatticeMaxOf m k j :=

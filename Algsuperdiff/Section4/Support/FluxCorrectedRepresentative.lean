@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.ErrorAtoms
 import Algsuperdiff.Section3.Observable.CutoffHomogenizationErrorRepresentative
@@ -672,12 +672,6 @@ theorem measurable_fluxCorrectedErrorObservableSup (M : ABKModel d) (m : ℤ)
   Measurable.iSup fun L =>
     (measurable_fluxCorrectedErrorRepresentative M L.1 m s).ennreal_ofReal
 
-theorem measurable_fluxCorrectedErrorObservableSqSup (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) :
-    Measurable (fluxCorrectedErrorObservableSqSup M m s) :=
-  Measurable.iSup fun L =>
-    ((measurable_fluxCorrectedErrorRepresentative M L.1 m s).pow_const 2).ennreal_ofReal
-
 theorem le_fluxCorrectedErrorObservableSup (M : ABKModel d) (m : ℤ)
     (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) {L : ℤ} (hL : m ≤ L) :
     ENNReal.ofReal (fluxCorrectedErrorRepresentative M L m s omega) ≤
@@ -703,26 +697,6 @@ theorem ae_forall_fluxCorrectedError_eq_representative (M : ABKModel d) (m : ℤ
           fluxCorrectedErrorRepresentative M L.1 m s omega :=
   MeasureTheory.ae_all_iff.2 fun L =>
     fluxCorrectedError_ae_eq_representative M L.1 m s
-
-/-- The public supremum observable is almost everywhere the literal supremum
-`fluxCorrectedErrorSup` of `ErrorAtoms`. -/
-theorem fluxCorrectedErrorSup_ae_eq_observableSup (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) :
-    @fluxCorrectedErrorSup d (neZero_of_model M) M m (s : ℝ) =ᵐ[
-        (Cutoff.cutoffSampleLaw M).toMeasure]
-      fluxCorrectedErrorObservableSup M m s := by
-  filter_upwards [ae_forall_fluxCorrectedError_eq_representative M m s] with omega hall
-  exact iSup_congr fun L => congrArg ENNReal.ofReal (hall L)
-
-/-- The public squared supremum observable is almost everywhere the literal
-squared supremum `fluxCorrectedErrorSqSup` of `ErrorAtoms`. -/
-theorem fluxCorrectedErrorSqSup_ae_eq_observableSqSup (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) :
-    @fluxCorrectedErrorSqSup d (neZero_of_model M) M m (s : ℝ) =ᵐ[
-        (Cutoff.cutoffSampleLaw M).toMeasure]
-      fluxCorrectedErrorObservableSqSup M m s := by
-  filter_upwards [ae_forall_fluxCorrectedError_eq_representative M m s] with omega hall
-  exact iSup_congr fun L => congrArg (fun x : ℝ => ENNReal.ofReal (x ^ 2)) (hall L)
 
 end
 

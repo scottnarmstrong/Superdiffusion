@@ -280,7 +280,7 @@ private theorem translateSequence_zero (omega : ShellSeq d) :
   funext k
   apply ShellField.ext
   intro x
-  simp [ShellField.translateSequence_apply, ShellField.translate_apply]
+  simp [ShellField.translateSequence_apply]
 
 private theorem translateCutoffSample_add (z w : Vec d) (omega : CutoffSample d) :
     translateCutoffSample z (translateCutoffSample w omega) =

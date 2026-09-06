@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Homogenization.InitialJLBound
 import Algsuperdiff.Section3.Provider.Homogenization.CombineIntegerDownscale
@@ -346,13 +346,20 @@ private theorem exp_neg_le_four_div_sq {x : ℝ} (hx : 0 < x) :
   have hmul : x / 2 * (x / 2) ≤ Real.exp (x / 2) * Real.exp (x / 2) :=
     mul_le_mul hhalf hhalf hnn (Real.exp_pos _).le
   rw [hexp] at hmul
-  have key : x ^ 2 / 4 ≤ Real.exp x := by nlinarith [hmul]
+  have key : x ^ 2 / 4 ≤ Real.exp x := by
+    calc
+      x ^ 2 / 4 = x / 2 * (x / 2) := by ring
+      _ ≤ Real.exp x := hmul
   have hx2 : (0 : ℝ) < x ^ 2 := by positivity
   have hinv : Real.exp (-x) * Real.exp x = 1 := by
     rw [← Real.exp_add]; simp
   rw [le_div_iff₀ hx2]
-  nlinarith [mul_nonneg (Real.exp_pos (-x)).le
-    (by linarith : (0 : ℝ) ≤ Real.exp x - x ^ 2 / 4), hinv]
+  have key' : x ^ 2 ≤ 4 * Real.exp x := by linarith only [key]
+  calc
+    Real.exp (-x) * x ^ 2 ≤ Real.exp (-x) * (4 * Real.exp x) :=
+      mul_le_mul_of_nonneg_left key' (Real.exp_pos _).le
+    _ = 4 * (Real.exp (-x) * Real.exp x) := by ring
+    _ = 4 := by rw [hinv, mul_one]
 
 /-- **The lane's two-term amplitude is below the printed one.**  Under the
 proposition's own induction regime `gamma ≤ E^{-10}` with `1 ≤ E`, the
@@ -375,17 +382,19 @@ private theorem twoTermAmplitude_le_amplitude {E gamma : ℝ} (hE : 1 ≤ E) (hg
     have hupos : (0 : ℝ) < (E ^ 6)⁻¹ := by positivity
     have hid : E ^ 6 * (E ^ 6)⁻¹ = 1 := mul_inv_cancel₀ (by positivity)
     have h3 : (E ^ 6)⁻¹ ≤ 1 := by
-      nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ E ^ 6 - 1) hupos.le, hid]
-    linarith
+      nlinarith only [mul_nonneg (by linarith only [hE6] : (0 : ℝ) ≤ E ^ 6 - 1)
+        hupos.le, hid]
+    linarith only [h1, h2, h3]
   have hPnn : (0 : ℝ) ≤ E ^ 2 * gamma * (2 * (E⁻¹) ^ 3 * gamma⁻¹) ^ 2 := by positivity
   have hid : E ^ 2 * gamma * (2 * (E⁻¹) ^ 3 * gamma⁻¹) ^ 2 * (E ^ 4 * gamma) = 4 := by
     field_simp
     ring
   have hkey : 4 / (2 * (E⁻¹) ^ 3 * gamma⁻¹) ^ 2 ≤ E ^ 2 * gamma := by
     rw [div_le_iff₀ (by positivity : (0 : ℝ) < (2 * (E⁻¹) ^ 3 * gamma⁻¹) ^ 2)]
-    nlinarith [mul_nonneg hPnn (by linarith : (0 : ℝ) ≤ 1 - E ^ 4 * gamma), hid]
+    nlinarith only [mul_nonneg hPnn
+      (by linarith only [hE4] : (0 : ℝ) ≤ 1 - E ^ 4 * gamma), hid]
   have hEg : (0 : ℝ) < E ^ 2 * gamma := by positivity
-  linarith [hexp, hkey]
+  linarith only [hexp, hkey, hEg]
 
 /-! ### The two assembly steps, as abstract real arithmetic -/
 
@@ -414,7 +423,12 @@ private theorem corridor_forcing_le {Cvar delta d1 P W T : ℝ}
   have h3 : (0 : ℝ) ≤ Cvar * (d1 * d1 - delta * delta) := mul_nonneg hCvar (by linarith)
   have h4 : (0 : ℝ) ≤ Cvar * ((d1 - delta) * P) :=
     mul_nonneg hCvar (mul_nonneg (by linarith) hP)
-  nlinarith [h1, h2, h3, h4]
+  calc
+    (2 * Cvar * delta * delta + 4 * d1 ^ 2) * W + 2 * Cvar * delta * T
+        ≤ (2 * Cvar * delta * delta + 4 * d1 ^ 2) * (3 / 2) +
+            2 * Cvar * delta * (3 / 2 * P) := add_le_add h1 h2
+    _ ≤ 3 * Cvar * d1 * (d1 + P) + 6 * d1 ^ 2 := by
+      nlinarith only [hsq, h3, h4]
 
 /-- **The final absorption of the three pure-square blocks** of the Step-1
 display into the `A.4` forcing shape `A d1 (d1 + P)`, using `d1 P ≥ 0`. -/
@@ -427,7 +441,7 @@ private theorem square_blocks_absorb {C1 Cbad Cvar d1 P Jm D A1 A2 : ℝ}
     mul_le_mul_of_nonneg_left hkey hC1
   have h2 : (0 : ℝ) ≤ (7 * C1 + Cbad) * (d1 * P) :=
     mul_nonneg (by linarith) (mul_nonneg hd1 hP)
-  nlinarith [hdisp, h1, h2]
+  nlinarith only [hdisp, h1, h2]
 
 noncomputable section
 
@@ -493,7 +507,7 @@ theorem exists_integral_cutoffResponseJ_le_finiteCorridorIndyhypDisplay (d : ℕ
   have hChompos : (0 : ℝ) < max (max Chom1 Chom2) ((10 : ℝ) ^ 9) :=
     lt_of_lt_of_le hChom1pos hCh1le
   refine ⟨max (max Chom1 Chom2) ((10 : ℝ) ^ 9), 3 * C1 * Cvar + 7 * C1 + Cbad, C1,
-    le_max_right _ _, le_trans hChom1 hCh1le, by nlinarith [hC1, hCvar, hCbad], hC1, ?_⟩
+    le_max_right _ _, le_trans hChom1 hCh1le, by positivity, hC1, ?_⟩
   intro M m E hEfloor hregime hLower epsilon hepsilon hgate L hsep hsepvar hgateC e he
   have hs : (0 : ℝ) < 1 / 4 := by norm_num
   obtain ⟨hdelta1mem, hmomentAll⟩ :=

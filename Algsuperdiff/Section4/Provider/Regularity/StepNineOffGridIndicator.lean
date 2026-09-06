@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepNineOffGridTransfer
 
@@ -35,15 +35,11 @@ nearest-point route, which pays a scale.
 ## What is delivered
 
 * `offGridCentre_mem_inner` — `x ∈ □_{m−1} → z ∈ □_{m−1}`;
-* `boundaryLeg`, `boundaryLeg_offGrid_le` — the boundary leg as a real number and
-  its `z → x` domination;
 * `energyDensityEstimate_offGrid` — `e.energy.density.estimate` transferred, in
   the frozen root's `ℝ≥0∞` carrier, at the constant `3^d·C`;
 * `energyDensityEstimate_offGrid_pair` — the frozen root's TWO- conclusion
   shape (the general clause, and the boundary-leg-free clause gated on `x ∈
-  □_{m−1}`), produced from the corresponding `z`-clauses;
-* `normalizedL2On_offGrid_compose` — the same composition in the `ℝ`-valued
-  carrier of the proved Step-7 chain.
+  □_{m−1}`), produced from the corresponding `z`-clauses.
 
 ## References
 
@@ -69,51 +65,9 @@ theorem offGridCentre_mem_inner {m : ℤ} (n : ℤ) {x : Vec d}
     offGridCentre n x ∈ openCubeSet (originCube d (m - 1)) :=
   offGridCentre_mem_openCubeSet n hx
 
-/-- The contrapositive: if the lattice centre is outside `□_{m−1}` then so is the
-arbitrary centre. -/
-theorem notMem_inner_of_offGridCentre_notMem {m : ℤ} (n : ℤ) {x : Vec d}
-    (hz : offGridCentre n x ∉ openCubeSet (originCube d (m - 1))) :
-    x ∉ openCubeSet (originCube d (m - 1)) :=
-  fun hx => hz (offGridCentre_mem_inner n hx)
-
 section BoundaryLeg
 
 open scoped Classical
-
-/-- **The boundary leg** `K·𝟙_{c ∉ □_{m−1}}` of `e.energy.density.estimate`, as a
-real number indexed by the window centre `c` (: the indicator is indexed by
-the). -/
-def boundaryLeg (m : ℤ) (c : Vec d) (K : ℝ) : ℝ :=
-  if c ∈ openCubeSet (originCube d (m - 1)) then 0 else K
-
-theorem boundaryLeg_of_mem {m : ℤ} {c : Vec d} (K : ℝ)
-    (hc : c ∈ openCubeSet (originCube d (m - 1))) : boundaryLeg m c K = 0 := by
-  rw [boundaryLeg, if_pos hc]
-
-theorem boundaryLeg_of_notMem {m : ℤ} {c : Vec d} (K : ℝ)
-    (hc : c ∉ openCubeSet (originCube d (m - 1))) : boundaryLeg m c K = K := by
-  rw [boundaryLeg, if_neg hc]
-
-theorem boundaryLeg_nonneg {m : ℤ} (c : Vec d) {K : ℝ} (hK : 0 ≤ K) :
-    0 ≤ boundaryLeg m c K := by
-  by_cases hc : c ∈ openCubeSet (originCube d (m - 1))
-  · rw [boundaryLeg_of_mem K hc]
-  · rw [boundaryLeg_of_notMem K hc]
-    exact hK
-
-/-- **`𝟙_{z∉□_{m−1}} ≤ 𝟙_{x∉□_{m−1}}`.**  The `z`-form's boundary leg is dominated
-by the `x`-form's, so transferring the display never has to discard a boundary
-term. -/
-theorem boundaryLeg_offGrid_le {m : ℤ} (n : ℤ) (x : Vec d) {K : ℝ} (hK : 0 ≤ K) :
-    boundaryLeg m (offGridCentre n x) K ≤ boundaryLeg m x K := by
-  by_cases hx : x ∈ openCubeSet (originCube d (m - 1))
-  · rw [boundaryLeg_of_mem K (offGridCentre_mem_inner n hx)]
-    exact boundaryLeg_nonneg x hK
-  · rw [boundaryLeg_of_notMem K hx]
-    by_cases hz : offGridCentre n x ∈ openCubeSet (originCube d (m - 1))
-    · rw [boundaryLeg_of_mem K hz]
-      exact hK
-    · rw [boundaryLeg_of_notMem K hz]
 
 end BoundaryLeg
 
@@ -197,23 +151,6 @@ theorem energyDensityEstimate_offGrid_pair (nu : ℝ) (f : Vec d → ℝ) {x : V
               Real.rpow (3 : ℝ) ((1 - alpha) * ((m : ℝ) - (n : ℝ)))) * bracketInner) := by
   refine ⟨energyDensityEstimate_offGrid nu f hx hnm hzfull, fun hxin => ?_⟩
   exact energyDensityEstimate_offGrid nu f hx hnm (hzinner (offGridCentre_mem_inner n hxin))
-
-/-! ## 3. The same composition in the `ℝ`-valued carrier of the chain -/
-
-/-- The only hypothesis beyond the theorem's own binders is the `H¹` integrability
-datum on the lattice window. -/
-theorem normalizedL2On_offGrid_compose {f : Vec d → ℝ} {x : Vec d} {m n : ℤ} {R : ℝ}
-    (hx : x ∈ openCubeSet (originCube d m)) (hnm : n ≤ m)
-    (hint : IntegrableOn (fun y => f y ^ 2)
-      (truncatedWindow (offGridCentre n x) m (n + 1)))
-    (hz : Support.normalizedL2On (truncatedWindow (offGridCentre n x) m (n + 1)) f ≤ R) :
-    Support.normalizedL2On (truncatedWindow x m n) f ≤ (3 : ℝ) ^ d * R := by
-  have htr := normalizedL2On_offGrid_transfer hx hnm hint
-  have hstep : (3 : ℝ) ^ d *
-      Support.normalizedL2On (truncatedWindow (offGridCentre n x) m (n + 1)) f
-      ≤ (3 : ℝ) ^ d * R :=
-    mul_le_mul_of_nonneg_left hz (by positivity)
-  linarith only [htr, hstep]
 
 end
 

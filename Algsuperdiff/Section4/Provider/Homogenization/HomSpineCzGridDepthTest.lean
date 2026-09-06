@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCzGridDualTest
 
@@ -37,8 +37,7 @@ double integral at `|x-y| ~ 3^{m-k}`:
 * the FAR bands `k < j` (distances above the cell side, up to `diam Q`) are NOT.
   A depth-`j` piecewise constant straddles at EVERY coarser scale, so the far
   bands contribute the truncated geometric sum `Σ_{i<j} 3^{-i·s·p'}`, which is
-  `≥ j/3` as soon as `j·s·p' ≤ 1` (`farBand_sum_ge_of_mul_le_one`, machine-checked)
-  and `≈ min(j·log 3, (s·p')^{-1})` in general.
+  `≥ j/3` as soon as `j·s·p' ≤ 1`, and `≈ min(j·log 3, (s·p')^{-1})` in general.
 
 So the single-depth Gagliardo bound carries a factor
 `(1 + min(j·log 3 + c_d, (s·p')^{-1}))^{1/p'}`, NOT `C(d,p)`.  The factor is real,
@@ -51,18 +50,14 @@ the banded lane's `|log γ|^{1/p}` (`p' ≈ 1`, `p = 4d`).
 
 * `ofReal_cubeAverage_vecDot_gridDualDepthTest_eq` — the single-depth pairing, EXACT;
 * `weight_mul_flat_rpow_le_depthEnergy` — the flat half at constant one, `γ`-uniform;
-* `sum_near_band_le`, `farBand_sum_ge_of_mul_le_one`, `farBand_sum_unbounded` — the
-  band arithmetic of the Gagliardo half: near uniform, far unbounded;
+* `sum_near_band_le` — the near-band arithmetic of the Gagliardo half, uniform
+  in `s`, `j` and `d`;
 * `fullENorm_gridDualDepthTest_le_of_gagliardo` — the full norm of the slice from
   ANY Gagliardo input `[g_j]^{p'} ≤ Cg^{p'}·(depth energy)`;
 * `depthEnergy_rpow_le_smoothDual_of_gagliardo` — THE ENDPOINT: the depth-`j` gauge
   inequality at `CA = (1+Cg^{p'})^{1/p'}`, with NO normalization step (the common
   factor is cancelled, so the positive homogeneity of `cubeEuclideanWspFullENorm`
-  — proved upstream but PRIVATE — is never needed);
-* `NegativeBesovGridDepthSmoothDualConverse`, `GridDualDepthTestFamily` and
-  `negativeBesovGridDepthSmoothDualConverse_of_depthTestFamily` — the sup-form
-  carriers for the depth-wise reading, and the reduction between them;
-* `depthEnergy_rpow_le_of_eq_zero` — the `P = 0` branch.
+  — proved upstream but PRIVATE — is never needed).
 -/
 
 open Homogenization Homogenization.Book Homogenization.Book.Ch03
@@ -77,7 +72,7 @@ variable {d : ℕ}
 
 /-! ## 1. The pairing at ONE depth
 
-The depth-`j` slice of `HomSpineCzGridDualTest.gridDualTest` pairs with `F`
+The depth-`j` slice of `HomSpineCzGridDualTest`'s grid dual test pairs with `F`
 against exactly the depth-`j` term of `CoarseGraining`'s running-scale negative
 Besov seminorm.  No sum over depths is taken, so no Hölder in the depth index
 is spent and no geometric factor appears. -/
@@ -402,8 +397,8 @@ Gagliardo double integral splits at the cell side `ℓ = 3^{m-j}`.
 * FAR bands (`k < j`, up to `diam Q`): every pair straddles, and band `k` is
   `3^{-(j-k)·s·p'}` relative to the flat mass.  The sum over the far bands is the
   truncated geometric series `Σ_{i<j} 3^{-i·s·p'}`, which is `≥ j/3` whenever
-  `j·s·p' ≤ 1` and is UNBOUNDED over the admissible parameter range
-  (`farBand_sum_unbounded`).  This is this file's central negative finding: the
+  `j·s·p' ≤ 1` and is UNBOUNDED over the admissible parameter range.
+  This is this file's central negative finding: the
   single-depth Gagliardo half is NOT `γ`-uniform. -/
 
 /-- The near-band geometric constant `(1-3^{-1/2})^{-1}`: the whole `k ≥ j` half of
@@ -449,69 +444,6 @@ theorem sum_near_band_le {x : ℝ} (hx : x ≤ 1 / 2) (K : ℕ) :
         rw [div_eq_mul_inv, div_eq_mul_inv]
         exact mul_le_mul_of_nonneg_right hnum (inv_nonneg.mpr hden.le)
     _ = nearBandGeometricConstant := by rw [nearBandGeometricConstant, ← hr0, one_div]
-
-/-- **The far half is not uniform.**  As soon as the depth is inside the order's
-own window (`j·s·p' ≤ 1`) every one of the `j` far bands contributes at least
-`3^{-1}` of the flat mass, so the far half is at least `j/3`. -/
-theorem farBand_sum_ge_of_mul_le_one {x : ℝ} (hx0 : 0 ≤ x) (j : ℕ) (hj : x * (j : ℝ) ≤ 1) :
-    ((j : ℝ)) / 3 ≤ ∑ i ∈ Finset.range j, (3 : ℝ) ^ (-x * (i : ℝ)) := by
-  have hterm : ∀ i ∈ Finset.range j, (1 / 3 : ℝ) ≤ (3 : ℝ) ^ (-x * (i : ℝ)) := by
-    intro i hi
-    have hij : (i : ℝ) ≤ (j : ℝ) := Nat.cast_le.mpr (le_of_lt (Finset.mem_range.mp hi))
-    have hxi : x * (i : ℝ) ≤ 1 :=
-      le_trans (mul_le_mul_of_nonneg_left hij hx0) hj
-    have hexp : (-1 : ℝ) ≤ -x * (i : ℝ) := by linarith only [hxi]
-    have hmono : (3 : ℝ) ^ (-1 : ℝ) ≤ (3 : ℝ) ^ (-x * (i : ℝ)) :=
-      Real.rpow_le_rpow_of_exponent_le (by norm_num) hexp
-    have hval : (3 : ℝ) ^ (-1 : ℝ) = 1 / 3 := by
-      rw [Real.rpow_neg_one]
-      norm_num
-    calc (1 / 3 : ℝ) = (3 : ℝ) ^ (-1 : ℝ) := hval.symm
-      _ ≤ (3 : ℝ) ^ (-x * (i : ℝ)) := hmono
-  have hsum := Finset.sum_le_sum hterm
-  rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul] at hsum
-  calc ((j : ℝ)) / 3 = (j : ℝ) * (1 / 3) := by ring
-    _ ≤ ∑ i ∈ Finset.range j, (3 : ℝ) ^ (-x * (i : ℝ)) := hsum
-
-/-- **THE NON-UNIFORMITY WITNESS.**  No finite constant bounds the far half of the
-single-depth boundary-layer estimate over the admissible range: for every `C` there
-are an order weight `0 < x ≤ 1/2` (read `x = s·p'`) and a depth `j` inside its own
-window `x·j ≤ 1` with far-band sum exceeding `C`.  Together with `sum_near_band_le`
-this is the exact shape of this file's honest stop: the near half is `C(d,p)`, the
-far half is `min(j·log 3, (s·p')^{-1})`. -/
-theorem farBand_sum_unbounded (C : ℝ) :
-    ∃ (x : ℝ) (j : ℕ), 0 < x ∧ x ≤ 1 / 2 ∧ x * (j : ℝ) ≤ 1 ∧
-      C < ∑ i ∈ Finset.range j, (3 : ℝ) ^ (-x * (i : ℝ)) := by
-  classical
-  set j : ℕ := ⌈(3 : ℝ) * C⌉₊ + 2 with hj
-  have hj2 : (2 : ℝ) ≤ (j : ℝ) := by
-    have : (2 : ℕ) ≤ j := by omega
-    exact_mod_cast this
-  have hjpos : (0 : ℝ) < (j : ℝ) := by linarith only [hj2]
-  refine ⟨1 / (j : ℝ), j, by positivity, ?_, ?_, ?_⟩
-  · exact one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 2) hj2
-  · rw [div_mul_cancel₀ (1 : ℝ) (ne_of_gt hjpos)]
-  · have hceil : (3 : ℝ) * C ≤ (⌈(3 : ℝ) * C⌉₊ : ℝ) := Nat.le_ceil _
-    have hjval : ((⌈(3 : ℝ) * C⌉₊ : ℝ)) + 2 = (j : ℝ) := by
-      rw [hj]
-      push_cast
-      ring
-    have hCj : C < (j : ℝ) / 3 := by
-      rw [← hjval]
-      linarith only [hceil]
-    exact lt_of_lt_of_le hCj
-      (farBand_sum_ge_of_mul_le_one (by positivity) j
-        (le_of_eq (div_mul_cancel₀ (1 : ℝ) (ne_of_gt hjpos))))
-
-/-! ## 5. The assembled single-depth duality
-
-Everything except the Gagliardo half is now unconditional.  The two theorems
-below carry the Gagliardo half as a NAMED INPUT `hgag` and derive, first the
-full norm of the depth slice, then the depth-`j` gauge inequality itself — with
-NO normalization step: the pairing bound of `CoarseGraining` is applied to the
-un-normalized slice and the common factor is cancelled, so the positive
-homogeneity of `cubeEuclideanWspFullENorm` (proved upstream but PRIVATE,
-`EuclideanWspSmoothDual` §105) is never needed. -/
 
 /-- **The single-depth full norm from a Gagliardo input.**  The flat half is free
 (`§3`); so any Gagliardo bound `[g_j]^{p'} ≤ Cg^{p'}·(depth energy)` gives the full
@@ -629,60 +561,6 @@ theorem depthEnergy_rpow_le_smoothDual_of_gagliardo (Q : TriadicCube d) (s : Fra
       (ENNReal.mul_le_mul_iff_left hne0 hnetop).mp (by rw [← hsplit]; exact hchain)
     rw [mul_comm K]
     exact hcancel
-
-/-! ## 6. The sup-form carriers, for the depth-wise reading -/
-
-/-- **The single-depth (sup-form) gauge inequality**, as a named carrier: every
-depth term of the grid gauge is dominated by the smooth-dual negative norm at ONE
-constant, uniformly in the depth `j` and in the order `s` on the band `s·p' ≤ 1/2`.
-This is the depth-wise reading's analogue of
-`HomSpineCzGridGaugeBanded.NegativeBesovGridSmoothDualConverseBanded`, with the
-`ℓ^p` aggregation over depths removed and NO lower band `s₀`. -/
-def NegativeBesovGridDepthSmoothDualConverse (d : ℕ) (p : FiniteLpExponent) (CA : ℝ≥0∞) : Prop :=
-  ∀ (Q : TriadicCube d) (s : FractionalOrder),
-    s.1 * p.conjugate.exponent.toReal ≤ 1 / 2 →
-    ∀ (F : CubeEuclideanLpField Q FiniteLpExponent.two) (j : ℕ),
-      cubeEuclideanNegativeBesovDepthEnergy Q s p F j ^ (p.exponent.toReal)⁻¹ ≤
-        CA * cubeEuclideanNegativeWspSmoothDualENorm Q s p F
-
-/-- **The single-depth dual-test family**: per cube, order, field and DEPTH, one
-normalized `W̲^{s,p'}(Q) ∩ L²(Q)` test seeing the depth-`j` grid term. -/
-def GridDualDepthTestFamily (d : ℕ) (p : FiniteLpExponent) (CA : ℝ≥0∞) : Prop :=
-  ∀ (Q : TriadicCube d) (s : FractionalOrder),
-    s.1 * p.conjugate.exponent.toReal ≤ 1 / 2 →
-    ∀ (F : CubeEuclideanLpField Q FiniteLpExponent.two) (j : ℕ),
-      ∃ G : CubeEuclideanWspL2Field Q s p.conjugate,
-        cubeEuclideanWspFullENorm Q s p.conjugate G.toField ≤ 1 ∧
-          cubeEuclideanNegativeBesovDepthEnergy Q s p F j ^ (p.exponent.toReal)⁻¹ ≤
-            CA * ENNReal.ofReal |cubeEuclideanNormalizedFieldPairing F G|
-
-/-- The depth-wise gauge inequality from the depth-wise test family — the exact
-analogue of `negativeBesovGridSmoothDualConverseBanded_of_testFamilyBanded`, one
-depth at a time. -/
-theorem negativeBesovGridDepthSmoothDualConverse_of_depthTestFamily {p : FiniteLpExponent}
-    {CA : ℝ≥0∞} (h : GridDualDepthTestFamily d p CA) :
-    NegativeBesovGridDepthSmoothDualConverse d p CA := by
-  intro Q s hband F j
-  obtain ⟨G, hG1, hG2⟩ := h Q s hband F j
-  refine hG2.trans ?_
-  calc CA * ENNReal.ofReal |cubeEuclideanNormalizedFieldPairing F G|
-      ≤ CA * (cubeEuclideanNegativeWspSmoothDualENorm Q s p F *
-          cubeEuclideanWspFullENorm Q s p.conjugate G.toField) :=
-        mul_le_mul' le_rfl (ennreal_ofReal_abs_cubeEuclideanNormalizedFieldPairing_le F G)
-    _ ≤ CA * (cubeEuclideanNegativeWspSmoothDualENorm Q s p F * 1) :=
-        mul_le_mul' le_rfl (mul_le_mul' le_rfl hG1)
-    _ = CA * cubeEuclideanNegativeWspSmoothDualENorm Q s p F := by rw [mul_one]
-
-/-- The `P = 0` branch of the depth-wise family: where the depth-`j` grid term
-vanishes, ANY admissible test realizes the clause, so the construction has nothing
-to do.  (The zero test is not available as a carrier without a `W̲^{s,p'}` zero
-instance; this is the statement the producer actually needs.) -/
-theorem depthEnergy_rpow_le_of_eq_zero {Q : TriadicCube d} {s : FractionalOrder}
-    {p : FiniteLpExponent} {F : CubeEuclideanLpField Q FiniteLpExponent.two} {j : ℕ}
-    (h0 : cubeEuclideanNegativeBesovDepthEnergy Q s p F j = 0) (X : ℝ≥0∞) :
-    cubeEuclideanNegativeBesovDepthEnergy Q s p F j ^ (p.exponent.toReal)⁻¹ ≤ X := by
-  rw [h0, ENNReal.zero_rpow_of_pos (inv_pos.mpr (finiteLpExponent_toReal_pos p))]
-  exact zero_le _
 
 end
 

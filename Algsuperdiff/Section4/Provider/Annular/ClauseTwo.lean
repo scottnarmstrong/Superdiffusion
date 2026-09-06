@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.ClauseOneConditional
 import Algsuperdiff.Section4.Provider.GoodEvents.Translate
@@ -61,7 +61,6 @@ variable {d : ℕ}
 
 /-- The four-term right-hand side of the clause-(i) representative display, at
 the output constant `C`.  This is *definitionally* the right-hand side of
-`ClauseOneConditional.exists_clauseOne_conditional_display` and of
 `DisplaySlots.clauseOne_representative_display_latticeMax`; it is a naming
 convenience inside this provider module and closes no node. -/
 def clauseOneDisplayRhs (M : ABKModel d) (m : ℤ) (s : {s : ℝ // 0 < s}) (C : ℝ)
@@ -346,43 +345,6 @@ theorem indicator_observableSup_le_of_sqSup (M : ABKModel d) (m : ℤ)
 
 /-! ## Part E -- the `In particular` bridge -/
 
-/-- **Clause (ii) of `p.mathcalE.annular.decomp`, derived from clause (i).**
-
-The event is `Support.goodEventBase M Ccg m s ε`, which is the frozen
-`goodEventAt M Ccg m 0 s ε` (see `goodEventBase_eq_translateZero_preimage`),
-and the constant is `2√C` where `C` is clause (i)'s output constant — wrinkle
-(b), the silent square root, together with the four-term budget `4 C ε²`.
-
-The clause-(i) display is a hypothesis; it carries the four author-consult slots
-of `ClauseOneConditional`.  No source node is claimed, realized or closed. -/
-theorem clauseTwo_of_clauseOne_display (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) {ep C : ℝ} (hC0 : 0 ≤ C)
-    (hep : ep ∈ Set.Ioc (0 : ℝ) (1 / 2))
-    (hsmall : M.gamma * |Real.log M.gamma| ^ 2
-      ≤ (s : ℝ) ^ (3 / 2 : ℝ) * Disorder.cstar M ^ 2 * ep)
-    (hdisp : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.goodEventBase M Ccg m s ep)
-          (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ clauseOneDisplayRhs M m s C omega) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.goodEventBase M Ccg m s ep)
-          (Support.fluxCorrectedErrorObservableSup M m s) omega
-        ≤ ENNReal.ofReal (2 * Real.sqrt C * ep) := by
-  classical
-  filter_upwards [hdisp] with omega hb
-  by_cases hmem : omega ∈ Support.goodEventBase M Ccg m s ep
-  · have hstep : Set.indicator (Support.goodEventBase M Ccg m s ep)
-        (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ ENNReal.ofReal (4 * C * ep ^ 2) :=
-      le_trans hb (clauseOneDisplayRhs_le_of_goodEventBase M Ccg m s hC0 hep.1.le
-        hsmall hmem)
-    have hB0 : (0 : ℝ) ≤ 4 * C * ep ^ 2 :=
-      mul_nonneg (mul_nonneg (by norm_num) hC0) (sq_nonneg _)
-    have hfin := indicator_observableSup_le_of_sqSup M m s hB0 hstep
-    rwa [sqrt_four_mul_sq hC0 hep.1.le] at hfin
-  · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
-
 /-- The frozen clause-(ii) event `goodEventAt M Ccg m 0 s ε` unfolds to
 `Support.goodEventBase M Ccg m s ε`: translating by `0` is the identity.  The
 frozen module is not imported; this records the identification at the level of
@@ -393,34 +355,6 @@ theorem goodEventBase_eq_translateZero_preimage (M : ABKModel d) (Ccg : ℝ) (m 
         Support.goodEventBase M Ccg m s ep
       = Support.goodEventBase M Ccg m s ep :=
   Algsuperdiff.Section4.Provider.GoodEvents.preimage_translateCutoffSample_zero _
-
-/-- **The two clauses at one constant.**  Clause (i) is monotone in its output
-constant and clause (ii) costs a square root, so any `C'` dominating both `C`
-and `2√C` carries the conjunction in the shape the frozen statement writes. -/
-theorem clauseOne_and_clauseTwo_of_display (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) {ep C C' : ℝ} (hC0 : 0 ≤ C) (hCC : C ≤ C')
-    (hCsqrt : 2 * Real.sqrt C ≤ C') (hep : ep ∈ Set.Ioc (0 : ℝ) (1 / 2))
-    (hsmall : M.gamma * |Real.log M.gamma| ^ 2
-      ≤ (s : ℝ) ^ (3 / 2 : ℝ) * Disorder.cstar M ^ 2 * ep)
-    (hdisp : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.goodEventBase M Ccg m s ep)
-          (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ clauseOneDisplayRhs M m s C omega) :
-    (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-        Set.indicator (Support.goodEventBase M Ccg m s ep)
-            (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-          ≤ clauseOneDisplayRhs M m s C' omega) ∧
-      ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-        Set.indicator (Support.goodEventBase M Ccg m s ep)
-            (Support.fluxCorrectedErrorObservableSup M m s) omega
-          ≤ ENNReal.ofReal (C' * ep) := by
-  constructor
-  · filter_upwards [hdisp] with omega hb
-    exact le_trans hb (clauseOneDisplayRhs_mono M m s omega hCC)
-  · filter_upwards [clauseTwo_of_clauseOne_display M Ccg m s hC0 hep hsmall hdisp]
-      with omega hb
-    refine le_trans hb (ENNReal.ofReal_le_ofReal ?_)
-    exact mul_le_mul_of_nonneg_right hCsqrt hep.1.le
 
 end
 

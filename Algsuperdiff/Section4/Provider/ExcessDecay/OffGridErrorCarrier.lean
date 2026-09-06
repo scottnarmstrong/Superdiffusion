@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridStabilityCap
 import Algsuperdiff.Section4.Provider.ExcessDecay.OffGridStabilitySubadditivity
@@ -230,28 +230,6 @@ omit [NeZero d] in
     offGridCube (0 : Vec d) P = openCubeSet P := by
   rw [offGridCube, translateSet_zero]
 
-theorem offGridBlockResponseValueSet_zero (R : TriadicCube d) (A : Ch02.TriadicCoeffFamily d)
-    (g : CoeffField d) (hg : (A.coeffOn R).toCoeffField = g) (a0 : Mat d) :
-    offGridBlockResponseValueSet (0 : Vec d) R g a0 =
-      Ch02.normalizedBlockResponseValueSet R A a0 := by
-  ext m
-  rw [offGridBlockResponseValueSet, Ch02.normalizedBlockResponseValueSet]
-  constructor
-  · rintro ⟨e, he, rfl⟩
-    refine ⟨e, he, ?_⟩
-    rw [offGridCube_zero, setDoubledResponseJ_openCubeSet R A g hg]
-  · rintro ⟨e, he, rfl⟩
-    refine ⟨e, he, ?_⟩
-    rw [offGridCube_zero, setDoubledResponseJ_openCubeSet R A g hg]
-
-/-- **At zero translate the off-grid maximum is CoarseGraining's
-`normalizedBlockResponseMax`.** -/
-theorem offGridBlockResponseMax_zero_eq (R : TriadicCube d) (A : Ch02.TriadicCoeffFamily d)
-    (g : CoeffField d) (hg : (A.coeffOn R).toCoeffField = g) (a0 : Mat d) :
-    offGridBlockResponseMax (0 : Vec d) R g a0 = Ch02.normalizedBlockResponseMax R A a0 := by
-  rw [offGridBlockResponseMax, Ch02.normalizedBlockResponseMax,
-    offGridBlockResponseValueSet_zero R A g hg]
-
 /-! ## 5. The shells and the off-grid error functional -/
 
 /-- **The shell maximum of an off-grid cube.**  The `w`-translated lattice: the
@@ -273,16 +251,6 @@ theorem offGridShellMax_le {w : Vec d} {P : TriadicCube d} {k : ℤ} {g : CoeffF
     offGridShellMax w P k g a0 ≤ C :=
   Ch02.finsetSupReal_le _ (descendantsAtScale_nonempty P hk) h
 
-theorem offGridShellMax_zero_eq (P : TriadicCube d) (k : ℤ) (A : Ch02.TriadicCoeffFamily d)
-    (g : CoeffField d) (hg : ∀ Q : TriadicCube d, (A.coeffOn Q).toCoeffField = g)
-    (a0 : Mat d) :
-    offGridShellMax (0 : Vec d) P k g a0 =
-      Ch02.maxDescendantNormalizedBlockResponseAtScale P k A a0 := by
-  rw [offGridShellMax, Ch02.maxDescendantNormalizedBlockResponseAtScale]
-  refine congrArg (Ch02.finsetSupReal (descendantsAtScale P k)) ?_
-  funext R
-  exact offGridBlockResponseMax_zero_eq R A g (hg R) a0
-
 /-- **The multiscale error of an off-grid cube**, `𝓔_{t,∞,2}(w + P; g, a₀)`.
 
 The shell series of `d.mathcal.E` with CoarseGraining's own geometric weights,
@@ -293,28 +261,6 @@ def offGridErrorFunctional (w : Vec d) (P : TriadicCube d) (t : ℝ) (g : CoeffF
     (a0 : Mat d) : ℝ :=
   Real.sqrt (∑' l : ℕ, Ch02.geometricWeight t 2 l *
     offGridShellMax w P (P.scale - (l : ℤ)) g a0)
-
-theorem offGridErrorFunctional_nonneg (w : Vec d) (P : TriadicCube d) (t : ℝ)
-    (g : CoeffField d) (a0 : Mat d) : 0 ≤ offGridErrorFunctional w P t g a0 :=
-  Real.sqrt_nonneg _
-
-/-- **The conservative-extension theorem.**  At zero translate the off-grid
-functional is exactly CoarseGraining's `𝓔_{t,∞,2}` on the cube. -/
-theorem offGridErrorFunctional_zero_eq (P : TriadicCube d) {t : ℝ} (ht : 0 < t)
-    (A : Ch02.TriadicCoeffFamily d) (g : CoeffField d)
-    (hg : ∀ Q : TriadicCube d, (A.coeffOn Q).toCoeffField = g) (a0 : Mat d) :
-    offGridErrorFunctional (0 : Vec d) P t g a0 =
-      Ch02.HomogenizationErrorOnCube P t .infinity (.finite 2) A a0 := by
-  have hshell : ∀ l : ℕ, offGridShellMax (0 : Vec d) P (P.scale - (l : ℤ)) g a0 =
-      Ch02.maxDescendantNormalizedBlockResponseAtScale P (P.scale - (l : ℤ)) A a0 :=
-    fun l => offGridShellMax_zero_eq P _ A g hg a0
-  have hsum : (∑' l : ℕ, Ch02.geometricWeight t 2 l *
-      offGridShellMax (0 : Vec d) P (P.scale - (l : ℤ)) g a0) =
-      Ch02.HomogenizationErrorOnCube P t .infinity (.finite 2) A a0 ^ 2 := by
-    rw [Ch02.homogenizationErrorOnCube_infinity_two_sq_eq_tsum P ht A a0]
-    exact tsum_congr fun l => by rw [hshell l]
-  rw [offGridErrorFunctional, hsum]
-  exact Real.sqrt_sq (homogenizationErrorOnCube_infinity_two_nonneg P A a0 ht)
 
 end
 

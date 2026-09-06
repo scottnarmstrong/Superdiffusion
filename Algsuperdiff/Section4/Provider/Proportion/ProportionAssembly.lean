@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.ProportionArith
 import Algsuperdiff.Section4.Provider.GoodEvents.Api
@@ -35,22 +35,16 @@ are discharged here.
   *different* window: `{ω ∉ 𝒢(m₀)}` carries bad-density `½` over `{m₀, m₀+1}`,
   so the window-`1` endpoint bounds it.
 
-## The two forms, and what blocks the printed one
+## The form delivered, and what blocks the printed one
 
 `exists_proportionTail_of_honestG1` is the assembly proper: the display, at an
-abstract rate `A`, from the honest `𝒢₁` condition `C(1+2A)γ ≤ θ c⋆ s⁶ ε²`.  Two
-consumers are provided.
-
-* `exists_proportionTail_repaired` derives that condition from the frozen
-  theorem's clauses **at the strengthened powers**: level clause at `s⁻⁶` and
-  rate at `s⁷`.  This is the minimal sufficient strengthening proved in
-  `LaneCertificates` (`couplingG1_of_anchor`) and recorded as author-consult
-  item 7.
-* `exists_proportionTail_printed_of_g1Deficit` keeps the anchor's **printed**
-  clauses (`s⁻⁴`, `s⁵`) and carries the honest `𝒢₁` condition as one explicitly
-  named hypothesis.  The printed clauses do not imply it on a nonempty parameter
-  region; that hypothesis *is* the recorded deficit, and it is a
-  consult-item-7 interface obligation, not a source premise.
+abstract rate `A`, from the honest `𝒢₁` condition `C(1+2A)γ ≤ θ c⋆ s⁶ ε²`.  The
+frozen theorem's **printed** clauses (`s⁻⁴`, `s⁵`) do not imply that condition on
+a nonempty parameter region: the minimal sufficient strengthening is the level
+clause at `s⁻⁶` and the rate at `s⁷`, proved in `LaneCertificates`
+(`couplingG1_of_anchor`).  The honest `𝒢₁`
+condition is therefore an interface obligation of the consumer, not a source
+premise.
 
 ## References
 
@@ -81,8 +75,8 @@ def laneRange (d : ℕ) : ℕ :=
 theorem one_le_laneRange (d : ℕ) : 1 ≤ laneRange d :=
   le_trans (exists_ratioTail_goodEventBase_shift d).choose_spec.1 (le_max_left _ _)
 
-/-- The assembly's range is admissible for the count, so the `𝒢₂` endpoint
-`exists_ratioTail_eventG2_of_range_shift` can be read at it. -/
+/-- The assembly's range is admissible for the count, so the shifted `𝒢₂`
+endpoint can be read at it. -/
 theorem laneRange_gap (d : ℕ) :
     3 + 2 * (3 : ℝ) ^ (1 - (2 : ℤ)) * Real.sqrt (d : ℝ) ≤ (3 : ℝ) ^ (laneRange d) :=
   le_trans (exists_dependence_range d).choose_spec.2
@@ -165,8 +159,7 @@ including `M_w = 0`, with right-hand side `6exp(−A(M_w+1))`.
 
 The `𝒢₂` lane enters as the named hypothesis `hG2`, in the `LaneTailFrom` shape,
 at exactly the one level `θ/(32(r+1))` and the one rate `2A` the assembly
-consumes — the shape
-`ShiftedG2Lane.exists_ratioTail_eventG2_of_range_shift` produces at
+consumes — the shape the shifted `𝒢₂` lane produces at
 `r = laneRange d` (admissible by `laneRange_gap`), for every `ε` above its own
 threshold `ε₀`.  It is a caller-supplied interface obligation, not a source
 premise. -/
@@ -296,226 +289,6 @@ theorem exists_proportionTail_of_honestG1 (d : ℕ) :
     simp only [scalePropFrom, GoodEvents.goodEventAt_zero]
   rw [hset]
   exact hcore
-
-/-! ## 4. The two consumers -/
-
-/-- The frozen proportion statement's shape, with two edits: the level clause is at
-`s⁻⁶` instead of `s⁻⁴`, and the exponent's `s`-power is `7` instead of `5`.  That
-pair is the minimal sufficient strengthening proved in `LaneCertificates`
-(`couplingG1_of_anchor`) and recorded as author-consult item 7: with the printed
-`s⁻⁴`/`s⁵` the honest `𝒢₁` condition fails on a nonempty parameter region, by
-exactly `s²` in both terms.
-
-`hG2` is the `𝒢₂` lane, named, at the assembly's dependence range; it is a
-caller-supplied interface obligation, not a source premise. -/
-theorem exists_proportionTail_repaired (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (s ep theta : ℝ),
-        s ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-        ep ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-        theta ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-        M.gamma ≤
-          C⁻¹ * min (Disorder.cstar M ^ (10 : ℕ))
-            (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ)) →
-        8 * M.gamma ≤ s →
-        C * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (6 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-            M.gamma ≤ theta →
-        ∀ (m0 : ℤ) (Mw : ℕ) (hs : 0 < s),
-          LaneTailFrom M (fun k => Support.eventG2 M k ⟨s, hs⟩ ep)
-              (theta / (32 * ((laneRange d : ℝ) + 1)))
-              (2 * (Disorder.cstar M ^ (2 : ℕ) * s ^ (7 : ℕ) * ep ^ (2 : ℕ) * theta /
-                (C * M.gamma))) →
-          (Cutoff.cutoffSampleLaw M).toMeasure
-              {omega |
-                (1 / ((Mw : ℝ) + 1)) *
-                    ∑ k ∈ Finset.range (Mw + 1),
-                      (Algsuperdiff.Frozen.Section4.goodEventAt M
-                            (Algsuperdiff.Section4.Support.cgEllipLowerConstant d)
-                            (m0 + (k : ℤ)) 0 ⟨s, hs⟩ ep).indicator
-                        (fun _ => (1 : ℝ)) omega ≤
-                  1 - theta } ≤
-            ENNReal.ofReal
-              (6 *
-                Real.exp
-                  (-(Disorder.cstar M ^ (2 : ℕ) * s ^ (7 : ℕ) * ep ^ (2 : ℕ) *
-                        theta * ((Mw : ℝ) + 1)) /
-                    (C * M.gamma))) := by
-  obtain ⟨C0, hC01, hassembly⟩ := exists_proportionTail_of_honestG1 d
-  have hC00 : (0 : ℝ) < C0 := by linarith only [hC01]
-  refine ⟨6 * C0, by linarith only [hC00], ?_⟩
-  intro M s ep theta hsm hepm hthm hreg _hgam hlevel m0 Mw hs hG2
-  have hs0 : (0 : ℝ) < s := hsm.1
-  have hs12 : s ≤ 1 / 2 := hsm.2
-  have hep0 : (0 : ℝ) < ep := hepm.1
-  have hep12 : ep ≤ 1 / 2 := hepm.2
-  have htheta0 : (0 : ℝ) < theta := hthm.1
-  have htheta12 : theta ≤ 1 / 2 := hthm.2
-  have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hcs32 : Disorder.cstar M ≤ 3 / 2 :=
-    Algsuperdiff.Section3.Provider.Disorder.cstar_le_three_halves M
-  obtain ⟨A, hAdef⟩ : ∃ x : ℝ,
-      x = Disorder.cstar M ^ (2 : ℕ) * s ^ (7 : ℕ) * ep ^ (2 : ℕ) * theta /
-        (6 * C0 * M.gamma) := ⟨_, rfl⟩
-  have hA0 : (0 : ℝ) ≤ A := by
-    rw [hAdef]; positivity
-  have hNle : Disorder.cstar M ^ (2 : ℕ) * s ^ (7 : ℕ) * ep ^ (2 : ℕ) * theta ≤ 9 / 4 :=
-    anchorNumerator_le hcs0 hcs32 hs0 hs12 hep0 hep12 htheta0 htheta12
-  have hAceil : 2 * A * M.gamma ≤ 1 := by
-    have hval : 2 * A * M.gamma
-        = 2 * (Disorder.cstar M ^ (2 : ℕ) * s ^ (7 : ℕ) * ep ^ (2 : ℕ) * theta) / (6 * C0) := by
-      rw [hAdef]
-      field_simp
-    rw [hval, div_le_one (by linarith only [hC00])]
-    linarith only [hNle, hC01]
-  have hregC0 : M.gamma ≤ C0⁻¹ * Disorder.cstar M ^ (10 : ℕ) :=
-    anchorRegime_shrink hC00 (by linarith only [hC00]) hreg
-  have hlevel4 : C0 * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (4 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-      M.gamma ≤ theta :=
-    anchorLevel_weaken hC00 (by linarith only [hC00]) hs0 hs12 hg0 hlevel
-  have hG1 : C0 * (1 + 2 * A) * M.gamma
-      ≤ theta * Disorder.cstar M * s ^ (6 : ℕ) * ep ^ (2 : ℕ) := by
-    refine couplingG1_of_anchor (K := C0) (Ca := 6 * C0 / 2) hC00 hcs0 hcs32 hs0 hs12 hep0
-      hg0 (by linarith only [hC00]) ?_ ?_
-    · have hfac : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ ^ (2 : ℕ) *
-          (s⁻¹ ^ (6 : ℕ) * (ep⁻¹ ^ (2 : ℕ) * M.gamma)) := by positivity
-      have hstep := mul_le_mul_of_nonneg_right
-        (show 6 * C0 / 2 ≤ 6 * C0 by linarith only [hC00]) hfac
-      calc 6 * C0 / 2 * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (6 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-            M.gamma
-          = 6 * C0 / 2 * ((Disorder.cstar M)⁻¹ ^ (2 : ℕ) *
-              (s⁻¹ ^ (6 : ℕ) * (ep⁻¹ ^ (2 : ℕ) * M.gamma))) := by ring
-        _ ≤ 6 * C0 * ((Disorder.cstar M)⁻¹ ^ (2 : ℕ) *
-              (s⁻¹ ^ (6 : ℕ) * (ep⁻¹ ^ (2 : ℕ) * M.gamma))) := hstep
-        _ = 6 * C0 * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (6 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-              M.gamma := by ring
-        _ ≤ theta := hlevel
-    · refine le_of_eq ?_
-      rw [hAdef]
-      field_simp
-  rw [← hAdef] at hG2
-  have hres := hassembly M s ep theta A hs0 hs12 hep0 hep12 htheta0 htheta12 hregC0 hlevel4
-    hA0 hAceil hG1 m0 Mw hs hG2
-  have hexp : -(A * ((Mw : ℝ) + 1))
-      = -(Disorder.cstar M ^ (2 : ℕ) * s ^ (7 : ℕ) * ep ^ (2 : ℕ) * theta *
-          ((Mw : ℝ) + 1)) / (6 * C0 * M.gamma) := by
-    rw [hAdef]
-    field_simp
-  rw [← hexp]
-  exact hres
-
-/-- The frozen proportion statement's shape, unchanged — level clause at `s⁻⁴`,
-exponent at `s⁵` — with ONE extra named hypothesis, `hG1deficit`, carrying the
-honest `𝒢₁` condition `C(1+c₁)γ ≤ θ c⋆ s⁶ ε²` at the assembly's own rate.
-
-That hypothesis is exactly the recorded deficit: the printed clauses do not imply
-it (the rate term needs `Kc⋆ ≤ C s` and the constant term needs `Cs² ≥ (3/2)K`,
-and `s` ranges over `(0, ½]` with no lower bound in terms of `c⋆` and `C`), which
-is author-consult item 7.  It is a caller-supplied interface obligation, not a
-source premise; `exists_proportionTail_repaired` is the alternative in which the
-anchor's own clauses do the work. -/
-theorem exists_proportionTail_printed_of_g1Deficit (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (s ep theta : ℝ),
-        s ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-        ep ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-        theta ∈ Set.Ioc (0 : ℝ) (1 / 2) →
-        M.gamma ≤
-          C⁻¹ * min (Disorder.cstar M ^ (10 : ℕ))
-            (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ)) →
-        8 * M.gamma ≤ s →
-        C * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (4 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-            M.gamma ≤ theta →
-        ∀ (m0 : ℤ) (Mw : ℕ) (hs : 0 < s),
-          C * (1 + 2 * (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta) /
-              (C * M.gamma)) * M.gamma
-              ≤ theta * Disorder.cstar M * s ^ (6 : ℕ) * ep ^ (2 : ℕ) →
-          LaneTailFrom M (fun k => Support.eventG2 M k ⟨s, hs⟩ ep)
-              (theta / (32 * ((laneRange d : ℝ) + 1)))
-              (2 * (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta /
-                (C * M.gamma))) →
-          (Cutoff.cutoffSampleLaw M).toMeasure
-              {omega |
-                (1 / ((Mw : ℝ) + 1)) *
-                    ∑ k ∈ Finset.range (Mw + 1),
-                      (Algsuperdiff.Frozen.Section4.goodEventAt M
-                            (Algsuperdiff.Section4.Support.cgEllipLowerConstant d)
-                            (m0 + (k : ℤ)) 0 ⟨s, hs⟩ ep).indicator
-                        (fun _ => (1 : ℝ)) omega ≤
-                  1 - theta } ≤
-            ENNReal.ofReal
-              (6 *
-                Real.exp
-                  (-(Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) *
-                        theta * ((Mw : ℝ) + 1)) /
-                    (C * M.gamma))) := by
-  obtain ⟨C0, hC01, hassembly⟩ := exists_proportionTail_of_honestG1 d
-  have hC00 : (0 : ℝ) < C0 := by linarith only [hC01]
-  refine ⟨6 * C0, by linarith only [hC00], ?_⟩
-  intro M s ep theta hsm hepm hthm hreg _hgam hlevel m0 Mw hs hG1deficit hG2
-  have hs0 : (0 : ℝ) < s := hsm.1
-  have hs12 : s ≤ 1 / 2 := hsm.2
-  have hep0 : (0 : ℝ) < ep := hepm.1
-  have hep12 : ep ≤ 1 / 2 := hepm.2
-  have htheta0 : (0 : ℝ) < theta := hthm.1
-  have htheta12 : theta ≤ 1 / 2 := hthm.2
-  have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hcs32 : Disorder.cstar M ≤ 3 / 2 :=
-    Algsuperdiff.Section3.Provider.Disorder.cstar_le_three_halves M
-  obtain ⟨A, hAdef⟩ : ∃ x : ℝ,
-      x = Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta /
-        (6 * C0 * M.gamma) := ⟨_, rfl⟩
-  have hA0 : (0 : ℝ) ≤ A := by
-    rw [hAdef]; positivity
-  have hNle : Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta ≤ 9 / 4 :=
-    anchorNumerator_le hcs0 hcs32 hs0 hs12 hep0 hep12 htheta0 htheta12
-  have hAceil : 2 * A * M.gamma ≤ 1 := by
-    have hval : 2 * A * M.gamma
-        = 2 * (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta) / (6 * C0) := by
-      rw [hAdef]
-      field_simp
-    rw [hval, div_le_one (by linarith only [hC00])]
-    linarith only [hNle, hC01]
-  have hregC0 : M.gamma ≤ C0⁻¹ * Disorder.cstar M ^ (10 : ℕ) :=
-    anchorRegime_shrink hC00 (by linarith only [hC00]) hreg
-  have hlevel4 : C0 * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (4 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-      M.gamma ≤ theta := by
-    refine le_trans ?_ hlevel
-    have hfac : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ ^ (2 : ℕ) *
-        (s⁻¹ ^ (4 : ℕ) * (ep⁻¹ ^ (2 : ℕ) * M.gamma)) := by positivity
-    have hstep := mul_le_mul_of_nonneg_right
-      (show C0 ≤ 6 * C0 by linarith only [hC00]) hfac
-    calc C0 * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (4 : ℕ) * ep⁻¹ ^ (2 : ℕ) * M.gamma
-        = C0 * ((Disorder.cstar M)⁻¹ ^ (2 : ℕ) *
-            (s⁻¹ ^ (4 : ℕ) * (ep⁻¹ ^ (2 : ℕ) * M.gamma))) := by ring
-      _ ≤ 6 * C0 * ((Disorder.cstar M)⁻¹ ^ (2 : ℕ) *
-            (s⁻¹ ^ (4 : ℕ) * (ep⁻¹ ^ (2 : ℕ) * M.gamma))) := hstep
-      _ = 6 * C0 * (Disorder.cstar M)⁻¹ ^ (2 : ℕ) * s⁻¹ ^ (4 : ℕ) * ep⁻¹ ^ (2 : ℕ) *
-            M.gamma := by ring
-  have hG1 : C0 * (1 + 2 * A) * M.gamma
-      ≤ theta * Disorder.cstar M * s ^ (6 : ℕ) * ep ^ (2 : ℕ) := by
-    have hrw : 2 * (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta) /
-        (6 * C0 * M.gamma) = 2 * A := by
-      rw [hAdef]; ring
-    rw [hrw] at hG1deficit
-    refine le_trans ?_ hG1deficit
-    have hfac : (0 : ℝ) ≤ (1 + 2 * A) * M.gamma := by positivity
-    have hstep := mul_le_mul_of_nonneg_right
-      (show C0 ≤ 6 * C0 by linarith only [hC00]) hfac
-    calc C0 * (1 + 2 * A) * M.gamma = C0 * ((1 + 2 * A) * M.gamma) := by ring
-      _ ≤ 6 * C0 * ((1 + 2 * A) * M.gamma) := hstep
-      _ = 6 * C0 * (1 + 2 * A) * M.gamma := by ring
-  rw [← hAdef] at hG2
-  have hres := hassembly M s ep theta A hs0 hs12 hep0 hep12 htheta0 htheta12 hregC0 hlevel4
-    hA0 hAceil hG1 m0 Mw hs hG2
-  have hexp : -(A * ((Mw : ℝ) + 1))
-      = -(Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * ep ^ (2 : ℕ) * theta *
-          ((Mw : ℝ) + 1)) / (6 * C0 * M.gamma) := by
-    rw [hAdef]
-    field_simp
-  rw [← hexp]
-  exact hres
 
 end
 

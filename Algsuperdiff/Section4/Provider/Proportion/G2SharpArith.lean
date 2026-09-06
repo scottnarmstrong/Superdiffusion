@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2ThresholdArith
 
@@ -14,8 +14,8 @@ import Algsuperdiff.Section4.Provider.Proportion.G2ThresholdArith
 `9 s'^{-1} C⋆^{1/p} θ^{-1/p}` below the row normalizer's reciprocal — pays the
 quantile factor `θ^{-1/p}` by the *crude* bound `θ^{-1/p} ≤ θ^{-1}`.  That single
 step is where a whole polynomial power of `1/θ` enters the `𝒢₂` threshold: it is
-the reason `G2ThresholdArith.g2Threshold` carries the divisor `θ` and the reason
-the binding clause of `g2Threshold_le_of` carries `θ²` rather than `θ`.
+the reason the crude reading of that threshold carries the divisor `θ` and the
+reason its binding clause carries `θ²` rather than `θ`.
 
 The honest reading is logarithmic: `θ^{-1/p} ≤ 3` as soon as
 `log(1/θ) ≤ p log 3`, and `log(1/θ) ≤ 1/θ − 1`, so the *existing* moment exponent
@@ -33,10 +33,7 @@ quantile power of `1/θ` is simply *not there*.
 * `g2ThresholdSharp d r s θ c₁ = 108(1+C⋆)·D` — the **`θ`-free** `ε²`-threshold
   (contrast `g2Threshold … = 36(1+C⋆)·D/θ`);
 * `g2ThresholdSharp_le_of` and `g2ThresholdSharp_le_of_gammaPow` — the sufficient
-  parameter conditions, in two clauses;
-* `g2ThresholdSharp_le_shape` — the closed majorant, which exhibits the exact
-  surviving powers: `s^{-5}θ^{-1}γ` on the binding term, `s^{-9}θ^{-4}` times an
-  exponentially small factor on the other, and **no logarithm anywhere**.
+  parameter conditions, in two clauses.
 
 ## The two sharp clauses
 
@@ -47,8 +44,8 @@ Writing `κ₁(d)`, `κ₂(d)` for `G2ThresholdArith.g2ThresholdConstOne/Two`:
 (2)   3κ₂(d) r⁸ (1+c₁)⁴ exp(−2c⋆³/(Cγ))  ≤ θ⁴     s⁹ ε²
 ```
 
-Each is the corresponding clause of `G2ThresholdArith.g2Threshold_le_of` with
-**one power of `θ` removed from the right-hand side** and the constant tripled.
+Each is the corresponding clause of the crude reading with **one power of `θ`
+removed from the right-hand side** and the constant tripled.
 That single power of `θ` is the whole content of the sharpening: against the
 consumer's own coupling `ε² = s̄²θ`, clause (1) reads `γ ≲ θ²`, i.e.  `θ ≳
 γ^{1/2}` — the printed Theorem-C range — where the old `θ²` form read `γ ≲ θ³`,
@@ -230,22 +227,6 @@ the divisor `θ` is gone.  The two are therefore related by `g2ThresholdSharp =
 def g2ThresholdSharp (d r : ℕ) (C : ℝ) (M : ABKModel d) (s theta c1 : ℝ) : ℝ :=
   108 * (1 + Cstar) * g2Normalizer d r C M s theta c1
 
-theorem g2ThresholdSharp_pos {C s : ℝ} (hC : 0 < C) (M : ABKModel d) (r : ℕ) (hs : 0 < s)
-    (theta c1 : ℝ) : 0 < g2ThresholdSharp d r C M s theta c1 := by
-  have hCs : (0 : ℝ) < 1 + Cstar := by linarith only [Cstar_pos]
-  rw [g2ThresholdSharp]
-  exact mul_pos (by linarith only [hCs]) (g2Normalizer_pos hC M r hs theta c1)
-
-/-- The sharp threshold is `3θ` times the proved one: no information is created or
-destroyed by the renormalization, the `θ` simply moves out of the threshold. -/
-theorem g2ThresholdSharp_eq {C s theta : ℝ} (M : ABKModel d) (r : ℕ) (hth0 : 0 < theta)
-    (c1 : ℝ) :
-    g2ThresholdSharp d r C M s theta c1 = 3 * theta * g2Threshold d r C M s theta c1 := by
-  have hne : theta ≠ 0 := ne_of_gt hth0
-  rw [g2ThresholdSharp, g2Threshold]
-  field_simp
-  ring
-
 /-- The `d`-only constant of the binding clause of the **sharp** threshold
 condition: three times the proved `g2ThresholdConstOne`. -/
 def g2SharpConstOne (d : ℕ) : ℝ := 3 * g2ThresholdConstOne d
@@ -253,11 +234,6 @@ def g2SharpConstOne (d : ℕ) : ℝ := 3 * g2ThresholdConstOne d
 /-- The `d`-only constant of the exponentially small clause of the **sharp**
 threshold condition: three times the proved `g2ThresholdConstTwo`. -/
 def g2SharpConstTwo (d : ℕ) : ℝ := 3 * g2ThresholdConstTwo d
-
-theorem g2SharpConstOne_pos (d : ℕ) : 0 < g2SharpConstOne d := by
-  rw [g2SharpConstOne]
-  have h := g2ThresholdConstOne_pos d
-  linarith only [h]
 
 theorem g2SharpConstTwo_pos (d : ℕ) : 0 < g2SharpConstTwo d := by
   rw [g2SharpConstTwo]
@@ -304,9 +280,8 @@ private theorem cubeAmpTwo_sq_sharp (C : ℝ) (M : ABKModel d) :
 (2)   3κ₂(d) r⁸ (1+c₁)⁴ exp(−2c⋆³/(Cγ))  ≤ θ⁴     s⁹ ε²
 ```
 
-Each clause is the corresponding clause of `G2ThresholdArith.g2Threshold_le_of`
-with **one power of `θ` removed from the right-hand side** and the constant
-tripled.  Clause (1) is the binding one; at the consumer's coupling `ε² = s̄²θ`
+Each clause is the corresponding clause of the crude reading with **one power
+of `θ` removed from the right-hand side** and the constant tripled.  Clause (1) is the binding one; at the consumer's coupling `ε² = s̄²θ`
 it reads `γ ≲ θ²`, i.e. `θ ≳ γ^{1/2}` — the printed Theorem-C range — where the
 proved `θ²` form read `γ ≲ θ³`. -/
 theorem g2ThresholdSharp_le_of (M : ABKModel d) {C s theta c1 ep : ℝ} {r : ℕ}
@@ -451,120 +426,6 @@ theorem g2ThresholdSharp_le_of_gammaPow (M : ABKModel d) {C s theta c1 ep : ℝ}
         rw [g2SharpConstTwo]; ring
     _ ≤ theta ^ (4 : ℕ) * s ^ (9 : ℕ) * ep ^ (2 : ℕ) := hfinal
 
-
-/-! ## 5. The shape of the sharp threshold -/
-
-/-- **The closed shape of the sharp threshold.**
-
-```
-g2ThresholdSharp ≤  (κ₁'(d)/2) r²(1+c₁)C²γ / (c⋆² s⁵ θ)
-                  + (κ₂'(d)/2) r⁸(1+c₁)⁴ exp(−2c⋆³/(Cγ)) / (s⁹ θ⁴)
-```
-
-with `κ₁' = g2SharpConstOne`, `κ₂' = g2SharpConstTwo`.
-
-* **The binding term is linear in `γ`, carries `s^{-5}`, and carries `θ^{-1}` —
-  one power, not two.**  One polynomial power of `1/θ` therefore *remains*: it
-  comes from the moment exponent's rate branch `64r(log 3r + c₁r)/(sθ)`, i.e.
-  from Appendix D's own rate `s'pθ/(16r)` having to dominate `log(3r) + c₁r`,
-  and **not** from the quantile, which the log-quantile reading has removed.
-* Against the consumer's coupling `ε² = s̄²θ` that single power is exactly what
-  turns the condition into `γ ≲ θ²`, i.e. `θ ≳ γ^{1/2}` — the printed range.
-  There are **no logarithmic factors**: the sharp quantile branch
-  `p ≥ log(1/θ)/log 3` is dominated by the rate branch and never appears.
-
-There is no third source of `1/θ` in the chain: the level condition `θ(r+1) < 1`
-is an upper bound on `θ`, the lane split `θ ↦ θ/N` is a constant factor, and the
-fourth-moment `θ^{-4}` of the second term is beaten by the exponential
-(`g2ThresholdSharp_le_of_gammaPow`). -/
-theorem g2ThresholdSharp_le_shape (M : ABKModel d) {C s theta c1 : ℝ} {r : ℕ}
-    (hr1 : 1 ≤ r) (hC0 : 0 < C) (hs0 : 0 < s) (hs1 : s ≤ 1)
-    (hth0 : 0 < theta) (hth1 : theta ≤ 1) (hc1 : 0 ≤ c1) :
-    g2ThresholdSharp d r C M s theta c1
-      ≤ g2SharpConstOne d / 2 * (r : ℝ) ^ (2 : ℕ) * (1 + c1) * C ^ (2 : ℕ) * M.gamma
-            / (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * theta)
-        + g2SharpConstTwo d / 2 * (r : ℝ) ^ (8 : ℕ) * (1 + c1) ^ (4 : ℕ)
-            * Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹)))
-            / (s ^ (9 : ℕ) * theta ^ (4 : ℕ)) := by
-  have hCs : (0 : ℝ) < 1 + Cstar := by linarith only [Cstar_pos]
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hG0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hgmc1 : (0 : ℝ) < gammaMomentConst 1 := gammaMomentConst_pos (by norm_num)
-  have hgmc4 : (0 : ℝ) < gammaMomentConst (1 / 4) := gammaMomentConst_pos (by norm_num)
-  have hgtc1 : (0 : ℝ) < gammaTriangleConst (1 : ℝ) := gammaTriangleConst_pos
-  have hgtc4 : (0 : ℝ) < gammaTriangleConst (1 / 4 : ℝ) := gammaTriangleConst_pos
-  have hpen1 : (0 : ℝ) < annulusPenalty d 2 1 :=
-    lt_of_lt_of_le zero_lt_one (one_le_annulusPenalty d (by norm_num) 1)
-  have hpen2 : (0 : ℝ) < annulusPenalty d (1 / 2) 1 :=
-    lt_of_lt_of_le zero_lt_one (one_le_annulusPenalty d (by norm_num) 1)
-  have hE0 : (0 : ℝ) < Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹))) :=
-    Real.exp_pos _
-  have hT1 : 108 * (1 + Cstar) *
-      (gammaMomentConst 1 * g2MomentExponent r s theta c1 *
-        (gammaTriangleConst (1 : ℝ) *
-          (xcalNormOne d / s ^ (2 : ℕ) * (2 * cubeAmpOne d C M s ^ (2 : ℕ)))))
-      ≤ g2SharpConstOne d / 2 * (r : ℝ) ^ (2 : ℕ) * (1 + c1) * C ^ (2 : ℕ) * M.gamma
-          / (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * theta) := by
-    have hfac : (0 : ℝ) ≤ 648 * (1 + Cstar) * (gammaMomentConst 1 * gammaTriangleConst (1 : ℝ)
-        * xcalNormOne d * annulusPenalty d 2 1 ^ (2 : ℕ)) * C ^ (2 : ℕ) * M.gamma
-          / (Disorder.cstar M ^ (2 : ℕ) * s ^ (4 : ℕ)) := by
-      refine div_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by linarith only [hCs])
-        (le_of_lt (mul_pos (mul_pos (mul_pos hgmc1 hgtc1) (xcalNormOne_pos d))
-          (pow_pos hpen1 2)))) (le_of_lt (pow_pos hC0 2))) hG0.le)
-        (le_of_lt (mul_pos (pow_pos hcs0 2) (pow_pos hs0 4)))
-    calc 108 * (1 + Cstar) *
-          (gammaMomentConst 1 * g2MomentExponent r s theta c1 *
-            (gammaTriangleConst (1 : ℝ) *
-              (xcalNormOne d / s ^ (2 : ℕ) * (2 * cubeAmpOne d C M s ^ (2 : ℕ)))))
-        = 648 * (1 + Cstar) * (gammaMomentConst 1 * gammaTriangleConst (1 : ℝ)
-            * xcalNormOne d * annulusPenalty d 2 1 ^ (2 : ℕ)) * C ^ (2 : ℕ) * M.gamma
-              / (Disorder.cstar M ^ (2 : ℕ) * s ^ (4 : ℕ))
-            * g2MomentExponent r s theta c1 := by
-          rw [cubeAmpOne_sq_sharp]; ring
-      _ ≤ 648 * (1 + Cstar) * (gammaMomentConst 1 * gammaTriangleConst (1 : ℝ)
-            * xcalNormOne d * annulusPenalty d 2 1 ^ (2 : ℕ)) * C ^ (2 : ℕ) * M.gamma
-              / (Disorder.cstar M ^ (2 : ℕ) * s ^ (4 : ℕ))
-            * (192 * (r : ℝ) ^ (2 : ℕ) * (1 + c1) / (s * theta)) :=
-          mul_le_mul_of_nonneg_left (g2MomentExponent_le hr1 hs0 hs1 hth0 hth1 hc1) hfac
-      _ = g2SharpConstOne d / 2 * (r : ℝ) ^ (2 : ℕ) * (1 + c1) * C ^ (2 : ℕ) * M.gamma
-            / (Disorder.cstar M ^ (2 : ℕ) * s ^ (5 : ℕ) * theta) := by
-          rw [g2SharpConstOne, g2ThresholdConstOne]; ring
-  have hT2 : 108 * (1 + Cstar) *
-      (gammaMomentConst (1 / 4) * g2MomentExponent r s theta c1 ^ (4 : ℝ) *
-        (gammaTriangleConst (1 / 4 : ℝ) *
-          (xcalNormQuarter d / s ^ (5 : ℕ) * (2 * cubeAmpTwo d C M ^ (2 : ℕ)))))
-      ≤ g2SharpConstTwo d / 2 * (r : ℝ) ^ (8 : ℕ) * (1 + c1) ^ (4 : ℕ)
-          * Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹)))
-          / (s ^ (9 : ℕ) * theta ^ (4 : ℕ)) := by
-    have hfac : (0 : ℝ) ≤ 648 * (1 + Cstar) * (gammaMomentConst (1 / 4)
-        * gammaTriangleConst (1 / 4 : ℝ) * xcalNormQuarter d
-        * annulusPenalty d (1 / 2) 1 ^ (2 : ℕ))
-        * Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹))) / s ^ (5 : ℕ) := by
-      refine div_nonneg (mul_nonneg (mul_nonneg (by linarith only [hCs])
-        (le_of_lt (mul_pos (mul_pos (mul_pos hgmc4 hgtc4) (xcalNormQuarter_pos d))
-          (pow_pos hpen2 2)))) hE0.le) (le_of_lt (pow_pos hs0 5))
-    calc 108 * (1 + Cstar) *
-          (gammaMomentConst (1 / 4) * g2MomentExponent r s theta c1 ^ (4 : ℝ) *
-            (gammaTriangleConst (1 / 4 : ℝ) *
-              (xcalNormQuarter d / s ^ (5 : ℕ) * (2 * cubeAmpTwo d C M ^ (2 : ℕ)))))
-        = 648 * (1 + Cstar) * (gammaMomentConst (1 / 4) * gammaTriangleConst (1 / 4 : ℝ)
-            * xcalNormQuarter d * annulusPenalty d (1 / 2) 1 ^ (2 : ℕ))
-            * Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹))) / s ^ (5 : ℕ)
-            * g2MomentExponent r s theta c1 ^ (4 : ℝ) := by
-          rw [cubeAmpTwo_sq_sharp]; ring
-      _ ≤ 648 * (1 + Cstar) * (gammaMomentConst (1 / 4) * gammaTriangleConst (1 / 4 : ℝ)
-            * xcalNormQuarter d * annulusPenalty d (1 / 2) 1 ^ (2 : ℕ))
-            * Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹))) / s ^ (5 : ℕ)
-            * (1358954496 * (r : ℝ) ^ (8 : ℕ) * (1 + c1) ^ (4 : ℕ)
-                / (s ^ (4 : ℕ) * theta ^ (4 : ℕ))) :=
-          mul_le_mul_of_nonneg_left
-            (g2MomentExponent_rpow_four_le hr1 hs0 hs1 hth0 hth1 hc1) hfac
-      _ = g2SharpConstTwo d / 2 * (r : ℝ) ^ (8 : ℕ) * (1 + c1) ^ (4 : ℕ)
-            * Real.exp (-(2 * (C⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹)))
-            / (s ^ (9 : ℕ) * theta ^ (4 : ℕ)) := by
-          rw [g2SharpConstTwo, g2ThresholdConstTwo]; ring
-  rw [g2ThresholdSharp, g2Normalizer]
-  linarith only [hT1, hT2]
 
 end
 

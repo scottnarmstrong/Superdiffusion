@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomMollifyBox
 import Mathlib.Analysis.Convolution
@@ -67,8 +67,7 @@ reconstruction separately.
 ## Main definitions and results
 
 * `boxKernel n` — the normalized indicator of the scale-`n` box at the
-  origin, with `boxKernel_nonneg`, `integral_boxKernel`, `integrable_boxKernel`,
-  `hasCompactSupport_boxKernel`, `locallyIntegrable_boxKernel`.
+  origin, with `integrable_boxKernel` and `locallyIntegrable_boxKernel`.
 * `convolution_boxKernel_eq_boxAverage` — **unconditionally**, convolving with
   `boxKernel n` is the sliding scale-`n` box average.
 * `boxMixture`, `boxMixtureVec` — the `ψ`-mixture of sliding box averages,
@@ -105,12 +104,6 @@ def boxKernel (n : ℤ) : Vec d → ℝ :=
 theorem boxKernel_def (n : ℤ) :
     boxKernel (d := d) n = Set.indicator (boxSet n 0) fun _ => (((3 : ℝ) ^ (n : ℝ)) ^ d)⁻¹ := rfl
 
-theorem boxKernel_nonneg (n : ℤ) (z : Vec d) : 0 ≤ boxKernel n z := by
-  rw [boxKernel_def]
-  refine Set.indicator_nonneg ?_ z
-  intro _ _
-  exact (inv_pos.mpr (boxVolume_pos n)).le
-
 theorem boxKernel_apply_of_mem {n : ℤ} {z : Vec d} (hz : z ∈ boxSet n 0) :
     boxKernel n z = (((3 : ℝ) ^ (n : ℝ)) ^ d)⁻¹ := by
   rw [boxKernel_def, Set.indicator_of_mem hz]
@@ -119,24 +112,6 @@ theorem boxKernel_apply_of_not_mem {n : ℤ} {z : Vec d} (hz : z ∉ boxSet n 0)
     boxKernel n z = 0 := by
   rw [boxKernel_def, Set.indicator_of_notMem hz]
 
-theorem measurable_boxKernel (n : ℤ) : Measurable (boxKernel (d := d) n) := by
-  rw [boxKernel_def]
-  exact (measurable_const.indicator (measurableSet_boxSet n 0))
-
-theorem support_boxKernel_subset (n : ℤ) :
-    Function.support (boxKernel (d := d) n) ⊆ boxSet n 0 := by
-  intro z hz
-  by_contra hc
-  exact hz (boxKernel_apply_of_not_mem hc)
-
-theorem tsupport_boxKernel_subset (n : ℤ) :
-    tsupport (boxKernel (d := d) n) ⊆ boxSet n 0 :=
-  closure_minimal (support_boxKernel_subset n) Metric.isClosed_closedBall
-
-theorem hasCompactSupport_boxKernel (n : ℤ) : HasCompactSupport (boxKernel (d := d) n) :=
-  IsCompact.of_isClosed_subset (isCompact_boxSet n 0) isClosed_closure
-    (tsupport_boxKernel_subset n)
-
 theorem integrable_boxKernel (n : ℤ) : Integrable (boxKernel (d := d) n) volume := by
   refine (integrable_indicator_iff (measurableSet_boxSet n 0)).2 ?_
   exact integrableOn_const (by rw [volume_boxSet]; exact ENNReal.ofReal_ne_top)
@@ -144,13 +119,6 @@ theorem integrable_boxKernel (n : ℤ) : Integrable (boxKernel (d := d) n) volum
 theorem locallyIntegrable_boxKernel (n : ℤ) :
     LocallyIntegrable (boxKernel (d := d) n) volume :=
   (integrable_boxKernel n).locallyIntegrable
-
-/-- **The box kernel has unit mass.** -/
-theorem integral_boxKernel (n : ℤ) : ∫ z, boxKernel (d := d) n z = 1 := by
-  have hvol : (0 : ℝ) < ((3 : ℝ) ^ (n : ℝ)) ^ d := boxVolume_pos n
-  rw [boxKernel_def, integral_indicator (measurableSet_boxSet n 0), setIntegral_const,
-    measureReal_def, toReal_volume_boxSet, smul_eq_mul]
-  field_simp
 
 /-! ## 2. Convolution with the box kernel is the sliding box average -/
 

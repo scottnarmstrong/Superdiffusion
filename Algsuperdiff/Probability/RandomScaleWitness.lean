@@ -18,15 +18,12 @@ the deterministic extraction `minimalScaleEN_not_bad_of_le` is a genuine, `ω`-u
 
 ## Contents
 
-* `minimalScale — the witness, and its two deterministic extractions
-  `minimalScale, `minimalScale.
-* `toNat_tail_subset` — the `ℕ`-valued tail embeds in the `ℕ∞`-valued tail.
-* `minimalScale — the pointwise maximum of two witnesses is the witness of the
-  disjunction of the two bad-window predicates.
-* `measurable_minimalScale — **the measurability criterion**: if every
-  bad-window event is measurable then the witness is measurable into `ℕ∞`; with
-  `measurable_max_enat` and `measurable_minimalScale for the maximum of two
-  witnesses.
+* `minimalScaleEN` — the witness.
+* `minimalScaleEN_not_bad_of_le` and `minimalScaleEN_tail_eq` — its two
+  deterministic extractions.
+* `minimalScaleEN_tail_subset` — the tail-event inclusion used by summation.
+* `minimalScaleEN_sup` — the witness for a disjunction is the pointwise maximum.
+* `measurable_minimalScaleEN` — measurability from measurable bad-window events.
 
 Everything is generic over the sample space `Ω`: no source-specific carrier and
 no measure appears in this module.
@@ -64,14 +61,6 @@ theorem minimalScaleEN_not_bad_of_le {bad : ℕ → Ω → Prop} {ω : Ω} {L : 
   rw [Nat.cast_le] at hcontra
   omega
 
-/-- **Domination.**  Every bad window length is strictly below the random
-scale. -/
-theorem minimalScaleEN_dominates {bad : ℕ → Ω → Prop} {ω : Ω} {n : ℕ}
-    (h : bad n ω) : (n : ℕ∞) < minimalScaleEN bad ω := by
-  by_contra hcon
-  push_neg at hcon
-  exact minimalScaleEN_not_bad_of_le hcon h
-
 /-- **The tail event of the minimal scale is exactly a union of bad windows.**
 Since `minimalScale bad ω = ⨆ (l) (_ : bad l ω), (l + 1)`, the event `{N + 1 ≤
 Z}` says that some bad window has length `≥ N`.  Note the index shift: the
@@ -105,15 +94,6 @@ windows** — the half consumed by the geometric summation. -/
 theorem minimalScaleEN_tail_subset (bad : ℕ → Ω → Prop) (N : ℕ) :
     {ω | ((N + 1 : ℕ) : ℕ∞) ≤ minimalScaleEN bad ω} ⊆ ⋃ i : ℕ, {ω | bad (N + i) ω} :=
   (minimalScaleEN_tail_eq bad N).subset
-
-/-- **`ℕ`-tail embeds into the `ℕ∞`-tail.**  For any `ℕ∞`-valued `Z`,
-`{ω | N ≤ (Z ω).toNat} ⊆ {ω | (N : ℕ∞) ≤ Z ω}`.  (On `{Z = ⊤}` the right-hand
-side is everything, so no positivity assumption on `N` is needed.) -/
-theorem toNat_tail_subset {Z : Ω → ℕ∞} (N : ℕ) :
-    {ω | N ≤ (Z ω).toNat} ⊆ {ω | (N : ℕ∞) ≤ Z ω} := by
-  intro ω hω
-  simp only [Set.mem_setOf_eq] at hω ⊢
-  exact le_trans (Nat.cast_le.mpr hω) (ENat.coe_toNat_le_self (Z ω))
 
 /-- **The maximum of two witnesses is the witness of the disjunction.**  This is
 the assembly rule for a scale built from two independent families of bad
@@ -181,41 +161,6 @@ theorem measurable_minimalScaleEN {bad : ℕ → Ω → Prop}
   rw [hset]
   exact (measurableSet_minimalScaleEN_tail hbad n).diff
     (measurableSet_minimalScaleEN_tail hbad (n + 1))
-
-/-- **The pointwise maximum of two `ℕ∞`-valued measurable maps is measurable.**
-`ℕ∞` carries the discrete `σ`-algebra and is countable, so it suffices to
-identify the fibres of the maximum. -/
-theorem measurable_max_enat {f g : Ω → ℕ∞} (hf : Measurable f) (hg : Measurable g) :
-    Measurable fun ω => max (f ω) (g ω) := by
-  refine measurable_to_countable' fun k => ?_
-  have hset : (fun ω => max (f ω) (g ω)) ⁻¹' {k}
-      = (f ⁻¹' {k} ∩ g ⁻¹' Set.Iic k) ∪ (g ⁻¹' {k} ∩ f ⁻¹' Set.Iic k) := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, Set.mem_union,
-      Set.mem_Iic]
-    constructor
-    · intro h
-      have hfk : f ω ≤ k := by rw [← h]; exact le_max_left _ _
-      have hgk : g ω ≤ k := by rw [← h]; exact le_max_right _ _
-      rcases max_choice (f ω) (g ω) with hc | hc
-      · exact Or.inl ⟨hc.symm.trans h, hgk⟩
-      · exact Or.inr ⟨hc.symm.trans h, hfk⟩
-    · rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
-      · have hgf : g ω ≤ f ω := by rw [h1]; exact h2
-        rw [max_eq_left hgf]; exact h1
-      · have hfg : f ω ≤ g ω := by rw [h1]; exact h2
-        rw [max_eq_right hfg]; exact h1
-  rw [hset]
-  exact ((hf MeasurableSet.of_discrete).inter (hg MeasurableSet.of_discrete)).union
-    ((hg MeasurableSet.of_discrete).inter (hf MeasurableSet.of_discrete))
-
-/-- **The measurability criterion for a maximum of two random minimal scales** —
-the shape consumed by a scale assembled from two families of bad windows. -/
-theorem measurable_minimalScaleEN_max {bad₁ bad₂ : ℕ → Ω → Prop}
-    (hbad₁ : ∀ n, MeasurableSet {ω | bad₁ n ω})
-    (hbad₂ : ∀ n, MeasurableSet {ω | bad₂ n ω}) :
-    Measurable fun ω => max (minimalScaleEN bad₁ ω) (minimalScaleEN bad₂ ω) :=
-  measurable_max_enat (measurable_minimalScaleEN hbad₁) (measurable_minimalScaleEN hbad₂)
 
 end Measurability
 

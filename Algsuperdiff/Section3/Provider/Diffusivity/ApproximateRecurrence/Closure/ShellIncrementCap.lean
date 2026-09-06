@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section3.InductionState
 import Algsuperdiff.Section3.Provider.Disorder.CstarUpperBound
@@ -106,7 +106,7 @@ theorem sum_shell_le (gamma : ℝ) (hgamma : 0 < gamma) (n : ℤ) (h : ℕ) :
       linarith
     refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
     have h2g : (0 : ℝ) < 2 * gamma := by linarith
-    nlinarith [hkle, h2g]
+    exact mul_le_mul_of_nonneg_left hkle h2g.le
   calc ∑ k ∈ Finset.Icc (n + 1) (n + (h : ℤ)), (3 : ℝ) ^ (2 * gamma * (k : ℝ))
       ≤ ∑ _k ∈ Finset.Icc (n + 1) (n + (h : ℤ)),
           (3 : ℝ) ^ (2 * gamma * ((n : ℝ) + (h : ℝ))) :=
@@ -231,14 +231,14 @@ theorem shellDrift_le_cap (M : ABKModel d) {m0 : ℤ} {E : {E : ℝ // 1 ≤ E}}
   have hstep1 : 4 * Real.log 3 * (M.gamma * (h : ℝ)) *
       (3 : ℝ) ^ (2 * M.gamma * (h : ℝ)) ≤
       4 * Real.log 3 * 9 * (3 : ℝ) ^ (2 * M.gamma * (h : ℝ)) := by
-    have : 4 * Real.log 3 * (M.gamma * (h : ℝ)) ≤ 4 * Real.log 3 * 9 := by
-      nlinarith [hlog0, hgh]
+    have : 4 * Real.log 3 * (M.gamma * (h : ℝ)) ≤ 4 * Real.log 3 * 9 :=
+      mul_le_mul_of_nonneg_left hgh (by linarith only [hlog0])
     exact mul_le_mul_of_nonneg_right this hpow0.le
   have hstep2 : 4 * Real.log 3 * 9 * (3 : ℝ) ^ (2 * M.gamma * (h : ℝ)) ≤
       4 * Real.log 3 * 9 * (3 : ℝ) ^ (18 : ℕ) := by
     have h0 : (0 : ℝ) ≤ 4 * Real.log 3 * 9 := by positivity
     exact mul_le_mul_of_nonneg_left hpow18 h0
-  nlinarith [hstep1, hstep2]
+  linarith only [hstep1, hstep2]
 
 end
 

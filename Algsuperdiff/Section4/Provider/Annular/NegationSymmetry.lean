@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.TransposeError
 import Algsuperdiff.Section3.Provider.BadEvents.LambdaCovariance
@@ -112,24 +112,6 @@ theorem gradTailSq_negateCutoffSample (M : ABKModel d) (m : ℤ)
   refine tsum_congr fun k => ?_
   rw [Cutoff.negateCutoffSample_val, ShellField.negateSequence_apply,
     shellW1InfGradNorm_negate]
-
-/-- The scale-`k` lattice maximum of the `W^{2,∞}` gauge is `N`-invariant. -/
-theorem shellW2InfLatticeMax_negateCutoffSample (m : ℤ)
-    (omega : Cutoff.CutoffSample d) (k : ℤ) :
-    shellW2InfLatticeMax m (Cutoff.negateCutoffSample omega) k =
-      shellW2InfLatticeMax m omega k := by
-  unfold shellW2InfLatticeMax
-  refine congrArg _ (funext fun v => ?_)
-  rw [Cutoff.negateCutoffSample_val, ShellField.negateSequence_apply,
-    shellW2InfNormAt_negate]
-
-/-- The `𝒢₁`-block display is `N`-invariant. -/
-theorem shellBlockLatticeReal_negateCutoffSample (M : ABKModel d) (m : ℤ)
-    (omega : Cutoff.CutoffSample d) (k : ℤ) :
-    shellBlockLatticeReal M m (Cutoff.negateCutoffSample omega) k =
-      shellBlockLatticeReal M m omega k := by
-  unfold shellBlockLatticeReal
-  rw [shellW2InfLatticeMax_negateCutoffSample]
 
 /-! ## Part C -- the good event `𝒢₁` is `N`-invariant -/
 
@@ -243,18 +225,6 @@ theorem mem_eventG0_negateCutoffSample_iff (M : ABKModel d) (Ccg : ℝ) (m : ℤ
     have h' : _ ≤ (1 : ℝ≥0∞) := h
     show _ ≤ (1 : ℝ≥0∞)
     rwa [← hsup] at h'
-
-/-- The `hlam` datum is `N`-invariant: the unit-rescaled `λ_{γ,2}` of the
-negated sample is the one of the sample. -/
-theorem unitCubeLambda_unitRescaledCutoffCoeff_negateCutoffSample [NeZero d]
-    (M : ABKModel d) (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
-    (q : Ch02.MultiscaleExponent) (omega : Cutoff.CutoffSample d) :
-    Algsuperdiff.Frozen.Section24.unitCubeLambda s q
-        (unitRescaledCutoffCoeff M Q cutoffScale (Cutoff.negateCutoffSample omega)) =
-      Algsuperdiff.Frozen.Section24.unitCubeLambda s q
-        (unitRescaledCutoffCoeff M Q cutoffScale omega) := by
-  rw [unitCubeLambda_unitRescaledCutoffCoeff, unitCubeLambda_unitRescaledCutoffCoeff,
-    lambdaSq_negateCutoffSample]
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamGradSpine
 
@@ -62,7 +62,7 @@ variable {d : ℕ}
 
 /-- **The real defect witness at the frozen display.**
 
-`HomSeamSpineBase.exists_spine_defect_witness_of_display` with the `K_abs` slot
+The real defect witness at a free display, with the `K_abs` slot
 moved INSIDE the model quantifier and gated by the budget
 `K_abs ≤ C_abs · |log γ|`.  The Step-1 display hypothesis is unchanged, at
 `|log γ|²`; the conclusion is the frozen moment display, at `|log γ|³`.
@@ -241,7 +241,7 @@ theorem exists_spine_defect_witness_of_displayBudget (d : ℕ) (cstar : ℝ)
 
 /-- **The spine at a free `(Y, sb)` and the budgeted `K_abs`, at `|log γ|³`.**
 
-`HomSeamGradSpine.homogenization_spine_close_of_stepOneDisplayGrad` with
+`HomSeamGradSpine`'s gradient-threaded spine close with
 
 * the `K_abs` slot moved inside the model quantifier and gated by the budget,
 * the produced moment clause at the frozen factor `|log γ|³`,

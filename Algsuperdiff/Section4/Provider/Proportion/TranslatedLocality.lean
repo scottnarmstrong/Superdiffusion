@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.BadEvents.LambdaLocal
 import Algsuperdiff.Section4.Probability.AnnulusSeparation
@@ -60,22 +60,20 @@ and are not needed anywhere in §4.1.
    every `m ≥ c`.  The domain scale `j` and the cutoff scale `c` are
    independent parameters, so the `𝒢₂` reading `z + □_n` at `a_{n−2}` is
    covered as well.
-4. `measurable_cgExcess_annulusRegion_local`,
-   `measurable_annMax_annulusRegion_local`,
+4. `measurable_cgExcess_annulusRegion_local` and
    `measurable_Ycal_annulusRegion_local` — the `𝒢₀` instances, ending at the
    `hloc` slot of `columnsIndep_Ycal`.
 
 ## The corrected reduction (recorded)
 
-`Concentration.measurable_Ycal_local` reduces the `𝒴`-locality to a per-cube
-slot quantified over **every** index vector `v : Fin d → ℤ`.  That slot is not
-dischargeable, and not because of a missing lemma: a cube `3^{k−2}v + □_{k−2}`
-with `v` outside the annulus enumeration is genuinely not read by
-`annulusRegion d n`.  The `0`-floored maximum only ever evaluates the bracket on
-`latticeAnnulusFinset d (k−2) n (n−1)`, so the honest reduction quantifies over
-the members of that `Finset`; that is `measurable_Ycal_local_of_annulusFinset`
-below, on top of the restricted `measurable_fmax_of_mem`.  Both readings are
-recorded here; the endpoint delivered is unconditional either way.
+Reducing the `𝒴`-locality to a per-cube slot quantified over **every** index
+vector `v : Fin d → ℤ` gives a slot that is not dischargeable, and not because
+of a missing lemma: a cube `3^{k−2}v + □_{k−2}` with `v` outside the annulus
+enumeration is genuinely not read by `annulusRegion d n`.  The `0`-floored
+maximum only ever evaluates the bracket on `latticeAnnulusFinset d (k−2) n
+(n−1)`, so the honest reduction quantifies over the members of that `Finset`;
+that is `measurable_Ycal_local_of_annulusFinset` below, on top of the restricted
+`measurable_fmax_of_mem`.  The endpoint delivered is unconditional.
 
 ## Scope
 
@@ -239,32 +237,14 @@ theorem measurable_fmax_of_mem {Omega iota : Type*} [MeasurableSpace Omega]
       exact (((hf i (Finset.mem_insert_self i S)).max measurable_const).max
         (ih fun j hj => hf j (Finset.mem_insert_of_mem hj)))
 
-/-- **The annulus maximum of the `𝒢₀` bracket is local.**  For `k ≤ n` the
-maximum over `3^{k−2}ℤ^d ∩ (□_n ∖ □_{n−1})` is measurable for the integral-local
-information of `annulusRegion d n` at shell index `n − 2`. -/
-theorem measurable_annMax_annulusRegion_local (M : ABKModel d) (Ccg : ℝ) {n k : ℤ}
-    (hk : k ≤ n) :
-    Measurable[Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)]
-      (annMax M Ccg n k) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) :=
-    Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)
-  have hrw : annMax M Ccg n k
-      = fun omega => fmax (latticeAnnulusFinset d (k - 2) n (n - 1))
-          (fun v => Localize.cgExcess M Ccg (k - 2)
-            (Support.triadicLatticePoint (k - 2) v) omega) := rfl
-  rw [hrw]
-  refine measurable_fmax_of_mem _ fun v hv => ?_
-  exact measurable_cgExcess_annulusRegion_local M Ccg (by omega)
-    ((mem_latticeAnnulusFinset_iff (by omega : k - 2 ≤ n)).1 hv)
-
 /-! ## 6. The `𝒴`-locality: the `hloc` slot of the concentration lane -/
 
 /-- **The corrected per-cube reduction.**  `𝒴_n` is local as soon as the `𝒢₀`
 bracket is local at each centre the annulus maxima actually enumerate.  The
 quantifier ranges over the members of `latticeAnnulusFinset d (k−2) n (n−1)`,
 which is what the `0`-floored maximum reads; quantifying over all
-`v : Fin d → ℤ` (as `Concentration.measurable_Ycal_local` does) asks for
-locality at cubes the annulus does not contain, and is not dischargeable. -/
+`v : Fin d → ℤ` asks for locality at cubes the annulus does not contain, and is
+not dischargeable. -/
 theorem measurable_Ycal_local_of_annulusFinset (M : ABKModel d) (Ccg sprime : ℝ) (n : ℤ)
     (hatomloc : ∀ k : ℤ, k ≤ n → ∀ v ∈ latticeAnnulusFinset d (k - 2) n (n - 1),
       Measurable[Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)]
@@ -278,7 +258,7 @@ theorem measurable_Ycal_local_of_annulusFinset (M : ABKModel d) (Ccg sprime : �
   exact measurable_fmax_of_mem _ fun v hv => hatomloc (n - (j : ℤ)) (by omega) v hv
 
 /-- **`𝒴_n` is local — unconditionally.**  This is the `hloc` slot of
-`columnsIndep_Ycal` and of `ratioTail_Ycal`: the `𝒢₀` score field at index `n`
+`columnsIndep_Ycal`: the `𝒢₀` score field at index `n`
 is measurable for the integral-local information
 `cutoffSampleLocalSigma M (n−2) (annulusRegion d n)` of the annulus it reads.
 

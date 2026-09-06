@@ -2,7 +2,7 @@ import Algsuperdiff.Section3.Provider.Multiscale.ConclusionArithmetic
 import Algsuperdiff.Section3.Provider.Whitney.LayerDensity
 
 /-!
-# The layer series of `p.bfA.multiscalebound`, Step 3, at the BD-1 correction
+# The layer series of `p.bfA.multiscalebound`, Step 3, at the corrected density
 
 ABK26, proof of Proposition `p.bfA.multiscalebound`, **Step 3**.  After the
 per-layer estimates are in place the manuscript sums over the Whitney layer
@@ -179,7 +179,7 @@ private theorem three_quarters_mul_half_pow (k : ℕ) :
   congr 2
   ring
 
-/-- **The BD-1-corrected collar decay.**  After the Cauchy-Schwarz step only
+/-- **The corrected collar decay.**  After the Cauchy-Schwarz step only
 *half* of the layer mass, `3^{-k/2}`, is available against the collar
 amplification `3^{2 b (k+h_k)}`, and the surviving ratio is `3^{-1/4}` rather
 than the printed `3^{-3/4}`.  The hypothesis `9 b <= 1` is exactly what
@@ -360,7 +360,7 @@ theorem summable_layerContrib {b γ ε Cmass Ktot Ccol : ℝ} {hs k₀ : ℕ} {M
 
 /-! ## The Step-3 payload -/
 
-/-- Crucially it carries **no** `3^{2 b k_0}` — the load-bearing BD-1 property. -/
+/-- Crucially it carries **no** `3^{2 b k_0}` — the load-bearing property of this constant. -/
 def layerSumConst (b γ : ℝ) (k₀ : ℕ) (Ktot Ccol Cmass : ℝ) : ℝ :=
   (1 - (3 : ℝ) ^ (-(1 / 4 : ℝ)))⁻¹ *
     (Ktot * Cmass * (3 : ℝ) ^ (γ * ((k₀ : ℝ) + 1)) +

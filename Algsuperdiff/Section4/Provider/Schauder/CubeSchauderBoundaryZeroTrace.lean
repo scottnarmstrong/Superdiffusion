@@ -1,19 +1,17 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepDatumZeroTrace
 
 /-!
 # Cube Schauder: the boundary zero-trace slot of the zero-datum competitor
 
-The boundary regime's classical-competitor producer
-`ExcessDecay.Schauder.exists_classicalCompetitor_gradientHolder_boundary_zeroTrace`
-carries one structural slot the interior regime does not have: the *localized
-zero trace* of the harmonic competitor `v` on the truncated window, tested
-against the reflected window.  This is what licenses the odd reflection across
-the met faces.
+The boundary regime's classical-competitor producer carries one structural slot
+the interior regime does not have: the *localized zero trace* of the harmonic
+competitor `v` on the truncated window, tested against the reflected window.
+This is what licenses the odd reflection across the met faces.
 
 For the **zero-datum** cube problem that slot is free.  The competitor of
 `CubeSchauderResidue.exists_frozenHarmonicReplacement_truncatedWindow` is
@@ -52,10 +50,9 @@ variable {d : ℕ}
 
 If `u ∈ H¹₀(□_m)` and `v ∈ H¹₀((x+□_k) ∩ □_m)`, then their difference has the
 face-only localized zero trace on the truncated window against the reflected
-window.  This is the `hzt` slot of
-`exists_classicalCompetitor_gradientHolder_boundary_zeroTrace` for the frozen
-harmonic replacement of a zero-datum solution: no extra hypothesis is needed
-beyond the two memberships. -/
+window.  This is the zero-trace slot the boundary producer asks for, here at the
+frozen harmonic replacement of a zero-datum solution: no extra hypothesis is
+needed beyond the two memberships. -/
 theorem localizedZeroTraceFunctionOn_sub_memH10_cube {m k : ℤ} (x : Vec d)
     {u v : Vec d → ℝ}
     (hu : MemH10 (openCubeSet (originCube d m)) u)

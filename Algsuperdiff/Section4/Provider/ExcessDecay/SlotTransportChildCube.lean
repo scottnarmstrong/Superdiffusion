@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.GoodEventCaps
 import Algsuperdiff.Section4.Provider.ExcessDecay.StabilityExponentComparison
@@ -102,47 +102,6 @@ variable {d : ℕ}
 
 /-! ## 1. The geometry the manuscript uses without comment -/
 
-/-- **The child inclusion.**
-
-If `x + □_n` sits inside `(z + □_{n+1}) ∩ □_m` — the frozen theorem's own
-geometry binder — then `x + □_{n+1}` sits inside `z + □_{n+2}`, which is the
-inclusion the printed proof restates ("Fix `x, z ∈ □_m` such that `x + □_n ⊂
-□_m` and `x + □_{n+1} ⊂ z + □_{n+2}`") without deriving it.
-
-Only the *centre* consequence of the hypothesis is used: evaluating it at
-`0 ∈ □_n` gives `|x_i − z_i| < 3^{n+1}/2`, and then every `w ∈ □_{n+1}` has
-`|x_i + w_i − z_i| < 3^{n+1} < 3^{n+2}/2`.  No limiting argument at the corners
-of the open cube is needed, and the slack (a factor `3/2`) is genuine. -/
-theorem image_add_openCubeSet_succ_subset {n m : ℤ} {x z : Vec d}
-    (hsub : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m)) :
-    (fun y => x + y) '' openCubeSet (originCube d (n + 1)) ⊆
-      (fun y => z + y) '' openCubeSet (originCube d (n + 2)) := by
-  have h3n : (0 : ℝ) < 3 ^ n := zpow_pos (by norm_num) n
-  have hzero : (0 : Vec d) ∈ openCubeSet (originCube d n) := by
-    rw [mem_openCubeSet_originCube_iff]
-    intro i
-    refine ⟨?_, ?_⟩ <;> simp only [Pi.zero_apply] <;> linarith only [h3n]
-  have hxmem : x ∈ (fun y => x + y) '' openCubeSet (originCube d n) :=
-    ⟨0, hzero, by simp⟩
-  obtain ⟨y0, hy0mem, hy0⟩ := (hsub hxmem).1
-  have hy0' : z + y0 = x := hy0
-  have hstep : (3 : ℝ) ^ (n + 2) = 3 ^ (n + 1) * 3 := by
-    have hn : n + 2 = n + 1 + 1 := by ring
-    rw [hn, zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0)]
-  have hpos : (0 : ℝ) < 3 ^ (n + 1) := zpow_pos (by norm_num) _
-  rintro p ⟨w, hw, rfl⟩
-  refine ⟨y0 + w, ?_, ?_⟩
-  · rw [mem_openCubeSet_originCube_iff] at hy0mem hw ⊢
-    intro i
-    have h1 := hy0mem i
-    have h2 := hw i
-    refine ⟨?_, ?_⟩ <;> simp only [Pi.add_apply] <;>
-      rw [hstep] <;> linarith only [h1.1, h1.2, h2.1, h2.2, hpos]
-  · show z + (y0 + w) = x + w
-    rw [← add_assoc, hy0']
-
 /-! ## 2. The parent's functionals read at a sub-cube -/
 
 /-- `𝓔_{s,∞,2}(Q; a_L − (κ_L−κ_m)_{□_m}, σ̄_m)`: the *parent's* flux-corrected
@@ -156,15 +115,6 @@ A4). -/
 def fluxCorrectedErrorOn [NeZero d] (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d)
     (s : ℝ) (omega : Cutoff.CutoffSample d) : ℝ :=
   Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2)
-    (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-    (isotropicComparatorMatrix (Annealed.sigmaBar M m))
-
-/-- The `q = 1` sibling of `fluxCorrectedErrorOn`: the exponent pair the
-coarse-graining display `e.homogenization.L2.interior` carries on its first
-right-hand term. -/
-def fluxCorrectedErrorOnOne [NeZero d] (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d)
-    (s : ℝ) (omega : Cutoff.CutoffSample d) : ℝ :=
-  Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 1)
     (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
     (isotropicComparatorMatrix (Annealed.sigmaBar M m))
 
@@ -255,54 +205,6 @@ theorem ae_errorOn_descendant_le_harmonicSlot (d : ℕ) [NeZero d] :
 
 /-! ## 4. The `q = 1` cap: the first inequality of `e.good.set.giveth.v2` -/
 
-/-- **The `q = 1` cap at every triadic sub-cube.**
-
-On the same event, for every index `u ≥ s/4`,
-
-```
-𝓔_{u,∞,1}(Q; ã_{L,n+2}, σ̄_{n+2})  ≤  3^{(s/8)·(n+2−k)} · C/2 ,
-```
-
-by the manuscript's `e.compareEqs` (`𝓔_{u,∞,1} ≤ 𝓔_{u/2,∞,2}`, constant `1`)
-followed by the `q = 2` transport at the index `u/2 ≥ s/8`.
-
-At `u = s/4` and `k = n+1` this is the **first** inequality of
-`e.good.set.giveth.v2` composed with the rest of the printed chain — the leg the
-survey recorded as having no available `q = 1 ← q = 2` comparison — in the grid
-rendering (deviation 1) and with the printed intermediate index `s/6` skipped
-(deviation 2). -/
-theorem ae_errorOnOne_descendant_le_harmonicSlot (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
-        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
-        ∀ hs : 0 < s, ∀ (n : ℤ) (z : Vec d),
-          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-                (Support.cgEllipLowerConstant d) (n + 2) z
-                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
-              ∀ L : ℤ, n + 2 ≤ L → ∀ (k : ℤ) (Q : TriadicCube d),
-                Q ∈ descendantsAtScale (originCube d (n + 2)) k →
-                  ∀ u : ℝ, s / 4 ≤ u →
-                    fluxCorrectedErrorOnOne M L (n + 2) Q u
-                        (Cutoff.translateCutoffSample z omega) ≤
-                      Real.rpow (3 : ℝ) (s / 8 * (Int.toNat (n + 2 - k) : ℝ)) *
-                        (C * (1 / 2)) := by
-  obtain ⟨C, hCpos, hC⟩ := ae_errorOn_descendant_le_harmonicSlot d
-  refine ⟨C, hCpos, ?_⟩
-  intro M s hsrange hregime hsmall hs n z
-  filter_upwards [hC M s hsrange hregime hsmall hs n z] with omega hcap
-  intro hmem L hL k Q hQ u hu
-  have hu0 : 0 < u := by
-    have hs4 : 0 < s / 4 := by linarith only [hs]
-    linarith only [hs4, hu]
-  have hjensen := homogenizationErrorOnCube_infinity_one_le_infinity_two_half Q
-    (Support.fluxCorrectedCoeffFamily M L (n + 2) (originCube d (n + 2))
-      (Cutoff.translateCutoffSample z omega))
-    (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 2))) hu0
-  exact le_trans hjensen (hcap hmem L hL k Q hQ (u / 2) (by linarith only [hu]))
-
 /-! ## 5. `e.bound.Lambdas.by.Es.v2` at every triadic sub-cube -/
 
 /-- **`e.bound.Lambdas.by.Es.v2` transported to triadic sub-cubes.**
@@ -371,69 +273,6 @@ private theorem transport_factor_parent (s : ℝ) (n : ℤ) :
   have hzero : (Int.toNat (n + 2 - (n + 2)) : ℝ) = 0 := by norm_num
   rw [hzero, mul_zero]
   exact Real.rpow_zero 3
-
-/-- ```
-𝓔_{u,∞,2}(z+□_{n+2}; ã_{L,n+2}, σ̄_{n+2}) · 1_𝒢  ≤  C/2       (u ≥ s/8).
-```
-
-No grid hypothesis enters: the cube *is* the parent. -/
-theorem ae_error_parent_index_le_harmonicSlot (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
-        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
-        ∀ hs : 0 < s, ∀ (n : ℤ) (z : Vec d),
-          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-                (Support.cgEllipLowerConstant d) (n + 2) z
-                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
-              ∀ L : ℤ, n + 2 ≤ L → ∀ u : ℝ, s / 8 ≤ u →
-                Support.fluxCorrectedError M L (n + 2) u
-                    (Cutoff.translateCutoffSample z omega) ≤ C * (1 / 2) := by
-  obtain ⟨C, hCpos, hC⟩ := ae_errorOn_descendant_le_harmonicSlot d
-  refine ⟨C, hCpos, ?_⟩
-  intro M s hsrange hregime hsmall hs n z
-  filter_upwards [hC M s hsrange hregime hsmall hs n z] with omega hcap
-  intro hmem L hL u hu
-  have h := hcap hmem L hL (n + 2) (originCube d (n + 2))
-    (parent_mem_descendantsAtScale d (n + 2)) u hu
-  rw [fluxCorrectedErrorOn_originCube, transport_factor_parent s n, one_mul] at h
-  exact h
-
-/-- **The `q = 1` cap at the parent cube, for every index `u ≥ s/4`.**
-
-```
-𝓔_{u,∞,1}(z+□_{n+2}; ã_{L,n+2}, σ̄_{n+2}) · 1_𝒢  ≤  C/2       (u ≥ s/4).
-```
-
-This is the leg the survey recorded as unreachable for want of a
-`q = 1 ← q = 2` comparison, at the parent cube where no grid hypothesis is
-needed.  At `u = s/4` it is the `𝓔_{s/4,∞,1}` term of the coarse-graining
-display, capped. -/
-theorem ae_errorOne_parent_index_le_harmonicSlot (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
-        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
-        ∀ hs : 0 < s, ∀ (n : ℤ) (z : Vec d),
-          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-                (Support.cgEllipLowerConstant d) (n + 2) z
-                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
-              ∀ L : ℤ, n + 2 ≤ L → ∀ u : ℝ, s / 4 ≤ u →
-                fluxCorrectedErrorOnOne M L (n + 2) (originCube d (n + 2)) u
-                    (Cutoff.translateCutoffSample z omega) ≤ C * (1 / 2) := by
-  obtain ⟨C, hCpos, hC⟩ := ae_errorOnOne_descendant_le_harmonicSlot d
-  refine ⟨C, hCpos, ?_⟩
-  intro M s hsrange hregime hsmall hs n z
-  filter_upwards [hC M s hsrange hregime hsmall hs n z] with omega hcap
-  intro hmem L hL u hu
-  have h := hcap hmem L hL (n + 2) (originCube d (n + 2))
-    (parent_mem_descendantsAtScale d (n + 2)) u hu
-  rw [transport_factor_parent s n, one_mul] at h
-  exact h
 
 /-- **`e.bound.Lambdas.by.Es.v2` at the parent cube, for every index
 `u ≥ s/8`.**

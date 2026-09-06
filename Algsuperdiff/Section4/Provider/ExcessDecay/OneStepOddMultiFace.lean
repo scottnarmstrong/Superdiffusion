@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionAssembly
 
@@ -373,57 +373,6 @@ theorem isWeaklyHarmonicOn_partialReflectedWindow_insert_lower {x : Vec d} {m k 
   exact hw y
 
 /-! ## 5. The iteration -/
-
-/-- **The multi-met-face transfer.**  Given one `H¹` datum per intermediate box,
-each pinned to the odd extension of the previous one's gradient across the face
-being unfolded, weak harmonicity propagates from the window to every
-intermediate box inside the met set. -/
-theorem isWeaklyHarmonicOn_partialReflectedWindow_of_chain {x : Vec d} {m k : ℤ}
-    (hkm : k < m) {S : Finset (Fin d)}
-    (Wf : ∀ T : Finset (Fin d), H1Function (partialReflectedWindow x m k T))
-    (hbase : IsWeaklyHarmonicOn (partialReflectedWindow x m k ∅) (Wf ∅))
-    (hchain : ∀ (T : Finset (Fin d)) (i : Fin d), i ∉ T → insert i T ⊆ S →
-      (MeetsUpperFace x m k i ∧ ∀ y, (Wf (insert i T)).grad y
-          = oddFaceExtendGrad ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-              (zeroExtendGrad (partialReflectedWindow x m k T) (Wf T).grad) y)
-        ∨ (MeetsLowerFace x m k i ∧ ∀ y, (Wf (insert i T)).grad y
-          = oddFaceExtendGrad (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-              (zeroExtendGrad (partialReflectedWindow x m k T) (Wf T).grad) y)) :
-    ∀ T : Finset (Fin d), T ⊆ S →
-      IsWeaklyHarmonicOn (partialReflectedWindow x m k T) (Wf T) := by
-  classical
-  intro T
-  induction T using Finset.induction_on with
-  | empty => exact fun _ => hbase
-  | @insert i T hiT ih =>
-      intro hsub
-      have hTsub : T ⊆ S := fun j hj => hsub (Finset.mem_insert_of_mem hj)
-      rcases hchain T i hiT hsub with ⟨hup, hgrad⟩ | ⟨hlow, hgrad⟩
-      · exact isWeaklyHarmonicOn_partialReflectedWindow_insert_upper hkm hup hiT
-          (Wf T) (ih hTsub) (Wf (insert i T)) hgrad
-      · exact isWeaklyHarmonicOn_partialReflectedWindow_insert_lower hkm hlow hiT
-          (Wf T) (ih hTsub) (Wf (insert i T)) hgrad
-
-/-- **The multi-met-face transfer at the fully reflected window.**  With `S`
-containing every met coordinate the last box of the chain *is* the reflected
-window. -/
-theorem isWeaklyHarmonicOn_reflectedWindow_of_chain {x : Vec d} {m k : ℤ}
-    (hkm : k < m) {S : Finset (Fin d)}
-    (hS : ∀ i, i ∉ S → ¬ MeetsUpperFace x m k i ∧ ¬ MeetsLowerFace x m k i)
-    (Wf : ∀ T : Finset (Fin d), H1Function (partialReflectedWindow x m k T))
-    (hbase : IsWeaklyHarmonicOn (partialReflectedWindow x m k ∅) (Wf ∅))
-    (hchain : ∀ (T : Finset (Fin d)) (i : Fin d), i ∉ T → insert i T ⊆ S →
-      (MeetsUpperFace x m k i ∧ ∀ y, (Wf (insert i T)).grad y
-          = oddFaceExtendGrad ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-              (zeroExtendGrad (partialReflectedWindow x m k T) (Wf T).grad) y)
-        ∨ (MeetsLowerFace x m k i ∧ ∀ y, (Wf (insert i T)).grad y
-          = oddFaceExtendGrad (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-              (zeroExtendGrad (partialReflectedWindow x m k T) (Wf T).grad) y)) :
-    IsWeaklyHarmonicOn (reflectedWindow x m k)
-      (h1FunctionOfSetEq (partialReflectedWindow_eq_reflectedWindow hS) (Wf S)) :=
-  isWeaklyHarmonicOn_h1FunctionOfSetEq (partialReflectedWindow_eq_reflectedWindow hS)
-    (isWeaklyHarmonicOn_partialReflectedWindow_of_chain hkm Wf hbase hchain S
-      (subset_refl S))
 
 end
 

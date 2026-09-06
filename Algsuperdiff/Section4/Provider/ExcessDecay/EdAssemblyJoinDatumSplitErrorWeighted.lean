@@ -1,10 +1,17 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyJoinDatumSplit
-import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyOneStepErrorWeighted
+import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyAnchorErrorWeighted
+import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyOneStep
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryCompose
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryHonestRegated
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepEvenBoundFinal
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepInterior
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepOddClassCornerProducer
+import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepOddCompose
+import Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay
 
@@ -20,7 +27,7 @@ noncomputable section
 /-- **The anchored one-step at every scale-`n` window, with the printed
 datum leg, at the error-weighted anchor.**
 
-`EdAssemblyJoinDatumSplit.excessDecay_oneStep_anchored_datumSplit` with the
+The anchored one-step with the printed datum leg, with the
 anchor re-pointed at the error-weighted statement: the remainder's `B.toReal`
 expansion is the error-weighted five-leg block (the fifth leg the
 `𝓔`-multiplied flat `∇h` average), and everything else — the window

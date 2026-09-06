@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderIteration
 
@@ -119,46 +119,5 @@ theorem sqrt_freezing_budget (D KG s V : ℝ) (hD : 0 ≤ D) (hKG : 0 ≤ KG) :
     Real.sqrt (D * (D * (KG ^ 2 * s) * V)) = D * KG * Real.sqrt (s * V) := by
   have hfac : D * (D * (KG ^ 2 * s) * V) = (D * KG) ^ 2 * (s * V) := by ring
   rw [hfac, Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (mul_nonneg hD hKG)]
-
-/-- **The freezing step with the residue in coordinate `L²` form.**
-
-At every base point `x₀` of the origin cube `□_j` the frozen zero-trace
-comparison `w` obeys
-
-```text
-  Σᵢ ‖∂ᵢ w‖_{L²(□_j)} ≤ d · KG · √( 3^j · (3^j)^d ) ,
-```
-
-the `√(3^j)` factor being the freezing gain and `(3^j)^d = |□_j|` the cube's
-volume.  Dividing by `|□_j|^{1/2}` this reads
-`Σᵢ ‖∂ᵢ w‖_{L̲²(□_j)} ≤ d · KG · (3^j)^{1/2}`. -/
-theorem exists_frozenHarmonicReplacement_coordL2 [NeZero d] {W : Set (Vec d)}
-    (j : ℤ) (hQW : openCubeSet (originCube d j) ⊆ W) (u : H1Function W)
-    {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
-    (hGL2 : MemVectorL2 W G)
-    (hG : HolderSeminormBoundOn W (1 / 2) KG G)
-    (hu : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d)) W u G)
-    {x0 : Vec d} (hx0 : x0 ∈ openCubeSet (originCube d j)) :
-    ∃ w : H10Function (openCubeSet (originCube d j)),
-      IsDivFormWeakSolutionOn (fun _ => (1 : Mat d)) (openCubeSet (originCube d j))
-          w.toH1Function (fun x => G x - G x0) ∧
-        IsWeaklyHarmonicOn (openCubeSet (originCube d j))
-            (u.restrict (isOpen_openCubeSet (originCube d j)) hQW - w.toH1Function) ∧
-          ∑ i : Fin d,
-              (eLpNorm (fun x => w.toH1Function.grad x i) 2
-                (volume.restrict (openCubeSet (originCube d j)))).toReal ≤
-            (d : ℝ) * KG * Real.sqrt ((3 : ℝ) ^ j * ((3 : ℝ) ^ j) ^ d) := by
-  obtain ⟨w, hweq, hharm, henergy⟩ :=
-    exists_frozenHarmonicReplacement_openCubeSet (originCube d j) hQW u hKG hGL2 hG hu hx0
-  refine ⟨w, hweq, hharm, ?_⟩
-  have hvol : (volume (openCubeSet (originCube d j))).toReal = ((3 : ℝ) ^ j) ^ d := by
-    rw [volume_openCubeSet_toReal, cubeVolume_eq_pow_scale]
-    rfl
-  have hscale : cubeScaleFactor (originCube d j) = (3 : ℝ) ^ j := rfl
-  rw [hscale, hvol] at henergy
-  have hstep := sum_toReal_eLpNorm_grad_le_of_dirichletEnergy_le w.toH1Function henergy
-  refine hstep.trans (le_of_eq ?_)
-  exact sqrt_freezing_budget (d : ℝ) KG ((3 : ℝ) ^ j) (((3 : ℝ) ^ j) ^ d)
-    (Nat.cast_nonneg d) hKG
 
 end Algsuperdiff.Section4.Provider.Schauder

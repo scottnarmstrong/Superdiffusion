@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalTestClass
 
@@ -11,14 +11,14 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalTestClass
 ## What this file supplies
 
 `HomCGFinalTestClass` proves the test-class comparison at `s′ < s`.  This file
-turns it into the Step-4 consumer's carrier and MACHINE-CHECKS the numeral
+turns it into the Step-4 consumer's carrier and records the numeral
 compatibility of the two constants.
 
 * `weakNegDualBoundOn_of_smoothDualLevel` — from a smooth-dual level `D` at
   order `s′` to `WeakNegDualBoundOn Q s (K_test·D)` at the DATA order `s`;
 * `conjugate_toReal_le_two` — the conjugate exponent is at most `2` as soon as
   `2 ≤ p`, from `ENNReal.conjExponent p = 1 + (p-1)⁻¹` alone;
-* `cgOrderWindow_of_guard` — **the numeral verdict**.
+* `two_le_exponent_of_guard` — the bundle's printed guard forces `2 ≤ p`.
 
 ## The numeral check: compatible, and free
 
@@ -83,37 +83,6 @@ theorem two_le_exponent_of_guard {p : FiniteLpExponent} (hd : 1 ≤ d) {s : ℝ}
   rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 by simp]
   exact ENNReal.ofReal_le_ofReal hreal
 
-/-! ## 2. The admissible order window -/
-
-/-- **The abstract window.** -/
-theorem cgOrderWindow (hd : 1 ≤ d) {t alpha beta : ℝ} (ht1 : 1 ≤ t) (ht2 : t ≤ 2)
-    (hlt : beta < alpha) (hsmall : alpha - beta ≤ 1 / 4) :
-    0 < (alpha - beta) * t ∧ (alpha - beta) * t < (d : ℝ) := by
-  have hdiff : 0 < alpha - beta := sub_pos.mpr hlt
-  have htpos : 0 < t := lt_of_lt_of_le zero_lt_one ht1
-  have h1 : 0 < (alpha - beta) * t := mul_pos hdiff htpos
-  have h2 : (alpha - beta) * t ≤ 1 / 4 * 2 :=
-    mul_le_mul hsmall ht2 htpos.le (by norm_num)
-  have hdR : (1 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
-  exact ⟨h1, by linarith only [h2, hdR]⟩
-
-/-- **THE NUMERAL VERDICT.**  The order window is satisfiable at the bundle's
-own printed guard, for every `s′` in `[s/2, s)`. -/
-theorem cgOrderWindow_of_guard {p : FiniteLpExponent} (hd : 1 ≤ d) {s beta : ℝ}
-    (hs0 : 0 < s) (hguard : s + (d : ℝ) / p.exponent.toReal ≤ 1 / 2)
-    (hhalf : s / 2 ≤ beta) (hlt : beta < s) :
-    0 < (s - beta) * p.conjugate.exponent.toReal ∧
-      (s - beta) * p.conjugate.exponent.toReal < (d : ℝ) := by
-  have hp2 : 2 ≤ p.exponent := two_le_exponent_of_guard hd hs0 hguard
-  have ht2 : p.conjugate.exponent.toReal ≤ 2 := conjugate_toReal_le_two hp2
-  have ht1 : 1 ≤ p.conjugate.exponent.toReal :=
-    le_of_lt (one_lt_finiteLpExponent_toReal p.conjugate)
-  have hquot : (0 : ℝ) ≤ (d : ℝ) / p.exponent.toReal :=
-    div_nonneg (Nat.cast_nonneg d) (finiteLpExponent_toReal_pos p).le
-  have hs2 : s ≤ 1 / 2 := by linarith only [hguard, hquot]
-  have hsmall : s - beta ≤ 1 / 4 := by linarith only [hhalf, hs2]
-  exact cgOrderWindow hd ht1 ht2 hlt hsmall
-
 /-! ## 3. The Step-4 carrier from a smooth-dual level -/
 
 /-- **The Step-4 duality carrier, produced.**
@@ -135,31 +104,6 @@ theorem weakNegDualBoundOn_of_smoothDualLevel {Q : TriadicCube d}
   weakNegDualBoundOn_of_smoothDualAt
     (cgTestConst_nonneg d Q hlo)
     (smoothDualDominatesHolderTestsAt Q s' s p hlo hhi) hD hF
-
-/-- **The same, at the concrete choice `s′ = s/2` and the bundle's own guard.**
-
-Nothing is assumed beyond `1 ≤ d`, the printed positivity `0 < s` and the
-printed guard `s + d/p ≤ 1/2`. -/
-theorem weakNegDualBoundOn_of_smoothDualLevel_half {Q : TriadicCube d}
-    (s : FractionalOrder) (p : FiniteLpExponent) (hd : 1 ≤ d)
-    (hguard : s.1 + (d : ℝ) / p.exponent.toReal ≤ 1 / 2)
-    {F : CubeEuclideanLpField Q FiniteLpExponent.two} {D : ℝ} (hD : 0 ≤ D)
-    (hF : cubeEuclideanNegativeWspSmoothDualENorm Q (fractionalOrderHalf s) p F ≤
-      ENNReal.ofReal D) :
-    WeakNegDualBoundOn Q s.1
-      (cgTestConst d Q s.1 (s.1 / 2) p.conjugate.exponent.toReal * D) F.toField := by
-  have hs0 : 0 < s.1 := s.2.1
-  have hlt : s.1 / 2 < s.1 := by linarith only [hs0]
-  obtain ⟨hlo, hhi⟩ :=
-    cgOrderWindow_of_guard (p := p) hd hs0 hguard (le_refl (s.1 / 2)) hlt
-  have hval : (fractionalOrderHalf s).1 = s.1 / 2 := fractionalOrderHalf_value s
-  have hlo' : 0 < (s.1 - (fractionalOrderHalf s).1) * p.conjugate.exponent.toReal := by
-    rw [hval]; exact hlo
-  have hhi' : (s.1 - (fractionalOrderHalf s).1) * p.conjugate.exponent.toReal < (d : ℝ) := by
-    rw [hval]; exact hhi
-  have hmain := weakNegDualBoundOn_of_smoothDualLevel (Q := Q) (fractionalOrderHalf s) s p
-    hlo' hhi' hD hF
-  rwa [hval] at hmain
 
 end
 

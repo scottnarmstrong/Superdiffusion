@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryCompose
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepDatumSplit
@@ -10,7 +10,7 @@ import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepDatumSplit
 # The boundary one-step contraction at the manuscript competitor `v − ℓ_h − v₁`
 
 The proved boundary endpoint
-`OneStepBoundaryCompose.excessDecay_oneStep_boundary_metSet_of_harmonicApprox`
+at the met set
 asks the met-face oddness and the classical harmonicity of the **harmonic
 replacement `v` itself**; but `v = h` on the met portion of `∂□_m`, so that
 clause forces `v` to vanish there
@@ -25,7 +25,7 @@ Here the odd-class binders are asked of the manuscript's **shifted** competitor
 ```
 
 — the object whose zero trace on the met faces the chain actually produces
-(`OneStepDatumZeroTrace.localizedZeroTraceFunctionOn_datumSplit`) — while the
+(the split datum's localized zero trace) — while the
 `L̲²` comparison binder stays on `u − v`, the anchor's own object.  The datum
 enters through the **already existing** `K_h` slot of
 `OneStepConditional.excessDecay_oneStep_of_harmonicApprox`, at the printed
@@ -203,8 +203,8 @@ theorem boundaryDatumLegConst_mono (d : ℕ) {Csch Csch' : ℝ} (hCsch : Csch �
   exact mul_le_mul_of_nonneg_right
     (mul_le_mul_of_nonneg_right hT (by norm_num)) h2
 
-/-- **`EdAssemblyOneStep.oneStepConclusion_mono` with the printed datum leg
-carried.**  The join raises both branches to `max (schauderWindowConst d) C_b`;
+/-- **The one-step conclusion's constant monotonicity with the printed datum
+leg carried.**  The join raises both branches to `max (schauderWindowConst d) C_b`;
 this is the three-leg version of that move, so the boundary branch's datum leg
 travels with it. -/
 theorem oneStepConclusionKh_mono (d : ℕ) {Csch Csch' : ℝ} (hCsch : Csch ≤ Csch')
@@ -382,8 +382,7 @@ theorem excessDecay_oneStep_boundary_datumSplit_core (hd : d ≠ 0) {m n : ℤ}
 /-- **The re-cut boundary one-step contraction at the manuscript
 competitor `V_odd = v − ℓ_h − v₁`, with the printed `K_h` leg.**
 
-The sibling of
-`OneStepBoundaryCompose.excessDecay_oneStep_boundary_metSet_of_harmonicApprox`
+The sibling of the proved boundary endpoint at the met set
 in which the odd-class binders `_hupv`/`_hlowv`/`_hharmclass` are asked of the
 **shifted** competitor — the object the chain's zero-trace supplier actually
 produces — while `_hharm` stays on `u − v`.  The conclusion is

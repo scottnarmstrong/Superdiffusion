@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section3.CoarseEllipticityBounds
 import Algsuperdiff.Section3.Provider.CoarseEllipticity.Assembly
@@ -9,9 +9,8 @@ import Algsuperdiff.Section3.Provider.CoarseEllipticity.Assembly
 /-!
 # The dimension-floor normalization of the coarse-ellipticity constant
 
-`Assembly.coarse_ellipticity_bounds_one_le` records that the constant of
-`p.cg.ellipticity.bounds` may be raised to satisfy `1 ≤ Ccg`.  The Section 3.4
-principal-response consumers need the same constant to clear the dimension
+The constant of `p.cg.ellipticity.bounds` may be raised to satisfy `1 ≤ Ccg`.  The
+Section 3.4 principal-response consumers need the same constant to clear the dimension
 floor `(d : ℝ) ^ 6` as well: the event constant they feed to the sensitivity
 gate is `2 * Ccg`, and that gate reads
 `2 * (d : ℝ) ^ 6 ≤ 2 * Ccg * sensitivityConstMax d ^ 2`.
@@ -32,8 +31,6 @@ on this branch, so this module's export is sorry-free.
 ## References
 
 * ABK26, `p.cg.ellipticity.bounds`, statement.
-* `Assembly.coarse_ellipticity_bounds_one_le`, of which this is the
-  dimension-floor strengthening.
 -/
 
 namespace Algsuperdiff.Section3.Provider.CoarseEllipticity

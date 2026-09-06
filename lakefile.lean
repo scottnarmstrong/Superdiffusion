@@ -10,11 +10,14 @@ require mathlib from git
 require «CoarseGraining» from git
   "https://github.com/scottnarmstrong/CoarseGraining" @ "8ec687c24a78f75aa7be88cb48da28074796c670"
 
-/-- The comparator audit surfaces (`Audit/*/Challenge.lean`, `SolutionBasic.lean`,
+require «MarkovProcess» from git
+  "https://github.com/scottnarmstrong/MarkovProcess.git" @ "60a807e8305ae334de83d48a122ab4eb9ccc5481"
+
+/-- The comparator audit surfaces (`SuperdiffusionAudit/*/Challenge.lean`, `SolutionBasic.lean`,
 `Solution.lean`).  Deliberately **not** a default target: it builds only on demand
-(`lake build Audit`), so the ordinary project build is unchanged. -/
-lean_lib «Audit» where
-  globs := #[.submodules `Audit]
+(`lake build SuperdiffusionAudit`), so the ordinary project build is unchanged. -/
+lean_lib «SuperdiffusionAudit» where
+  globs := #[.submodules `SuperdiffusionAudit]
   leanOptions := #[
     ⟨`autoImplicit, false⟩,
     ⟨`relaxedAutoImplicit, false⟩,

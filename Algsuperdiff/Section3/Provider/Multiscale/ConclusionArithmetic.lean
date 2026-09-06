@@ -18,7 +18,7 @@ compound carrier expression, and the `k_0` collapse is an `exp`/`rpow`
 computation.  The carrier-level layer series that consumes these cores is
 `Provider.Multiscale.ConclusionAssembly`.
 
-## The BD-1 correction
+## The square-root layer-density correction
 
 With only the mass form available the `k`-sum of the `exp(-cE^{-2}gamma^{-1})`
 leg diverges.
@@ -51,7 +51,7 @@ noncomputable section
 
 /-! ## `log 3`
 
-`Percolation.Numerics` supplies `1 <= log 3 <= 2`.  The BD-1 collapse uses the
+`Percolation.Numerics` supplies `1 <= log 3 <= 2`.  The `k_0` collapse uses the
 sharper upper bound `log 3 <= 3/2` for comfort (: `log 3 <= 2` would in fact
 suffice — `2b·log 3 <= 4/9 <= 17/36`; convenience, not necessity). -/
 
@@ -117,7 +117,7 @@ theorem sqrt_add_le_sqrt_add_sqrt {a c : ℝ} (ha : 0 ≤ a) (hc : 0 ≤ c) :
         Real.sqrt_le_sqrt hsq
     _ = Real.sqrt a + Real.sqrt c := Real.sqrt_sq hsum
 
-/-! ## Core 1a: the `k_0` collapse at the BD-1-corrected (square-root) density -/
+/-! ## Core 1a: the `k_0` collapse at the corrected (square-root) density -/
 
 /-- **The `k_0` collapse** (`p.bfA.multiscalebound` Step 3, at the `min`-capped
 layer density).
@@ -188,7 +188,7 @@ theorem three_rpow_neg_three_quarters_nonneg : (0 : ℝ) ≤ (3 : ℝ) ^ (-(3 / 
   Real.rpow_nonneg (by norm_num) _
 
 
-/-- **The layer-summation geometric series at the BD-1-corrected ratio.**  After
+/-- **The layer-summation geometric series at the corrected ratio.**  After
 the `min`/Cauchy-Schwarz step the collar leg of layer `k` carries the extra
 factor `3^{k/2}`, so the printed ratio `3^{-3/4}` degrades to `3^{-1/4}`; the
 sum still converges. -/

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderFold
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderBoundaryTwin
@@ -25,7 +25,7 @@ Three proved ingredients meet here:
 
 The result carries **no interior geometry slot**: it holds at every base point
 of `□_m` and every scale with `n - 2 < m`, so a single branch supplies the
-Campanato datum everywhere (`SCH-5`'s structural finding).
+Campanato datum everywhere.
 
 ```text
   E(u,U_k) ≤ C_contr(d) · 3^{-k} · E(u,U_0)

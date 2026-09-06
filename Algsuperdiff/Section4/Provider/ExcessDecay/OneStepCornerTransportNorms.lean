@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.AffineExcess
 import Homogenization.Sobolev.Foundations.CubeReflection.Reflections
@@ -224,16 +224,6 @@ theorem affineExcessRaw_comp_coordFaceReflection_zero (i : Fin d) {W : Set (Vec 
         (fun y => f (coordFaceReflection (0 : ℝ) i y)) = affineExcessRaw W f := by
   unfold affineExcessRaw
   rw [affineDistSet_comp_coordFaceReflection_zero i hW f]
-
-/-- **The excess `E(u, W)` is invariant under the coordinate negation**: both the
-normalizer `|W|^{-1/d}` and the unnormalized excess transport. -/
-theorem affineExcess_comp_coordFaceReflection_zero (i : Fin d) {W : Set (Vec d)}
-    (hW : MeasurableSet W) (f : Vec d → ℝ) :
-    affineExcess (coordFaceReflection (0 : ℝ) i ⁻¹' W)
-        (fun y => f (coordFaceReflection (0 : ℝ) i y)) = affineExcess W f := by
-  unfold affineExcess
-  rw [volume_preimage_coordFaceReflection (a := (0 : ℝ)) i hW,
-    affineExcessRaw_comp_coordFaceReflection_zero i hW f]
 
 /-- The best-affine predicate transports both ways: `(c, g)` is a minimizer for
 `f` on `W` exactly when `(c, σ_i g)` is one for `f ∘ σ_i` on `σ_i ⁻¹' W`. -/

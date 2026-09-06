@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Cutoff.CoefficientFamily
 
@@ -216,13 +216,6 @@ theorem subConstCutoffTriadicCoeffFamily_coeffOn_toCoeffField (M : ABKModel d)
     ((subConstCutoffTriadicCoeffFamily M L C hC omega).coeffOn Q).toCoeffField =
       subConstCutoffField M L C omega :=
   rfl
-
-theorem subConstCutoffTriadicCoeffFamily_coeffOn_aeeq (M : ABKModel d) (L : ℤ)
-    (C : Mat d) (hC : matTranspose C = -C) (omega : Cutoff.CutoffSample d)
-    (Q : TriadicCube d) :
-    CoeffOn.AEEq ((subConstCutoffTriadicCoeffFamily M L C hC omega).coeffOn Q)
-      (subConstCutoffCoeffOn M L C hC omega Q) :=
-  Filter.EventuallyEq.rfl
 
 end
 

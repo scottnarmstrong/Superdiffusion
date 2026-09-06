@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCzGridGauge
 
@@ -29,10 +29,10 @@ rather than approximate.
 
 ## What this file proves
 
-`ofReal_cubeAverage_vecDot_gridDualTest_eq`:
+The single-depth pairing, EXACTLY:
 
 ```text
-  ⟨F, G₀⟩_{L̲²(Q)}  =  (negativeBesovPartialE Q s p F N)^p          (EXACT)
+  ⟨F, G₀⟩_{L̲²(Q)}  =  (truncated grid mass of F at depth ≤ N)          (EXACT)
 ```
 
 — the depth-`≤ N` truncated grid mass, on the nose.  The mechanism is a pure
@@ -50,7 +50,7 @@ anywhere; `√d` is NOT spent here (the sup-norm duality is exact, and
 ## What this file does NOT prove — the residual, stated exactly
 
 Two norm bounds on the SAME `G₀` remain, both at `s₀ ≤ s`, `s·p' ≤ 1/2`, with
-`P:= (negativeBesovPartialE Q s p F N)^p`:
+`P` the truncated grid mass above:
 
 * the FLAT part
   `3^{-s·m}·‖G₀‖_{L̲^{p'}(Q)} ≤ (1-3^{-s·p})^{-1/p}·P^{1/p'}` — Hölder in the
@@ -203,12 +203,6 @@ def gridDualTestCoeff (Q : TriadicCube d) (s t : ℝ) (F : Vec d → Vec d) (j :
   ((3 : ℝ) ^ (s * t * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
       ‖cubeAverageVec R F‖ ^ (t - 1)) • vecSupDual (cubeAverageVec R F)
 
-/-- **THE DUAL TEST `G₀`.**  The depth-`≤ N` grid-piecewise-constant aggregate
-`Σ_{j≤N} Σ_{R∈D_j} 3^{s·t·(m-j)}‖(F)_R‖^{t-1}e_R 1_R`. -/
-def gridDualTest (Q : TriadicCube d) (s t : ℝ) (F : Vec d → Vec d) (N : ℕ) :
-    Vec d → Vec d :=
-  fun x => ∑ j ∈ Finset.range (N + 1), gridDualDepthTest Q j (gridDualTestCoeff Q s t F j) x
-
 /-! ## 4. Integrability of the components on the cube -/
 
 /-- Each component of an `L²(Q)` field is integrable on `Q` for Lebesgue
@@ -318,70 +312,6 @@ theorem rpow_sub_one_mul_self (x t : ℝ) (hx : 0 ≤ x) (ht : 0 < t) :
     congr 1
     ring
 
-/-- **The real-valued exact duality.**  The cube average of `⟨F, G₀⟩` is the
-truncated grid mass, term by term in the depth. -/
-theorem cubeAverage_vecDot_gridDualTest (Q : TriadicCube d) (s t : ℝ) (ht : 0 < t)
-    (F : CubeEuclideanLpField Q FiniteLpExponent.two) (N : ℕ) :
-    cubeAverage Q (fun x => vecDot (F.toField x) (gridDualTest Q s t F.toField N x)) =
-      ∑ j ∈ Finset.range (N + 1),
-        (3 : ℝ) ^ (s * t * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
-          descendantsAverage Q j (fun R => ‖cubeAverageVec R F.toField‖ ^ t) := by
-  classical
-  have hFi := fun i : Fin d => integrableOn_component_cubeSet F i
-  /- split the cube average over the dept -/
-  have hint : ∀ j ∈ Finset.range (N + 1),
-      IntegrableOn (fun x =>
-        vecDot (F.toField x) (gridDualDepthTest Q j (gridDualTestCoeff Q s t F.toField j) x))
-        (cubeSet Q) volume := by
-    intro j _
-    have hrw : (fun x => vecDot (F.toField x)
-          (gridDualDepthTest Q j (gridDualTestCoeff Q s t F.toField j) x)) =
-        fun x => ∑ R ∈ descendantsAtDepth Q j,
-          (cubeSet R).indicator
-            (fun y => vecDot (F.toField y) (gridDualTestCoeff Q s t F.toField j R)) x := by
-      funext x
-      exact vecDot_gridDualDepthTest Q j _ F.toField x
-    rw [hrw]
-    refine integrable_finset_sum (descendantsAtDepth Q j) fun R _ => ?_
-    exact (integrableOn_vecDot_const F.toField
-      (gridDualTestCoeff Q s t F.toField j R) hFi).indicator (measurableSet_cubeSet R)
-  have hsplit : cubeAverage Q
-      (fun x => vecDot (F.toField x) (gridDualTest Q s t F.toField N x)) =
-      ∑ j ∈ Finset.range (N + 1), cubeAverage Q (fun x =>
-        vecDot (F.toField x)
-          (gridDualDepthTest Q j (gridDualTestCoeff Q s t F.toField j) x)) := by
-    have hpt : ∀ x : Vec d,
-        vecDot (F.toField x) (gridDualTest Q s t F.toField N x) =
-          ∑ j ∈ Finset.range (N + 1),
-            vecDot (F.toField x)
-              (gridDualDepthTest Q j (gridDualTestCoeff Q s t F.toField j) x) := by
-      intro x
-      rw [gridDualTest]
-      exact vecDot_finset_sum (F.toField x) (Finset.range (N + 1)) _
-    show (cubeVolume Q)⁻¹ *
-      ∫ x in cubeSet Q, vecDot (F.toField x) (gridDualTest Q s t F.toField N x) ∂volume = _
-    rw [show (fun x => vecDot (F.toField x) (gridDualTest Q s t F.toField N x)) =
-        (fun x => ∑ j ∈ Finset.range (N + 1),
-          vecDot (F.toField x)
-            (gridDualDepthTest Q j (gridDualTestCoeff Q s t F.toField j) x)) from funext hpt,
-      integral_finset_sum (Finset.range (N + 1)) hint, Finset.mul_sum]
-    rfl
-  rw [hsplit]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [cubeAverage_vecDot_gridDualDepthTest Q j (gridDualTestCoeff Q s t F.toField j) F]
-  have hcell : ∀ R : TriadicCube d,
-      vecDot (cubeAverageVec R F.toField) (gridDualTestCoeff Q s t F.toField j R) =
-        (3 : ℝ) ^ (s * t * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
-          ‖cubeAverageVec R F.toField‖ ^ t := by
-    intro R
-    rw [gridDualTestCoeff, vecDot_smul_right, vecDot_vecSupDual, mul_assoc,
-      rpow_sub_one_mul_self _ t (norm_nonneg _) ht]
-  rw [show (fun R => vecDot (cubeAverageVec R F.toField)
-        (gridDualTestCoeff Q s t F.toField j R)) =
-      (fun R => (3 : ℝ) ^ (s * t * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
-        ‖cubeAverageVec R F.toField‖ ^ t) from funext hcell]
-  exact descendantsAverage_mul_left Q j _ _
-
 /-! ## 7. The `ℝ≥0∞` form: the truncated grid mass, on the nose -/
 
 /-- Each depth energy of `CoarseGraining`'s running-scale negative Besov seminorm is the
@@ -419,82 +349,11 @@ theorem depthEnergy_eq_ofReal (Q : TriadicCube d) (s : FractionalOrder)
     ((D.card : ℝ)⁻¹ * ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ p.exponent.toReal)
   ring
 
-/-- **THE EXACT `ℓ^p`–`ℓ^{p'}` DUALITY OF THE DUAL TEST.**
-
-```text
-  ⟨F, G₀⟩  =  (negativeBesovPartialE Q s p F N)^p
-```
-
-on the nose: the normalized pairing of `F` against the depth-`≤ N` grid dual
-test reproduces the depth-`≤ N` truncated grid mass exactly, with no constant
-spent — in particular no `√d` (the sup-norm duality is realized by a Euclidean
-unit vector) and no inequality of any kind. -/
-theorem ofReal_cubeAverage_vecDot_gridDualTest_eq (Q : TriadicCube d) (s : FractionalOrder)
-    (p : FiniteLpExponent) (F : CubeEuclideanLpField Q FiniteLpExponent.two) (N : ℕ) :
-    ENNReal.ofReal (cubeAverage Q (fun x =>
-        vecDot (F.toField x)
-          (gridDualTest Q s.1 p.exponent.toReal F.toField N x))) =
-      negativeBesovPartialE Q s p F N ^ p.exponent.toReal := by
-  have ht : 0 < p.exponent.toReal := finiteLpExponent_toReal_pos p
-  have hnn : ∀ j : ℕ, (0 : ℝ) ≤
-      (3 : ℝ) ^ (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
-        descendantsAverage Q j
-          (fun R => ‖cubeAverageVec R F.toField‖ ^ p.exponent.toReal) := by
-    intro j
-    refine mul_nonneg (Real.rpow_nonneg (by norm_num) _) ?_
-    exact descendantsAverage_nonneg Q j _ fun R _ => Real.rpow_nonneg (norm_nonneg _) _
-  rw [cubeAverage_vecDot_gridDualTest Q s.1 p.exponent.toReal ht F N,
-    ENNReal.ofReal_sum_of_nonneg fun j _ => hnn j, negativeBesovPartialE,
-    ← ENNReal.rpow_mul, inv_mul_cancel₀ (ne_of_gt ht), ENNReal.rpow_one]
-  exact (Finset.sum_congr rfl fun j _ => depthEnergy_eq_ofReal Q s p F j).symm
-
-/-! ## 8. The `L^q(Q)` membership of the dual test, at every exponent
-
-The dual test is a finite sum of constants times indicators of measurable sets,
-on a finite measure; so it belongs to every `L^q(Q)`, `L²(Q)` included.  This
-discharges the `euclideanMemL2` field of `CubeEuclideanWspL2Field` for `G₀` and
-the finiteness of its flat part, leaving ONLY the two norm bounds of the file
-header as the residual of `GridDualTestFamilyBanded`. -/
-
 /-- The Hilbert realization is additive on finite sums (it is the identity on
 the underlying pi type). -/
 theorem ofVec_finset_sum {ι : Type*} (T : Finset ι) (w : ι → Vec d) :
     HilbertVec.ofVec (∑ j ∈ T, w j) = ∑ j ∈ T, HilbertVec.ofVec (w j) :=
   WithLp.toLp_sum 2 (Vec d) T w
-
-/-- The dual test, written as a finite sum of indicators of constants in the
-Hilbert realization. -/
-theorem ofVec_gridDualTest_eq (Q : TriadicCube d) (s t : ℝ) (Fv : Vec d → Vec d) (N : ℕ)
-    (x : Vec d) :
-    HilbertVec.ofVec (gridDualTest Q s t Fv N x) =
-      ∑ j ∈ Finset.range (N + 1), ∑ R ∈ descendantsAtDepth Q j,
-        (cubeSet R).indicator
-          (fun _ => HilbertVec.ofVec (gridDualTestCoeff Q s t Fv j R)) x := by
-  rw [gridDualTest, ofVec_finset_sum]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [gridDualDepthTest, ofVec_finset_sum]
-  refine Finset.sum_congr rfl fun R _ => ?_
-  by_cases hx : x ∈ cubeSet R
-  · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
-  · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
-    rfl
-
-/-- **The dual test belongs to every `L^q(Q)`** — in particular to `L²(Q)`, the
-membership `CubeEuclideanWspL2Field` demands, and to `L^{p'}(Q)`, so its flat
-part is finite before any estimate is made. -/
-theorem memLp_ofVec_gridDualTest (Q : TriadicCube d) (s t : ℝ) (Fv : Vec d → Vec d)
-    (N : ℕ) (q : ℝ≥0∞) :
-    MemLp (fun x => HilbertVec.ofVec (gridDualTest Q s t Fv N x)) q
-      (normalizedCubeMeasure Q) := by
-  have hfun : (fun x => HilbertVec.ofVec (gridDualTest Q s t Fv N x)) =
-      fun x => ∑ j ∈ Finset.range (N + 1), ∑ R ∈ descendantsAtDepth Q j,
-        (cubeSet R).indicator
-          (fun _ => HilbertVec.ofVec (gridDualTestCoeff Q s t Fv j R)) x :=
-    funext fun x => ofVec_gridDualTest_eq Q s t Fv N x
-  rw [hfun]
-  refine memLp_finset_sum _ fun j _ => ?_
-  refine memLp_finset_sum _ fun R _ => ?_
-  exact MemLp.indicator (measurableSet_cubeSet R) (memLp_const _)
 
 /-- The normalized field pairing of `CoarseGraining` is the cube average of `⟨F, ·⟩`: the
 bridge from `§6`–`§7` to `GridDualTestFamilyBanded`, once a `W̲^{s,p'} ∩ L²`

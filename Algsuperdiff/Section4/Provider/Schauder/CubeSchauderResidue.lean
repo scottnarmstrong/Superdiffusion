@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderOneStep
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderPoincare
@@ -165,129 +165,6 @@ theorem exists_frozenHarmonicReplacement_truncatedWindow [NeZero d] {m n : ℤ} 
     (Nat.cast_nonneg d) hKG
 
 /-! ## 3. The residue constant and the full chain -/
-
-/-- The residue constant of the forced one step:
-`√((3⁴)^d) · C_Poincaré(d) · d`.  The `√((3⁴)^d)` is the volume ratio of the two
-truncated windows `U_2 ⊆ U_0`, the `d` the coordinate dictionary's
-Cauchy--Schwarz factor. -/
-def schauderResidueConst (d : ℕ) : ℝ :=
-  Real.sqrt (((3 : ℝ) ^ (4 : ℤ)) ^ d) * (schauderDirichletPoincareConst d * (d : ℝ))
-
-theorem schauderResidueConst_nonneg (d : ℕ) : 0 ≤ schauderResidueConst d :=
-  mul_nonneg (Real.sqrt_nonneg _)
-    (mul_nonneg (schauderDirichletPoincareConst_nonneg d) (Nat.cast_nonneg d))
-
-/-- **The harmonic competitor of the forced equation, with its residue priced.**
-
-For `u` solving `-Δu = ∇·G` on `□_m` with `[G]_{C^{0,1/2}(□_m)} ≤ KG`, and for
-every base point `x ∈ □_m` and scale `n ≤ m`, there is a function `v` which is
-
-* classically harmonic on the window `W = (x + □_n) ∩ □_m` (Weyl), and
-* globally square integrable,
-
-with the one-step remainder slot bounded by the **freezing gain**:
-
-```text
-  3^{-n} · ‖u - v‖_{L̲²((x+□_{n-2}) ∩ □_m)} ≤ schauderResidueConst d · KG · √(3ⁿ) .
-```
--/
-theorem exists_harmonicCompetitor_residue [NeZero d] {m n : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m)) (hnm : n - 1 ≤ m)
-    (u : H1Function (openCubeSet (originCube d m)))
-    {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
-    (hGL2 : MemVectorL2 (openCubeSet (originCube d m)) G)
-    (hG : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) KG G)
-    (hu : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d))
-      (openCubeSet (originCube d m)) u G) :
-    ∃ v : Vec d → ℝ,
-      HarmonicOnNhd (v ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-          ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' truncatedWindow x m n) ∧
-        MemLp v 2 (volume : Measure (Vec d)) ∧
-        (3 : ℝ) ^ (-n) *
-            normalizedL2On (truncatedWindow x m (n - 2)) (fun y => u.toFun y - v y)
-          ≤ schauderResidueConst d * KG * Real.sqrt ((3 : ℝ) ^ n) := by
-  set W : Set (Vec d) := truncatedWindow x m n with hWdef
-  have hWsub : W ⊆ openCubeSet (originCube d m) := truncatedWindow_subset_domain x m n
-  have hWopen : IsOpen W := isOpen_truncatedWindow x m n
-  have hWmeas : MeasurableSet W := measurableSet_truncatedWindow x m n
-  have hWpos : 0 < (volume W).toReal := volume_toReal_truncatedWindow_pos x hx hnm
-  obtain ⟨w, hharm, hgrad⟩ :=
-    exists_frozenHarmonicReplacement_truncatedWindow (n := n) hx u hKG hGL2 hG hu
-  obtain ⟨v, hvharm, hvmem, hvae⟩ :=
-    exists_harmonicRepresentative_memLp hWopen hharm
-  refine ⟨v, hvharm, hvmem, ?_⟩
-  -- `u - v = w` almost everywhere on the window
-  have hae : ∀ᵐ y ∂(volume.restrict W), u.toFun y - v y = w.toH1Function.toFun y := by
-    filter_upwards [hvae.restrict, MeasureTheory.self_mem_ae_restrict hWmeas] with y hy hyW
-    have hsub : (u.restrict (isOpen_truncatedWindow x m n)
-        (truncatedWindow_subset_domain x m n) - w.toH1Function).toFun y
-        = u.toFun y - w.toH1Function.toFun y := by
-      simp only [H1Function.sub_toFun]
-      rfl
-    rw [hy, Set.indicator_of_mem hyW, hsub]
-    ring
-  have hW2sub : truncatedWindow x m (n - 2) ⊆ W := truncatedWindow_mono x m (by omega)
-  have hae2 : ∀ᵐ y ∂(volume.restrict (truncatedWindow x m (n - 2))),
-      u.toFun y - v y = w.toH1Function.toFun y :=
-    ae_restrict_of_ae_restrict_of_subset hW2sub hae
-  -- the `L²` legs of the transfer
-  have hwW : MemLp w.toH1Function.toFun 2 (volume.restrict W) := by
-    have h := w.toH1Function.memL2
-    simpa only [volumeMeasureOn] using h
-  -- Poincaré at the inscribing cube `x + □_n`
-  have hinscribe : ∀ y ∈ W, ∀ j : Fin d,
-      x j - (1 / 2 : ℝ) * (3 : ℝ) ^ n < y j ∧ y j < x j + (1 / 2 : ℝ) * (3 : ℝ) ^ n := by
-    intro y hy j
-    have h := mem_image_add_openCubeSet_iff.1 (truncatedWindow_subset_translate x m n hy) j
-    exact ⟨by linarith only [h.1], by linarith only [h.2]⟩
-  have hpoin := eLpNorm_le_schauderDirichletPoincare hWmeas x n hinscribe w
-  have hpoin' : (eLpNorm w.toH1Function.toFun 2 (volume.restrict W)).toReal
-      ≤ schauderDirichletPoincareConst d * (3 : ℝ) ^ n *
-        ((d : ℝ) * KG * Real.sqrt ((3 : ℝ) ^ n * (volume W).toReal)) := by
-    refine hpoin.trans (mul_le_mul_of_nonneg_left hgrad ?_)
-    exact mul_nonneg (schauderDirichletPoincareConst_nonneg d)
-      (zpow_pos (by norm_num) n).le
-  -- convert to the normalized seminorm on `W`
-  have hsqrtV : Real.sqrt ((3 : ℝ) ^ n * (volume W).toReal)
-      = Real.sqrt ((3 : ℝ) ^ n) * Real.sqrt ((volume W).toReal) :=
-    Real.sqrt_mul (zpow_pos (by norm_num) n).le _
-  have hVne : Real.sqrt ((volume W).toReal) ≠ 0 := ne_of_gt (Real.sqrt_pos.2 hWpos)
-  have hnormW : normalizedL2On W w.toH1Function.toFun
-      ≤ schauderDirichletPoincareConst d * (d : ℝ) * KG *
-        ((3 : ℝ) ^ n * Real.sqrt ((3 : ℝ) ^ n)) := by
-    rw [normalizedL2On_eq_toReal_eLpNorm_div hwW, div_le_iff₀ (Real.sqrt_pos.2 hWpos)]
-    refine hpoin'.trans (le_of_eq ?_)
-    rw [hsqrtV]
-    ring
-  -- transfer to the inner window `U_2`
-  have hW2 : normalizedL2On (truncatedWindow x m (n - 2)) (fun y => u.toFun y - v y)
-      ≤ Real.sqrt (((3 : ℝ) ^ (4 : ℤ)) ^ d) *
-        (schauderDirichletPoincareConst d * (d : ℝ) * KG *
-          ((3 : ℝ) ^ n * Real.sqrt ((3 : ℝ) ^ n))) := by
-    have hcongr2 : normalizedL2On (truncatedWindow x m (n - 2)) (fun y => u.toFun y - v y)
-        = normalizedL2On (truncatedWindow x m (n - 2)) w.toH1Function.toFun :=
-      normalizedL2On_congr_ae hae2
-    have htrans := normalizedL2On_truncatedWindow_le (l := n) (k := n - 2) hx
-      (by omega : n - 2 - 1 ≤ m) hnm (by omega) (f := w.toH1Function.toFun) hwW
-    rw [show n - (n - 2) + 2 = (4 : ℤ) by ring] at htrans
-    rw [hcongr2]
-    refine htrans.trans (mul_le_mul_of_nonneg_left hnormW (Real.sqrt_nonneg _))
-  -- multiply by `3^{-n}`
-  have h3n : (0 : ℝ) < (3 : ℝ) ^ (-n) := zpow_pos (by norm_num) _
-  have hmul := mul_le_mul_of_nonneg_left hW2 h3n.le
-  refine hmul.trans (le_of_eq ?_)
-  have hcancel : (3 : ℝ) ^ (-n) * (3 : ℝ) ^ n = 1 := by
-    rw [← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), neg_add_cancel, zpow_zero]
-  rw [schauderResidueConst]
-  calc (3 : ℝ) ^ (-n) * (Real.sqrt (((3 : ℝ) ^ (4 : ℤ)) ^ d) *
-        (schauderDirichletPoincareConst d * (d : ℝ) * KG *
-          ((3 : ℝ) ^ n * Real.sqrt ((3 : ℝ) ^ n))))
-      = Real.sqrt (((3 : ℝ) ^ (4 : ℤ)) ^ d) *
-          (schauderDirichletPoincareConst d * (d : ℝ)) * KG *
-          Real.sqrt ((3 : ℝ) ^ n) * ((3 : ℝ) ^ (-n) * (3 : ℝ) ^ n) := by ring
-    _ = Real.sqrt (((3 : ℝ) ^ (4 : ℤ)) ^ d) *
-          (schauderDirichletPoincareConst d * (d : ℝ)) * KG *
-          Real.sqrt ((3 : ℝ) ^ n) := by rw [hcancel, mul_one]
 
 end
 

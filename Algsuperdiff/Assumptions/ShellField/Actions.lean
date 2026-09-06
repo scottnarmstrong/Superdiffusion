@@ -180,6 +180,12 @@ theorem translate_secondDeriv (z : Vec d) (j : ShellField d) (x : Vec d) :
     secondDeriv (translate z j) x = secondDeriv j (x + z) :=
   rfl
 
+/-- Translation by the zero vector is the identity on shell fields. -/
+@[simp]
+theorem translate_zero (j : ShellField d) :
+    translate (0 : Vec d) j = j :=
+  ext fun x => by rw [translate_apply, add_zero]
+
 theorem continuous_translate (z : Vec d) :
     Continuous (translate (d := d) z) :=
   Continuous.subtype_mk

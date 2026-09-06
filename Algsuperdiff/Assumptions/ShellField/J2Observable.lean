@@ -63,9 +63,9 @@ theorem norm_vec_le_vecNorm (v : Vec d) : ‖v‖ ≤ vecNorm v := by
 private theorem sum_abs_entries_le (A : Mat d) :
     (∑ i, ∑ j, |A i j|) ≤ (d : ℝ) ^ 2 * ‖A‖ := by
   calc
-    (∑ i, ∑ j, |A i j|) ≤ ∑ _i : Fin d, ∑ _j : Fin d, ‖A‖ := by
-      gcongr with i j
-      simpa only [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
+    (∑ i, ∑ j, |A i j|) ≤ ∑ _i : Fin d, ∑ _j : Fin d, ‖A‖ :=
+      Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun j _ => by
+        simpa only [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
     _ = (d : ℝ) ^ 2 * ‖A‖ := by
       simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
         nsmul_eq_mul, pow_two]
@@ -89,17 +89,15 @@ private theorem norm_matrixOperatorNorm_sub_le_sq_mul_norm (A B : Mat d) :
     calc
       matrixOperatorNorm B ≤ matrixOperatorNorm A +
           ∑ i, ∑ j, |B i j - A i j| := h
-      _ ≤ matrixOperatorNorm A + (d : ℝ) ^ 2 * ‖A - B‖ := by
-        gcongr
-        simpa only [hnorm, Matrix.sub_apply] using hsum
+      _ ≤ matrixOperatorNorm A + (d : ℝ) ^ 2 * ‖A - B‖ :=
+        add_le_add_right (by simpa only [hnorm, Matrix.sub_apply] using hsum) _
   · rw [sub_le_iff_le_add]
     have h := matrixOperatorNorm_le_matrixOperatorNorm_add_sum_abs_sub_entries A B
     calc
       matrixOperatorNorm A ≤ matrixOperatorNorm B +
           ∑ i, ∑ j, |A i j - B i j| := h
-      _ ≤ matrixOperatorNorm B + (d : ℝ) ^ 2 * ‖A - B‖ := by
-        gcongr
-        exact sum_abs_entries_le (A - B)
+      _ ≤ matrixOperatorNorm B + (d : ℝ) ^ 2 * ‖A - B‖ :=
+        add_le_add_right (sum_abs_entries_le (A - B)) _
       _ = (d : ℝ) ^ 2 * ‖A - B‖ + matrixOperatorNorm B := add_comm _ _
 
 private theorem matrixOperatorNorm_lipschitz :
@@ -128,15 +126,15 @@ private theorem matrixDerivativeNormValue_le_sq_mul_norm (D : MatrixDerivative d
       calc
         matrixOperatorNorm (D v.1) ≤ (d : ℝ) ^ 2 * ‖D v.1‖ :=
           matrixOperatorNorm_le_sq_mul_norm _
-        _ ≤ (d : ℝ) ^ 2 * (‖D‖ * ‖v.1‖) := by
-          gcongr
-          exact D.le_opNorm _
-        _ ≤ (d : ℝ) ^ 2 * (‖D‖ * vecNorm v.1) := by
-          gcongr
-          exact norm_vec_le_vecNorm v.1
-        _ ≤ (d : ℝ) ^ 2 * (‖D‖ * 1) := by
-          gcongr
-          exact v.2
+        _ ≤ (d : ℝ) ^ 2 * (‖D‖ * ‖v.1‖) :=
+          mul_le_mul_of_nonneg_left (D.le_opNorm _) (sq_nonneg _)
+        _ ≤ (d : ℝ) ^ 2 * (‖D‖ * vecNorm v.1) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left (norm_vec_le_vecNorm v.1) (norm_nonneg D))
+            (sq_nonneg _)
+        _ ≤ (d : ℝ) ^ 2 * (‖D‖ * 1) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left v.2 (norm_nonneg D)) (sq_nonneg _)
         _ = (d : ℝ) ^ 2 * ‖D‖ := by ring
 
 private theorem matrixDerivativeNormValueSet_bddAbove (D : MatrixDerivative d) :
@@ -219,17 +217,15 @@ theorem norm_matrixDerivativeNorm_sub_le_sq_mul_norm (D E : MatrixDerivative d) 
       matrixDerivativeNorm E ≤ matrixDerivativeNorm (E - D) + matrixDerivativeNorm D := hED
       _ = matrixDerivativeNorm (D - E) + matrixDerivativeNorm D := by
         rw [show E - D = -(D - E) by abel, matrixDerivativeNorm_neg]
-      _ ≤ (d : ℝ) ^ 2 * ‖D - E‖ + matrixDerivativeNorm D := by
-        gcongr
-        exact matrixDerivativeNorm_le_sq_mul_norm (D - E)
+      _ ≤ (d : ℝ) ^ 2 * ‖D - E‖ + matrixDerivativeNorm D :=
+        add_le_add_left (matrixDerivativeNorm_le_sq_mul_norm (D - E)) _
       _ = matrixDerivativeNorm D + (d : ℝ) ^ 2 * ‖D - E‖ := add_comm _ _
   · rw [sub_le_iff_le_add]
     calc
       matrixDerivativeNorm D ≤
           matrixDerivativeNorm (D - E) + matrixDerivativeNorm E := hDE
-      _ ≤ (d : ℝ) ^ 2 * ‖D - E‖ + matrixDerivativeNorm E := by
-        gcongr
-        exact matrixDerivativeNorm_le_sq_mul_norm (D - E)
+      _ ≤ (d : ℝ) ^ 2 * ‖D - E‖ + matrixDerivativeNorm E :=
+        add_le_add_left (matrixDerivativeNorm_le_sq_mul_norm (D - E)) _
 
 theorem matrixDerivativeNorm_lipschitz :
     LipschitzWith (Real.toNNReal ((d : ℝ) ^ 2))
@@ -279,15 +275,15 @@ private theorem matrixSecondDerivativeNormValue_le_sq_mul_norm
       calc
         matrixDerivativeNorm (H u.1) ≤ (d : ℝ) ^ 2 * ‖H u.1‖ :=
           matrixDerivativeNorm_le_sq_mul_norm _
-        _ ≤ (d : ℝ) ^ 2 * (‖H‖ * ‖u.1‖) := by
-          gcongr
-          exact H.le_opNorm _
-        _ ≤ (d : ℝ) ^ 2 * (‖H‖ * vecNorm u.1) := by
-          gcongr
-          exact norm_vec_le_vecNorm u.1
-        _ ≤ (d : ℝ) ^ 2 * (‖H‖ * 1) := by
-          gcongr
-          exact u.2
+        _ ≤ (d : ℝ) ^ 2 * (‖H‖ * ‖u.1‖) :=
+          mul_le_mul_of_nonneg_left (H.le_opNorm _) (sq_nonneg _)
+        _ ≤ (d : ℝ) ^ 2 * (‖H‖ * vecNorm u.1) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left (norm_vec_le_vecNorm u.1) (norm_nonneg H))
+            (sq_nonneg _)
+        _ ≤ (d : ℝ) ^ 2 * (‖H‖ * 1) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left u.2 (norm_nonneg H)) (sq_nonneg _)
         _ = (d : ℝ) ^ 2 * ‖H‖ := by ring
 
 private theorem matrixSecondDerivativeNormValueSet_bddAbove
@@ -355,16 +351,20 @@ private theorem matrixSecondDerivativeNorm_le_add_norm_sub
           add_le_add (matrixDerivativeNorm_le_sq_mul_norm _)
             (matrixSecondDerivativeNormValue_le K (some u))
         _ = (d : ℝ) ^ 2 * ‖(H - K) u.1‖ + matrixSecondDerivativeNorm K := rfl
-        _ ≤ (d : ℝ) ^ 2 * (‖H - K‖ * ‖u.1‖) + matrixSecondDerivativeNorm K := by
-          gcongr
-          exact (H - K).le_opNorm _
+        _ ≤ (d : ℝ) ^ 2 * (‖H - K‖ * ‖u.1‖) + matrixSecondDerivativeNorm K :=
+          add_le_add_left
+            (mul_le_mul_of_nonneg_left ((H - K).le_opNorm _) (sq_nonneg _)) _
         _ ≤ (d : ℝ) ^ 2 * (‖H - K‖ * vecNorm u.1) +
-              matrixSecondDerivativeNorm K := by
-          gcongr
-          exact norm_vec_le_vecNorm u.1
-        _ ≤ (d : ℝ) ^ 2 * (‖H - K‖ * 1) + matrixSecondDerivativeNorm K := by
-          gcongr
-          exact u.2
+              matrixSecondDerivativeNorm K :=
+          add_le_add_left
+            (mul_le_mul_of_nonneg_left
+              (mul_le_mul_of_nonneg_left (norm_vec_le_vecNorm u.1)
+                (norm_nonneg (H - K))) (sq_nonneg _)) _
+        _ ≤ (d : ℝ) ^ 2 * (‖H - K‖ * 1) + matrixSecondDerivativeNorm K :=
+          add_le_add_left
+            (mul_le_mul_of_nonneg_left
+              (mul_le_mul_of_nonneg_left u.2 (norm_nonneg (H - K)))
+              (sq_nonneg _)) _
         _ = matrixSecondDerivativeNorm K + (d : ℝ) ^ 2 * ‖H - K‖ := by ring
 
 theorem norm_matrixSecondDerivativeNorm_sub_le_sq_mul_norm

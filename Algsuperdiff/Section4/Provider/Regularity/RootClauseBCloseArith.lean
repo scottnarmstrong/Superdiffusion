@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBInputs
 import Algsuperdiff.Section4.Provider.Regularity.RootPayloadDataM
@@ -55,7 +55,7 @@ theorem volumeRatio_inner_gen (d : ℕ) (m j : ℤ) :
   ν^{1/2}‖∇u‖_{L̲²((z+□_j) ∩ □_m)}  ≤  3^{(m-j)d/2} · ν^{1/2}‖∇u‖_{L̲²(□_m)} .
 ```
 
-`RootClauseBInputs.stepSevenNuGradNorm_inner_le_cube` is the case `j = m-1`.
+The case `j = m-1` is the one the close chain consumes.
 Not an estimate on `u`: integral monotonicity on nested sets plus the exact
 volume computation of §1. -/
 theorem stepSevenNuGradNorm_window_le_cube (d : ℕ) {m j : ℤ} {z : Vec d} {nu : ℝ}
@@ -87,9 +87,6 @@ theorem stepSevenNuGradNorm_window_le_cube (d : ℕ) {m j : ℤ} {z : Vec d} {nu
 /-- **The `K_g` slot** at the chain's coarse scale `k`: the exact volume ratio
 `3^{(m-k)d/2}`. -/
 def rootClauseBTopKg (d : ℕ) (m k : ℤ) : ℝ := Real.sqrt (((3 : ℝ) ^ (m - k)) ^ d)
-
-theorem rootClauseBTopKg_nonneg (d : ℕ) (m k : ℤ) : 0 ≤ rootClauseBTopKg d m k :=
-  Real.sqrt_nonneg _
 
 /-- `K_g` in exponential form. -/
 theorem rootClauseBTopKg_eq (d : ℕ) (m k : ℤ) :

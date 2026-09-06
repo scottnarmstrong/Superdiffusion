@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdBridgeStepFourDatumSplit
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyJoinDatumSplitErrorWeighted
@@ -25,8 +25,8 @@ slot:
   every other byte unchanged;
 * `edBridgeDeltaErrorWeighted` — the same weight-and-normalizer wrapper `W · (3^{-n} · bracket)`;
 * `excessDecay_stepFour_slot_general_datumSplit_errorWeighted` — the Step-4 decay slot at
-  every centre, off the error-weighted join, in the shape the collapse
-  (`stepFourDecay_of_edOneStepErrorWeighted`) and the proved budget composition
+  every centre, off the error-weighted join, in the shape the error-weighted
+  Step-4 collapse and the proved budget composition
   `stepFourDeltaOutErrorWeighted_add_datumLeg_le_boundaryThreeLegs` consume: contraction,
   `ε·|∇ℓ|`, and `δ + datum leg`.
 

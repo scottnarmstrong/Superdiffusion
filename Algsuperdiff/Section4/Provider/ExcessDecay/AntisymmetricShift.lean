@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.Dirichlet
 import Homogenization.Sobolev.Foundations.EuclideanL2CZ
@@ -410,15 +410,6 @@ theorem vecDot_matVecMul_self_eq_zero_of_skew {C : Mat d}
       using congrFun (congrFun hC i) j
   rw [vecDot_matVecMul_expand C v v]
   exact sum_sum_mul_eq_zero_of_skew_of_symm hCentry fun i j => by ring
-
-theorem vecDot_matVecMul_sub_const_self_of_skew {C : Mat d}
-    (hC : matTranspose C = -C) (A : Mat d) (v : Vec d) :
-    vecDot (matVecMul (A - C) v) v = vecDot (matVecMul A v) v := by
-  rw [sub_matVecMul]
-  have hsub : vecDot (matVecMul A v - matVecMul C v) v =
-      vecDot (matVecMul A v) v - vecDot (matVecMul C v) v := by
-    simp only [vecDot, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
-  rw [hsub, vecDot_matVecMul_self_eq_zero_of_skew hC v, sub_zero]
 
 /-- The symmetric part is untouched by a skew shift. -/
 theorem symmPart_sub_const_of_skew {C : Mat d} (hC : matTranspose C = -C)

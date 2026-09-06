@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCarrierBridge
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGCarrierEnergy
@@ -12,7 +12,7 @@ import Algsuperdiff.Section3.Cutoff.Limit
 
 ## What this file supplies
 
-`RecutCoreSupply`'s energy slot (`hS0`, `hS`, `hSbound`) needs the printed
+The §4.5 supplier's energy slot (`hS0`, `hS`, `hSbound`) needs the printed
 per-cube energy `‖σ^{1/2}∇u‖_{L̲²(R)}` — this repository's `printedLocalEnergy`
 at the cutoff coefficient field — bounded at EVERY depth `j ≤ m` below `□_m`.
 Theorem C (`anomalous_regularity`) gives the display only on the deep range

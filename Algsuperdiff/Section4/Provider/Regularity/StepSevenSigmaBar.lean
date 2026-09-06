@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenEndAssembly
 import Algsuperdiff.Section4.Provider.Annular.SigmaBarBudget
@@ -17,13 +17,12 @@ The Step-7d chain hard-codes the printed comparison
   e.shom.m.vs.shom.n :   σ̄_{n'}  ≤  2 σ̄_m
 ```
 
- at the literal constant `2` in five places (`stepSevenDataLeg_merge`,
-`stepSevenEnergyDensityEstimate_merged`, `stepSevenEnergyDensityEstimate`,
-`stepSevenEnd_chain`, `exists_stepSevenEnd_chain_of_lambda`), while the only
-comparison proved here is
+ at the literal constant `2` in five places along the Step-7d chain — the
+data-leg merge, the merged and the pinned energy-density estimates, the end
+chain and its narrowed form — while the only comparison proved here is
 `Annular.SigmaBarBudget.sigmaBar_ratio_le_four`, i.e. the constant `4`.
 
-The route is the `rootBracket_collapse` pattern already used for `Ccol`:
+The route is the generic-constant collapse pattern already used for `Ccol`:
 generic-`Ccmp` siblings of the pinned theorems, leaving the pinned statements
 untouched.
 
@@ -83,13 +82,13 @@ theorem sigmaBar_le_four_mul_sigmaBar (M : ABKModel d) {m0 : ℤ}
 
 /-! ## 2. The data-leg collapse, generic in `Ccmp` -/
 
-/-- **`stepSevenDataLeg_merge` at a generic comparison constant**.
+/-- **The data-leg merge at a generic comparison constant**.
 
 ```text
   √σ̄_{n'} · W · (σ̄_m^{-1}G + H)  ≤  √Ccmp · W · ((√σ̄_m)^{-1}G + √σ̄_m·H) .
 ```
 
-At `Ccmp := 2` this is `stepSevenDataLeg_merge` verbatim (machine-checked); at
+At `Ccmp := 2` this is the printed data-leg merge verbatim (machine-checked); at
 `Ccmp := 4` it is the proved envelope's own comparison, at cost `2`. -/
 theorem stepSevenDataLeg_merge_gen {shomNp shomM Ccmp W G H : ℝ} (hshomM : 0 < shomM)
     (hCcmp : 0 ≤ Ccmp) (hW : 0 ≤ W) (hG : 0 ≤ G) (hH : 0 ≤ H)
@@ -118,7 +117,7 @@ theorem stepSevenDataLeg_merge_gen {shomNp shomM Ccmp W G H : ℝ} (hshomM : 0 <
 
 /-! ## 3. `e.energy.density.estimate` with the printed bracket, generic in `Ccmp` -/
 
-/-- **`stepSevenEnergyDensityEstimate_merged` at a generic comparison constant.**
+/-- **The merged energy-density estimate at a generic comparison constant.**
 
 `stepSevenEnergyDensityEstimate_compose` (already generic in `Ccmp`) followed
 by `stepSevenDataLeg_merge_gen` at the SAME comparison, so `e.shom.m.vs.shom.n`
@@ -149,7 +148,7 @@ theorem stepSevenEnergyDensityEstimate_merged_gen {Cg Cend Ccmp R34 R14 shomNp s
     linarith only [hmerge]
   linarith only [hbase, hpush]
 
-/-- **`stepSevenEnergyDensityEstimate` at a generic comparison constant**, i.e.
+/-- **The energy-density estimate at a generic comparison constant**, i.e.
 `e.energy.density.estimate` at the printed exponent `3^{(1-α)(m-n)}` with the
 printed data bracket and the `σ̄` comparison left as a parameter.  At `Ccmp:=
 2` this is the pinned parent verbatim. -/
@@ -195,7 +194,7 @@ theorem stepSevenEnergyDensityEstimate_gen {alpha : ℝ} {n m : ℤ}
 
 /-! ## 4. Step 7d end to end, generic in `Ccmp` -/
 
-/-- **`stepSevenEnd_chain` at a generic comparison constant.**
+/-- **The Step-7d end chain at a generic comparison constant.**
 
 The three proved displays of the node, chained, with `e.shom.m.vs.shom.n` a
 parameter rather than the printed `2`.  Each hypothesis is literally the
@@ -236,52 +235,6 @@ theorem stepSevenEnd_chain_gen {alpha : ℝ} {n m : ℤ}
   rw [hassoc] at hend0
   exact stepSevenEnergyDensityEstimate_gen hCg hCcmp hshomM hoscTrunc hW hG hH hcomp
     hgrad hend0
-
-/-! ## 5. The chain at the proved comparison `Ccmp = 4` -/
-
-/-- **Step 7d end to end at the proved `σ̄` comparison.**
-
-`stepSevenEnd_chain_gen` with `shomNp := σ̄_{n'}`, `shomM := σ̄_m` and `Ccmp:=
-4`, the comparison discharged from the frozen Section-3 `inductionState` by
-`sigmaBar_le_four_mul_sigmaBar`.  The printed `√2` becomes `√4 = 2`; no other
-constant moves.  This is the form the outer assembly can actually consume — the
-printed `2` is not available in this repository. -/
-theorem stepSevenEnd_chain_sigmaBarFour (M : ABKModel d) {m0 : ℤ}
-    {Ecap : {E : ℝ // 1 ≤ E}} (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 Ecap)
-    {alpha : ℝ} {n m n' : ℤ} (hnm : n' ≤ m) (hm : m ≤ m0)
-    {Cg Cmean Cemb Cbr Cout Ctr gradLoc oscTrunc oscLoc besovP1 besov
-      dataM gradM dataG W G H : ℝ}
-    (hCg : 0 ≤ Cg) (hCmean : 0 ≤ Cmean) (hCemb : 0 ≤ Cemb) (hCbr : 0 ≤ Cbr)
-    (hoscTrunc : 0 ≤ oscTrunc) (hW : 0 ≤ W) (hG : 0 ≤ G) (hH : 0 ≤ H)
-    (hgrad : gradLoc ≤
-      Cg * Real.sqrt (Annealed.sigmaBar M n' : ℝ) *
-          Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) * oscTrunc +
-        Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-          (Real.sqrt (Annealed.sigmaBar M n' : ℝ) *
-            (W * (((Annealed.sigmaBar M m : ℝ))⁻¹ * G + H)) + dataM))
-    (hmean : oscTrunc ≤ Cmean * oscLoc)
-    (hembed : oscLoc ≤ Cemb * besovP1)
-    (hbridge : besovP1 ≤ Cbr * besov)
-    (hpoincare : besov ≤
-      Cout * (Ctr * Real.rpow (3 : ℝ) (1 / 4 * stepSixExponent alpha n m)) *
-        (Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ * gradM +
-          ((Annealed.sigmaBar M m : ℝ))⁻¹ * dataG)) :
-    gradLoc ≤
-      Cg * 2 * (Cmean * Cemb * Cbr * Cout * Ctr) *
-          Real.rpow (3 : ℝ) (stepSixExponent alpha n m) *
-          (gradM + Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ * dataG) +
-        Cg * Real.rpow (3 : ℝ) (3 / 4 * stepSixExponent alpha n m) *
-          (2 * (W * ((Real.sqrt (Annealed.sigmaBar M m : ℝ))⁻¹ * G +
-            Real.sqrt (Annealed.sigmaBar M m : ℝ) * H)) + dataM) := by
-  have hshomM : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ) := (Annealed.sigmaBar M m).2
-  have hcomp := sigmaBar_le_four_mul_sigmaBar M hS hnm hm
-  have h := stepSevenEnd_chain_gen (Ccmp := 4) hCg hCmean hCemb hCbr (by norm_num)
-    hshomM hoscTrunc hW hG hH hcomp hgrad hmean hembed hbridge hpoincare
-  have hfour : Real.sqrt (4 : ℝ) = 2 := by
-    rw [show (4 : ℝ) = 2 ^ (2 : ℕ) by norm_num]
-    exact Real.sqrt_sq (by norm_num)
-  rw [hfour] at h
-  exact h
 
 end
 

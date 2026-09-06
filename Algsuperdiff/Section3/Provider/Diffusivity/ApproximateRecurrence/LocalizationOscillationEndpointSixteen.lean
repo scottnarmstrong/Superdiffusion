@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationOscillationEndpoint
 
@@ -124,7 +124,7 @@ theorem three_term_budget_le_mul {C W Csig sqd Nr G P S Eb gamma Ctot Kn : ℝ}
       mul_le_mul_of_nonneg_left hSP (mul_nonneg hA0 hNrG0)
     have hstep2 : C * sqd * Eb ≤ C * sqd := by
       have hCs : (0 : ℝ) ≤ C * sqd := mul_nonneg hC hsqd
-      nlinarith [hCs, hEb, hEb0]
+      exact mul_le_of_le_one_right hCs hEb
     have hNrGle : Nr * G ≤ Kn * gamma ^ (31 : ℕ) := by
       have hNrG : Nr * G ≤ Nr * gamma ^ (32 : ℕ) := mul_le_mul_of_nonneg_left hG hNr0
       have hstep : Nr * gamma ^ (32 : ℕ) = (Nr * gamma) * gamma ^ (31 : ℕ) := by ring
@@ -306,7 +306,7 @@ theorem exists_gamma0_freshShellDirichlet_meshOscillation_le_gamma_pow_sixteen
       rw [le_inv_comm₀ (by norm_num) hgamma0]
       linarith
     have h10 : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) := by norm_num
-    nlinarith [hinv, h10]
+    exact one_le_mul_of_one_le_of_one_le h10 hinv
   have hmK1 : m ≤ K - 1 := by
     have hle : (m : ℝ) + 1 ≤ (K : ℝ) := by linarith
     have : m + 1 ≤ K := by exact_mod_cast hle
@@ -386,7 +386,7 @@ theorem exists_gamma0_freshShellDirichlet_meshOscillation_le_gamma_pow_sixteen
       have hsq : (M.gamma ^ (100 : ℕ)) ^ (2 : ℕ) ≤ (1 : ℝ) ^ (2 : ℕ) :=
         pow_le_pow_left₀ h0 h1 2
       have hcoef : (0 : ℝ) ≤ 32 * Real.exp 1 ^ (2 : ℕ) := by positivity
-      nlinarith [mul_le_mul_of_nonneg_left hsq hcoef]
+      exact add_le_add le_rfl (mul_le_mul_of_nonneg_left hsq hcoef)
     have h3d : (0 : ℝ) ≤ (3 : ℝ) ^ d := by positivity
     exact mul_le_mul_of_nonneg_left hmono h3d
   have hCtotle : Cdisp * W + 96 * (Cdisp * Real.sqrt (d : ℝ) * shellNormalizationConst)

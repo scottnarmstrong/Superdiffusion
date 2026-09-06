@@ -1,34 +1,30 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.Proportion.RatioTailUniform
 import Algsuperdiff.Section4.Provider.Proportion.G1ThresholdArith
 import Algsuperdiff.Section4.Provider.Proportion.LaneInterface
 
 /-!
-# The two proved lane certificates, at one common dependence range
+# The frozen-anchor bridge arithmetic of the two lane couplings
 
-ABK26, §4.1.  `RatioTailUniform.exists_ratioTail_eventG0_uniform` and
-`G1ThresholdArith.ratioTail_eventG1_shellThreshold` are the two proved
-per-event ratio-tail endpoints.  This module puts them in the single `LaneTail`
-shape that the three-fold union bound of `p.independence.between.scales`
-consumes, at **one** dependence range `r = r(d)` and **one** constant `C(d)`
-chosen before every parameter, and composes them with the `𝒢₂` lane's
-`LaneTail` slot.
-
-## The two couplings
-
-Both lanes are unconditional in everything probabilistic; what each still needs
-is one explicit inequality tying the model to the level `θ` and the rate `c₁`:
+ABK26, §4.1.  The `𝒢₀` and `𝒢₁` ratio-tail lanes are unconditional in
+everything probabilistic; what each still needs is one explicit inequality
+tying the model to the level `θ` and the rate `c₁`:
 
 * `𝒢₀`: `C⁹γ² ≤ θ c⋆⁸` — the level-vs-regime coupling that replaces the proved
-  `RatioTailClosed` packaging of `θ` *inside* the constant.  It is derivable
-  from the frozen proportion anchor's own clauses (`couplingG0_of_anchor`
-  below).
+  `RatioTailClosed` packaging of `θ` *inside* the constant
+  (`couplingG0_of_anchor`);
 * `𝒢₁`: `K(d,r)(1+c₁)γ ≤ θ c⋆ s⁶ ε²` — the closed form of `T₀ ≤ s ε √c⋆
-  γ^{-1/2}` at the substituted threshold of `e.lambda.good.events`.
+  γ^{-1/2}` at the substituted threshold of `e.lambda.good.events`
+  (`couplingG1_of_anchor`).
+
+Both are abstract-real implications recording what the frozen proportion
+anchor's own parameter clauses give.  The anchor quantifies one constant `C_a`
+before `(M, s, ε, θ)` and carries the regime `γ ≤ C_a^{-1}c⋆^{10}` together with
+the level clause `C_a c⋆^{-2}s^{-4}ε^{-2}γ ≤ θ`; `regime_of_anchor` reads the
+printed regime off that one.
 
 ## References
 
@@ -48,32 +44,8 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## 1. The `𝒢₀` lane certificate -/
-
-/-- **The `𝒢₀` lane in `LaneTail` shape**, with one dependence range `r(d)` and
-one constant `C(d)` chosen before the level, the rate and the model.  This is
-`RatioTailUniform.exists_ratioTail_eventG0_uniform` read through `LaneTail`. -/
-theorem exists_laneTail_eventG0 (d : ℕ) :
-    ∃ r : ℕ, 1 ≤ r ∧ ∃ C : ℝ, 6 ≤ C ∧
-      ∀ (M : ABKModel d) (theta c1 : ℝ),
-        M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        0 < theta → theta * ((r : ℝ) + 1) < 1 →
-        C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ) ≤ theta * (Disorder.cstar M) ^ (8 : ℕ) →
-        0 ≤ c1 → c1 * M.gamma ≤ 1 →
-        LaneTail M (fun k => Support.eventG0 M (Support.cgEllipLowerConstant d) k)
-          theta c1 := by
-  obtain ⟨r, hr1, C, hC6, hall⟩ := exists_ratioTail_eventG0_uniform d
-  exact ⟨r, hr1, C, hC6, fun M theta c1 hreg htheta0 hthetar hcouple hc10 hc1g =>
-    hall M hreg theta htheta0 hthetar hcouple c1 hc10 hc1g⟩
-
-/-! ## 2. The frozen-anchor bridge arithmetic
-
-Two abstract-real implications recording what the frozen proportion anchor's own
-parameter clauses give.  The anchor quantifies one constant `C_a` before
-`(M, s, ε, θ)` and carries the regime `γ ≤ C_a^{-1}c⋆^{10}` together with the
-level clause `C_a c⋆^{-2}s^{-4}ε^{-2}γ ≤ θ`. -/
-
-/-- So one `C(d)` before the parameters costs nothing on this lane. -/
+/-- **The `𝒢₀` coupling from the anchor's own clauses.**  So one `C(d)` before
+the parameters costs nothing on this lane. -/
 theorem couplingG0_of_anchor {C Ca cs s ep theta gamma : ℝ}
     (hC : 6 ≤ C) (hcs0 : 0 < cs) (hcs32 : cs ≤ 3 / 2)
     (hs0 : 0 < s) (hs12 : s ≤ 1 / 2) (hep0 : 0 < ep) (hep12 : ep ≤ 1 / 2)
@@ -215,112 +187,6 @@ theorem regime_of_anchor {C Ca cs gamma : ℝ} (hC0 : 0 < C)
   refine le_trans hreg (mul_le_mul_of_nonneg_right ?_ (by positivity))
   rw [inv_pow]
   exact inv_anti₀ (by positivity) hCa
-
-/-! ## 3. The `𝒢₁` lane certificate at the common range -/
-
-/-- **The `𝒢₁` lane in `LaneTail` shape**, at the substituted threshold
-`s ε √c⋆ (√γ)⁻¹` of `e.lambda.good.events` and at any dependence range `r ≥ 1`
-(so in particular at the `𝒢₀` lane's `r(d)`).  This is
-`G1ThresholdArith.ratioTail_eventG1_shellThreshold` read through `LaneTail`. -/
-theorem laneTail_eventG1_shellThreshold (M : ABKModel d) {s ep theta c1 : ℝ} {r : ℕ}
-    (hs0 : 0 < s) (hs1 : s ≤ 1) (hep0 : 0 < ep) (hr1 : 1 ≤ r) (htheta0 : 0 < theta)
-    (hthetar : theta * ((r : ℝ) + 1) < 1) (hc1 : 0 ≤ c1)
-    (hcond : g1ThresholdConst d r * (1 + c1) * M.gamma
-        ≤ theta * Disorder.cstar M * s ^ (6 : ℕ) * ep ^ (2 : ℕ)) :
-    LaneTail M
-      (fun k => Support.eventG1 M k s
-        (s * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹)) theta c1 :=
-  fun n => ratioTail_eventG1_shellThreshold M hs0 hs1 hep0 hr1 htheta0 hthetar hc1 hcond n
-
-/-! ## 4. The three-lane endpoint, with the `𝒢₂` slot -/
-
-/-- **The `§4.1` proportion premise from two proved lanes and one named slot.**
-
-One dependence range `r(d)` and one constant `C(d)`, both fixed before every
-parameter.  Both output forms are delivered: the bad-density form the union
-bound produces, and the good-proportion form `avsum 𝟙{𝒢} ≤ 1 − θ` in which the
-printed display is stated.
-
-Every window `n` is covered, including the short windows `n < r`.  The rate
-`c₁` is the caller's, up to the `𝒢₀` lane's ceiling `c₁γ ≤ 1` (: the rate is
-delivered, not read off the printed per-lane displays). -/
-theorem exists_ratioTail_goodEventBase (d : ℕ) :
-    ∃ r : ℕ, 1 ≤ r ∧ ∃ C : ℝ, 6 ≤ C ∧
-      ∀ (M : ABKModel d) (s : {s : ℝ // 0 < s}) (ep theta c1 : ℝ),
-        (s : ℝ) ≤ 1 → 0 < ep → 0 < theta → theta * ((r : ℝ) + 1) < 1 →
-        0 ≤ c1 → c1 * M.gamma ≤ 1 →
-        M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        C ^ (10 : ℕ) * M.gamma ^ (2 : ℕ) ≤ theta * (Disorder.cstar M) ^ (8 : ℕ) →
-        C * (1 + c1) * M.gamma
-            ≤ theta * Disorder.cstar M * (s : ℝ) ^ (6 : ℕ) * ep ^ (2 : ℕ) →
-        LaneTail M (fun k => Support.eventG2 M k s ep) (theta / 4) c1 →
-        (∀ n : ℕ,
-            (Cutoff.cutoffSampleLaw M).toMeasure
-                {omega | theta < scaleProp
-                  (fun k =>
-                    (Support.goodEventBase M (Support.cgEllipLowerConstant d) k s ep)ᶜ)
-                  n omega}
-              ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)))) ∧
-          ∀ n : ℕ,
-            (Cutoff.cutoffSampleLaw M).toMeasure
-                {omega | scaleProp
-                  (fun k => Support.goodEventBase M (Support.cgEllipLowerConstant d) k s ep)
-                  n omega ≤ 1 - theta}
-              ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ))) := by
-  obtain ⟨r, hr1, C0, hC06, hG0⟩ := exists_laneTail_eventG0 d
-  refine ⟨r, hr1, max C0 (max 6 (4 * g1ThresholdConst d r)), ?_, ?_⟩
-  · exact le_trans (le_max_left _ _) (le_max_right _ _)
-  intro M s ep theta c1 hs1 hep0 htheta0 hthetar hc10 hc1g hreg hcoup hcond hG2
-  have hC0le : C0 ≤ max C0 (max 6 (4 * g1ThresholdConst d r)) := le_max_left _ _
-  have hC6 : (6 : ℝ) ≤ max C0 (max 6 (4 * g1ThresholdConst d r)) :=
-    le_trans (le_max_left _ _) (le_max_right _ _)
-  have hg1le : 4 * g1ThresholdConst d r ≤ max C0 (max 6 (4 * g1ThresholdConst d r)) :=
-    le_trans (le_max_right _ _) (le_max_right _ _)
-  have hC0pos : (0 : ℝ) < C0 := by linarith only [hC06]
-  have hCpos : (0 : ℝ) < max C0 (max 6 (4 * g1ThresholdConst d r)) := by linarith only [hC6]
-  have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hrR : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-  have hth4 : (0 : ℝ) < theta / 4 := by linarith only [htheta0]
-  have hthetar4 : theta / 4 * ((r : ℝ) + 1) < 1 := by
-    have hrw : theta / 4 * ((r : ℝ) + 1) = theta * ((r : ℝ) + 1) / 4 := by ring
-    rw [hrw]
-    linarith only [hthetar]
-  -- the `𝒢₀` lane at level `θ/4`
-  have hlane0 : LaneTail M
-      (fun k => Support.eventG0 M (Support.cgEllipLowerConstant d) k) (theta / 4) c1 := by
-    refine hG0 M (theta / 4) c1 ?_ hth4 hthetar4 ?_ hc10 hc1g
-    · refine le_trans hreg (mul_le_mul_of_nonneg_right ?_ (by positivity))
-      exact pow_le_pow_left₀ (by positivity) (inv_anti₀ hC0pos hC0le) 10
-    · have h9 : C0 ^ (9 : ℕ) ≤ (max C0 (max 6 (4 * g1ThresholdConst d r))) ^ (9 : ℕ) :=
-        pow_le_pow_left₀ hC0pos.le hC0le 9
-      have h10 : 4 * C0 ^ (9 : ℕ)
-          ≤ (max C0 (max 6 (4 * g1ThresholdConst d r))) ^ (10 : ℕ) := by
-        calc 4 * C0 ^ (9 : ℕ)
-            ≤ 4 * (max C0 (max 6 (4 * g1ThresholdConst d r))) ^ (9 : ℕ) := by
-              linarith only [h9]
-          _ ≤ max C0 (max 6 (4 * g1ThresholdConst d r)) *
-                (max C0 (max 6 (4 * g1ThresholdConst d r))) ^ (9 : ℕ) :=
-              mul_le_mul_of_nonneg_right (by linarith only [hC6]) (pow_nonneg hCpos.le 9)
-          _ = (max C0 (max 6 (4 * g1ThresholdConst d r))) ^ (10 : ℕ) := by ring
-      have hstep := mul_le_mul_of_nonneg_right h10 (pow_nonneg hg0.le 2)
-      linarith only [hstep, hcoup]
-  -- the `𝒢₁` lane at level `θ/4`
-  have hlane1 : LaneTail M
-      (fun k => Support.eventG1 M k (s : ℝ)
-        ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-      (theta / 4) c1 := by
-    refine laneTail_eventG1_shellThreshold M s.2 hs1 hep0 hr1 hth4 hthetar4 hc10 ?_
-    have hprod : (0 : ℝ) ≤ (1 + c1) * M.gamma := by positivity
-    have h4 := mul_le_mul_of_nonneg_right hg1le hprod
-    linarith only [h4, hcond]
-  refine ⟨fun n => ?_, fun n => ?_⟩
-  · exact measure_scaleProp_compl_goodEventBase_le M (Support.cgEllipLowerConstant d) s ep
-      theta c1 (hlane0.mono_level (by linarith only [htheta0]))
-      (hlane1.mono_level (by linarith only [htheta0]))
-      (hG2.mono_level (by linarith only [htheta0])) n
-  · exact measure_scaleProp_goodEventBase_le M (Support.cgEllipLowerConstant d) s ep
-      theta c1 htheta0 hlane0 hlane1 hG2 n
 
 end
 

@@ -1,17 +1,17 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineEnergyDensity
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineResidueLevel
 
 /-!
-# `RecutCoreSupply`'s energy slot, produced from Theorem C
+# The §4.5 supplier's energy slot, produced from Theorem C
 
 ## What this file supplies
 
-`RecutCoreSupply` asks, per `ω` and per elliptic pair, for a real `S` with
+The supplier asks, per `ω` and per elliptic pair, for a real `S` with
 
 ```text
   0 ≤ S,     ∀ N, coarseGrainingEnergyPartial □_m p (s - s/4) j_n N Gen ≤ S,
@@ -75,16 +75,6 @@ finite-`p` geometric factor.  Model-independent: no `ω`, no `ν`, no `σ̄`. -/
 def recutEnergySlotConst (Creg alpha p s : ℝ) (jn : ℕ) : ℝ :=
   Creg * (3 : ℝ) ^ ((1 - alpha) * (jn : ℝ)) * coarseGrainingGeomFactor p (s / 4)
 
-theorem recutEnergySlotConst_nonneg {Creg alpha p s : ℝ} {jn : ℕ} (hCreg : 0 ≤ Creg)
-    (hp : 0 < p) (hs : 0 < s) :
-    0 ≤ recutEnergySlotConst Creg alpha p s jn := by
-  have h1 : (0 : ℝ) ≤ (3 : ℝ) ^ ((1 - alpha) * (jn : ℝ)) :=
-    Real.rpow_nonneg (by norm_num) _
-  have h2 : (0 : ℝ) ≤ coarseGrainingGeomFactor p (s / 4) :=
-    coarseGrainingGeomFactor_nonneg hp (by linarith only [hs])
-  rw [recutEnergySlotConst]
-  exact mul_nonneg (mul_nonneg hCreg h1) h2
-
 /-! ## 3. The Step-2b family bound at the `s₁ = s/4` pin -/
 
 /-- **The printed family bound.**
@@ -130,7 +120,7 @@ theorem printedLocalEnergy_le_family {M : ABKModel d} {m : ℤ} {X : ℕ}
 
 /-- **`hS0`, `hS` and `hSbound`, produced.**
 
-The three energy conjuncts of `RecutCoreSupply` from the Theorem-C display, the
+The three energy conjuncts of the supplier from the Theorem-C display, the
 printed order identification `1 - α = s/2`, and the disclosed top-scale datum.
 The majorant is the printed one: the deterministic Step-2 constant times
 `3^{(1-α)X_m(α)}(1 + 𝓔_{1/4})` times the data bracket. -/

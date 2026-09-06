@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.HolderGagliardoEmbedding
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
@@ -23,11 +23,9 @@ development's own carrier:
                  = 2^{(d+1)/2} 3^{d/2} (1-2s)^{-1/2}          (0 < s < 1/2),
 ```
 
-and at the §4.4/§4.5 pin `s = 1/4` the numeral
-
-```text
-  C_{S4.4}(d, 1/4) ≤ ( 2^{d+2} 3^{d} )^{1/2} .
-```
+The `s`-free form at the §4.4/§4.5 gate `s ≤ 1/4`, where `1 - 2s ≥ 1/2` and the
+right-hand side collapses to `( 2^{d+2} 3^{d} )^{1/2}`, is read off this bound
+downstream, in the §4.5 data embedding.
 
 The only analytic content is the elementary lower bound `1 - 3^{-t} ≥ t/2` on
 `t ∈ [0,1]`, which is Bernoulli's inequality for exponents in `[0,1]` (the chord
@@ -134,15 +132,6 @@ theorem stepFourGagliardoConst_le {s : ℝ} (hs0 : 0 < s) (hs : s < 1 / 2) :
     stepFourGagliardoConst d s ≤ Real.sqrt ((2 : ℝ) ^ (d + 1) * (3 : ℝ) ^ d / (1 - 2 * s)) := by
   rw [stepFourGagliardoConst]
   exact Real.sqrt_le_sqrt (radialKernelConst_holderGagliardoBeta_le hs0 hs)
-
-theorem stepFourGagliardoConst_quarter_le :
-    stepFourGagliardoConst d (1 / 4) ≤ Real.sqrt ((2 : ℝ) ^ (d + 2) * (3 : ℝ) ^ d) := by
-  have h := stepFourGagliardoConst_le (d := d) (s := 1 / 4) (by norm_num) (by norm_num)
-  refine h.trans (le_of_eq ?_)
-  congr 1
-  have h2 : (2 : ℝ) ^ (d + 2) = (2 : ℝ) ^ (d + 1) * 2 := by ring
-  rw [h2, show (1 : ℝ) - 2 * (1 / 4) = 1 / 2 by norm_num]
-  field_simp
 
 end
 

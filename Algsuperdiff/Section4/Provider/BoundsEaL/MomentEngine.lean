@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.MomentSplitter
 
@@ -113,34 +113,6 @@ theorem gammaTwoMomentBound_nonneg {p A : ℝ} (hA : 0 ≤ A) :
   positivity
 
 /-! ## 2. The deterministic bullets -/
-
-/-- **The `q`-th moment of an a.e. bounded observable.**
-
-The three `σ̄`-arithmetic bullets of Step 4 (`shom_m^{-1}shom_j ≤ C`,
-`|shom_m shom_{j−2}^{-1} − 1|² ≤ …`, `3^{γj}shom_{j−2}^{-1} ≤ Cγ^{1/2}`) are
-deterministic, so their `q`-th moment is the bound itself: a probability
-measure has total mass one. -/
-theorem lintegral_rpow_le_of_ae_le_const {mu : Measure Omega}
-    [IsProbabilityMeasure mu] {F : Omega → ℝ≥0∞} {c p : ℝ} (hp : 0 ≤ p)
-    (hF : ∀ᵐ omega ∂mu, F omega ≤ ENNReal.ofReal c) :
-    ∫⁻ omega, F omega ^ p ∂mu ≤ ENNReal.ofReal c ^ p := by
-  calc ∫⁻ omega, F omega ^ p ∂mu
-      ≤ ∫⁻ _omega : Omega, ENNReal.ofReal c ^ p ∂mu := by
-        refine lintegral_mono_ae ?_
-        filter_upwards [hF] with omega homega
-        exact ENNReal.rpow_le_rpow homega hp
-    _ = ENNReal.ofReal c ^ p := by
-        rw [lintegral_const, measure_univ, mul_one]
-
-/-- The same at an observable of the form `ENNReal.ofReal ∘ X`, which is how the
-`σ̄`-arithmetic bullets are actually read. -/
-theorem lintegral_ofReal_rpow_le_of_ae_le_const {mu : Measure Omega}
-    [IsProbabilityMeasure mu] {X : Omega → ℝ} {c p : ℝ} (hp : 0 ≤ p)
-    (hX : ∀ᵐ omega ∂mu, X omega ≤ c) :
-    ∫⁻ omega, ENNReal.ofReal (X omega) ^ p ∂mu ≤ ENNReal.ofReal c ^ p := by
-  refine lintegral_rpow_le_of_ae_le_const hp ?_
-  filter_upwards [hX] with omega homega
-  exact ENNReal.ofReal_le_ofReal homega
 
 /-! ## 3. The one-term Orlicz → moment splitter -/
 

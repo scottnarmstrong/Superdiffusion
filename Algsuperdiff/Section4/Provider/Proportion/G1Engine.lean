@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.RowSumFinite
 import Algsuperdiff.Section4.Provider.Proportion.ShellColumnIndep
@@ -140,16 +140,6 @@ def goodRowG (G : ℤ → ℤ → Cutoff.CutoffSample d → ℝ) (sprime : ℝ) 
     Set (Cutoff.CutoffSample d) :=
   {omega | ∀ m : ℤ, rowGE G sprime m omega ≠ ⊤}
 
-theorem measurableSet_goodRowG {G : ℤ → ℤ → Cutoff.CutoffSample d → ℝ}
-    (hGm : ∀ m j, Measurable (G m j)) (sprime : ℝ) :
-    MeasurableSet (goodRowG G sprime) := by
-  have hrw : goodRowG G sprime = ⋂ m : ℤ, {omega | rowGE G sprime m omega ≠ ⊤} := by
-    ext omega
-    simp only [goodRowG, Set.mem_setOf_eq, Set.mem_iInter]
-  rw [hrw]
-  refine MeasurableSet.iInter fun m => ?_
-  exact (measurable_rowGE hGm sprime m (measurableSet_singleton (⊤ : ℝ≥0∞))).compl
-
 private theorem measure_rowGE_top (M : ABKModel d)
     {f : Cutoff.CutoffSample d → ℝ≥0∞} (hf : Measurable f)
     (hfin : ∫⁻ omega, f omega ∂(Cutoff.cutoffSampleLaw M).toMeasure ≠ ⊤) :
@@ -206,60 +196,6 @@ theorem lt_Yk_of_lt_rowGE {G : ℤ → ℤ → Cutoff.CutoffSample d → ℝ}
     exact tsum_congr fun j => by ring
   rw [hYk, ← htoReal, inv_mul_eq_div, lt_div_iff₀ hD]
   linarith only [hlt']
-
-/-! ## 5. The lane engine -/
-
-/-- **The proportion tail of one `𝒢₁` lane, in the consumer's shape.**
-
-Both Appendix-D hypotheses are discharged inside: the unit moments from the
-entries' `Γ_σ` tails and the normalizer, and the columns' independence from (J1)
-alone, at the caller's `r ≥ 1`.  `hreduce` is the lane's deterministic reduction,
-and `hnorm`, `hrate`, `hthetar` are the parameter conditions. -/
-theorem ratioTail_of_shellArray (M : ABKModel d)
-    (Ev : ℤ → Set (Cutoff.CutoffSample d)) (G : ℤ → ℤ → Cutoff.CutoffSample d → ℝ)
-    {sigma p sprime theta c1 K D Q : ℝ} {r : ℕ}
-    (hsigma : 0 < sigma) (hK : 0 < K) (hD : 0 < D)
-    (hp : 1 ≤ p) (hs' : 0 < sprime) (hs'1 : sprime ≤ 1) (hsp : 1 ≤ sprime * p)
-    (hr1 : 1 ≤ r) (hQ : 1 ≤ Q) (htheta0 : 0 < theta)
-    (hthetar : theta * ((r : ℝ) + 1) < 1) (hc1 : 0 ≤ c1)
-    (hrate : Real.log (Q * (r : ℝ)) + c1 * (r : ℝ) ≤ sprime * p * theta / (16 * (r : ℝ)))
-    (hGnn : ∀ m j omega, 0 ≤ G m j omega)
-    (hGloc : ∀ m j, Measurable[shellSigma d j] (G m j))
-    (hGtail : ∀ m j, IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-      (gammaSigma sigma) (G m j) K)
-    (hnorm : gammaMomentConst sigma * p ^ sigma⁻¹ * K ≤ D)
-    (hreduce : ∀ m : ℤ, 0 ≤ m → ∀ omega ∈ (Ev m)ᶜ,
-      9 * sprime⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) <
-        Yk (fun m j omega => D⁻¹ * G m j omega) sprime m omega)
-    (n : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | theta < scaleProp (fun k => (Ev k)ᶜ) n omega}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / Q) := by
-  have hGm : ∀ m j : ℤ, Measurable (G m j) := fun m j =>
-    (hGloc m j).mono (shellSigma_le j) le_rfl
-  have hr1R : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-  have htheta1 : theta ≤ 1 := by nlinarith only [hthetar, htheta0, hr1R]
-  have hXmeas : ∀ k j : ℤ,
-      Measurable ((fun m j omega => D⁻¹ * G m j omega) k j) :=
-    fun k j => (hGm k j).const_mul _
-  have hXnn : ∀ (k j : ℤ) (omega : Cutoff.CutoffSample d),
-      0 ≤ (fun m j omega => D⁻¹ * G m j omega) k j omega := fun k j omega =>
-    mul_nonneg (inv_nonneg.2 hD.le) (hGnn k j omega)
-  have hmomL := IndicatorDensity.lintegral_rpow_le_one_of_array
-    (P := (Cutoff.cutoffSampleLaw M).toMeasure) (Y := G) hsigma hK hp hD hGnn
-    (fun m j => (hGm m j).aemeasurable) hGtail hnorm
-  have hindep : ColumnsIndep (Cutoff.cutoffSampleLaw M).toMeasure
-      (fun m j omega => D⁻¹ * G m j omega) r :=
-    columnsIndep_of_shellColumn M _ hr1 fun m j => (hGloc m j).const_mul _
-  have hconc : ∀ Mw : ℕ, (r : ℤ) ≤ (Mw : ℤ) →
-      (Cutoff.cutoffSampleLaw M).toMeasure
-          (concEvent (fun m j omega => D⁻¹ * G m j omega) p sprime theta Cstar Mw)
-        ≤ ENNReal.ofReal
-            (Real.exp (-(sprime * p * theta) / (16 * (r : ℝ)) * ((Mw : ℝ) + 1))) :=
-    fun Mw hMw => p_concentration_for_scales_Cstar _ _ hp hs' hs'1 hsp hr1
-      hXmeas hXnn hmomL hindep Mw theta hMw htheta0 htheta1
-  exact ratioTail_of_concentration _ _ Ev hr1 hQ htheta0 hthetar hc1 hrate hconc
-    hreduce n
 
 end
 

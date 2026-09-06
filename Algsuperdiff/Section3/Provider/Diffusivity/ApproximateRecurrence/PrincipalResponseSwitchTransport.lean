@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalResponseSensitivitySwitch
 import Algsuperdiff.Section3.Provider.BadEvents.LambdaTransfer
@@ -270,7 +270,7 @@ The manuscript's `a_m` is the cutoff at `highScale` and its `a_{m-h}` is the
 cutoff at `lowScale`; the load `X` is `P_z` and the constant antisymmetric
 matrix `hbar` is `(h)_{z+cu_n}` (built and proved skew in
 `ApproximateRecurrence.PrincipalResponseShellAverage`).  The two `2 X_1 . X_2`
-terms are the manuscript's `2 p_z . q_z` with the sign correction recorded in
+terms are the manuscript's `2 p_z . q_z`, derived in
 `ApproximateRecurrence.PrincipalResponseSensitivityAlgebra`; they are kept
 explicit rather than absorbed.  The Young remainder is likewise not absorbed at
 this stage; the absorption is

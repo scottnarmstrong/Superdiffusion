@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Probability.ShellActiveSigma
 import Algsuperdiff.Section4.Support.Events
@@ -54,14 +54,8 @@ it is sharp for this argument.
 ## The dimension caveat
 
 At the offset `c = 2` of the `G_0` lane, `r = 2` requires
-`3 + (2/3) sqrt d <= 9`, i.e. `sqrt d <= 9`, i.e. **`d <= 81`**
-(`three_add_two_thirds_sqrt_le_nine`).  At the offset `c = 3` of the `G_2` lane,
-`r = 2` requires `3 + (2/9) sqrt d <= 9`, i.e. **`d <= 729`**
-(`three_add_two_ninths_sqrt_le_nine`).  The printed displays are the *strict*
-inequalities `3^(n-n') > 3 + (2/3) sqrt d` resp. `> 3 + (2/9) sqrt d`, whose
-regimes are the one-smaller `d <= 80` resp. `d <= 728`; the non-strict form
-proved here is what the arithmetic actually needs, and it is what admits the
-endpoints `d = 81` and `d = 729`.  Beyond those dimensions the count is not
+`3 + (2/3) sqrt d <= 9`, i.e. `sqrt d <= 9`, i.e. **`d <= 81`**.
+Beyond that dimension the count is not
 `r = 2` but `r(d)` above, which `separatedBy_annulusRegion_of_gap` delivers at
 every `r`.  This dimension caveat comes entirely from the `sqrt d` in the
 shells' range of dependence, which the manuscript's per-scale display drops.
@@ -74,15 +68,10 @@ shells' range of dependence, which the manuscript's per-scale display drops.
 
 ## Main results
 
-* `separatedBy_of_coordinate_gap`, `separatedBy_of_coordinate_gap'` -- the
-  workhorse: a coordinate gap between two regions is a `SeparatedBy` bound.
+* `separatedBy_of_coordinate_gap` -- the workhorse: a coordinate gap between
+  two regions is a `SeparatedBy` bound.
 * `separatedBy_annulusRegion_of_gap` -- the `r(d)` count at a free truncation
   offset `c`.
-* `separatedBy_annulusRegion_two`, `separatedBy_annulusRegion_two_offset_three`
-  -- the manuscript's `r = 2`, with its dimension caveats.
-* `openCubeSet_sdiff_subset_annulusRegion` -- the events' open triadic annulus
-  `openCubeSet (originCube d n) \ openCubeSet (originCube d (n-1))` sits inside
-  `annulusRegion d n`.
 * `mem_annulusRegion_of_le_triadicLatticePoint` -- the *no-enlargement* fact:
   a cube `z + Box_j` centred at a triadic lattice point `z` of the open annulus,
   with `j <= n - 1`, is still contained in `annulusRegion d n`.  This is what
@@ -154,13 +143,6 @@ theorem separatedBy_of_coordinate_gap {a b : ℝ} {U V : Set (Vec d)}
     abs_sub_apply_le_vecNorm_sub x y i
   linarith only [hi, hyi, hgap, hcoord]
 
-/-- The mirror image of `separatedBy_of_coordinate_gap`, with the large
-coordinate on the second region. -/
-theorem separatedBy_of_coordinate_gap' {a b : ℝ} {U V : Set (Vec d)}
-    (hU : ∀ x ∈ U, ∀ i, |x i| ≤ b) (hV : ∀ y ∈ V, ∃ i, a ≤ |y i|) :
-    SeparatedBy (a - b) U V :=
-  (separatedBy_of_coordinate_gap hV hU).symm
-
 /-! ## The annulus -/
 
 /-- **The annulus `closure(Box_n) \ Box_{n-1}`** in the sup norm of `Vec d`: the
@@ -169,12 +151,6 @@ matching the coordinate definition of the triadic cubes. -/
 def annulusRegion (d : ℕ) (n : ℤ) : Set (Vec d) :=
   {x | (∃ i, (1 / 2 : ℝ) * (3 : ℝ) ^ (n - 1) ≤ |x i|) ∧
     ∀ i, |x i| ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ n}
-
-theorem mem_annulusRegion_iff {n : ℤ} {x : Vec d} :
-    x ∈ annulusRegion d n ↔
-      (∃ i, (1 / 2 : ℝ) * (3 : ℝ) ^ (n - 1) ≤ |x i|) ∧
-        ∀ i, |x i| ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ n :=
-  Iff.rfl
 
 theorem measurableSet_annulusRegion (d : ℕ) (n : ℤ) :
     MeasurableSet (annulusRegion d n) := by
@@ -290,91 +266,7 @@ theorem separatedBy_annulusRegion_of_gap {c : ℤ} {r : ℕ} (hr1 : 1 ≤ r)
       rw [abs_of_nonneg (by omega)] at hgap; omega
     exact separatedBy_annulusRegion_of_lt (d := d) (c := c) hgt (key n n' hle)
 
-/-! ## `r = 2` -- the manuscript's regime, and its dimension caveats -/
-
-/-- **`r(d) = 2` for `d <= 81` at the truncation offset `c = 2`** (the `G_0`
-lane).  `3 + (2/3) sqrt d <= 9` iff `sqrt d <= 9` iff `d <= 81`.  The printed
-display is the strict `3^(n-n') > 3 + (2/3) sqrt d`, whose regime is `d <= 80`;
-the non-strict form used here is what the arithmetic needs and it admits the
-endpoint `d = 81`. -/
-theorem three_add_two_thirds_sqrt_le_nine (hd : d ≤ 81) :
-    3 + 2 * (3 : ℝ) ^ (1 - (2 : ℤ)) * Real.sqrt (d : ℝ) ≤ (3 : ℝ) ^ (2 : ℕ) := by
-  have h1 : (d : ℝ) ≤ 81 := by exact_mod_cast hd
-  have h9 : Real.sqrt 81 = 9 := by
-    rw [show (81 : ℝ) = 9 ^ 2 by norm_num]
-    exact Real.sqrt_sq (by norm_num)
-  have h2 : Real.sqrt (d : ℝ) ≤ 9 := by
-    rw [← h9]
-    exact Real.sqrt_le_sqrt h1
-  have h3 : 2 * (3 : ℝ) ^ (1 - (2 : ℤ)) = 2 / 3 := by
-    rw [show (1 : ℤ) - (2 : ℤ) = -1 by norm_num, zpow_neg, zpow_one]
-    norm_num
-  have h4 : (3 : ℝ) ^ (2 : ℕ) = 9 := by norm_num
-  rw [h3, h4]
-  linarith only [h2]
-
-/-- **`r(d) = 2` for `d <= 729` at the truncation offset `c = 3`** (the `G_2` lane,
-whose atoms read cubes `z + Box_n` at the field `a_{n-2}` with `n <= j - 1`).
-`3 + (2/9) sqrt d <= 9` iff `sqrt d <= 27` iff `d <= 729`; the printed strict
-display has regime `d <= 728`. -/
-theorem three_add_two_ninths_sqrt_le_nine (hd : d ≤ 729) :
-    3 + 2 * (3 : ℝ) ^ (1 - (3 : ℤ)) * Real.sqrt (d : ℝ) ≤ (3 : ℝ) ^ (2 : ℕ) := by
-  have h1 : (d : ℝ) ≤ 729 := by exact_mod_cast hd
-  have h27 : Real.sqrt 729 = 27 := by
-    rw [show (729 : ℝ) = 27 ^ 2 by norm_num]
-    exact Real.sqrt_sq (by norm_num)
-  have h2 : Real.sqrt (d : ℝ) ≤ 27 := by
-    rw [← h27]
-    exact Real.sqrt_le_sqrt h1
-  have h3 : 2 * (3 : ℝ) ^ (1 - (3 : ℤ)) = 2 / 9 := by
-    rw [show (1 : ℤ) - (3 : ℤ) = -2 by norm_num, zpow_neg]
-    norm_num
-  have h4 : (3 : ℝ) ^ (2 : ℕ) = 9 := by norm_num
-  rw [h3, h4]
-  linarith only [h2]
-
-/-- **The manuscript's claim at the `G_0` offset, machine-checked: the per-scale
-atoms A `2`-dependent for `d <= 81`.**  Annuli whose indices differ by at least
-`2` are separated at the shared-shell threshold `sqrt d * 3 ^ (min (n - 2) (n'
-- 2))`, which is exactly the hypothesis under which
-`iIndepFun_of_local_cutoffSample` delivers mutual independence of the atoms,
-each reading one truncation per inner scale. -/
-theorem separatedBy_annulusRegion_two (hd : d ≤ 81) {n n' : ℤ}
-    (hgap : (2 : ℤ) ≤ |n - n'|) :
-    SeparatedBy (Real.sqrt (d : ℝ) * (3 : ℝ) ^ (min (n - 2) (n' - 2)))
-      (annulusRegion d n) (annulusRegion d n') :=
-  separatedBy_annulusRegion_of_gap (c := 2) (r := 2) (by norm_num)
-    (three_add_two_thirds_sqrt_le_nine hd) (by exact_mod_cast hgap)
-
-/-- The same statement at the `G_2` offset `c = 3`, valid for `d <= 729`. -/
-theorem separatedBy_annulusRegion_two_offset_three (hd : d ≤ 729) {n n' : ℤ}
-    (hgap : (2 : ℤ) ≤ |n - n'|) :
-    SeparatedBy (Real.sqrt (d : ℝ) * (3 : ℝ) ^ (min (n - 3) (n' - 3)))
-      (annulusRegion d n) (annulusRegion d n') :=
-  separatedBy_annulusRegion_of_gap (c := 3) (r := 2) (by norm_num)
-    (three_add_two_ninths_sqrt_le_nine hd) (by exact_mod_cast hgap)
-
 /-! ## The events' triadic geometry -/
-
-/-- The open triadic annulus enumerated by `latticeAnnulusSet d j n (n-1)` sits
-inside the closed sup-norm annulus `annulusRegion d n`. -/
-theorem openCubeSet_sdiff_subset_annulusRegion (d : ℕ) (n : ℤ) :
-    openCubeSet (originCube d n) \ openCubeSet (originCube d (n - 1))
-      ⊆ annulusRegion d n := by
-  rintro x ⟨hin, hout⟩
-  refine ⟨?_, ?_⟩
-  · by_contra hcon
-    push_neg at hcon
-    refine hout ?_
-    rw [mem_openCubeSet_originCube_iff]
-    intro i
-    have hi := hcon i
-    rw [abs_lt] at hi
-    exact ⟨by linarith only [hi.1], by linarith only [hi.2]⟩
-  · intro i
-    have hi := (mem_openCubeSet_originCube_iff.mp hin) i
-    rw [abs_le]
-    exact ⟨by linarith only [hi.1], by linarith only [hi.2]⟩
 
 /-- The integrality step behind the *no-enlargement* fact, upper half: a
 multiple of `3^j` that lies strictly inside `Box_n` (`j <= n`) is at distance at

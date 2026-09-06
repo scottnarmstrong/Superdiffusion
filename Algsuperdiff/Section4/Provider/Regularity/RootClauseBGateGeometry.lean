@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBCloseArith
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccBoundaryLattice
@@ -65,61 +65,6 @@ theorem stepSevenNuGradNorm_window_le_cube_gate (d : ℕ) {m j : ℤ} {z : Vec d
   rw [hratio] at hmain
   rw [stepSevenNuGradNorm_eq_sqrt_div, stepSevenNuGradNorm_eq_sqrt_div]
   exact hmain
-
-/-! ## 3.  at the full cube, at the gate -/
-
-/-- **The `hgradE` identity at the gate.**
-
-`RootClauseBInputs.forcedSolutionEnergyNorm_fluxCorrected_eq_nuGradNorm` with
-the printed pair replaced by `(GATE j)`. -/
-theorem forcedSolutionEnergyNorm_fluxCorrected_eq_nuGradNorm_gate (M : ABKModel d)
-    (L mf m j : ℤ) (Qf : TriadicCube d) {z : Vec d} (omega : Cutoff.CutoffSample d)
-    {g : Vec d → Vec d}
-    (u : ForcedCubeSolution (originCube d j)
-      (Support.fluxCorrectedCoeffFamily M L mf Qf
-        (Cutoff.translateCutoffSample z omega)) g)
-    (G : Vec d → Vec d) (hg : ∀ y, u.toH1.grad y = G (y + z))
-    (hgate : (fun y => z + y) '' openCubeSet (originCube d j) ⊆
-      openCubeSet (originCube d m)) :
-    forcedSolutionEnergyNorm (originCube d j)
-        (Support.fluxCorrectedCoeffFamily M L mf Qf
-          (Cutoff.translateCutoffSample z omega)) u =
-      stepSevenNuGradNorm (M.nu : ℝ) (truncatedWindow z m j) G := by
-  rw [forcedSolutionEnergyNorm, h1EnergyNormOnCube, stepSevenNuGradNorm]
-  congr 1
-  rw [localizedCoeffEnergyValue_fluxCorrectedCoeffFamily_eq]
-  have hfun : (fun x => vecNormSq (u.toH1.grad x)) = fun x => vecNormSq (G (x + z)) := by
-    funext x
-    rw [hg x]
-  have h1 := normalizedSetAverage_vecNormSq_translateSet z
-    (openCubeSet (originCube d j)) G
-  rw [truncatedWindow_eq_translateSet_of_gate hgate, hfun]
-  exact congrArg (fun t : ℝ => (M.nu : ℝ) * t) h1.symm
-
-/-! ## 4. The Hölder datum in the translated frame, at the gate -/
-
-/-- **The Hölder bound transports to the gated cube.**
-`RootClauseBInputs.holderSeminormBoundOn_translated_neg` at `(GATE j)`. -/
-theorem holderSeminormBoundOn_translated_neg_gate {m j : ℤ} {z : Vec d}
-    {g : Vec d → Vec d} {K : ℝ}
-    (hgate : (fun y => z + y) '' openCubeSet (originCube d j) ⊆
-      openCubeSet (originCube d m))
-    (hg : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K g) :
-    Support.HolderSeminormBoundOn (openCubeSet (originCube d j)) (1 / 2) K
-      (fun x => -g (x + z)) := by
-  intro x hx y hy
-  have hxm : z + x ∈ openCubeSet (originCube d m) := hgate ⟨x, hx, rfl⟩
-  have hym : z + y ∈ openCubeSet (originCube d m) := hgate ⟨y, hy, rfl⟩
-  have hcx : x + z = z + x := by rw [add_comm]
-  have hcy : y + z = z + y := by rw [add_comm]
-  have hbase := hg (z + x) hxm (z + y) hym
-  have hdiff : -g (x + z) - -g (y + z) = -(g (z + x) - g (z + y)) := by
-    rw [hcx, hcy]
-    ring
-  have hshift : (z + x) - (z + y) = x - y := by ring
-  rw [hdiff, norm_neg]
-  rw [hshift] at hbase
-  exact hbase
 
 /-! ## 5. The translated Besov datum, at the gate -/
 

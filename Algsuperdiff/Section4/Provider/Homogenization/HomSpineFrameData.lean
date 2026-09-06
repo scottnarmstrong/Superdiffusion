@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineCloseClause
 import Homogenization.Sobolev.W1p.ZeroExtensionGraph
@@ -11,14 +11,14 @@ import Homogenization.Sobolev.W1p.ZeroExtensionGraph
 
 ## What this module is
 
-`HomSpineCloseClause.spineClauseBody_of_coarseGraining` carries eight frame
+`HomSpineCloseClause`'s clause body carries eight frame
 binders for the Step-3c leg,
 
 ```text
   hw, hwI, hwc, hGI, hGzero, hgc, hgw, hzero
 ```
 
-exactly as the `ae_linfty_of_negBesovLp` carries them.  This module produces
+exactly as the `L^∞` conversion carries them.  This module produces
 the first FIVE of them from the root's own data binders `hsol` and `hcomp`, and
 DERIVES the eighth (`hzero`) from the other two.  What is left is stated as one
 named predicate, `HasContinuousRepresentative`, and is this file's reported
@@ -141,7 +141,7 @@ theorem integrable_zeroExtensionGrad_coord {Q : TriadicCube d}
   exact integrable_indicator_openCubeSet_of_memL2 Q (w.toH1Function.gradMemL2 i)
 
 /-- The gradient zero extension vanishes off the (half-open) cube — the
-`hGzero` binder of `ae_linfty_of_negBesovLp`. -/
+`hGzero` binder of the `L^∞` conversion. -/
 theorem zeroExtensionGrad_eq_zero_of_not_mem_cubeSet {Q : TriadicCube d}
     (w : H10Function (openCubeSet Q)) {y : Vec d} (hy : y ∉ cubeSet Q) :
     w.zeroExtensionGrad y = 0 :=
@@ -232,7 +232,7 @@ theorem cubeFaceSet_subset_closure_compl (Q : TriadicCube d) :
 
 If `W` vanishes off the open cube and `g` is a continuous representative of
 `W`, then `g` vanishes on the faces of the cube.  This is the eighth frame
-binder of `ae_linfty_of_negBesovLp`, obtained from the other two
+binder of the `L^∞` conversion, obtained from the other two
 representative binders and the zero extension itself; nothing about the
 Dirichlet problem is used. -/
 theorem faceZero_of_continuousRepresentative {Q : TriadicCube d} {W : Vec d → ℝ}
@@ -281,7 +281,7 @@ def HasContinuousRepresentative (W : Vec d → ℝ) : Prop :=
 From the root's own two data binders `hsol` and `hcomp` — solutions of the two
 Dirichlet problems at the SAME boundary datum `h` and the SAME forcing `g` —
 the `H¹₀` zero extension of `u - v` and its gradient carry every frame item of
-`ae_linfty_of_negBesovLp` except the continuous representative:
+the `L^∞` conversion except the continuous representative:
 
 * the two agree with `u - v` and `∇u - ∇v` on the open cube;
 * the value extension vanishes off the open cube;

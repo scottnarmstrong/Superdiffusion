@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBGateGeometry
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringGeometry
@@ -72,56 +72,6 @@ theorem integrableOn_coarseFrame_pack {m k : ℤ} (z : Vec d) (hkm : k ≤ m)
       (volume_coarseFrame_ne_top z hkm),
     integrableOn_sub_sq_toFun_subset u (coarseFrame_subset_openCubeSet z hkm)
       (volume_coarseFrame_ne_top z hkm) b⟩
-
-/-! ## 3. The solution object at the well-placed cube -/
-
-/-- **The Caccioppoli's coarse solution object at the print's own frame centre.**
-
-`StepSevenCaccBoundaryLattice.exists_stepSevenCaccGateSolution` at `z:=
-wellPlacedCentre z m k`, whose gate is discharged from `k ≤ m` alone.  No
-geometry binder survives. -/
-theorem exists_coarseFrameSolution {m k : ℤ} (M : ABKModel d) (L : ℤ) {z : Vec d}
-    (omega : Cutoff.CutoffSample d)
-    {uglob hdat : H1Function (openCubeSet (originCube d m))} {gsrc : Vec d → Vec d}
-    (hkm : k ≤ m)
-    (hsol : Support.IsDirichletSolutionOn
-      (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m) uglob hdat
-      gsrc) :
-    ∃ v : H1Function (Ch02.cubeDomain (originCube d k) : Set (Vec d)),
-      (∀ y, v.toFun y = uglob.toFun (y + wellPlacedCentre z m k)) ∧
-      (∀ y, v.grad y = uglob.grad (y + wellPlacedCentre z m k)) ∧
-      IsForcedEquation (originCube d k)
-        (Support.fluxCorrectedCoeffFamily M L (k + 1) (originCube d (k + 1))
-          (Cutoff.translateCutoffSample (wellPlacedCentre z m k) omega)) v
-        (fun x => -gsrc (x + wellPlacedCentre z m k)) :=
-  exists_stepSevenCaccGateSolution M L (originCube d (k + 1)) omega
-    (coarseFrame_subset_openCubeSet z hkm) hsol
-
-/-! ## 4. The energy-norm domination at the well-placed cube -/
-
-/-- **The coarse leg's `hgradE` slot, at no geometry binder.**
-
-`forcedSolutionEnergyNorm_fluxCorrected_eq_nuGradNorm_gate` followed by
-`stepSevenNuGradNorm_window_le_cube_gate`, both at `c:= wellPlacedCentre z m
-k`, so both gates are discharged from `k ≤ m`.  The constant is the printed
-volume ratio `rootClauseBTopKg d m k = 3^{d(m-k)/2}`. -/
-theorem forcedSolutionEnergyNorm_coarseFrame_le (M : ABKModel d) (L k m : ℤ)
-    {z : Vec d} (omega : Cutoff.CutoffSample d) {gsrc : Vec d → Vec d}
-    (u : ForcedCubeSolution (originCube d k)
-      (Support.fluxCorrectedCoeffFamily M L (k + 1) (originCube d (k + 1))
-        (Cutoff.translateCutoffSample (wellPlacedCentre z m k) omega)) gsrc)
-    (uglob : H1Function (openCubeSet (originCube d m)))
-    (hg : ∀ y, u.toH1.grad y = uglob.grad (y + wellPlacedCentre z m k))
-    (hkm : k ≤ m) :
-    forcedSolutionEnergyNorm (originCube d k)
-        (Support.fluxCorrectedCoeffFamily M L (k + 1) (originCube d (k + 1))
-          (Cutoff.translateCutoffSample (wellPlacedCentre z m k) omega)) u ≤
-      rootClauseBTopKg d m k *
-        stepSevenNuGradNorm (M.nu : ℝ) (openCubeSet (originCube d m)) uglob.grad := by
-  rw [forcedSolutionEnergyNorm_fluxCorrected_eq_nuGradNorm_gate M L (k + 1) m k
-    (originCube d (k + 1)) omega u uglob.grad hg (coarseFrame_subset_openCubeSet z hkm)]
-  exact stepSevenNuGradNorm_window_le_cube_gate d (le_of_lt M.nu_pos)
-    (coarseFrame_subset_openCubeSet z hkm) uglob
 
 /-! ## 5. The force's Besov regularity and the `dataB` leg at the well-placed cube -/
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.SandwichNondegeneracyAttainment
 
@@ -262,41 +262,6 @@ theorem one_le_volumeRatioConstTriadic (d : ℕ) : (1 : ℝ) ≤ volumeRatioCons
   rw [Real.one_rpow] at h
   exact h
 
-/-- **The volume ratio of the triadic sandwich family is bounded.**  The hypothesis
-`hratio` of `slopeStability_of_axisCubeSandwich` is a *theorem* on the paper's
-window family, at the explicit `κ = volumeRatioConstTriadic d`. -/
-theorem volumeRatio_le_of_cubeSandwich {U : ℤ → Set (Vec d)} {Q₁ Q₂ : ℤ → TriadicCube d}
-    (hs₁ : ∀ k : ℤ, (Q₁ k).scale = k - 2) (hs₂ : ∀ k : ℤ, (Q₂ k).scale = k)
-    (hin : ∀ k : ℤ, openCubeSet (Q₁ k) ⊆ U k) (hout : ∀ k : ℤ, U k ⊆ openCubeSet (Q₂ k)) :
-    ∀ k : ℤ, ((volume (U (k + 1))).toReal / (volume (U k)).toReal) ^ ((d : ℝ)⁻¹ + 1 / 2)
-      ≤ volumeRatioConstTriadic d := by
-  intro k
-  have hexp : (0 : ℝ) ≤ (d : ℝ)⁻¹ + 1 / 2 := by positivity
-  have hlow : ((3 : ℝ) ^ (k - 2)) ^ d ≤ (volume (U k)).toReal :=
-    volume_toReal_ge_of_cubeSandwich (hs₁ k) (hin k) (hout k)
-  have hlowpos : (0 : ℝ) < ((3 : ℝ) ^ (k - 2)) ^ d := by positivity
-  have hpos : (0 : ℝ) < (volume (U k)).toReal := lt_of_lt_of_le hlowpos hlow
-  have hhigh : (volume (U (k + 1))).toReal ≤ ((3 : ℝ) ^ (k + 1)) ^ d :=
-    volume_toReal_le_of_subset (hs₂ (k + 1)) (hout (k + 1))
-  have hquot : ((3 : ℝ) ^ (k + 1)) ^ d / ((3 : ℝ) ^ (k - 2)) ^ d = (3 : ℝ) ^ (3 * d) := by
-    rw [← div_pow, ← zpow_sub₀ (by norm_num : (3 : ℝ) ≠ 0),
-      show k + 1 - (k - 2) = (3 : ℤ) by ring, show ((3 : ℝ) ^ (3 : ℤ)) = 3 ^ (3 : ℕ) by norm_num,
-      ← pow_mul]
-  have hmul : (volume (U (k + 1))).toReal * ((3 : ℝ) ^ (k - 2)) ^ d
-      ≤ ((3 : ℝ) ^ (k + 1)) ^ d * (volume (U k)).toReal := by
-    have t1 : (volume (U (k + 1))).toReal * ((3 : ℝ) ^ (k - 2)) ^ d
-        ≤ ((3 : ℝ) ^ (k + 1)) ^ d * ((3 : ℝ) ^ (k - 2)) ^ d :=
-      mul_le_mul_of_nonneg_right hhigh hlowpos.le
-    have t2 : ((3 : ℝ) ^ (k + 1)) ^ d * ((3 : ℝ) ^ (k - 2)) ^ d
-        ≤ ((3 : ℝ) ^ (k + 1)) ^ d * (volume (U k)).toReal :=
-      mul_le_mul_of_nonneg_left hlow (by positivity)
-    exact t1.trans t2
-  have hratio : (volume (U (k + 1))).toReal / (volume (U k)).toReal ≤ (3 : ℝ) ^ (3 * d) := by
-    rw [← hquot, div_le_div_iff₀ hpos hlowpos]
-    exact hmul
-  rw [volumeRatioConstTriadic]
-  exact Real.rpow_le_rpow (by positivity) hratio hexp
-
 /-! ### The producer -/
 
 /-- **Gradient stability (`e.grad.stability`) on the sandwich class.**
@@ -387,70 +352,6 @@ theorem slopeStability_of_axisCubeSandwich (U : ℤ → Set (Vec d)) (u : Vec d 
     slope_algebra hc₀ (Real.rpow_pos_of_pos hB _) hone hrk
       (affineExcess_nonneg _ _) (affineExcess_nonneg _ _) hchain
   exact le_trans (abs_slopeMagnitude_sub_slopeMagnitude_le (gg k) (gg (k - 1))) hslope
-
-/-- **Gradient stability on the §4.3 consumption class (the triadic sandwich).**
-
-The paper's windows satisfy `x + □_{k−2} ⊆ U_k ⊆ y + □_k`, i.e. the sandwich at aspect ratio
-`θ = 1/9` at *every* scale.  The constant is therefore
-`Cstab = slopeStabilityConst d (1/9) κ = κ / (3^{−d−2}/(2√3)) = C(d)·κ`, scale-free. -/
-theorem slopeStability_of_cubeSandwich (U : ℤ → Set (Vec d)) (u : Vec d → ℝ)
-    (cc : ℤ → ℝ) (gg : ℤ → Vec d) {κ : ℝ} {Q₁ Q₂ : ℤ → TriadicCube d}
-    (hd : 0 < d) (hs₁ : ∀ k : ℤ, (Q₁ k).scale = k - 2) (hs₂ : ∀ k : ℤ, (Q₂ k).scale = k)
-    (hin : ∀ k : ℤ, openCubeSet (Q₁ k) ⊆ U k)
-    (hout : ∀ k : ℤ, U k ⊆ openCubeSet (Q₂ k))
-    (hmeas : ∀ k : ℤ, MeasurableSet (U k)) (hnest : ∀ k : ℤ, U k ⊆ U (k + 1))
-    (hu : ∀ k : ℤ, MemLp u 2 (volume.restrict (U k)))
-    (hmin : ∀ k : ℤ, IsAffineMinimizer (U k) u (cc k) (gg k))
-    (hratio : ∀ k : ℤ,
-      ((volume (U (k + 1))).toReal / (volume (U k)).toReal) ^ ((d : ℝ)⁻¹ + 1 / 2) ≤ κ) :
-    ∀ k : ℤ, |slopeMagnitude (gg k) - slopeMagnitude (gg (k - 1))|
-      ≤ slopeStabilityConst d (1 / 9 : ℝ) κ
-        * (affineExcess (U k) u + affineExcess (U (k - 1)) u) := by
-  have hLin : ∀ k : ℤ, cubeScaleFactor (Q₁ k) = (3 : ℝ) ^ (k - 2) := by
-    intro k
-    rw [cubeScaleFactor, hs₁ k]
-  have hLout : ∀ k : ℤ, cubeScaleFactor (Q₂ k) = (3 : ℝ) ^ k := by
-    intro k
-    rw [cubeScaleFactor, hs₂ k]
-  refine slopeStability_of_axisCubeSandwich U u cc gg
-    (zin := fun k => fun i => (((Q₁ k).index i : ℝ) - 1 / 2) * cubeScaleFactor (Q₁ k))
-    (zout := fun k => fun i => (((Q₂ k).index i : ℝ) - 1 / 2) * cubeScaleFactor (Q₂ k))
-    (Lin := fun k => cubeScaleFactor (Q₁ k)) (Lout := fun k => cubeScaleFactor (Q₂ k))
-    hd (fun k => cubeScaleFactor_pos (Q₁ k)) (fun k => cubeScaleFactor_pos (Q₂ k))
-    (by norm_num) ?_ ?_ ?_ hmeas hnest hu hmin hratio
-  · intro k
-    show (1 / 9 : ℝ) * cubeScaleFactor (Q₂ k) ≤ cubeScaleFactor (Q₁ k)
-    rw [hLin k, hLout k]
-    exact le_of_eq (triadic_aspect k)
-  · intro k
-    have h := hin k
-    rw [openCubeSet_eq_axisCube (Q₁ k)] at h
-    exact h
-  · intro k
-    have h := hout k
-    rw [openCubeSet_eq_axisCube (Q₂ k)] at h
-    exact h
-
-/-- **Gradient stability on the consumption class, at fully explicit constants.**
-
-The same statement with the volume-ratio constant *derived* rather than assumed: the only inputs
-are the two triadic inclusions, nestedness, measurability, square-integrability of `u`, and the
-choice of minimizers.  The constant is
-`slopeStabilityConst d (1/9) (volumeRatioConstTriadic d)`, a closed-form function of `d` alone ---
-this is the `Cstab = C(d)` of `e.grad.stability`. -/
-theorem slopeStability_of_cubeSandwich_explicit (U : ℤ → Set (Vec d)) (u : Vec d → ℝ)
-    (cc : ℤ → ℝ) (gg : ℤ → Vec d) {Q₁ Q₂ : ℤ → TriadicCube d}
-    (hd : 0 < d) (hs₁ : ∀ k : ℤ, (Q₁ k).scale = k - 2) (hs₂ : ∀ k : ℤ, (Q₂ k).scale = k)
-    (hin : ∀ k : ℤ, openCubeSet (Q₁ k) ⊆ U k)
-    (hout : ∀ k : ℤ, U k ⊆ openCubeSet (Q₂ k))
-    (hmeas : ∀ k : ℤ, MeasurableSet (U k)) (hnest : ∀ k : ℤ, U k ⊆ U (k + 1))
-    (hu : ∀ k : ℤ, MemLp u 2 (volume.restrict (U k)))
-    (hmin : ∀ k : ℤ, IsAffineMinimizer (U k) u (cc k) (gg k)) :
-    ∀ k : ℤ, |slopeMagnitude (gg k) - slopeMagnitude (gg (k - 1))|
-      ≤ slopeStabilityConst d (1 / 9 : ℝ) (volumeRatioConstTriadic d)
-        * (affineExcess (U k) u + affineExcess (U (k - 1)) u) :=
-  slopeStability_of_cubeSandwich U u cc gg hd hs₁ hs₂ hin hout hmeas hnest hu hmin
-    (volumeRatio_le_of_cubeSandwich hs₁ hs₂ hin hout)
 
 end
 

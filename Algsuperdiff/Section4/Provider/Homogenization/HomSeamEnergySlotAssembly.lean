@@ -1,18 +1,21 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
-import Algsuperdiff.Section4.Provider.Homogenization.HomProviderBSeamAssemblyHalf
-import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDataBridge
+import Algsuperdiff.Section4.Provider.Homogenization.HomProviderBAssembly
+import Algsuperdiff.Section4.Provider.Homogenization.HomProviderBSeamClose
+import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxHalfBundle
+import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxIdentification
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamGaugeCongruence
+import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDataBridge
 
 /-!
 # The energy conjuncts of the seam residue, assembled at the enlarged `Y`
 
 ## What this file supplies
 
-`HomProviderBSeamResidue.SeamEnergySupplyOfRegularity` asks, per `ω` and per
+The seam residue's energy supply asks, per `ω` and per
 printed elliptic pair, for `{0 ≤ S, the partial-sum slot, hSbound}` plus the
 multiscale clause.  This file produces the FIRST THREE from the Theorem-C
 display, by supplying the step no file supplies:
@@ -41,8 +44,8 @@ away)
 2. **`HasGradientOn`.**  The `anomalous_regularity` display carries
    the classical-gradient binder `HasGradientOn □_m h.toFun h.grad` (the V3
    amendment).  The frozen ROOT carries it too, but the spine drops it
-   (`HomProviderBAssembly.generator_renormalization_provider_of_core`, docstring:
-   "introduced and discarded"), so the per-`ω` residues do NOT bind it.
+   (the §4.5 provider introduces it and discards it), so the per-`ω` residues
+   do NOT bind it.
    Every theorem below therefore takes it as an EXPLICIT hypothesis: the energy
    slot is available exactly for the pairs the theorem speaks about.
 -/
@@ -225,12 +228,6 @@ theorem seamEnlargedY_apply_of_eq_coe (M : ABKModel d) (m : ℤ) {Ctop alpha : �
     rw [homMinimalScaleFactor, hXk, enatThreeRpow_coe]
   rw [seamEnlargedY, hY, ← mul_assoc, ← ENNReal.ofReal_mul hCtop]
 
-/-- `recutEnergyFactor` reads its `Y` slot at one sample only. -/
-theorem recutEnergyFactor_congr (M : ABKModel d) {Y Y' : Cutoff.CutoffSample d → ℝ≥0∞}
-    (m : ℤ) (omega : Cutoff.CutoffSample d) (h : Y omega = Y' omega) :
-    recutEnergyFactor M Y m omega = recutEnergyFactor M Y' m omega := by
-  rw [recutEnergyFactor, recutEnergyFactor, h]
-
 /-! ## 6. `htop` at the seam's own `Y` -/
 
 theorem seamQuarterPos : (0 : ℝ) < 1 / 4 := by norm_num
@@ -313,8 +310,7 @@ theorem htop_seamEnlargedY (d : ℕ) [NeZero d] (hd1 : 1 ≤ d) :
 
 /-- **`{0 ≤ S, the partial-sum slot, hSbound}` OF THE SEAM RESIDUE, PRODUCED.**
 
-The first three conjuncts of
-`HomSeamFluxIdentification.RecutCoreSupplyFluxEnergy` at the seam's own
+The first three conjuncts of the seam's energy residue at its own
 enlarged `Y`, from the Theorem-C display alone.  The partial-sum slot is
 delivered at the PRINTED coefficient `ã_{L,m}`: by
 `HomSeamFluxCoefficient.printedLocalEnergy_fluxCorrected` the energy functional

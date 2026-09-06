@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryOdd
 import Algsuperdiff.Section4.Provider.ExcessDecay.OddReflectionAssembly
@@ -133,43 +133,6 @@ theorem oddExtend_eq_self_of_faceOdd_upper {x : Vec d} {m k : ℤ} {i : Fin d}
       if_pos hgt, hO y]
     ring
 
-/-- **The interface atom, lower face.** -/
-theorem oddExtend_eq_self_of_faceOdd_lower {x : Vec d} {m k : ℤ} {i : Fin d}
-    (hnup : ¬ MeetsUpperFace x m k i) (hlow : MeetsLowerFace x m k i)
-    (hother : ∀ j, j ≠ i → ¬ MeetsUpperFace x m k j ∧ ¬ MeetsLowerFace x m k j)
-    {O : Vec d → ℝ}
-    (hO : ∀ z, O (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -O z)
-    {y : Vec d} (hne : y i ≠ -(1 / 2 : ℝ) * (3 : ℝ) ^ m) :
-    oddExtend x m k O y = O y := by
-  have hsign : windowFoldSign x m k y = foldSignCoord x m k i (y i) := by
-    rw [windowFoldSign]
-    refine Finset.prod_eq_single i (fun j _ hji => ?_) (fun h => ?_)
-    · exact foldSignCoord_of_unmet (hother j hji).1 (hother j hji).2 (y j)
-    · exact absurd (Finset.mem_univ i) h
-  rcases lt_or_gt_of_ne hne with hlt | hgt
-  · have hfold : windowFold x m k y
-        = coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y := by
-      funext j
-      by_cases hj : j = i
-      · subst hj
-        rw [windowFold_apply, foldCoord_of_meetsLowerFace hnup hlow,
-          max_eq_right (by linarith only [hlt]), coordFaceReflection_apply, if_pos rfl]
-        ring
-      · rw [windowFold_apply, foldCoord_of_unmet (hother j hj).1 (hother j hj).2 (y j),
-          coordFaceReflection_apply, if_neg hj]
-    rw [oddExtend_apply, hfold, hsign, foldSignCoord_of_meetsLowerFace hnup hlow,
-      if_pos hlt, hO y]
-    ring
-  · have hfold : windowFold x m k y = y := by
-      funext j
-      by_cases hj : j = i
-      · subst hj
-        rw [windowFold_apply, foldCoord_of_meetsLowerFace hnup hlow,
-          max_eq_left (by linarith only [hgt])]
-      · exact foldCoord_of_unmet (hother j hj).1 (hother j hj).2 (y j)
-    rw [oddExtend_apply, hfold, hsign, foldSignCoord_of_meetsLowerFace hnup hlow,
-      if_neg (not_lt.2 hgt.le), one_mul]
-
 /-- **The interface is null.**  The pointwise atom therefore holds almost
 everywhere, upper face. -/
 theorem oddExtend_ae_eq_self_of_faceOdd_upper {x : Vec d} {m k : ℤ} {i : Fin d}
@@ -184,26 +147,6 @@ theorem oddExtend_ae_eq_self_of_faceOdd_upper {x : Vec d} {m k : ℤ} {i : Fin d
   by_contra hne
   exact hy (oddExtend_eq_self_of_faceOdd_upper hup hother hO hne)
 
-/-- **The interface is null**, lower face. -/
-theorem oddExtend_ae_eq_self_of_faceOdd_lower {x : Vec d} {m k : ℤ} {i : Fin d}
-    (hnup : ¬ MeetsUpperFace x m k i) (hlow : MeetsLowerFace x m k i)
-    (hother : ∀ j, j ≠ i → ¬ MeetsUpperFace x m k j ∧ ¬ MeetsLowerFace x m k j)
-    {O : Vec d → ℝ}
-    (hO : ∀ z, O (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -O z) :
-    oddExtend x m k O =ᵐ[volume] O := by
-  refine MeasureTheory.ae_iff.2 (measure_mono_null ?_
-    (volume_coordLevel_eq_zero i (-(1 / 2 : ℝ) * (3 : ℝ) ^ m)))
-  intro y hy
-  by_contra hne
-  exact hy (oddExtend_eq_self_of_faceOdd_lower hnup hlow hother hO hne)
-
-/-- The one-face odd extension of `OddReflectionGlue` — the value-level shape of
-the object whose gradient the proved one-met-face transfer pins — is odd about
-its face. -/
-theorem faceOdd_oddFaceExtend (a : ℝ) (i : Fin d) (g : Vec d → ℝ) (z : Vec d) :
-    oddFaceExtend a i g (coordFaceReflection a i z) = -oddFaceExtend a i g z :=
-  oddFaceExtend_comp_coordFaceReflection a i g z
-
 /-! ## 3. The odd bridge, almost everywhere -/
 
 /-- **The odd bridge, almost-everywhere form.**  For a competitor which agrees
@@ -213,7 +156,7 @@ intercept `c - c₀` lies in the odd class, the excess minimum on the doubled
 window is at most `2^d` times the affine distance on `U₂`.
 
 With `c₀ = 0` and a pointwise-odd `V` this is
-`OneStepBoundaryOdd.affineExcessRaw_reflectedWindow_le_odd`. -/
+the pointwise odd-class excess bound on the doubled window. -/
 theorem affineExcessRaw_reflectedWindow_le_odd_ae {m k : ℤ} {x : Vec d} (hkm : k < m)
     {V O : Vec d → ℝ} {c₀ : ℝ}
     (hVO : V =ᵐ[volume.restrict (reflectedWindow x m k)] fun y => O y + c₀)
@@ -280,7 +223,7 @@ theorem affineExcessRaw_reflectedWindow_le_odd_ae {m k : ℤ} {x : Vec d} (hkm :
 almost-everywhere odd competitor.**
 
 The almost-everywhere twin of
-`OneStepBoundaryOdd.exists_gradientHolder_boundary_odd`: the competitor is only
+the pointwise odd-class producer: the competitor is only
 required to agree almost everywhere on the doubled window with `O + c₀` for an
 almost-everywhere odd `O`, which is exactly what Weyl's lemma delivers off the
 reflected `H¹` datum. -/

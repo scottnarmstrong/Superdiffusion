@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Observable.CutoffHomogenizationError
 import Algsuperdiff.Section3.Provider.MultiscaleEstimate.BadEventMaxSplit
@@ -577,7 +577,7 @@ theorem exists_badEventSup_isBigOWith_gammaOne (d : ℕ) :
 
 /-! ## 5. `e.local.bad.events.summed` -/
 
-/-- **The revised `e.local.bad.events.summed`** (canonical revision), at the
+/-- **`e.local.bad.events.summed`**, at the
 multiscale root's own binder set:
 
 ```

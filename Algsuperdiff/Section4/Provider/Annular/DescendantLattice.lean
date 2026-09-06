@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.BlockResponse
 import Algsuperdiff.Section4.Support.Events
@@ -45,11 +45,8 @@ identification, with no geometric hypothesis beyond `n <= m`.
 * `mem_latticeCubeSet_iff` -- the same box, read off the Section 4 lattice set.
 * `mem_descendantsAtScale_originCube_iff`, `latticeCube_mem_descendantsAtScale`,
   `eq_latticeCube_of_mem_descendantsAtScale` -- the correspondence, both ways.
-* `cubeSet_latticeCube` / `openCubeSet_latticeCube` -- the cube of a descendant
-  is literally the translate of the origin cube by its base lattice point.
-* `latticeCubeFinset`, `descendantsAtScale_originCube_eq_image`,
-  `finsetSupReal_descendantsAtScale_originCube` -- the index bijection and the
-  transfer of the finite supremum.
+* `latticeCubeFinset`, `descendantsAtScale_originCube_eq_image` -- the index
+  bijection of the descendant enumeration.
 * `maxDescendantNormalizedBlockResponse_le_of_lattice_bounds` and
   `eightEss_blockResponse_le_of_lattice_bounds` -- the two targets joined: the
   scale-`n` descendant maximum of the normalized block response is bounded by
@@ -194,44 +191,8 @@ def latticeCube (n : ℤ) (v : Fin d → ℤ) : TriadicCube d :=
 @[simp] theorem latticeCube_index (n : ℤ) (v : Fin d → ℤ) :
     (latticeCube n v).index = v := rfl
 
-/-- **The cube of a descendant is the translate of the origin cube by its base
-lattice point.** -/
-theorem latticeCube_eq_translateCube (n : ℤ) (v : Fin d → ℤ) :
-    latticeCube n v = translateCube v (originCube d n) := by
-  unfold latticeCube translateCube originCube
-  simp
-
 theorem latticeCube_index_self (R : TriadicCube d) :
     latticeCube R.scale R.index = R := rfl
-
-/-- The point set of a lattice cube is the `3^n v`-translate of the scale-`n`
-origin cube -- the manuscript's `z + cu_n` with `z = 3^n v`. -/
-theorem cubeSet_latticeCube (n : ℤ) (v : Fin d → ℤ) :
-    cubeSet (latticeCube n v) =
-      translateSet (triadicLatticePoint n v) (cubeSet (originCube d n)) := by
-  ext x
-  rw [latticeCube_eq_translateCube, mem_cubeSet_translateCube_iff,
-    mem_translateSet_iff_sub_mem]
-  have hz : (fun i => (v i : ℝ) * cubeScaleFactor (originCube d n))
-      = triadicLatticePoint n v := by
-    funext i
-    rw [cubeScaleFactor_originCube, triadicLatticePoint]
-    ring
-  rw [hz]
-
-/-- The open version of `cubeSet_latticeCube`. -/
-theorem openCubeSet_latticeCube (n : ℤ) (v : Fin d → ℤ) :
-    openCubeSet (latticeCube n v) =
-      translateSet (triadicLatticePoint n v) (openCubeSet (originCube d n)) := by
-  ext x
-  rw [latticeCube_eq_translateCube, mem_openCubeSet_translateCube_iff,
-    mem_translateSet_iff_sub_mem]
-  have hz : (fun i => (v i : ℝ) * cubeScaleFactor (originCube d n))
-      = triadicLatticePoint n v := by
-    funext i
-    rw [cubeScaleFactor_originCube, triadicLatticePoint]
-    ring
-  rw [hz]
 
 private theorem lattice_coord_iff {A x Kr : ℝ} (hA : 0 < A) :
     ((-(1 / 2) : ℝ) * (A * Kr) < A * x ∧ A * x < (1 / 2 : ℝ) * (A * Kr)) ↔
@@ -352,12 +313,6 @@ theorem mem_latticeCubeFinset_iff {n m : ℤ} (hnm : n ≤ m) (v : Fin d → ℤ
     refine Finset.mem_image.mpr ⟨latticeCube n v, ?_, rfl⟩
     exact latticeCube_mem_descendantsAtScale hnm hv
 
-/-- The two enumerations carry the same points. -/
-theorem coe_latticeCubeFinset {n m : ℤ} (hnm : n ≤ m) :
-    (↑(latticeCubeFinset d n m) : Set (Fin d → ℤ)) = latticeCubeSet d n m := by
-  ext v
-  exact mem_latticeCubeFinset_iff hnm v
-
 /-- **The index bijection**: the descendant family is the image of the lattice
 index set under `v |-> 3^n v + cu_n`. -/
 theorem descendantsAtScale_originCube_eq_image {n m : ℤ} (hnm : n ≤ m) :
@@ -380,14 +335,6 @@ theorem latticeCube_injective (n : ℤ) :
   have := congrArg TriadicCube.index hvw
   simpa using this
 
-/-- The lattice index set is nonempty: the centre `0` always belongs. -/
-theorem latticeCubeFinset_nonempty {n m : ℤ} (hnm : n ≤ m) :
-    (latticeCubeFinset d n m).Nonempty := by
-  refine ⟨0, (mem_latticeCubeFinset_iff hnm 0).mpr ?_⟩
-  rw [mem_latticeCubeSet_iff hnm]
-  intro i
-  simp
-
 /-- **The lattice count** `#(3^n Z^d cap cu_m) = 3^{d(m-n)}`, obtained from the
 descendant count through the index bijection. -/
 theorem latticeCubeFinset_card {n m : ℤ} (hnm : n ≤ m) :
@@ -401,37 +348,6 @@ theorem latticeCubeFinset_card {n m : ℤ} (hnm : n ≤ m) :
   rw [descendantsAtScale_originCube_eq_image hnm,
     Finset.card_image_of_injective _ (latticeCube_injective (d := d) n)] at hcard
   exact hcard
-
-/-- **Transfer of the finite maximum**: a maximum over the descendants at scale
-`n` of `cu_m` is a maximum over the lattice `3^n Z^d cap cu_m`. -/
-theorem finsetSupReal_descendantsAtScale_originCube {n m : ℤ} (hnm : n ≤ m)
-    (F : TriadicCube d → ℝ) :
-    finsetSupReal (descendantsAtScale (originCube d m) n) F
-      = finsetSupReal (latticeCubeFinset d n m) (fun v => F (latticeCube n v)) := by
-  rw [descendantsAtScale_originCube_eq_image hnm]
-  exact finsetSupReal_image _ _ _ _ (fun _ _ => rfl)
-
-/-- A lattice value is below the descendant maximum. -/
-theorem le_finsetSupReal_descendantsAtScale {n m : ℤ} (hnm : n ≤ m)
-    (F : TriadicCube d → ℝ) {v : Fin d → ℤ} (hv : v ∈ latticeCubeSet d n m) :
-    F (latticeCube n v) ≤ finsetSupReal (descendantsAtScale (originCube d m) n) F := by
-  have hmem : latticeCube n v ∈ descendantsAtScale (originCube d m) n :=
-    latticeCube_mem_descendantsAtScale hnm hv
-  have hbdd : BddAbove (F '' (↑(descendantsAtScale (originCube d m) n) : Set (TriadicCube d))) :=
-    (((descendantsAtScale (originCube d m) n).finite_toSet).image F).bddAbove
-  exact le_csSup hbdd ⟨latticeCube n v, hmem, rfl⟩
-
-/-- The descendant maximum is below any uniform lattice bound. -/
-theorem finsetSupReal_descendantsAtScale_le {n m : ℤ} (hnm : n ≤ m)
-    (F : TriadicCube d → ℝ) {B : ℝ}
-    (hB : ∀ v ∈ latticeCubeSet d n m, F (latticeCube n v) ≤ B) :
-    finsetSupReal (descendantsAtScale (originCube d m) n) F ≤ B := by
-  have hne : (descendantsAtScale (originCube d m) n).Nonempty :=
-    descendantsAtScale_nonempty (originCube d m) (by exact hnm)
-  refine finsetSupReal_le _ hne ?_
-  intro R hR
-  rw [eq_latticeCube_of_mem_descendantsAtScale hnm hR]
-  exact hB R.index (index_mem_latticeCubeSet_of_mem_descendantsAtScale hnm hR)
 
 /-! ## The two targets joined -/
 

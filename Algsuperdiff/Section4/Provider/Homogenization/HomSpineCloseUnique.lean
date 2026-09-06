@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepFourIdentity
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderPoincare
@@ -30,7 +30,7 @@ is proved here, unconditionally:
    Since `σ̄_m > 0` and the integrand is nonnegative and integrable (the `H¹`
    membership of both gradients, `integrableOn_vecDot_of_memVectorL2`), `∇w = 0`
    a.e.
-2. **function uniqueness** (`dirichletComparator_toFun_ae_eq`) — `w ∈ H¹₀(□_m)`
+2. **function uniqueness** — `w ∈ H¹₀(□_m)`
    with vanishing gradient, so the zero-trace Poincaré inequality at the cube's
    own scale (`Schauder.eLpNorm_le_schauderDirichletPoincare`, `Frozen`-free,
    read at the inscribing cube `0 + □_m`) forces `‖w‖_{L²(□_m)} = 0`.  The
@@ -47,8 +47,9 @@ analysis was needed and the boundary chain was not required.
 
 ## The payoff
 
-`dirichletComparator_clauses_transfer` moves the root's two clause bodies from
-the produced comparator `v'` to an ARBITRARY comparator `v`: the (C3) display
+`dirichletComparator_grad_ae_eq` and `dirichletComparator_energyAverage_eq` are
+what moves the root's two clause bodies from the produced comparator `v'` to an
+ARBITRARY comparator `v`: the (C3) display
 because `v =ᵐ v'`, the (C4) display because `∇v =ᵐ ∇v'` and `volumeAverage` is
 an integral.  So a producer that delivers the clauses at `∃ v` delivers them at
 `∀ v`, which is the root's own quantifier.
@@ -168,75 +169,6 @@ theorem dirichletComparator_grad_ae_eq {Q : TriadicCube d} {sigmaBarM : ℝ}
   have hfin : v.grad x - v'.grad x = 0 := this.symm
   exact sub_eq_zero.mp hfin
 
-/-! ## 3. Function uniqueness, through the zero-trace Poincaré inequality -/
-
-/-- **The comparator itself is unique.**
-
-The `H¹₀` difference has vanishing gradient, so the Dirichlet Poincaré
-inequality at the cube's own scale (`Schauder.eLpNorm_le_schauderDirichletPoincare`
-at the inscribing cube `0 + □_m`) gives `‖v - v'‖_{L²(□_m)} = 0`.  The `L²`
-finiteness needed to pass from `.toReal ≤ 0` to the vanishing of the seminorm is
-the `H¹` structure's own `memL2` field. -/
-theorem dirichletComparator_toFun_ae_eq [NeZero d] {m : ℤ} {sigmaBarM : ℝ}
-    (hsig : 0 < sigmaBarM)
-    {v v' h : H1Function (openCubeSet (originCube d m))} {g : Vec d → Vec d}
-    (hv : IsDirichletSolutionOn (fun _ => sigmaBarM • (1 : Mat d)) (originCube d m) v h g)
-    (hv' : IsDirichletSolutionOn (fun _ => sigmaBarM • (1 : Mat d)) (originCube d m) v' h g) :
-    ∀ᵐ x ∂(volume.restrict (openCubeSet (originCube d m))), v.toFun x = v'.toFun x := by
-  obtain ⟨w, hwF, hwG⟩ := exists_h10Function_sub_of_hasZeroTrace hv.1 hv'.1
-  have hgrad := dirichletComparator_grad_ae_eq hsig hv hv'
-  /- every coordinate of the difference's gradient vanishes a. -/
-  have hcoord : ∀ i : Fin d,
-      eLpNorm (fun y => w.toH1Function.grad y i) 2
-        (volume.restrict (openCubeSet (originCube d m))) = 0 := by
-    intro i
-    have hz : (fun y => w.toH1Function.grad y i) =ᵐ[volume.restrict
-        (openCubeSet (originCube d m))] fun _ => (0 : ℝ) := by
-      refine hgrad.mono fun x hx => ?_
-      have := hwG x
-      rw [hx, sub_self] at this
-      show w.toH1Function.grad x i = 0
-      rw [this]
-      rfl
-    rw [eLpNorm_congr_ae hz]
-    exact eLpNorm_zero
-  /- the Poincaré inequality at the inscribing cube `0 + □_m` -/
-  have hinscribe : ∀ y ∈ openCubeSet (originCube d m), ∀ j : Fin d,
-      (0 : Vec d) j - (1 / 2 : ℝ) * (3 : ℝ) ^ m < y j ∧
-        y j < (0 : Vec d) j + (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-    intro y hy j
-    have hj := mem_openCubeSet_originCube_iff.1 hy j
-    exact ⟨by simpa using by linarith only [hj.1], by simpa using by linarith only [hj.2]⟩
-  have hpoin := Schauder.eLpNorm_le_schauderDirichletPoincare
-    (measurableSet_openCubeSet (originCube d m)) 0 m hinscribe w
-  have hsum : (∑ i : Fin d,
-      (eLpNorm (fun y => w.toH1Function.grad y i) 2
-        (volume.restrict (openCubeSet (originCube d m)))).toReal) = 0 := by
-    refine Finset.sum_eq_zero fun i _ => ?_
-    rw [hcoord i]
-    rfl
-  rw [hsum, mul_zero] at hpoin
-  /- the `L²` seminorm of the difference is finite, hence ze -/
-  have hfin : eLpNorm w.toFun 2
-      (volume.restrict (openCubeSet (originCube d m))) ≠ ⊤ :=
-    w.toH1Function.memL2.eLpNorm_ne_top
-  have htoReal : (eLpNorm w.toFun 2
-      (volume.restrict (openCubeSet (originCube d m)))).toReal = 0 :=
-    le_antisymm hpoin ENNReal.toReal_nonneg
-  have hzero : eLpNorm w.toFun 2
-      (volume.restrict (openCubeSet (originCube d m))) = 0 := by
-    rcases (ENNReal.toReal_eq_zero_iff _).mp htoReal with h | h
-    · exact h
-    · exact absurd h hfin
-  have hae : w.toFun =ᵐ[volume.restrict (openCubeSet (originCube d m))] 0 :=
-    (eLpNorm_eq_zero_iff w.toH1Function.memL2.aestronglyMeasurable (by norm_num)).mp hzero
-  refine hae.mono fun x hx => ?_
-  have hx0 : w.toH1Function.toFun x = 0 := hx
-  have := hwF x
-  rw [hx0] at this
-  have hfin2 : v.toFun x - v'.toFun x = 0 := this.symm
-  exact sub_eq_zero.mp hfin2
-
 /-! ## 4. `∀ v` from `∃ v`: the clause transfer -/
 
 /-- **The comparator's energy average is comparator-independent.**
@@ -257,37 +189,6 @@ theorem dirichletComparator_energyAverage_eq {Q : TriadicCube d} {sigmaBarM : �
   refine hgrad.mono fun x hx => ?_
   show sigmaBarM * vecNormSq (v.grad x) = sigmaBarM * vecNormSq (v'.grad x)
   rw [hx]
-
-/-- **THE TRANSFER: the root's `∀ v` from the Schauder package's `∃ v`.**
-
-Given the two clause bodies at the PRODUCED comparator `v'`, they hold at every
-comparator `v` of the same Dirichlet problem.  (C3) transfers because `v =ᵐ v'`
-and the display is an a.e. statement; (C4) transfers because `∇v =ᵐ ∇v'` and
-`volumeAverage` is an integral. -/
-theorem dirichletComparator_clauses_transfer [NeZero d] {m : ℤ}
-    {sigmaBarM nu Bd Be : ℝ} (hsig : 0 < sigmaBarM)
-    {u v v' h : H1Function (openCubeSet (originCube d m))} {g : Vec d → Vec d}
-    (hv : IsDirichletSolutionOn (fun _ => sigmaBarM • (1 : Mat d)) (originCube d m) v h g)
-    (hv' : IsDirichletSolutionOn (fun _ => sigmaBarM • (1 : Mat d)) (originCube d m) v' h g)
-    (hC3 : ∀ᵐ x ∂(volume.restrict (openCubeSet (originCube d m))),
-      Real.rpow 3 (-(m : ℝ)) * |u.toFun x - v'.toFun x| ≤ Bd)
-    (hC4 : |volumeAverage (openCubeSet (originCube d m))
-            (fun y => nu * vecNormSq (u.grad y)) -
-          volumeAverage (openCubeSet (originCube d m))
-            (fun y => sigmaBarM * vecNormSq (v'.grad y))| ≤ Be) :
-    (∀ᵐ x ∂(volume.restrict (openCubeSet (originCube d m))),
-        Real.rpow 3 (-(m : ℝ)) * |u.toFun x - v.toFun x| ≤ Bd) ∧
-      |volumeAverage (openCubeSet (originCube d m))
-            (fun y => nu * vecNormSq (u.grad y)) -
-          volumeAverage (openCubeSet (originCube d m))
-            (fun y => sigmaBarM * vecNormSq (v.grad y))| ≤ Be := by
-  have hfun := dirichletComparator_toFun_ae_eq hsig hv hv'
-  refine ⟨?_, ?_⟩
-  · refine (hC3.and hfun).mono fun x hx => ?_
-    rw [hx.2]
-    exact hx.1
-  · rw [dirichletComparator_energyAverage_eq hsig hv hv']
-    exact hC4
 
 end
 

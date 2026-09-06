@@ -1,0 +1,186 @@
+/-
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Scott Armstrong
+-/
+import Algsuperdiff.Process
+import Algsuperdiff.Section5.Field.Carrier
+import Algsuperdiff.Section5.Field.Continuity
+import Algsuperdiff.Section5.Field.CutoffLimit
+import Algsuperdiff.Section5.Field.Growth
+import Algsuperdiff.Section5.Field.SharpTailGrowth
+import Algsuperdiff.Section5.Field.SharpTailProbability
+import Algsuperdiff.Section5.Field.StreamField
+import Algsuperdiff.Section5.Field.TailGauge
+import Algsuperdiff.Section5.Field.TailMoments
+import Algsuperdiff.Section5.Field.TailProbability
+import Algsuperdiff.Section5.Percolation.CubeMass
+import Algsuperdiff.Section5.Percolation.FixedPath
+import Algsuperdiff.Section5.Percolation.Geodesic
+import Algsuperdiff.Section5.Percolation.Hypotheses
+import Algsuperdiff.Section5.Percolation.Inflate
+import Algsuperdiff.Section5.Percolation.LargeScale
+import Algsuperdiff.Section5.Percolation.Lattice
+import Algsuperdiff.Section5.Percolation.LatticeBridge
+import Algsuperdiff.Section5.Percolation.Minimizer
+import Algsuperdiff.Section5.Percolation.PathBound
+import Algsuperdiff.Section5.Percolation.PathCount
+import Algsuperdiff.Section5.Percolation.SmallScale
+import Algsuperdiff.Section5.Provider.CutoffAnalyticData
+import Algsuperdiff.Section5.Provider.CutoffLimitDatum
+import Algsuperdiff.Section5.Provider.DivergenceContraction
+import Algsuperdiff.Section5.Provider.EarlyExit
+import Algsuperdiff.Section5.Provider.EarlyExitConfinementModel
+import Algsuperdiff.Section5.Provider.EarlyExitModel
+import Algsuperdiff.Section5.Provider.EarlyExitPrinted
+import Algsuperdiff.Section5.Provider.EarlyExitScaleMoments
+import Algsuperdiff.Section5.Provider.ErrorMoment
+import Algsuperdiff.Section5.Provider.ExitTimeCutoffLimit
+import Algsuperdiff.Section5.Provider.ExitTimeCutoffLimitTail
+import Algsuperdiff.Section5.Provider.ExitTimeCutoffLimitTailData
+import Algsuperdiff.Section5.Provider.ExitTimeHomogenization
+import Algsuperdiff.Section5.Provider.ExitTimeHomogenizationJoint
+import Algsuperdiff.Section5.Provider.ExitTimeHomogenizationJointMoment
+import Algsuperdiff.Section5.Provider.ExitTimeJointCarrier
+import Algsuperdiff.Section5.Provider.ExitTimeJointStream
+import Algsuperdiff.Section5.Provider.ExitTimeTailModel
+import Algsuperdiff.Section5.Provider.ExitTimeTailStream
+import Algsuperdiff.Section5.Provider.HomogenizationCorrector
+import Algsuperdiff.Section5.Provider.HomogenizationCorrectorPointwise
+import Algsuperdiff.Section5.Provider.HomogenizationObservable
+import Algsuperdiff.Section5.Provider.InjectionAssembly
+import Algsuperdiff.Section5.Provider.IterationSeries
+import Algsuperdiff.Section5.Provider.LocalizedErrorScaling
+import Algsuperdiff.Section5.Provider.OnePointChainLaplace
+import Algsuperdiff.Section5.Provider.OnePointChainPath
+import Algsuperdiff.Section5.Provider.OnePointChainPrinted
+import Algsuperdiff.Section5.Provider.OnePointChainStreamFull
+import Algsuperdiff.Section5.Provider.OnePointChainStreamJoint
+import Algsuperdiff.Section5.Provider.OnePointChainTrace
+import Algsuperdiff.Section5.Provider.OneStepLaplace
+import Algsuperdiff.Section5.Provider.OneStepLaplaceComposer
+import Algsuperdiff.Section5.Provider.PercolationAssembly
+import Algsuperdiff.Section5.Provider.PercolationAssemblyV2
+import Algsuperdiff.Section5.Provider.PercolationScaleTail
+import Algsuperdiff.Section5.Provider.PthMoment
+import Algsuperdiff.Section5.Provider.PthMomentProcess
+import Algsuperdiff.Section5.Provider.PthMomentProcessModel
+import Algsuperdiff.Section5.Provider.PthMomentProcessScale
+import Algsuperdiff.Section5.Provider.PthMomentProcessTail
+import Algsuperdiff.Section5.Provider.QuenchedMomentsComposer
+import Algsuperdiff.Section5.Provider.RemovalSteps
+import Algsuperdiff.Section5.Provider.SeedControl
+import Algsuperdiff.Section5.Provider.SiteTailsV2
+import Algsuperdiff.Section5.Provider.SeriesLimit
+import Algsuperdiff.Section5.Provider.StoppedMoments
+import Algsuperdiff.Section5.Provider.StoppedMomentsCube
+import Algsuperdiff.Section5.Provider.StoppedMomentsCubeMeanValue
+import Algsuperdiff.Section5.Provider.StoppedMomentsCubeModel
+import Algsuperdiff.Section5.Provider.StoppedMomentsCubeStream
+import Algsuperdiff.Section5.Provider.StoppedMomentsDatum
+import Algsuperdiff.Section5.Provider.StoppedMomentsProcess
+import Algsuperdiff.Section5.Provider.StoppedPositionStream
+import Algsuperdiff.Section5.Provider.StreamExitTimeH10
+import Algsuperdiff.Section5.Provider.SuperdiffusiveBounds
+import Algsuperdiff.Section5.Provider.SuperdiffusivityAssembly
+import Algsuperdiff.Section5.Provider.SuperdiffusivityComponentsModel
+import Algsuperdiff.Section5.Provider.SuperdiffusivityProvider
+import Algsuperdiff.Section5.Support.AuxiliaryScale
+import Algsuperdiff.Section5.Support.BallAverage
+import Algsuperdiff.Section5.Support.BallAverageHolder
+import Algsuperdiff.Section5.Support.BallAverageRepresentative
+import Algsuperdiff.Section5.Support.CoefficientLocalMeasurable
+import Algsuperdiff.Section5.Support.CoefficientMeasurable
+import Algsuperdiff.Section5.Support.ComparatorComparison
+import Algsuperdiff.Section5.Support.ComparatorUniformBound
+import Algsuperdiff.Section5.Support.ConfinementScale
+import Algsuperdiff.Section5.Support.ConfinementScaleMinimality
+import Algsuperdiff.Section5.Support.ConfinementScaleMoments
+import Algsuperdiff.Section5.Support.ConfinementScaleRandomMoments
+import Algsuperdiff.Section5.Support.ConstantInvariance
+import Algsuperdiff.Section5.Support.CubeAxisBridge
+import Algsuperdiff.Section5.Support.CubeCarrier
+import Algsuperdiff.Section5.Support.CutoffFieldLimit
+import Algsuperdiff.Section5.Support.CutoffFieldLimitPointwise
+import Algsuperdiff.Section5.Support.DataApproximation
+import Algsuperdiff.Section5.Support.DataSeparability
+import Algsuperdiff.Section5.Support.DatumContinuity
+import Algsuperdiff.Section5.Support.DatumIntegralContinuity
+import Algsuperdiff.Section5.Support.DensePoints
+import Algsuperdiff.Section5.Support.DirichletSolvability
+import Algsuperdiff.Section5.Support.DisplacementScale
+import Algsuperdiff.Section5.Support.EnergyPoincare
+import Algsuperdiff.Section5.Support.EssentialSupremum
+import Algsuperdiff.Section5.Support.ExitTimeBarrier
+import Algsuperdiff.Section5.Support.ExitTimeHomogenizationJointEvent
+import Algsuperdiff.Section5.Support.FieldDivergenceTest
+import Algsuperdiff.Section5.Support.FieldSolutionMap
+import Algsuperdiff.Section5.Support.HolderCalculus
+import Algsuperdiff.Section5.Support.HolderGauge
+import Algsuperdiff.Section5.Support.HolderL2Interpolation
+import Algsuperdiff.Section5.Support.HomogenizedExitTime
+import Algsuperdiff.Section5.Support.IntrinsicScale
+import Algsuperdiff.Section5.Support.IterationStep
+import Algsuperdiff.Section5.Support.LengthTimeScale
+import Algsuperdiff.Section5.Support.LinearExitDatum
+import Algsuperdiff.Section5.Support.LipschitzRepresentative
+import Algsuperdiff.Section5.Support.LocalizedAssembly
+import Algsuperdiff.Section5.Support.LocalizedFinite
+import Algsuperdiff.Section5.Support.LocalizedGaugeMeasurable
+import Algsuperdiff.Section5.Support.LocalizedLocality
+import Algsuperdiff.Section5.Support.LocalizedMeasurable
+import Algsuperdiff.Section5.Support.LocalizedTranslation
+import Algsuperdiff.Section5.Support.PercolationScale
+import Algsuperdiff.Section5.Support.PercolationScaleV2
+import Algsuperdiff.Section5.Support.RenormalizationAtRandomScale
+import Algsuperdiff.Section5.Support.RenormalizationFamilyCorrector
+import Algsuperdiff.Section5.Support.Representative
+import Algsuperdiff.Section5.Support.RepresentativeComparator
+import Algsuperdiff.Section5.Support.SeriesEnergy
+import Algsuperdiff.Section5.Support.SeriesIdentification
+import Algsuperdiff.Section5.Support.SigmaBarBridge
+import Algsuperdiff.Section5.Support.SigmaBarProfile
+import Algsuperdiff.Section5.Support.ShellPerturbation
+import Algsuperdiff.Section5.Support.SiteFamilyFive
+import Algsuperdiff.Section5.Support.SiteFamilyFiveIndep
+import Algsuperdiff.Section5.Support.SiteTailCalibration
+import Algsuperdiff.Section5.Support.SiteTailCalibrationV2
+import Algsuperdiff.Section5.Support.SiteTails
+import Algsuperdiff.Section5.Support.SkewTransfer
+import Algsuperdiff.Section5.Support.SmallGammaRpow
+import Algsuperdiff.Section5.Support.SolutionCoefficientContinuity
+import Algsuperdiff.Section5.Support.SolutionLinearity
+import Algsuperdiff.Section5.Support.SolutionMeasurable
+import Algsuperdiff.Section5.Support.SolutionScaling
+import Algsuperdiff.Section5.Support.SolutionSelector
+import Algsuperdiff.Section5.Support.Translation
+import Algsuperdiff.Section5.Support.VecGauge
+import Algsuperdiff.Section5.Support.VectorPairing
+import Algsuperdiff.Section5.Support.ZeroTraceBoundary
+import Algsuperdiff.Section5.Support.ZeroTraceSupNorm
+import Algsuperdiff.Section5.Trace.CrossingTrace
+import Algsuperdiff.Section5.Trace.CubeTrace
+import Algsuperdiff.Section5.Trace.GoodCubeCrossing
+import Algsuperdiff.Section5.Trace.HitExitBridge
+import Algsuperdiff.Section5.Trace.RescaledPathBound
+import Algsuperdiff.Section5.Trace.SurvivalProbability
+import Algsuperdiff.Section5.Field
+import Algsuperdiff.Section5.Percolation
+import Algsuperdiff.Frozen.Section5.InjectionInLInftyV2
+import Algsuperdiff.Frozen.Section5.PercolationGFv2
+import Algsuperdiff.Frozen.Section5.SuperdiffusivityV2
+import Algsuperdiff.Frozen.Introduction.GeneratorRenormalization
+import Algsuperdiff.Frozen.Introduction.AnomalousRegularity
+
+/-!
+# Section 5
+
+Root import for the Section 5 development: the full stream matrix and its
+tail estimates, the percolation path bound and its lattice reading, the
+support results of the exit-time and displacement estimates, the trace of a
+continuous path across a cube annulus, and the two main statements of the
+section, the chains-of-good-cubes estimate and the injection in `L^∞`.
+
+Every module under `Algsuperdiff/Section5/` and `Algsuperdiff/Frozen/Section5/`
+is imported here, so a build of this module compiles the whole tree.
+-/

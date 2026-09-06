@@ -1,10 +1,10 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoarseAssemblyBudget
-import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryAssemblyWideners
+import Algsuperdiff.Section4.Provider.ExcessDecay.EnnrealShell
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay
 
@@ -150,12 +150,6 @@ theorem one_le_rpow_neg_two {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) :
 display's legs 4 and 5. -/
 theorem rpow_neg_four_mul_neg_two {s : ℝ} (hs : 0 < s) :
     Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(2 : ℝ)) = Real.rpow s (-(6 : ℝ)) :=
-  rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-
-/-- The envelope's `s^{-4}` against the canonical `s^{-3}`: the frozen force
-leg. -/
-theorem rpow_neg_four_mul_neg_three {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 : ℝ)) = Real.rpow s (-(7 : ℝ)) :=
   rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
 
 /-! ## 4. The boundary energy assembly, on abstract letters -/
@@ -356,20 +350,6 @@ theorem boundary_absorb {Cf C A A' B B' T3 T4 T5 : ℝ} (hAA' : A ≤ A')
       C * A' + C * B' + C * T3 + C * T4 + C * T5 := by ring
   rw [hexp, hexp2]
   linarith only [hstep1, hstep2, hstep3, hstep4, hstep5]
-
-theorem fluxWeighted_scalar_leg_le {C Erep E0 P S : ℝ} (hC : 0 ≤ C) (hP : 0 ≤ P)
-    (hS : 0 ≤ S) (hErep : Erep ≤ E0) :
-    C * (P * Erep * S) ≤ (C * E0) * (P * S) := by
-  have hPS : (0 : ℝ) ≤ P * S := mul_nonneg hP hS
-  have hstep : P * Erep * S ≤ E0 * (P * S) := by
-    have h := mul_le_mul_of_nonneg_right hErep hPS
-    have hrw : P * Erep * S = Erep * (P * S) := by ring
-    rw [hrw]
-    exact h
-  have hfin := mul_le_mul_of_nonneg_left hstep hC
-  have hrw2 : C * (E0 * (P * S)) = C * E0 * (P * S) := by ring
-  rw [hrw2] at hfin
-  exact hfin
 
 end
 

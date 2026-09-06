@@ -292,11 +292,6 @@ theorem lambdaSqFinite_inv_eq_rpow [NeZero d] (Q : TriadicCube d) {s q : ℝ}
 
 /-! ## 7. The bridge at the Section 3 observables -/
 
-/-- The paper-wide `2 <= d` gives the `NeZero d` instance the Chapter 4
-observables are typed on. -/
-theorem neZero_of_abkModel (M : ABKModel d) : NeZero d :=
-  ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
-
 /-- The Section 3 **literal** upper observable *is* the Chapter 4 ambient
 observable at the cutoff field.  `NeZero d` is a `Prop` class, so the instance
 carried inside the observable's definition and the one supplied here are

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.HarmonicityTransferFace
 import Homogenization.Sobolev.W1p.ZeroExtensionGraph
@@ -12,8 +12,8 @@ import Homogenization.Sobolev.H1.LocalizedZeroTrace
 
 This module builds the three named ingredients that produce it from a
 **face-only** zero-trace hypothesis — the honest input identified
-(`OneStepBoundaryFull` scope note): full `H¹₀`-membership of the competitor
-would force it to vanish.
+in the one-met-face scope note: full `H¹₀`-membership of the competitor would
+force it to vanish.
 
 * **The interface eta-cutoff chain.**  The face-only zero trace is rendered by
   CoarseGraining's own `LocalizedZeroTraceFunctionOn Ω V`: every smooth cutoff

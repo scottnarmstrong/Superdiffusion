@@ -27,7 +27,7 @@ descendant representative of any family compatible with `perturbCoeffOn U a h t`
 is a.e. equal to `perturbCoeffOn` of the descendant representative of any family
 compatible with `a`, with `h` restricted to the descendant cube.  This is
 `coeffOn_descendant_aeeq_perturbCoeffOn` below, and it is what lets the
-per-descendant one-cube estimates of the neighbouring packets be fed into the
+per-descendant one-cube estimates of the neighbouring modules be fed into the
 aggregation lemmas.
 
 Every declaration is an internal helper for the Section 2.4 sensitivity

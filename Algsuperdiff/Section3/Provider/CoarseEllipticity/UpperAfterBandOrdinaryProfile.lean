@@ -514,11 +514,12 @@ private theorem cstarInv_mul_exp_neg_afterBandRate_le_halfRate
     rw [hcancel] at hmul
     simpa [mul_comm] using hmul
   have hEsq : E ≤ E ^ 2 := by
-    nlinarith [mul_nonneg hE0 (sub_nonneg.mpr hE)]
+    linarith only [mul_nonneg hE0 (sub_nonneg.mpr hE)]
   have hrateCube : 2 * E ^ 2 ≤ rate * E ^ 3 := by
     have hmul := mul_le_mul_of_nonneg_right hrateE (sq_nonneg E)
-    nlinarith
-  have hEhalfCube : E ≤ (rate / 2) * E ^ 3 := by nlinarith
+    linarith only [hmul]
+  have hEhalfCube : E ≤ (rate / 2) * E ^ 3 := by
+    linarith only [hrateCube, hEsq]
   have hhalf0 : 0 ≤ rate / 2 := div_nonneg hrate.le (by norm_num)
   have hEhalfX : E ≤ (rate / 2) * X :=
     hEhalfCube.trans (mul_le_mul_of_nonneg_left hX hhalf0)
@@ -979,7 +980,7 @@ theorem exists_tunedAfterBand_good_finite_trace_split
   have hlargeChoice : 2 * upperHsepResidualRate⁻¹ ≤ Cup := by
     have hinv : 0 < upperHsepResidualRate⁻¹ :=
       inv_pos.mpr upperHsepResidualRate_pos
-    nlinarith
+    linarith only [hrareBranch, hinv.le, mul_nonneg hK0 hinv.le]
   have hprefChoice : K + 8 ≤ (upperHsepResidualRate / 2) * Cup := by
     have hhalf : 0 ≤ upperHsepResidualRate / 2 :=
       div_nonneg upperHsepResidualRate_pos.le (by norm_num)
@@ -987,7 +988,7 @@ theorem exists_tunedAfterBand_good_finite_trace_split
     have hcancel : (upperHsepResidualRate / 2) *
         (2 * (K + 8) * upperHsepResidualRate⁻¹) = K + 8 := by
       field_simp [ne_of_gt upperHsepResidualRate_pos]
-    nlinarith
+    linarith only [hmul, hcancel, hhalf]
   have hX : Cup ≤ X := by
     dsimp only [X]
     exact outputConst_le_invSq_mul_gammaInv_of_gate M hCup0.le
@@ -995,7 +996,7 @@ theorem exists_tunedAfterBand_good_finite_trace_split
   have hCupExp : Cup ≤ Real.exp (Cup / sigma) := by
     have hdiv : Cup ≤ Cup / sigma := by
       rw [le_div_iff₀ hsigma0]
-      nlinarith
+      exact mul_le_of_le_one_right hCup0.le (by linarith only [hsigma])
     exact hdiv.trans ((le_add_of_nonneg_right zero_le_one).trans
       (Real.add_one_le_exp (Cup / sigma)))
   have hlargeE : 2 * upperHsepResidualRate⁻¹ ≤ (E : ℝ) :=

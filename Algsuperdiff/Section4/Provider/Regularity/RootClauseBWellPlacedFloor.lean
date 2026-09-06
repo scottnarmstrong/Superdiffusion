@@ -1,13 +1,20 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBDichotomyDisplay
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenFlushMerged
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenFlushHgradSlot
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenClampLambdaAtCentre
-import Algsuperdiff.Section4.Provider.Regularity.RootClauseBBoundaryGateAssembly
+import Algsuperdiff.Section4.Provider.GoodEvents.InductionState
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBBoundaryOscFloor
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBCloseAssembly
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBCloseChain
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBFinalArith
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBGateBoundaryC1
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBGateGeometry
+import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaChain
 
 /-!
 # fine-scale dichotomy executed

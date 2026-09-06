@@ -52,7 +52,7 @@ and neither `gammaGrowthConst` nor `gammaTriangleConst` is invoked.
 
 ## Consumer fit: the `[0,1]` ceiling, never an Orlicz product
 
-The revised `e.local.bad.events.summed` multiplies `e.mathcalE.crude.bound`
+The display `e.local.bad.events.summed` multiplies `e.mathcalE.crude.bound`
 against the bad-event factor
 
 ```
@@ -357,7 +357,7 @@ values in `[0,1]` at every sample point, for an arbitrary finite index set — t
 empty one included, where `(F.card : ℝ)⁻¹ = 0` makes the average `0`.
 
 This is the deterministic fact behind the Markov/ceiling join below, and it is
-also the *consumer mechanism* recorded: the bad-event factor of the revised
+also the *consumer mechanism* recorded: the bad-event factor of
 `e.local.bad.events.summed` is built from this average, hence is `[0,1]`-valued
 pointwise, hence multiplies the crude bound's lanes without touching their
 Orlicz indices. -/

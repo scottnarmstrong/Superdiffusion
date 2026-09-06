@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxHalfPin
 
@@ -10,8 +10,8 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxHalfPin
 
 ## What this file supplies
 
-`HomSeamFluxFreeCcg.hlevelDualFluxAt_of_seam` with the Hölder gauge of the
-Step-4 test moved from `α = s` to `α = 1/2`, the dual order `s′ = 7s/8`
+`HomSeamFluxFreeCcg`'s `hlevelDual` at a free `Ccg`, with the Hölder gauge of
+the Step-4 test moved from `α = s` to `α = 1/2`, the dual order `s′ = 7s/8`
 UNCHANGED.  Nothing in the pairing chain notices: `HomSpineInstallArith`'s
 `hlevelDual_of_energyBound` is already general in `α` (its `s` slot enters only
 through `cgTestConstBase d s s′ t` and the matching scale power), and
@@ -71,8 +71,8 @@ theorem cgOrderWindow_half (p : FiniteLpExponent) {s : ℝ} (hquarter : s ≤ 1 
 /-- **`hlevelDual` AT THE SCHAUDER PROVENANCE `α = 1/2`, A FREE `Ccg`, THE `ã`
 COEFFICIENT AND THE BASE `s/8`.**
 
-`HomSeamFluxFreeCcg.hlevelDualFluxAt_of_seam` with the test's Hölder gauge
-re-pinned.  Two hypotheses of the sibling are GONE (`1 ≤ d` and the
+`HomSeamFluxFreeCcg`'s `hlevelDual` at a free `Ccg`, with the test's Hölder
+gauge re-pinned.  Two hypotheses of the sibling are GONE (`1 ≤ d` and the
 guard `s + d/p ≤ 1/2`): they were needed only to place the closing order gap
 `α - s′ = s/8` inside the Gagliardo window, and the fixed gap `1/2 - 7s/8` is
 inside it for free. -/

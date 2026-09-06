@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepThreeWindows
 
@@ -44,8 +44,6 @@ of `z` is needed, matching(c).
 * `exists_sandwich_centre` — the sandwich at a general inner index `k`:
   `(z + □_k) ∩ □_m ⊆ y + □_k ⊆ (z + □_{k+1}) ∩ □_m` with `y ∈ □_m`.
 * `exists_stepSevenSandwich` — the same in the printed indexing `(k'-1, k')`.
-* `exists_stepSevenSandwichPair` — the printed `(z', m')`, `(z'', n')` in one
-  statement, which is the form Step 7b (`l.lambdas.stability`) consumes.
 
 ## References
 
@@ -177,24 +175,5 @@ theorem exists_stepSevenSandwich (z : Vec d) {m k' : ℤ}
   obtain ⟨y, hymem, hin, hout⟩ := exists_sandwich_centre z hz hk
   refine ⟨y, hymem, hin, ?_⟩
   rwa [show k' - 1 + 1 = k' by ring] at hout
-
-/-- **The printed**: centres `z'`, `z''` in `□_m` with the sandwich at `m'` and at
-`n'` respectively — the exact shape `for each (y',k') ∈ {(z',m'), (z'',n')}`
-that Step 7b applies `l.lambdas.stability` across. -/
-theorem exists_stepSevenSandwichPair (z : Vec d) {m n' m' : ℤ}
-    (hz : z ∈ openCubeSet (originCube d m)) (hn' : n' - 1 ≤ m) (hm' : m' - 1 ≤ m) :
-    ∃ zp zpp : Vec d,
-      zp ∈ openCubeSet (originCube d m) ∧ zpp ∈ openCubeSet (originCube d m) ∧
-      (truncatedWindow z m (m' - 1) ⊆
-          (fun v => zp + v) '' openCubeSet (originCube d (m' - 1)) ∧
-        (fun v => zp + v) '' openCubeSet (originCube d (m' - 1)) ⊆
-          truncatedWindow z m m') ∧
-      (truncatedWindow z m (n' - 1) ⊆
-          (fun v => zpp + v) '' openCubeSet (originCube d (n' - 1)) ∧
-        (fun v => zpp + v) '' openCubeSet (originCube d (n' - 1)) ⊆
-          truncatedWindow z m n') := by
-  obtain ⟨zp, hzp, hzp1, hzp2⟩ := exists_stepSevenSandwich z hz hm'
-  obtain ⟨zpp, hzpp, hzpp1, hzpp2⟩ := exists_stepSevenSandwich z hz hn'
-  exact ⟨zp, zpp, hzp, hzpp, ⟨hzp1, hzp2⟩, ⟨hzpp1, hzpp2⟩⟩
 
 end Algsuperdiff.Section4.Provider.Regularity

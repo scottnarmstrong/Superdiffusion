@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.DescendantLattice
 import Algsuperdiff.Section4.Provider.Annular.EightEss
@@ -223,7 +223,8 @@ theorem preZero_leg {s gamma cstar Cbf C₁ C₂ C gradM Ecal2 : ℝ} {m : ℤ}
 
 /-! ## Part D -- the four-term shape with separated constants
 
-`Step3.IsAnnularDecomp` carries ONE constant across all four right-hand terms. -/
+The Step-3 four-term shape carries ONE constant across all four right-hand
+terms. -/
 
 /-- ```
 Ecal2 <= C s G2 + C s^(-3) cstar^(-4) Rem
@@ -238,10 +239,9 @@ def IsClauseOneBound (Ecal2 G2 Rem G1a G1b s cstar gamma C : ℝ) : Prop :=
     + C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1a
     + C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1b
 
-/-- **The Step-3 regrouping at separated constants.**  The analogue of
-`annularDecomp_of_preZero` in which the `sigma-bar` slot's extra `s^(-1)` is
-carried by the *second term's exponent* rather than by the shared constant, so
-the output constant is `s`-free. -/
+/-- **The Step-3 regrouping at separated constants.**  The regrouping in which
+the `sigma-bar` slot's extra `s^(-1)` is carried by the *second term's exponent*
+rather than by the shared constant, so the output constant is `s`-free. -/
 theorem clauseOneBound_of_preZero
     {Ecal2 G2raw SigSum GradSum L2Sum Gm Rem G1a G1b s cstar gamma D Csig Cgrad
       CL2 C : ℝ}
@@ -306,55 +306,6 @@ theorem clauseOneBound_of_preZero
       _ = C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1a := by rw [inv_pow]; ring
   linarith only [hpre, hT1, hT2, hT34, hT5]
 
-/-- The shared-constant `IsAnnularDecomp` shape of the Step-3 A, recovered from the
-sharper `IsClauseOneBound` at any output constant `Cout` dominating both `C`
-and `C s^(-1)`. -/
-theorem isAnnularDecomp_of_clauseOneBound
-    {Ecal2 G2 Rem G1a G1b s cstar gamma C Cout : ℝ}
-    (hs0 : 0 < s) (hcstar : 0 < cstar) (hgamma : 0 ≤ gamma)
-    (hG20 : 0 ≤ G2) (hRem0 : 0 ≤ Rem) (hG1a0 : 0 ≤ G1a) (hG1b0 : 0 ≤ G1b)
-    (h : IsClauseOneBound Ecal2 G2 Rem G1a G1b s cstar gamma C)
-    (hCs : C * s⁻¹ ≤ Cout) (hC : C ≤ Cout) :
-    IsAnnularDecomp Ecal2 (s * G2) Rem G1a G1b s cstar gamma Cout := by
-  unfold IsClauseOneBound at h
-  unfold IsAnnularDecomp
-  have hcsinv : (0 : ℝ) ≤ cstar⁻¹ := inv_nonneg.2 hcstar.le
-  have hT1 : C * s * G2 ≤ Cout * (s * G2) := by
-    calc C * s * G2 = C * (s * G2) := by ring
-      _ ≤ Cout * (s * G2) := mul_le_mul_of_nonneg_right hC (mul_nonneg hs0.le hG20)
-  have hT2 : C * (s⁻¹ ^ (3 : ℕ)) * (cstar⁻¹ ^ (4 : ℕ)) * Rem
-      ≤ Cout * (s ^ 2)⁻¹ * (cstar ^ 4)⁻¹ * Rem := by
-    have hnn : (0 : ℝ) ≤ (cstar ^ 4)⁻¹ * Rem := mul_nonneg (by positivity) hRem0
-    have hstep : C * (s⁻¹ ^ (3 : ℕ)) ≤ Cout * (s ^ 2)⁻¹ := by
-      have hid : C * (s⁻¹ ^ (3 : ℕ)) = (C * s⁻¹) * (s ^ 2)⁻¹ := by
-        rw [← inv_pow]; ring
-      rw [hid]
-      exact mul_le_mul_of_nonneg_right hCs (by positivity)
-    calc C * (s⁻¹ ^ (3 : ℕ)) * (cstar⁻¹ ^ (4 : ℕ)) * Rem
-        = (C * (s⁻¹ ^ (3 : ℕ))) * ((cstar ^ 4)⁻¹ * Rem) := by rw [inv_pow]; ring
-      _ ≤ (Cout * (s ^ 2)⁻¹) * ((cstar ^ 4)⁻¹ * Rem) :=
-          mul_le_mul_of_nonneg_right hstep hnn
-      _ = Cout * (s ^ 2)⁻¹ * (cstar ^ 4)⁻¹ * Rem := by ring
-  have hT3 : C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1a
-      ≤ Cout * (s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1a := by
-    have hnn : (0 : ℝ) ≤ (s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1a :=
-      mul_nonneg (mul_nonneg (mul_nonneg (by positivity) hcsinv) hgamma) hG1a0
-    calc C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1a
-        = C * ((s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1a) := by rw [inv_pow]; ring
-      _ ≤ Cout * ((s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1a) :=
-          mul_le_mul_of_nonneg_right hC hnn
-      _ = Cout * (s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1a := by ring
-  have hT4 : C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1b
-      ≤ Cout * (s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1b := by
-    have hnn : (0 : ℝ) ≤ (s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1b :=
-      mul_nonneg (mul_nonneg (mul_nonneg (by positivity) hcsinv) hgamma) hG1b0
-    calc C * (s⁻¹ ^ (2 : ℕ)) * cstar⁻¹ * gamma * G1b
-        = C * ((s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1b) := by rw [inv_pow]; ring
-      _ ≤ Cout * ((s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1b) :=
-          mul_le_mul_of_nonneg_right hC hnn
-      _ = Cout * (s ^ 2)⁻¹ * cstar⁻¹ * gamma * G1b := by ring
-  linarith only [h, hT1, hT2, hT3, hT4]
-
 /-! ## Part D' -- the two legs and the Step-3 regrouping -/
 
 /-- **The two-leg Step-3 regrouping.**
@@ -368,7 +319,7 @@ about the terms at all -- its whole content is that the transposed leg admits
 the same per-cube ugly estimate, which is the caller's `hlegt`.
 
 The three Step-3 resummations are then discharged from their comparison inputs
-(`hshom`, `hcsL2`, `hcsGn`) and the regrouping is `annularDecomp_of_preZero`. -/
+(`hshom`, `hcsL2`, `hcsGn`) and the regrouping is `clauseOneBound_of_preZero`. -/
 theorem clauseOneBound_of_legs
     {s gamma cstar C Cshom Kl2 Kgn Cout gradM Ecal2 Ecal2f Ecal2t : ℝ} {m : ℤ}
     {E2 L2f gradNf : ℤ → ℤ → ℝ} {sig : ℤ → ℝ} {A : ℤ → ℝ}

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.ProportionAssembly
 import Algsuperdiff.Section4.Provider.Proportion.G2ThresholdSharp
@@ -9,9 +9,9 @@ import Algsuperdiff.Section4.Provider.Proportion.G2ThresholdSharp
 /-!
 # The `§4.1` proportion display with the `𝒢₂` slot discharged
 
-`ProportionAssembly.exists_proportionTail_repaired` proves the display with one
-caller-supplied obligation left open: the `𝒢₂` lane in `LaneTailFrom` shape, at
-the split level `θ/(32(r+1))` and the assembly rate `c₁ = 2A`.
+`ProportionAssembly.exists_proportionTail_of_honestG1` proves the display with
+the `𝒢₂` lane left open as a caller-supplied obligation in `LaneTailFrom` shape,
+at the split level `θ/(32(r+1))` and the assembly rate `c₁ = 2A`.
 `G2ThresholdSharp.g2ThresholdSharp_le_of_anchor` discharges the `ε`-threshold of
 that lane from the anchor's own clauses plus two `d`-only constant floors on the
 anchor constant.  This module performs the stitch: the two floors are absorbed
@@ -37,8 +37,8 @@ coupling is read at `C_a = C/2` — which is exactly why the assembly's floor is
 equality.
 
 The stitch consumes the **rate-parametrised** assembly
-`exists_proportionTail_of_honestG1`, not its consumer
-`exists_proportionTail_repaired`, and this is forced: the rate of the `𝒢₂`
+`exists_proportionTail_of_honestG1` rather than a fixed-constant consumer of it,
+and this is forced: the rate of the `𝒢₂`
 obligation is `2A = 2c⋆²s⁷ε²θ/(Cγ)`, which *decreases* in `C`, so a lane endpoint
 produced at the absorbing constant is too weak for a slot read at a smaller one.
 Keeping `A` a free parameter — the assembly's own interface — lets the slot, the
@@ -66,7 +66,6 @@ helper**.  No Frozen.Section4 statement module is imported.
 
 * ABK26, `p.independence.between.scales`;
   `l.ratio.of.good.scales.for.mathcal.E`.
-* Author rulings, consult items 7 and 9.
 -/
 
 namespace Algsuperdiff.Section4.Provider.Proportion
@@ -164,7 +163,7 @@ theorem assemblyConst_le_proportionConst (d : ℕ) : assemblyConst d ≤ proport
 /-- **The assembly's `𝒢₂` slot, proved from the anchor's own clauses.**
 
 The `LaneTailFrom` hypothesis `hG2` of
-`ProportionAssembly.exists_proportionTail_repaired` — at the split level
+`ProportionAssembly.exists_proportionTail_of_honestG1` — at the split level
 `θ/(32(r+1))` and the assembly rate `2A`, `A = c⋆²s⁷ε²θ/(Cγ)` — holds at
 `C = proportionConst d` for every model and every parameter triple obeying the
 anchor's parameter ranges, its regime clause, its standing window `8γ ≤ s` and

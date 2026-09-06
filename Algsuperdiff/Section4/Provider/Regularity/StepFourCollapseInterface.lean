@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFourCollapseEps
 import Algsuperdiff.Section4.Provider.Regularity.StepFourCollapseWeights
@@ -20,8 +20,8 @@ mathematical input, `hstep4`:
      E(u, U_{j-k}) ≤ θ^k E(u, U_j) + ε_j |∇ℓ_j| + δ_j .
 ```
 
-The excess-decay lane (`ExcessDecay.excessDecay_oneStep_interior_anchored`)
-delivers, at each scale `n`, a display of the shape
+The excess-decay lane's anchored interior one-step delivers, at each scale `n`,
+a display of the shape
 
 ```text
    E(u, U_{n-k}) ≤ C_con E(u, U_n)
@@ -50,24 +50,23 @@ Every conversion is named and separately proved:
 2. **The gate scale shifts by one** — see `StepFourCollapseEps`; the produced
    `ε` reads `ε_{j+1}`.
 3. **`δ_n`'s `∇h` legs are ungated, and one of them does not decay.**  The Step-5
-   family `stepFiveDelta` multiplies its `∇h` legs by `1_{z ∉ □_{m-1}}` and its
+   family multiplies its `∇h` legs by `1_{z ∉ □_{m-1}}` and its
    seminorm legs are `[·]_{W̲^{1/2,∞}(□_m)}`, whereas the excess-decay display
    carries them at every `z` and produces them at the Hölder constants `K_h`,
-   `K_{h,∞}` (which DOMINATE those seminorms,
-   `StepFiveDeltaFamily.stepFiveHalfSeminorm_le_of_holderSeminormBound`);
+   `K_{h,∞}` (which DOMINATE those seminorms);
    moreover `T₄` collapses to the flat `C s^{-6}·(1/9)·‖∇h‖_∞`, with no decay in
    `n`, so its window sum is `(m-n+1)`-linear rather than `2δ(m-n)`-linear.
    The produced `δ` here is therefore `stepFourDeltaOut`, which is larger than
-   `stepFiveDelta`; feeding the Step-5 concrete endpoint at its pinned
-   `stepFiveDelta` is not available from this display.
+   the Step-5 family; feeding the Step-5 concrete endpoint at its own pinned
+   family is not available from this display.
 
 ## The abstract excess-decay leg interface
 
 The display above enters here as the hypothesis `hed` of
 `stepFourDecay_of_edOneStep`, with the four leg values abstract reals and the
-scale weights, the `3^{-n}` normalizer and the nesting written exactly as
-`ExcessDecay.excessDecay_oneStep_interior_anchored` writes them.  The final
-stitch is therefore one application: instantiate
+scale weights, the `3^{-n}` normalizer and the nesting written exactly as the
+excess-decay lane's anchored interior one-step writes them.  The final stitch
+is therefore one application: instantiate
 
 ```text
   Exc j := affineExcess (truncatedWindow z m j) u ,  Slp j := slopeMagnitude (g j) ,
@@ -242,7 +241,7 @@ def stepFourEpsCoeff (Crem Vd Cst s Cosc : ℝ) : ℝ :=
 /-- **The `δ_n` the collapse produces**, in the Step-5 slot's own weights: the
 `g`-leg at `3^{n/2} σ̄_n^{-1} K_g` (constant `8` from the shom-weight
 conversion), the `∇h` seminorm leg at `3^{n/2} K_h`, and the two flat datum
-legs.  Larger than `StepFiveDeltaFamily.stepFiveDelta` — measured mismatch (3). -/
+legs.  Larger than the Step-5 family — measured mismatch (3). -/
 def stepFourDeltaOut (Crem Vd Cst s epsj Khinf SigInvN Kg Kh : ℝ) (n : ℤ) : ℝ :=
   Crem * Vd *
     (Cst * s ^ (-(4 : ℝ)) * epsj * (s ^ (-(3 / 2 : ℝ)) * (1 / 9) * Khinf) +
@@ -344,9 +343,9 @@ theorem edBracket_le {n : ℤ}
 
 /-! ## 3. The endpoint: `hstep4`'s body at one scale -/
 
-/-- **The Step-4 collapse.**  The excess-decay lane's one-step display (`hed`, written exactly as
-`ExcessDecay.excessDecay_oneStep_interior_anchored` writes it, with the six leg
-values abstract) becomes the body of
+/-- **The Step-4 collapse.**  The excess-decay lane's one-step display (`hed`,
+written exactly as the lane's anchored interior one-step writes it, with the six
+leg values abstract) becomes the body of
 `StepFiveIterationResult.iterationDecay_of_stepFourDecay`'s `hstep4` at the
 scale `n`:
 

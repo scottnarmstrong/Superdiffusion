@@ -1,21 +1,22 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomFinitePGauge
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepFourPairing
 
 /-!
-# the general coarse-graining proposition at finite `p`: the transcribed source hypothesis
+# the general coarse-graining proposition at finite `p`: the printed vocabulary
 
 ## THE CONDITIONAL EDGE — `hCG'`, transcribed, NOT proved here
 
 The general coarse-graining proposition is a declared dependency and a declared
 source hypothesis of the Step-3a node of Theorem B. It is a **hypothesis** of
 this tree, exactly as `hCG` and `hC` are entered elsewhere in it.  Nothing
-below proves it; `GeneralCoarseGrainingFiniteP` is the named transcription, and
-every consumer carries it as an explicit binder.
+below proves it; this file transcribes the vocabulary of its printed display —
+the energy slot, the right-hand side and the geometric factor — and every
+consumer carries the display itself as an explicit binder.
 
 This file replaces the `hCG` hypothesis (the *`p → ∞`* reading) by the
 **printed finite-`p` proposition**:
@@ -40,9 +41,8 @@ printed range `[2,∞)`, and `C(p,d)` is the printed constant.
 
 ## Which parts are pinned, and which are carried abstractly
 
-Following the established conditional-edge device (the
-`stepThreeCoarseGraining_of_display`), the objects this file does **not**
-consume are carried as abstract reals: the coefficient field, the two `𝓔`
+Following the established conditional-edge device, the objects this file does
+**not** consume are carried as abstract reals: the coefficient field, the two `𝓔`
 quantities (`E1`, `E2`), the forcing seminorm (`Dg`), the constant (`Ccg`) and
 the elliptic pair itself.  Two things ARE pinned, because they are consumed:
 
@@ -64,26 +64,20 @@ the two consumption sites need **inequivalent** objects:
   pairing a Hölder test field against the multiscale depth maxima diverges
   logarithmically over the triadic depths.
 
-Neither implies the other.  The honest transcription of ONE printed display
-whose symbol is undefined is therefore a hypothesis carrying **both** readings
-of that display, which is what `GeneralCoarseGrainingFiniteP` does.  Its
-multiscale clause is the finite-`p` grid carrier of `HomFinitePGauge`; its
-duality clauses are the `WeakNegDualBoundOn` at the two printed levels.  No
-clause is derived from another anywhere in this tree, and the disclosure
+Neither implies the other.  An honest transcription of ONE printed display
+whose symbol is undefined therefore has to carry **both** readings of that
+display: a multiscale clause, at the finite-`p` grid carrier of
+`HomFinitePGauge`, and two duality clauses, at the `WeakNegDualBoundOn` levels.
+No clause is derived from another anywhere in this tree, and the disclosure
 travels with every consumer.
 
 ## Main definitions and results
 
 * `coarseGrainingEnergyPartial` — the printed `ℓ^p` mesoscale energy slot;
 * `coarseGrainingFinitePRHS` — the printed right-hand side;
-* `GeneralCoarseGrainingFiniteP` — **the transcribed hypothesis** `hCG'`;
-* `GeneralCoarseGrainingFiniteP.multiscale`, `.dualGrad`, `.dualFlux` — the
-  three per-site projections;
-* `coarseGrainingEnergyPartial_le_of_bound` — the finite-`p` energy slot is
-  bounded by the SAME Step-2b sup datum the `p = ∞` route used, at the
-  explicit geometric factor `(1 - 3^{-(s-s₁)p})^{-1/p}`;
-* `weakNegDualBounds_of_coarseGraining` — the Step-4 supply: the two exact
-  `WeakNegDualBoundOn` slots from `hCG'` in one application.
+* `coarseGrainingGeomFactor` — the geometric factor `(1 - 3^{-wp})^{-1/p}` the
+  energy slot is summed against, with the elementary `ℓ^p` geometric-sum bounds
+  it needs.
 -/
 
 open Homogenization Homogenization.Book.Ch03
@@ -132,93 +126,6 @@ theorem coarseGrainingFinitePRHS_def (Ccg s s2 sigma E1 E2 Dg S : ℝ) (n : ℤ)
         Ccg * s ^ (-(9 / 2) : ℝ) * (s2 - s)⁻¹ * (1 + E2 ^ (2 : ℕ)) *
           ((3 : ℝ) ^ (s2 * ((n : ℤ) : ℝ)) * Dg) := rfl
 
-/-! ## 2. `hCG'` — the transcribed source hypothesis -/
-
-/-- **the general coarse-graining proposition at finite `p`, transcribed**.
-
-`Q = □_m` is the window, `jn = m - n` the mesoscale depth, `Fgrad = ∇u - ∇v`,
-`Fflux = 𝐚∇u - σ₀∇v`, `Gen R = ‖σ^{1/2}∇u‖_{L̲²(R)}` the printed per-cube
-energy, and `Ccg = C(p,d)` the printed constant.
-
-The display is asserted at both readings of its undefined left-hand symbol:
-
-* clause 1 (**multiscale**, consumed at Step 3c): the finite-`p` grid gauge of
-  `HomFinitePGauge`, at the printed combination `σ₀·(gradient) + (flux)`;
-* clauses 2 and 3 (**duality**, consumed at Step 4): the `WeakNegDualBoundOn`
-  for each leg at the level the same display gives it, i.e. `3^{ms}σ₀^{-1}·RHS`
-  for the gradient and `3^{ms}·RHS` for the flux.
-
-THIS IS A HYPOTHESIS.  It is never proved in this repository. -/
-def GeneralCoarseGrainingFiniteP (Q : TriadicCube d) (jn : ℕ)
-    (Ccg s s1 s2 p sigma E1 E2 Dg : ℝ)
-    (Gen : TriadicCube d → ℝ) (Fgrad Fflux : Vec d → Vec d) : Prop :=
-  ∀ S : ℝ, (∀ N : ℕ, coarseGrainingEnergyPartial Q p (s - s1) jn N Gen ≤ S) →
-    (∀ N : ℕ,
-        sigma * negBesovLpPartialNorm Q s p N Fgrad +
-            negBesovLpPartialNorm Q s p N Fflux ≤
-          coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))) ∧
-      WeakNegDualBoundOn Q s
-        ((3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * sigma⁻¹ *
-          coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))) Fgrad ∧
-      WeakNegDualBoundOn Q s
-        ((3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) *
-          coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))) Fflux
-
-/-- The multiscale clause: the Step-3c reading. -/
-theorem GeneralCoarseGrainingFiniteP.multiscale {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg : ℝ} {Gen : TriadicCube d → ℝ}
-    {Fgrad Fflux : Vec d → Vec d}
-    (h : GeneralCoarseGrainingFiniteP Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen Fgrad Fflux)
-    {S : ℝ} (hS : ∀ N : ℕ, coarseGrainingEnergyPartial Q p (s - s1) jn N Gen ≤ S) (N : ℕ) :
-    sigma * negBesovLpPartialNorm Q s p N Fgrad + negBesovLpPartialNorm Q s p N Fflux ≤
-      coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ)) :=
-  (h S hS).1 N
-
-/-- The gradient duality clause: the Step-4 reading. -/
-theorem GeneralCoarseGrainingFiniteP.dualGrad {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg : ℝ} {Gen : TriadicCube d → ℝ}
-    {Fgrad Fflux : Vec d → Vec d}
-    (h : GeneralCoarseGrainingFiniteP Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen Fgrad Fflux)
-    {S : ℝ} (hS : ∀ N : ℕ, coarseGrainingEnergyPartial Q p (s - s1) jn N Gen ≤ S) :
-    WeakNegDualBoundOn Q s
-      ((3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * sigma⁻¹ *
-        coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))) Fgrad :=
-  (h S hS).2.1
-
-/-- The flux duality clause: the Step-4 reading. -/
-theorem GeneralCoarseGrainingFiniteP.dualFlux {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg : ℝ} {Gen : TriadicCube d → ℝ}
-    {Fgrad Fflux : Vec d → Vec d}
-    (h : GeneralCoarseGrainingFiniteP Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen Fgrad Fflux)
-    {S : ℝ} (hS : ∀ N : ℕ, coarseGrainingEnergyPartial Q p (s - s1) jn N Gen ≤ S) :
-    WeakNegDualBoundOn Q s
-      ((3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) *
-        coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))) Fflux :=
-  (h S hS).2.2
-
-/-- The single gradient leg of the multiscale clause, with the flux leg
-discarded — the source's own route (ii) in the paper, "we just discarded it". -/
-theorem GeneralCoarseGrainingFiniteP.gradPartial {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg : ℝ} {Gen : TriadicCube d → ℝ}
-    {Fgrad Fflux : Vec d → Vec d}
-    (h : GeneralCoarseGrainingFiniteP Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen Fgrad Fflux)
-    {S : ℝ} (hS : ∀ N : ℕ, coarseGrainingEnergyPartial Q p (s - s1) jn N Gen ≤ S)
-    (hsigma : 0 < sigma) (N : ℕ) :
-    negBesovLpPartialNorm Q s p N Fgrad ≤
-      sigma⁻¹ * coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ)) := by
-  have hflux : (0 : ℝ) ≤ negBesovLpPartialNorm Q s p N Fflux :=
-    negBesovLpPartialNorm_nonneg Q s p N Fflux
-  have hmain := h.multiscale hS N
-  have hstep : sigma * negBesovLpPartialNorm Q s p N Fgrad ≤
-      coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ)) := by
-    linarith only [hmain, hflux]
-  have hne : sigma ≠ 0 := ne_of_gt hsigma
-  calc negBesovLpPartialNorm Q s p N Fgrad
-      = sigma⁻¹ * (sigma * negBesovLpPartialNorm Q s p N Fgrad) := by
-        rw [← mul_assoc, inv_mul_cancel₀ hne, one_mul]
-    _ ≤ sigma⁻¹ * coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ)) :=
-        mul_le_mul_of_nonneg_left hstep (inv_nonneg.mpr hsigma.le)
-
 /-! ## 3. The energy slot is fed by the SAME Step-2b datum as the `p = ∞` route -/
 
 /-- The geometric factor the finite-`p` energy slot pays over the `p = ∞` sup:
@@ -260,108 +167,6 @@ theorem sum_geom_weighted_le {r B : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) (hB : 0 �
     _ ≤ (1 - r)⁻¹ * B :=
         mul_le_mul_of_nonneg_right (geom_sum_range_le_inv_one_sub hr0 hr1 N) hB
     _ = B * (1 - r)⁻¹ := by ring
-
-/-- **The finite-`p` energy slot, fed by the `p = ∞` datum.**
-
-If the printed per-cube energy `Gen` is at most `S` on every grid cell at every
-depth the sum reaches, then the whole `ℓ^p` slot is at most `S · (1 -
-3^{-(s-s₁)p})^{-1/p}`.  So the finite-`p` proposition consumes EXACTLY the
-Step-2b family bound the `p = ∞` route consumed (the `stepThreeSupBound`), at
-one displayed extra factor and nothing else. -/
-theorem coarseGrainingEnergyPartial_le_of_bound {Q : TriadicCube d} {p w S : ℝ}
-    {jn N : ℕ} {Gen : TriadicCube d → ℝ} (hp : 0 < p) (hw : 0 < w) (hS : 0 ≤ S)
-    (hG : ∀ i : ℕ, ∀ R ∈ descendantsAtDepth Q (jn + i), Gen R ≤ S)
-    (hG0 : ∀ R : TriadicCube d, 0 ≤ Gen R) :
-    coarseGrainingEnergyPartial Q p w jn N Gen ≤ S * coarseGrainingGeomFactor p w := by
-  classical
-  have hr0 : (0 : ℝ) < (3 : ℝ) ^ (-(w * p)) := three_rpow_pos _
-  have hr1 : (3 : ℝ) ^ (-(w * p)) < 1 := three_rpow_neg_lt_one (mul_pos hw hp)
-  have hden : (0 : ℝ) < 1 - (3 : ℝ) ^ (-(w * p)) := by linarith only [hr1]
-  have hSp : (0 : ℝ) ≤ S ^ p := Real.rpow_nonneg hS p
-  /- each depth average is at most `S ^ p` -/
-  have hdepth : ∀ i : ℕ,
-      (descendantsAverage Q (jn + i) fun R => Gen R ^ p) ≤ S ^ p := by
-    intro i
-    have hmono := descendantsAverage_le_descendantsAverage Q (jn + i)
-      (F := fun R => Gen R ^ p) (G := fun _ => S ^ p)
-      (fun R hR => Real.rpow_le_rpow (hG0 R) (hG i R hR) hp.le)
-    rwa [descendantsAverage_const_eq Q (jn + i) (S ^ p)] at hmono
-  have hdepth0 : ∀ i : ℕ, (0 : ℝ) ≤ descendantsAverage Q (jn + i) fun R => Gen R ^ p :=
-    fun i => descendantsAverage_nonneg Q (jn + i) _
-      fun R _ => Real.rpow_nonneg (hG0 R) p
-  /- the weight is a geometric rat -/
-  have hpow : ∀ i : ℕ,
-      (3 : ℝ) ^ (-(w * p) * (i : ℝ)) = ((3 : ℝ) ^ (-(w * p))) ^ i := by
-    intro i
-    rw [← Real.rpow_natCast ((3 : ℝ) ^ (-(w * p))) i,
-      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-  have hsum : (∑ i ∈ Finset.range (N + 1),
-      (3 : ℝ) ^ (-(w * p) * (i : ℝ)) *
-        descendantsAverage Q (jn + i) fun R => Gen R ^ p) ≤
-      S ^ p * (1 - (3 : ℝ) ^ (-(w * p)))⁻¹ := by
-    have hrw : (∑ i ∈ Finset.range (N + 1),
-        (3 : ℝ) ^ (-(w * p) * (i : ℝ)) *
-          descendantsAverage Q (jn + i) fun R => Gen R ^ p) =
-        ∑ i ∈ Finset.range (N + 1), ((3 : ℝ) ^ (-(w * p))) ^ i *
-          descendantsAverage Q (jn + i) fun R => Gen R ^ p :=
-      Finset.sum_congr rfl fun i _ => by rw [hpow i]
-    rw [hrw]
-    exact sum_geom_weighted_le hr0.le hr1 hSp hdepth N
-  have hnnsum : (0 : ℝ) ≤ ∑ i ∈ Finset.range (N + 1),
-      (3 : ℝ) ^ (-(w * p) * (i : ℝ)) *
-        descendantsAverage Q (jn + i) fun R => Gen R ^ p :=
-    Finset.sum_nonneg fun i _ => mul_nonneg (three_rpow_nonneg _) (hdepth0 i)
-  have hfin : coarseGrainingEnergyPartial Q p w jn N Gen ≤
-      (S ^ p * (1 - (3 : ℝ) ^ (-(w * p)))⁻¹) ^ (1 / p) := by
-    rw [coarseGrainingEnergyPartial_def]
-    exact Real.rpow_le_rpow hnnsum hsum (one_div_nonneg.mpr hp.le)
-  refine hfin.trans (le_of_eq ?_)
-  rw [Real.mul_rpow hSp (inv_nonneg.mpr hden.le), ← Real.rpow_mul hS,
-    mul_one_div_cancel (ne_of_gt hp), Real.rpow_one, coarseGrainingGeomFactor_def]
-
-/-! ## 4. The Step-4 supply, in one application -/
-
-/-- **the two `WeakNegDualBoundOn` slots, from `hCG'`.**
-
-The `stepFourEnergyDisplay` consumes the flux leg at level `3^{ms}·σ₀·(C_w E_B
-D)` and the gradient leg at level `3^{ms}·(C_w E_B D)`. Both are the printed
-display's own levels, transported by `WeakNegDualBoundOn.mono`, as soon as the
-printed right-hand side is below `σ₀·(C_w E_B D)` — the single arithmetic
-condition.  This is the whole Step-4 half of the coarse-graining application.
-
-Disclosure: the duality clauses of `GeneralCoarseGrainingFiniteP` are the
-DUALITY reading of the undefined printed symbol; the correction records that
-this reading is inequivalent to the multiscale reading consumed at Step 3c, and
-that the source hypothesis must carry both. -/
-theorem weakNegDualBounds_of_coarseGraining {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg S Level : ℝ} {Gen : TriadicCube d → ℝ}
-    {Fgrad Fflux : Vec d → Vec d} (hsigma : 0 < sigma)
-    (h : GeneralCoarseGrainingFiniteP Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen Fgrad Fflux)
-    (hS : ∀ N : ℕ, coarseGrainingEnergyPartial Q p (s - s1) jn N Gen ≤ S)
-    (hlevel : coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ)) ≤
-      sigma * Level) :
-    WeakNegDualBoundOn Q s
-        ((3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * sigma * Level) Fflux ∧
-      WeakNegDualBoundOn Q s ((3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * Level) Fgrad := by
-  have h3 : (0 : ℝ) ≤ (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) := three_rpow_nonneg _
-  have hgradLevel : sigma⁻¹ *
-      coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ)) ≤ Level := by
-    have hstep := mul_le_mul_of_nonneg_left hlevel (inv_nonneg.mpr hsigma.le)
-    rwa [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hsigma), one_mul] at hstep
-  refine ⟨(h.dualFlux hS).mono ?_, (h.dualGrad hS).mono ?_⟩
-  · calc (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) *
-          coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))
-        ≤ (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * (sigma * Level) :=
-          mul_le_mul_of_nonneg_left hlevel h3
-      _ = (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * sigma * Level := by ring
-  · calc (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * sigma⁻¹ *
-          coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))
-        = (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) *
-            (sigma⁻¹ *
-              coarseGrainingFinitePRHS Ccg s s2 sigma E1 E2 Dg S (Q.scale - (jn : ℤ))) := by
-          ring
-      _ ≤ (3 : ℝ) ^ (s * ((Q.scale : ℤ) : ℝ)) * Level :=
-          mul_le_mul_of_nonneg_left hgradLevel h3
 
 end
 

@@ -205,10 +205,12 @@ private theorem badEventMultiscaleGates
         mul_le_mul_of_nonneg_left hepsScale hc.le
       _ ≤ c * (E ^ (10 : ℕ) *
           Algsuperdiff.Section3.Disorder.cstar M) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_right hELeE10 hcstarPos.le) hc.le
       _ ≤ c * (M.gamma⁻¹ *
           Algsuperdiff.Section3.Disorder.cstar M) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_right hgammaInv hcstarPos.le) hc.le
       _ = c * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ := by ring
   have hcstarInvLower : (2 / 3 : ℝ) ≤
       (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ := by
@@ -245,11 +247,18 @@ private theorem badEventMultiscaleGates
     calc
       8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
           8 * Ccg * ((d : ℝ) * ((H + 2) * |Real.log epsilon|) *
-            Real.log 3) := by gcongr
+            Real.log 3) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hhSimple (Nat.cast_nonneg d))
+            hlogThree.le)
+          (mul_nonneg (by norm_num) hCcgPos.le)
       _ = (2 / 3 : ℝ) *
           (12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3) *
             |Real.log epsilon| := by ring
-      _ ≤ (2 / 3 : ℝ) * C * |Real.log epsilon| := by gcongr
+      _ ≤ (2 / 3 : ℝ) * C * |Real.log epsilon| :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hCEntropy (by norm_num)) hLNonneg
   have hLinearExp : C * |Real.log epsilon| ≤
       Real.exp (C * |Real.log epsilon|) := by
     calc
@@ -293,7 +302,8 @@ private theorem badEventMultiscaleGates
       (d : ℝ) * (h : ℝ) * Real.log 3 ≤
           (E ^ (8 : ℕ)) / (8 * Ccg) := hdiv
       _ ≤ (E⁻¹ ^ 2 * M.gamma⁻¹) / (8 * Ccg) := by
-        gcongr
+        exact div_le_div_of_nonneg_right hE8Gamma
+          (mul_nonneg (by norm_num) hCcgPos.le)
       _ = (1 / 8 : ℝ) * X := by
         dsimp only [X]
         field_simp

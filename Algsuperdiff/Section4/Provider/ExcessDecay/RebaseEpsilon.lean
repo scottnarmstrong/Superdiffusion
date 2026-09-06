@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.GoodEvents.Api
 
@@ -105,21 +105,6 @@ theorem regime_le_of_const_le {M : ABKModel d} {C C' : ℝ} (hC : 0 < C) (hCC : 
 
 /-! ## 3. The event and its indicator -/
 
-/-- **The domination.**  A proved indicator display at the larger threshold
-dominates the clause-threshold one pointwise: the clause event is the smaller
-set, and the indicated function is `ℝ≥0∞`-valued.
-
-(Stated here at a general pair of thresholds and with no import of any
-`Frozen/` statement file.) -/
-theorem indicator_goodEventAt_mono {M : ABKModel d} {Ccg : ℝ} {j : ℤ} {y : Vec d}
-    {t : {t : ℝ // 0 < t}} {ep ep' : ℝ} (hep0 : 0 ≤ ep) (hep : ep ≤ ep')
-    (F : Cutoff.CutoffSample d → ℝ≥0∞) (omega : Cutoff.CutoffSample d) :
-    Set.indicator (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j y t ep) F omega ≤
-      Set.indicator (Algsuperdiff.Frozen.Section4.goodEventAt M Ccg j y t ep') F omega :=
-  Set.indicator_le_indicator_of_subset
-    (Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M Ccg j y t hep0 hep)
-    (fun _ => zero_le _) omega
-
 /-- **The slot transfer at a witnessed `ω`.**
 
 An indicator bound at *one* threshold `ε₁` transfers to *any* other threshold
@@ -160,8 +145,7 @@ theorem fourSummandBracket_nonneg {a b e f X c Y Z W : ℝ} (ha : 0 ≤ a) (hb :
   linarith only [h1, h2, h3, h4]
 
 /-- Raising a four-summand real right-hand side from a producer's constant to
-the assembly's joint constant.  In-repo sibling of `RebaseJoin`'s
-`private four_summand_absorb`. -/
+the assembly's joint constant. -/
 theorem fourSummandBracket_absorb {C₀ C t₁ t₂ t₃ t₄ : ℝ} (h : C₀ ≤ C)
     (h₁ : 0 ≤ t₁) (h₂ : 0 ≤ t₂) (h₃ : 0 ≤ t₃) (h₄ : 0 ≤ t₄) :
     C₀ * (t₁ + t₂ + t₃ + t₄) ≤ C * t₁ + C * t₂ + C * t₃ + C * t₄ := by
@@ -208,31 +192,6 @@ theorem excessDecayDelta_repriced {C s delta : ℝ} (hC : 0 < C) (hs : 0 ≤ s)
     s / 8 * Real.sqrt delta ≤ C⁻¹ * s ^ (4 : ℕ) := by
   refine excessDecayEpsilon_le_clauseEpsilon hC hs (hdelta.trans (le_of_eq ?_))
   rw [show (C ^ (2 : ℕ))⁻¹ = (C⁻¹) ^ (2 : ℕ) from (inv_pow C 2).symm]
-  ring
-
-/-- **The minimal-scale anchor's slot reaches the clause event.**
-
-The minimal-scale anchor carries the tolerance `ε = s√δ`; it sits below the
-frozen threshold exactly when `δ ≤ (C⁻¹ s³)²`. -/
-theorem minimalScaleEpsilon_le_clauseEpsilon {C s delta : ℝ} (hC : 0 < C) (hs : 0 ≤ s)
-    (hdelta : delta ≤ (C⁻¹ * s ^ (3 : ℕ)) ^ (2 : ℕ)) :
-    s * Real.sqrt delta ≤ C⁻¹ * s ^ (4 : ℕ) := by
-  have ha : (0 : ℝ) ≤ C⁻¹ * s ^ (3 : ℕ) :=
-    mul_nonneg (inv_pos.mpr hC).le (pow_nonneg hs 3)
-  have hsq := sqrt_le_of_le_sq ha hdelta
-  have hmul : s * Real.sqrt delta ≤ s * (C⁻¹ * s ^ (3 : ℕ)) :=
-    mul_le_mul_of_nonneg_left hsq hs
-  refine hmul.trans (le_of_eq ?_)
-  ring
-
-/-- **Exactness at that choice of `δ`.**  At `δ := (C⁻¹ s³)²` the minimal-scale
-tolerance `s√δ` *equals* the frozen threshold `C⁻¹ s⁴`, so the reach is sharp,
-not slack. -/
-theorem minimalScaleEpsilon_eq_clauseEpsilon {C s : ℝ} (hC : 0 < C) (hs : 0 ≤ s) :
-    s * Real.sqrt ((C⁻¹ * s ^ (3 : ℕ)) ^ (2 : ℕ)) = C⁻¹ * s ^ (4 : ℕ) := by
-  have ha : (0 : ℝ) ≤ C⁻¹ * s ^ (3 : ℕ) :=
-    mul_nonneg (inv_pos.mpr hC).le (pow_nonneg hs 3)
-  rw [Real.sqrt_sq ha]
   ring
 
 end

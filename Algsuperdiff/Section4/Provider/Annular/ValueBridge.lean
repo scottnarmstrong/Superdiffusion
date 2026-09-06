@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.ValueLipschitz
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalResponseCentre
@@ -339,20 +339,6 @@ theorem shellField_translate_zero (g : ShellField d) :
     ShellField.translate (0 : Vec d) g = g :=
   ShellField.ext fun x => by
     rw [ShellField.translate_apply, add_zero]
-
-/-- The Section 3 oscillation gauge at the origin cube is the manuscript's
-`3^{2m} || grad g ||_{W̲^{1,infinity}(cu_m)}`. -/
-theorem cubeOscGauge_originCube (m : ℤ) (g : ShellField d) :
-    cubeOscGauge (originCube d m) g =
-      (3 : ℝ) ^ (2 * m) * Support.shellW1InfGradNorm m g := by
-  have hbase : cubeBasePoint (originCube d m) = (0 : Vec d) := by
-    funext i
-    show ((originCube d m).index i : ℝ) * (3 : ℝ) ^ m = 0
-    show ((0 : ℤ) : ℝ) * (3 : ℝ) ^ m = 0
-    rw [Int.cast_zero, zero_mul]
-  rw [Support.cubeOscGauge_eq_zpow_mul_shellW1InfGradNorm, hbase,
-    shellField_translate_zero]
-  rfl
 
 /-- **The frozen `L²` value gauge of the centered shell, bounded on `z + cu_n`.**
 

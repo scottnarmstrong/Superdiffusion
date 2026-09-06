@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.Step3Arith
 import Algsuperdiff.Section4.Support.Events
@@ -31,7 +31,8 @@ and `d >= 2`.
 
 The manuscript performs two order-of-summation interchanges.  The cover
 interchange is carried here as the named slot `hcov` of `annularDecompPre_of`;
-the centre interchange is what `centre_geom_factor` measures.
+the centre interchange is carried as the slot `hcen`, whose constant is the
+geometric factor `3^{2s}(1 - 3^{2s-d})^{-1}`.
 -/
 
 namespace Algsuperdiff.Section4.Provider.Annular
@@ -142,45 +143,6 @@ theorem zero_mem_latticeCubeSet (n m : ℤ) : (0 : Fin d → ℤ) ∈ latticeCub
 
 end Geometry
 
-/-! ## Part B -- the centre-term geometric factor -/
-
-/-- **The Step-1 geometric factor**, at the honest open range `2s < dd`.
-
-Writing the centre resummation over the annulus index `i = n - k - 1`, the
-weight sum is `sum_{i < N} 3^(-2s(N-1-i) - dd i)`, a geometric sum of ratio
-`3^(2s - dd) < 1`; the bound is uniform in `N`. -/
-theorem centre_geom_factor {s dd : ℝ} (hsd : 2 * s < dd) (N : ℕ) :
-    ∑ i ∈ Finset.range N,
-        (3 : ℝ) ^ (-(2 * s * (((N : ℤ) - 1 - (i : ℤ) : ℤ) : ℝ)) - dd * (i : ℝ))
-      ≤ (3 : ℝ) ^ (2 * s) * (1 - (3 : ℝ) ^ (2 * s - dd))⁻¹
-        * (3 : ℝ) ^ (-(2 * s * (N : ℝ))) := by
-  have h3 : (0 : ℝ) < 3 := by norm_num
-  set r : ℝ := (3 : ℝ) ^ (2 * s - dd) with hr
-  have hr0 : 0 ≤ r := by rw [hr]; positivity
-  have hr1 : r < 1 := by
-    rw [hr]
-    exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hsd])
-  have hterm : ∀ i ∈ Finset.range N,
-      (3 : ℝ) ^ (-(2 * s * (((N : ℤ) - 1 - (i : ℤ) : ℤ) : ℝ)) - dd * (i : ℝ))
-        = (3 : ℝ) ^ (2 * s) * (3 : ℝ) ^ (-(2 * s * (N : ℝ))) * r ^ i := by
-    intro i _
-    rw [hr, ← Real.rpow_natCast ((3 : ℝ) ^ (2 * s - dd)) i, ← Real.rpow_mul h3.le,
-      ← Real.rpow_add h3, ← Real.rpow_add h3]
-    congr 1
-    push_cast
-    ring
-  rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum]
-  have hgeo : ∑ i ∈ Finset.range N, r ^ i ≤ (1 - r)⁻¹ := by
-    refine (Summable.sum_le_tsum (Finset.range N) (fun i _ => pow_nonneg hr0 _)
-      (summable_geometric_of_lt_one hr0 hr1)).trans ?_
-    exact (tsum_geometric_of_lt_one hr0 hr1).le
-  have hpos : (0 : ℝ) ≤ (3 : ℝ) ^ (2 * s) * (3 : ℝ) ^ (-(2 * s * (N : ℝ))) := by
-    positivity
-  calc (3 : ℝ) ^ (2 * s) * (3 : ℝ) ^ (-(2 * s * (N : ℝ))) * ∑ i ∈ Finset.range N, r ^ i
-      ≤ (3 : ℝ) ^ (2 * s) * (3 : ℝ) ^ (-(2 * s * (N : ℝ))) * (1 - r)⁻¹ :=
-        mul_le_mul_of_nonneg_left hgeo hpos
-    _ = (3 : ℝ) ^ (2 * s) * (1 - r)⁻¹ * (3 : ℝ) ^ (-(2 * s * (N : ℝ))) := by ring
-
 /-! ## Part C -- the diagonal slice of the annular double sum -/
 
 private theorem diagIdx_injective (m : ℤ) :
@@ -239,13 +201,12 @@ theorem tsum_diag_le_annDouble {m : ℤ} {h : ℤ → ℤ → ℝ}
 The manuscript's proof splits the full-grid weighted scale sum into the
 annular-cover part and the centre part, bounds the first by the annular double
 sum (the cover interchange, `hcov`) and pushes the second back into the
-diagonal of the same double sum (the subadditivity iteration together with
-`centre_geom_factor`, `hcen`).  The output is `Resum.IsAnnularDecompPre`, the
-shape `Resum.preZero_of_pre_and_ugly` consumes.
+diagonal of the same double sum (the subadditivity iteration, `hcen`).  The
+output is `Resum.IsAnnularDecompPre`, the shape `Resum.preZero_of_pre_and_ugly`
+consumes.
 
 Both slots are conditional A obligations on the caller: `hcov` is the cover
-interchange and `hcen` the resummed centre term, whose constant is supplied by
-`centre_geom_factor`. -/
+interchange and `hcen` the resummed centre term. -/
 theorem annularDecompPre_of {s Ccov Ccen C : ℝ} {m : ℤ} {Jgrid Jcen Jcov : ℤ → ℝ}
     {Jann : ℤ → ℤ → ℝ}
     (hJann0 : ∀ j n, 0 ≤ Jann j n) (hCcen : 0 ≤ Ccen)

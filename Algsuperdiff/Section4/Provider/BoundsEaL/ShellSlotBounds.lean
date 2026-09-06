@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.GradNormalization
 import Algsuperdiff.Section4.Provider.Annular.ValueBridge
@@ -98,19 +98,6 @@ def tailLayerSum (m k : ℤ) (v : Fin d → ℤ) (omega : Cutoff.CutoffSample d)
 theorem headLayerSum_nonneg (m k : ℤ) (v : Fin d → ℤ) (omega : Cutoff.CutoffSample d) :
     0 ≤ headLayerSum m k v omega :=
   Finset.sum_nonneg fun _ _ => Support.shellW1InfGradNorm_nonneg _ _
-
-theorem tailLayerSum_nonneg (m k : ℤ) (v : Fin d → ℤ) (omega : Cutoff.CutoffSample d)
-    (L : ℤ) : 0 ≤ tailLayerSum m k v omega L :=
-  Finset.sum_nonneg fun _ _ => Support.shellW1InfGradNorm_nonneg _ _
-
-/-- **The tail is nondecreasing in the truncation index.**  Hence an `L`-uniform
-bound for it is exactly a bound for its supremum over `L ≥ m`, i.e. for the value
-of the upper shell series: this is the precise shape of the obligation `hT`. -/
-theorem tailLayerSum_mono (m k : ℤ) (v : Fin d → ℤ) (omega : Cutoff.CutoffSample d)
-    {L L' : ℤ} (hL : L ≤ L') :
-    tailLayerSum m k v omega L ≤ tailLayerSum m k v omega L' := by
-  refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.Ioc_subset_Ioc le_rfl hL)
-    fun i _ _ => Support.shellW1InfGradNorm_nonneg _ _
 
 /-- The layer gauge extended by zero below the recentering scale: the canonical
 `ℤ`-indexed summand of the upper shell series. -/

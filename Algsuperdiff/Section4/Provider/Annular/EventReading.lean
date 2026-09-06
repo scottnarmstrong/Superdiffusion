@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.AssemblyFeed
 import Algsuperdiff.Section4.Provider.Annular.EventBudgets
@@ -42,10 +42,6 @@ are written, which is what turns a `𝒢₂` membership into the `hsumE` binder 
   3^{s/4} T² 3^{(s/4)q}` feeding `AssemblyFeed.summable_annFam_grad` and
   `AssemblyFeed.summable_annFam_l2`.
 
-## Part C -- the `𝒢₂` reading
-
-`summable_annFam_error_of_eventG2` is the `hsumE` binder at the A5b-pinned
-family `DisplaySlots.annularErrorLatticeMax`.
 -/
 
 namespace Algsuperdiff.Section4.Provider.Annular
@@ -168,15 +164,6 @@ theorem tsum_gradTail_le_of_eventG1 (M : ABKModel d) (m : ℤ) {s T : ℝ} (hT :
         (3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ))
           * Support.shellW1InfGradNorm m (omega.1 k.1)) ≤ T :=
   tsum_le_of_ofReal_tsum_le (gradTailFam_nonneg M m omega) hT homega.1
-
-theorem gradTailSq_le_of_eventG1 (M : ABKModel d) (m : ℤ) {s T : ℝ} (hT : 0 ≤ T)
-    {omega : Cutoff.CutoffSample d} (homega : omega ∈ Support.eventG1 M m s T) :
-    gradTailSq M m omega ≤ T ^ 2 := by
-  have hnn : (0 : ℝ) ≤ ∑' k : {k : ℤ // m ≤ k},
-      (3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ))
-        * Support.shellW1InfGradNorm m (omega.1 k.1) :=
-    tsum_nonneg (gradTailFam_nonneg M m omega)
-  exact pow_le_pow_left₀ hnn (tsum_gradTail_le_of_eventG1 M m hT homega) 2
 
 /-! ### The `𝒢₁ᵇ` reading at the pinned shell family -/
 
@@ -343,61 +330,6 @@ theorem shellPartialSum_le_of_eventG1 (M : ABKModel d) (m : ℤ) {s T : ℝ}
     ring
   rw [hsplit]
   ring
-
-/-! ## Part C -- the `𝒢₂` reading -/
-
-/-- **The `hsumE` binder of `ClauseOne.clauseOne_bound`**, at the A5b-pinned
-`(2,2)` family: on `𝒢₂` the weighted annular double sum of the squared error
-maxima converges.  The display weight `3^{−s(m−n)}` is below the event weight
-`3^{−(s/4)(m−n)}`, and the finite lattice maximum is below the event's
-`[0,∞]`-valued lattice supremum (`DisplaySlots.ofReal_annularErrorLatticeMax_le`).
--/
-theorem summable_annFam_error_of_eventG2 (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) {ep : ℝ} {omega : Cutoff.CutoffSample d}
-    (homega : omega ∈ Support.eventG2 M m s ep) :
-    Summable (annFam m (fun j n => (3 : ℝ) ^ (-((s : ℝ) * ((m - n : ℤ) : ℝ)))
-      * annularErrorLatticeMax M s omega j n)) := by
-  classical
-  set D : ℝ≥0∞ := ∑' j : {j : ℤ // j ≤ m}, ∑' n : {n : ℤ // n ≤ j.1 - 1},
-    ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 4 : ℝ) * (s : ℝ) * ((m - n.1 : ℤ) : ℝ)))
-      * ⨆ v : ↥(Support.latticeAnnulusSet d n.1 j.1 (j.1 - 1)),
-          ENNReal.ofReal (Support.annularErrorObservable M n.1 s
-            (Cutoff.translateCutoffSample (Support.triadicLatticePoint n.1 v.1)
-              omega) ^ 2) with hD
-  have hDtop : D ≠ ⊤ := by
-    intro hDt
-    have hs0 : ENNReal.ofReal (s : ℝ) ≠ 0 := by
-      simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-      exact s.2
-    have hmul : ENNReal.ofReal (s : ℝ) * D = ⊤ := by
-      rw [hDt, ENNReal.mul_top hs0]
-    have hle : (⊤ : ℝ≥0∞) ≤ ENNReal.ofReal (ep ^ 2) := by
-      rw [← hmul]
-      exact homega
-    exact ENNReal.ofReal_ne_top (top_le_iff.mp hle)
-  refine summable_annFam_of_ennreal_ne_top
-    (fun j n => mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-      (annularErrorLatticeMax_nonneg M s omega j n)) ?_
-  refine ne_top_of_le_ne_top hDtop ?_
-  rw [hD]
-  refine ENNReal.tsum_le_tsum fun j => ENNReal.tsum_le_tsum fun n => ?_
-  have hq : (0 : ℝ) ≤ ((m - n.1 : ℤ) : ℝ) := by
-    have hz : (0 : ℤ) ≤ m - n.1 := by
-      have hjm := j.2
-      have hnj := n.2
-      omega
-    exact_mod_cast hz
-  rw [ENNReal.ofReal_mul (Real.rpow_nonneg (by norm_num) _)]
-  refine mul_le_mul' ?_ ?_
-  · refine ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_)
-    have hpos : (0 : ℝ) ≤ (3 / 4 : ℝ) * (s : ℝ) * ((m - n.1 : ℤ) : ℝ) := by
-      have := s.2
-      positivity
-    have hid : -(1 / 4 : ℝ) * (s : ℝ) * ((m - n.1 : ℤ) : ℝ)
-        = -((s : ℝ) * ((m - n.1 : ℤ) : ℝ)) + (3 / 4 : ℝ) * (s : ℝ)
-            * ((m - n.1 : ℤ) : ℝ) := by ring
-    linarith only [hid, hpos]
-  · exact ofReal_annularErrorLatticeMax_le M s omega (by omega)
 
 /-! ## Part D -- the two budget-family summabilities at the pinned carriers -/
 

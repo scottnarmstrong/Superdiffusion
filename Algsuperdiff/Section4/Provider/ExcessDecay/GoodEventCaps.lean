@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section4.AnnularDecomposition
 import Algsuperdiff.Section4.Provider.ExcessDecay.LambdaCaps
@@ -246,37 +246,6 @@ theorem ae_errorRepresentative_le_harmonicSlot (d : ℕ) :
                     ⟨s / 8, by linarith only [hs]⟩
                     (Cutoff.translateCutoffSample z omega) ≤ C * (1 / 2) := by
   obtain ⟨C, hCpos, hC⟩ := ae_errorRepresentative_le_of_mem_goodEventAt d
-  refine ⟨C, hCpos, ?_⟩
-  intro M s hsrange hregime hsmall hs n z
-  exact hC M hregime ⟨s / 8, by linarith only [hs]⟩
-    (annularSlot_mem_Icc M.gamma s hsrange) (1 / 2) half_mem_Ioc hsmall (n + 2) z
-
-/-- **`e.bound.Lambdas.by.Es.v2` at the harmonic statement's slot
-`(s/8, ε = 1/2)`.**
-
-This is the exact input the coarse-grained Caccioppoli step
-`e.energy.bound.interior` will consume: a constant bound, `2d((C/2)² + 1)`, on
-the coarse-grained ellipticity ratios of the flux-corrected field, holding
-almost surely on the good event `𝒢(n+2, z; s/8, 1/2)` of the harmonic
-statement, for every `L ≥ n+2`.  Its hypotheses are exactly the three the
-frozen statement carries — the `s`-range, the annular standing regime, and
-the hoisted smallness — plus typing data. -/
-theorem ae_boundLambdasByEs_harmonicSlot (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
-        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
-        ∀ hs : 0 < s, ∀ (n : ℤ) (z : Vec d),
-          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
-                (Support.cgEllipLowerConstant d) (n + 2) z
-                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
-              ∀ L : ℤ, n + 2 ≤ L →
-                fluxCorrectedEllipticityRatioMax M L (n + 2) (s / 8)
-                    (Cutoff.translateCutoffSample z omega) ≤
-                  2 * (d : ℝ) * ((C * (1 / 2)) ^ 2 + 1) := by
-  obtain ⟨C, hCpos, hC⟩ := ae_boundLambdasByEs d
   refine ⟨C, hCpos, ?_⟩
   intro M s hsrange hregime hsmall hs n z
   exact hC M hregime ⟨s / 8, by linarith only [hs]⟩

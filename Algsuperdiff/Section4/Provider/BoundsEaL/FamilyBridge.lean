@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.CarrierIdentification
 
@@ -82,14 +82,6 @@ def subConstFluxFamily (M : ABKModel d) (L m : ℤ)
     (Support.fluxIncrementAverage M L m (originCube d m) omega)
     (matTranspose_fluxIncrementAverage M L m (originCube d m) omega) omega
 
-theorem subConstFluxFamily_eq (M : ABKModel d) (L m : ℤ)
-    (omega : Cutoff.CutoffSample d) :
-    subConstFluxFamily M L m omega =
-      subConstCutoffTriadicCoeffFamily M L
-        (Support.fluxIncrementAverage M L m (originCube d m) omega)
-        (matTranspose_fluxIncrementAverage M L m (originCube d m) omega) omega :=
-  rfl
-
 /-! ## The family-level a.e. identification -/
 
 /-- **The family-level form of A6c finding (f).**  The Chapter 4 dependent family
@@ -123,43 +115,6 @@ theorem normalizedBlockResponseMax_fluxCorrected_eq [NeZero d] (M : ABKModel d)
       Ch02.normalizedBlockResponseMax R (subConstFluxFamily M L m omega) a0 :=
   Ch02.normalizedBlockResponseMax_eq_ofAEEq
     (fluxCorrectedCoeffFamily_aeEq_subConstFluxFamily M L m omega) R a0
-
-/-- The descendant-maximum level of the same identification. -/
-theorem maxDescendantNormalizedBlockResponseAtScale_fluxCorrected_eq [NeZero d]
-    (M : ABKModel d) (L m : ℤ) (omega : Cutoff.CutoffSample d) (Q : TriadicCube d)
-    (k : ℤ) (a0 : Mat d) :
-    Ch02.maxDescendantNormalizedBlockResponseAtScale Q k
-        (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega) a0 =
-      Ch02.maxDescendantNormalizedBlockResponseAtScale Q k
-        (subConstFluxFamily M L m omega) a0 :=
-  Ch02.maxDescendantNormalizedBlockResponseAtScale_eq_ofAEEq
-    (fluxCorrectedCoeffFamily_aeEq_subConstFluxFamily M L m omega) Q k a0
-
-/-- **The endpoint's inner average, at Step 3's family.**  This is the exact
-integrand shape of `Step1ScaleSum.step1_scaleSum_endpoint_originCube` and of
-`Step2VolumeConversion.step2_volume_pointwise_originCube`. -/
-theorem finsetAverage_rpow_normalizedBlockResponseMax_fluxCorrected_eq [NeZero d]
-    (M : ABKModel d) (L m : ℤ) (omega : Cutoff.CutoffSample d)
-    (t : Finset (TriadicCube d)) (a0 : Mat d) (P : ℝ) :
-    Ch02.finsetAverageReal t (fun R => Real.rpow (Ch02.normalizedBlockResponseMax R
-        (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega) a0) P) =
-      Ch02.finsetAverageReal t (fun R => Real.rpow (Ch02.normalizedBlockResponseMax R
-        (subConstFluxFamily M L m omega) a0) P) :=
-  congrArg (Ch02.finsetAverageReal t)
-    (funext fun R => congrArg (fun x => Real.rpow x P)
-      (normalizedBlockResponseMax_fluxCorrected_eq M L m omega R a0))
-
-/-- The two-argument `𝓔`-level identification: the object the a.e.-fidelity
-certificate of `TwoScaleFidelity.lean` names may itself be read at Step 3's
-family. -/
-theorem homogenizationError_fluxCorrected_eq [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (omega : Cutoff.CutoffSample d) (Q : TriadicCube d) (n : ℤ) (s : ℝ)
-    (P R : Ch02.MultiscaleExponent) (a0 : Mat d) :
-    Ch02.HomogenizationError Q n s P R
-        (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega) a0 =
-      Ch02.HomogenizationError Q n s P R (subConstFluxFamily M L m omega) a0 :=
-  Ch02.HomogenizationError_eq_ofAEEq
-    (fluxCorrectedCoeffFamily_aeEq_subConstFluxFamily M L m omega) Q n s P R a0
 
 end
 

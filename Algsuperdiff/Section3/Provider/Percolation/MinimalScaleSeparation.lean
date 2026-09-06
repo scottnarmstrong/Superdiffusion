@@ -8,13 +8,11 @@ Proposition `p.minimal.scale.separation`: the function `hsep` above which both
 deterministic bad-cluster bounds hold, its defining characterizations, and its
 `Gamma`-tail.
 
-## The carrier of `hsep`, and the off-by-one correction
+## The carrier of `hsep`
 
-The manuscript defines `hsep^{(1)}:= max { j: exists h >= j with (diameter
-bound fails at h) }` (similarly `hsep^{(2)}`) with `max empty = 0`, and asserts
-the two deterministic bounds for every `h >= hsep`.  That is off by one — the
-bound *fails* at `h = hsep` whenever it fails anywhere — and the `max` does not
-exist on the (null) event where the failure set is unbounded.
+The manuscript defines `hsep` as the infimum of the set of `j in N_0` above
+which both deterministic bounds hold at every scale `h >= j`, with the value
+`infinity` when no such `j` exists.  Here:
 
 ```
 hsepSet omega := { j : 1 <= j and every h >= j is good } ,
@@ -51,7 +49,8 @@ then writes `<= C exp(-3^{(1-sigma) b j})`.  The geometric constant of that
 union bound is `(1 - exp(-(1-sigma) b log 3))^{-1}`, which is **not** bounded
 by any `C(d)`: it blows up as `(1-sigma) b -> 0`.  It is carried here
 explicitly as `hsepTailConst sigma b`, and the amplitude of the resulting
-`Gamma_{1-sigma}` bound is `hsepAmplitude sigma b`, not the printed `1`.
+`Gamma_{1-sigma}` bound is `hsepAmplitude sigma b`, the paper's own
+`C(sigma, b)`.
 
 ## Main results
 

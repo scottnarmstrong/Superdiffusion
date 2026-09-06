@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.MomentEngine
 import Algsuperdiff.Section4.Provider.BoundsEaL.StepFourSigmaBar
@@ -70,65 +70,6 @@ variable {d : ℕ}
 
 /-! ## 1. The three deterministic bullets -/
 
-/-- **(B1) at every moment.**  `σ̄_m^{-1}σ̄_{j−2} ≤ 4` is deterministic, so its
-`q`-th moment is `4^q` for every `q ≥ 0`.  The regime is the printed one; the
-induction-state binder was already discharged in `StepFourSigmaBar`. -/
-theorem exists_lintegral_rpow_inv_sigmaBar_mul_sigmaBar_sub_two_le (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∀ m j : ℤ, j - 2 ≤ m → ∀ p : ℝ, 0 ≤ p →
-          ∫⁻ _omega : Cutoff.CutoffSample d,
-              ENNReal.ofReal (((Annealed.sigmaBar M m : ℝ))⁻¹ *
-                (Annealed.sigmaBar M (j - 2) : ℝ)) ^ p
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure
-            ≤ ENNReal.ofReal 4 ^ p := by
-  obtain ⟨C, hC0, hall⟩ := exists_inv_sigmaBar_mul_sigmaBar_sub_two_le_four d
-  refine ⟨C, hC0, fun M hreg m j hjm p hp => ?_⟩
-  exact lintegral_ofReal_rpow_le_of_ae_le_const hp
-    (Filter.Eventually.of_forall fun _ => hall M hreg m j hjm)
-
-/-- **(B2) at every moment.**  The squared continuity display is deterministic,
-so its `q`-th moment is the display raised to the `q`. -/
-theorem exists_lintegral_rpow_sigmaBar_ratio_sub_one_sq_le (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (M : ABKModel d) (m0 : ℤ) (E : {E : ℝ // 1 ≤ E}),
-        mStarStar M < m0 →
-        Algsuperdiff.Frozen.Section3.inductionState M (m0 - 1) E →
-        C * (Disorder.cstar M)⁻¹ ≤ (E : ℝ) →
-        M.gamma ≤ ((E : ℝ)⁻¹) ^ 10 →
-        M.gamma ≤ 1 / 8 →
-        ∀ m j : ℤ, j - 2 ≤ m → m ≤ m0 → ∀ p : ℝ, 0 ≤ p →
-          ∫⁻ _omega : Cutoff.CutoffSample d,
-              ENNReal.ofReal (((Annealed.sigmaBar M m : ℝ) *
-                ((Annealed.sigmaBar M (j - 2) : ℝ))⁻¹ - 1) ^ 2) ^ p
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure
-            ≤ ENNReal.ofReal (C * (min 1 (M.gamma * (((m : ℝ) - (j : ℝ)) + 2) +
-                  (E : ℝ) ^ 2 * (M.gamma * |Real.log M.gamma| ^ 2))) ^ 2 *
-                (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (j : ℝ))))) ^ p := by
-  obtain ⟨C, hC0, hall⟩ := exists_sigmaBar_ratio_sub_one_sq_le d
-  refine ⟨C, hC0, fun M m0 E hm0 hstate hCE hreg hgam m j hjm hm p hp => ?_⟩
-  exact lintegral_ofReal_rpow_le_of_ae_le_const hp
-    (Filter.Eventually.of_forall fun _ =>
-      hall M m0 E hm0 hstate hCE hreg hgam m j hjm hm)
-
-/-- **(B3) at every moment.**  `3^{γj}σ̄_{j−2}^{-1} ≤ 4c⋆^{-1/2}γ^{1/2}` is
-deterministic, so its `q`-th moment is the bound raised to the `q`.  The
-`γ^{1/2}` on the right is the anchor's `√γ`. -/
-theorem exists_lintegral_rpow_gamma_weight_inv_sigmaBar_le (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∀ j : ℤ, ∀ p : ℝ, 0 ≤ p →
-          ∫⁻ _omega : Cutoff.CutoffSample d,
-              ENNReal.ofReal ((3 : ℝ) ^ (M.gamma * (j : ℝ)) *
-                ((Annealed.sigmaBar M (j - 2) : ℝ))⁻¹) ^ p
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure
-            ≤ ENNReal.ofReal (4 * ((Real.sqrt (Disorder.cstar M))⁻¹ *
-                Real.sqrt M.gamma)) ^ p := by
-  obtain ⟨C, hC0, hall⟩ := exists_rpow_gamma_mul_inv_sigmaBar_sub_two_le d
-  refine ⟨C, hC0, fun M hreg j p hp => ?_⟩
-  exact lintegral_ofReal_rpow_le_of_ae_le_const hp
-    (Filter.Eventually.of_forall fun _ => hall M hreg j)
-
 /-! ## 2. (B4): the two-term bullet at the literal `(2,2)` error -/
 
 /-- **(B4) at every moment `q ∈ [1,∞)`, for the literal `(2,2)` error.**
@@ -193,22 +134,6 @@ theorem measurable_fullGradSeries (k : ℤ) (v : Fin d → ℤ) :
   measurable_tsum_nat_of_nonneg _
     (fun n => measurable_gradLayerGauge k v (k - 1 + (n : ℤ)))
     (fun n omega => gradLayerGauge_nonneg k v omega (k - 1 + (n : ℤ)))
-
-/-- **(B6a) at every moment `q ∈ [1,∞)`.** -/
-theorem lintegral_rpow_weightedFullGradSeries_le (M : ABKModel d) (k : ℤ)
-    (v : Fin d → ℤ) {p : ℝ} (hp : 1 ≤ p) :
-    ∫⁻ omega : Cutoff.CutoffSample d,
-        ENNReal.ofReal (Real.rpow 3 (2 * (k : ℝ)) * fullGradSeries k v omega) ^ p
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure
-      ≤ ENNReal.ofReal (gammaTwoMomentBound p
-          (fullGradConst M * Real.rpow 3 (M.gamma * (k : ℝ)))) ^ p := by
-  have hA : (0 : ℝ) < fullGradConst M * Real.rpow 3 (M.gamma * (k : ℝ)) :=
-    mul_pos (fullGradConst_pos M) (Real.rpow_pos_of_pos (by norm_num) _)
-  refine lintegral_ofReal_rpow_le_of_isBigOWith_gammaTwo hA hp
-    (fun omega => mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-      (fullGradSeries_nonneg k v omega))
-    ((measurable_fullGradSeries k v).const_mul _).aemeasurable
-    (isBigOWith_gammaSigma_weightedFullGradSeries M k v) le_rfl
 
 /-- **(B6a) at the slot itself.**  Almost surely the `L`-free gradient slot IS
 the weighted full series, so it inherits the moment bound.  This is the form the

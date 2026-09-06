@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDepthBandArith
 
@@ -102,15 +102,6 @@ depth-`j` skeleton layer of thickness `3^{j-k}` at the near bands. -/
 def straddleLayerSet (Q : TriadicCube d) (j k : ℕ) : Set (Vec d) :=
   if k < j then cubeSet Q
   else ⋃ R ∈ descendantsAtDepth Q j, cubeBoundaryLayer R ((1 / 3 : ℝ) ^ (k - j))
-
-theorem measurableSet_straddleLayerSet (Q : TriadicCube d) (j k : ℕ) :
-    MeasurableSet (straddleLayerSet Q j k) := by
-  classical
-  rw [straddleLayerSet]
-  split_ifs with h
-  · exact measurableSet_cubeSet Q
-  · exact Set.Finite.measurableSet_biUnion (descendantsAtDepth Q j).finite_toSet
-      fun R _ => measurableSet_cubeBoundaryLayer R _
 
 /-! ## 2. The `y`-slice -/
 

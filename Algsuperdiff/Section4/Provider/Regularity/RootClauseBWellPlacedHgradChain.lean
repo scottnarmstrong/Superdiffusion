@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootClauseBRebasedWellPlaced
-import Algsuperdiff.Section4.Provider.Regularity.RootClauseBGateEndChain
+import Algsuperdiff.Section4.Provider.Regularity.RootClauseBGateGeometry
+import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaChain
 
 /-!
 # fine-scale dichotomy geometry
@@ -60,20 +61,6 @@ theorem no_overhang_iff_gate {m k : ℤ} {z : Vec d} :
     have hle := (abs_le.mp habs)
     rcases hsigma with hσ | hσ <;> subst hσ <;> intro hcon <;>
       [linarith only [hle.2, hcon]; linarith only [hle.1, hcon]]
-
-/-- **On the gated side the clamp is inactive**: the well-placed centre is `z`
-itself. -/
-theorem wellPlacedCentre_eq_self_of_gate {m k : ℤ} {z : Vec d}
-    (h : (fun y => z + y) '' openCubeSet (originCube d k) ⊆
-      openCubeSet (originCube d m)) :
-    wellPlacedCentre z m k = z := by
-  rw [image_add_subset_openCubeSet_iff] at h
-  funext i
-  have hi := h i
-  have habs : |z i| ≤ wellPlacedHalfGap m k := by
-    rw [wellPlacedHalfGap]; linarith only [hi]
-  have hle := abs_le.mp habs
-  rw [wellPlacedCentre, min_eq_right hle.2, max_eq_right hle.1]
 
 /-! ## 2. The well-placed coarse chain from an abstract `hgrad` -/
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderExcess
 import Homogenization.Sobolev.Foundations.EuclideanL2CZ
@@ -28,7 +28,7 @@ bridge:
   *convex* smoothing operator back into a plain convolution Laplacian).
 -/
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/WeylLaplacianTransfer.lean ====
+-- ==== Weyl: Laplacian transfer ====
 open InnerProductSpace
 open Homogenization (Vec basisVec euclideanBall euclideanCoordDeriv euclideanCoordSecondDeriv
   euclideanCoordLaplacian)
@@ -156,7 +156,7 @@ end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
--- ==== transplanted from Superdiff/Regularity/Harmonic/WeylConvolutionLaplacian.lean ====
+-- ==== Weyl: the convolution Laplacian ====
 open scoped Convolution
 open Homogenization (Vec basisVec euclideanCoordDeriv euclideanCoordSecondDeriv
   euclideanCoordLaplacian)
@@ -304,75 +304,6 @@ theorem euclideanCoordLaplacian_comp_const_sub {K : Vec d → ℝ} (hK : ContDif
           simp [Homogenization.euclideanCoordDeriv]
 
 /-! ### Behaviour under the affine homothety `y ↦ a • y + b` -/
-
-/-- Coordinate derivative after precomposition with the affine homothety `y ↦ a • y + b`. -/
-theorem euclideanCoordDeriv_comp_smul_add {K : Vec d → ℝ} (hK : ContDiff ℝ (⊤ : ℕ∞) K)
-    (a : ℝ) (b : Vec d) (i : Fin d) (x : Vec d) :
-    euclideanCoordDeriv i (fun y => K (a • y + b)) x = a * euclideanCoordDeriv i K (a • x + b) := by
-  unfold Homogenization.euclideanCoordDeriv
-  have hcomp :
-      fderiv ℝ (fun y : Vec d => K (a • y + b)) x =
-        (fderiv ℝ K (a • x + b)).comp (a • (1 : Vec d →L[ℝ] Vec d)) := by
-    change fderiv ℝ (K ∘ fun y : Vec d => a • y + b) x =
-      (fderiv ℝ K (a • x + b)).comp (a • (1 : Vec d →L[ℝ] Vec d))
-    rw [fderiv_comp]
-    · have harg : fderiv ℝ (fun y : Vec d => a • y + b) x = a • (1 : Vec d →L[ℝ] Vec d) := by
-        rw [fderiv_add_const]
-        simpa using
-          (fderiv_const_smul (𝕜 := ℝ) (f := fun y : Vec d => y) (x := x)
-            (differentiableAt_id : DifferentiableAt ℝ (fun y : Vec d => y) x) a)
-      rw [harg]
-    · exact (hK.differentiable (by simp)) (a • x + b)
-    · fun_prop
-  rw [hcomp]
-  simp
-
-/-- Coordinate derivative of a scalar multiple. -/
-theorem euclideanCoordDeriv_const_mul {f : Vec d → ℝ} {a : ℝ} {i : Fin d} {x : Vec d}
-    (hf : DifferentiableAt ℝ f x) :
-    euclideanCoordDeriv i (fun y => a * f y) x = a * euclideanCoordDeriv i f x := by
-  unfold Homogenization.euclideanCoordDeriv
-  have h := fderiv_const_smul (𝕜 := ℝ) (f := f) (x := x) hf a
-  simpa [Pi.smul_apply, smul_eq_mul] using congrArg (fun L => L (basisVec i)) h
-
-/-- **The coordinate Laplacian scales quadratically under an affine homothety** `y ↦ a • y + b`. -/
-theorem euclideanCoordLaplacian_comp_smul_add {K : Vec d → ℝ} (hK : ContDiff ℝ (⊤ : ℕ∞) K)
-    (a : ℝ) (b : Vec d) (x : Vec d) :
-    euclideanCoordLaplacian (fun y => K (a • y + b)) x =
-      a ^ 2 * euclideanCoordLaplacian K (a • x + b) := by
-  unfold Homogenization.euclideanCoordLaplacian Homogenization.euclideanCoordSecondDeriv
-  calc
-    ∑ i : Fin d, euclideanCoordDeriv i
-          (euclideanCoordDeriv i (fun y : Vec d => K (a • y + b))) x
-        = ∑ i : Fin d,
-            a ^ 2 * euclideanCoordDeriv i (euclideanCoordDeriv i K) (a • x + b) := by
-          refine Finset.sum_congr rfl fun i _ => ?_
-          have hfirst :
-              euclideanCoordDeriv i (fun y : Vec d => K (a • y + b)) =
-                fun y => a * euclideanCoordDeriv i K (a • y + b) := by
-            funext y
-            exact euclideanCoordDeriv_comp_smul_add hK a b i y
-          rw [hfirst]
-          have hD : ContDiff ℝ (⊤ : ℕ∞) (euclideanCoordDeriv i K) :=
-            Homogenization.contDiff_euclideanCoordDeriv hK i
-          have haff_diff : DifferentiableAt ℝ (fun y : Vec d => a • y + b) x :=
-            (differentiableAt_id.const_smul a).add_const b
-          have hinner_diff :
-              DifferentiableAt ℝ (fun y : Vec d => euclideanCoordDeriv i K (a • y + b)) x := by
-            have hcomp := ((hD.differentiable (by simp)) (a • x + b)).comp x haff_diff
-            simpa [Function.comp_def] using hcomp
-          calc
-            euclideanCoordDeriv i
-                (fun y : Vec d => a * euclideanCoordDeriv i K (a • y + b)) x
-                = a * euclideanCoordDeriv i
-                    (fun y : Vec d => euclideanCoordDeriv i K (a • y + b)) x :=
-                  euclideanCoordDeriv_const_mul hinner_diff
-            _ = a * (a * euclideanCoordDeriv i (euclideanCoordDeriv i K) (a • x + b)) := by
-                  rw [euclideanCoordDeriv_comp_smul_add hD a b i x]
-            _ = a ^ 2 * euclideanCoordDeriv i (euclideanCoordDeriv i K) (a • x + b) := by ring
-    _ = a ^ 2 * ∑ i : Fin d,
-          euclideanCoordDeriv i (euclideanCoordDeriv i K) (a • x + b) := by
-          rw [Finset.mul_sum]
 
 /-! ### Reflecting a convolution integral onto the domain -/
 

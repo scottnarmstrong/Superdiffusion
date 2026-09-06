@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDepthGagliardoBand
 
@@ -26,8 +26,7 @@ together with the size of that skeleton neighbourhood.  Both are proved here.
   a sup-ball of radius `t·ℓ` around a point of the shrunk core stays inside the
   cell.)
 * `volume_cubeBoundaryLayer_le` — THE STRADDLING MEASURE, `≤ 2·d·t·|R|` per
-  cell, and `normalizedCubeMeasure_biUnion_cubeBoundaryLayer_le` — its aggregate
-  `≤ 2·d·t` over the whole depth-`j` skeleton.  This is the `3^{j-k}`-smallness
+  cell, aggregating to `≤ 2·d·t` over the whole depth-`j` skeleton.  This is the `3^{j-k}`-smallness
   the near bands of the band reduction run on: at band `k ≥ j` the relevant
   thickness is `t = 3^{j-k}`.
 
@@ -144,58 +143,6 @@ theorem volume_cubeBoundaryLayer_le (R : TriadicCube d) {t : ℝ} (ht0 : 0 ≤ t
     linarith only [hstep, hexp, hexp2]
   rw [← ENNReal.ofReal_toReal hne]
   exact ENNReal.ofReal_le_ofReal hbound
-
-/-- **THE AGGREGATE STRADDLING MEASURE.**  The whole depth-`j` skeleton layer of
-normalized thickness `t` carries normalized measure at most `2·d·t` in `Q`,
-uniformly in the depth. -/
-theorem normalizedCubeMeasure_biUnion_cubeBoundaryLayer_le (Q : TriadicCube d) (j : ℕ)
-    {t : ℝ} (ht0 : 0 ≤ t) (ht : t ≤ 1 / 2) :
-    normalizedCubeMeasure Q (⋃ R ∈ descendantsAtDepth Q j, cubeBoundaryLayer R t) ≤
-      ENNReal.ofReal (2 * (d : ℝ) * t) := by
-  classical
-  set D : Finset (TriadicCube d) := descendantsAtDepth Q j with hD
-  have hQpos : (0 : ℝ) < cubeVolume Q := cubeVolume_pos Q
-  have hQne : cubeVolume Q ≠ 0 := ne_of_gt hQpos
-  have hcardpos : (0 : ℝ) < ((D.card : ℝ)) := descendantsAtDepth_card_pos Q j
-  have hcardne : ((D.card : ℝ)) ≠ 0 := ne_of_gt hcardpos
-  /- the union, bounded cell by ce -/
-  have hunion : volume (⋃ R ∈ D, cubeBoundaryLayer R t) ≤
-      ∑ R ∈ D, ENNReal.ofReal (2 * (d : ℝ) * t * cubeVolume R) :=
-    le_trans (measure_biUnion_finset_le D _)
-      (Finset.sum_le_sum fun R _ => volume_cubeBoundaryLayer_le R ht0 ht)
-  have hcell : ∀ R ∈ D, cubeVolume R = ((D.card : ℝ))⁻¹ * cubeVolume Q := by
-    intro R hR
-    have hcard : cubeVolume Q = ((D.card : ℝ)) * cubeVolume R := by
-      rw [hD]
-      exact cubeVolume_eq_card_mul_cubeVolume_of_mem_descendantsAtDepth hR
-    rw [hcard, ← mul_assoc, inv_mul_cancel₀ hcardne, one_mul]
-  have hsum : (∑ R ∈ D, ENNReal.ofReal (2 * (d : ℝ) * t * cubeVolume R)) =
-      ENNReal.ofReal (2 * (d : ℝ) * t * cubeVolume Q) := by
-    have hstep : ∀ R ∈ D, ENNReal.ofReal (2 * (d : ℝ) * t * cubeVolume R) =
-        ENNReal.ofReal (((D.card : ℝ))⁻¹ * (2 * (d : ℝ) * t * cubeVolume Q)) := by
-      intro R hR
-      rw [hcell R hR]
-      congr 1
-      ring
-    rw [Finset.sum_congr rfl hstep, Finset.sum_const, nsmul_eq_mul,
-      ← ENNReal.ofReal_natCast D.card,
-      ← ENNReal.ofReal_mul (Nat.cast_nonneg D.card)]
-    congr 1
-    field_simp
-  /- read the normalized measu -/
-  have hnorm : normalizedCubeMeasure Q (⋃ R ∈ D, cubeBoundaryLayer R t) ≤
-      ENNReal.ofReal ((cubeVolume Q)⁻¹) *
-        volume (⋃ R ∈ D, cubeBoundaryLayer R t) := by
-    show (ENNReal.ofReal ((cubeVolume Q)⁻¹) • cubeMeasure Q)
-      (⋃ R ∈ D, cubeBoundaryLayer R t) ≤ _
-    rw [Measure.smul_apply, smul_eq_mul, cubeMeasure,
-      Measure.restrict_apply' (measurableSet_cubeSet Q)]
-    exact mul_le_mul' le_rfl (measure_mono Set.inter_subset_left)
-  refine le_trans hnorm ?_
-  refine le_trans (mul_le_mul' le_rfl (le_trans hunion (le_of_eq hsum))) ?_
-  rw [← ENNReal.ofReal_mul (le_of_lt (inv_pos.mpr hQpos))]
-  refine ENNReal.ofReal_le_ofReal (le_of_eq ?_)
-  field_simp
 
 end
 

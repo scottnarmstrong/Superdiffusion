@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.InteriorClause
 import Algsuperdiff.Section4.Provider.ExcessDecay.ReplacementDatumHarmonic
@@ -24,7 +24,7 @@ Three of the four glue items the interior-clause assembly was priced with.
   √(3/2)·s^{−1/2}` on `(0,1]`, through the chord bound `1 − 3^{−s} ≥ 2s/3`
   (convexity of `exp`, no `nlinarith`, no numerical `rpow` evaluation).
 * **+ composed** (`correctionLeg_le_anchorGagliardo`) — the correction summand
-  of `ReplacementDatumHarmonic.coarseGraining_l2_slot_harmonic_le`, written in
+  of the harmonic replacement's coarse-graining slot, written in
   the frozen theorem's own Gagliardo carrier on the translated window `w +
   □_n`, at the explicit `d`-only constant `interiorCorrectionConst d` and the
   honest `s`-power `s^{−1/2}`.
@@ -116,18 +116,6 @@ theorem two_mul_div_three_le_one_sub_three_rpow_neg {s : ℝ} (hs0 : 0 ≤ s)
   rw [harg] at hconv
   rw [hlog]
   linarith only [hconv]
-
-/-- The `s`-dependent factor of the correction is finite and positive on
-`(0,1]`: the geometric discount `1 − 3^{−s}` is bounded below by `2s/3 > 0`. -/
-theorem geometricDiscount_slot_pos {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) :
-    0 < geometricDiscount (s / 2) 2 := by
-  have hchord := two_mul_div_three_le_one_sub_three_rpow_neg hs.le hs1
-  have hrw : geometricDiscount (s / 2) 2 = 1 - Real.rpow (3 : ℝ) (-s) := by
-    rw [geometricDiscount]
-    congr 2
-    ring
-  rw [hrw]
-  linarith only [hchord, hs]
 
 /-- **.**  The closed-form correction factor `(1 − 3^{−s})^{−1/2}` carried by
 `ReplacementDatumHarmonic.negativeToL2Factor` obeys the honest envelope `√(3/2)

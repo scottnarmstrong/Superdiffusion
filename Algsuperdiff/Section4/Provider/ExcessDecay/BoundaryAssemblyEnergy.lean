@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryAssemblyDirichlet
 import Homogenization.Book.Ch03.Theorems.EnergyRHS.Theory
@@ -171,57 +171,6 @@ theorem exists_localizedCoeffEnergyValue_openCubeSet_le_dirichletEnergyWithRHSRH
   exact pow_le_pow_left₀ hnn hbase 2
 
 /-! ## 4. The printed boundary display, with the `∇h` legs present -/
-
-/-- **The boundary-regime coarse Caccioppoli estimate with boundary datum.**
-
-At CoarseGraining's cube geometry, for a forced solution `u` on `□_m` whose
-difference from the Dirichlet solution `v` with datum `h` lies in `H¹₀(□_m)`:
-
-```text
-  E_{core}(∇u)  ≤  2 · (Caccioppoli prefactor) · λ_t 3^{-2m} ‖u-v‖²_{L̲²(□_m)}
-                  + 2 · 18^d · (C r^{-3/2} Λ⁻ [g]_{B^r} + C r^{-1/2} Λ⁺ ‖∇h‖_{B^r})² .
-```
-
-The second summand is CoarseGraining's `dirichletEnergyWithRHSRHS` squared; its
-second leg is the boundary leg `‖∇h‖` at `dirichletBoundaryGradientField v = ∇h`,
-which is the term the frozen theorem's general clause carries and the interior
-clause does not.  The two constants are kept separate because the two
-CoarseGraining theorems are normalized differently (see the module
-docstring). -/
-theorem exists_boundaryCaccioppoliEnergy_withBoundaryDatum (d : ℕ) [NeZero d] :
-    ∃ C₁ C₂ : ℝ, 0 < C₁ ∧ 0 < C₂ ∧
-      ∀ {Q : TriadicCube d} {a : CoeffFamily d} {s t r : ℝ} {x : Vec d}
-        {g : Vec d → Vec d} (u : H1Function (Ch02.cubeDomain Q : Set (Vec d)))
-        (v : DirichletForcedCubeSolution Q a g),
-        IsForcedEquation Q a u g →
-        MemH10 (Ch02.cubeDomain Q : Set (Vec d))
-          (fun y => u.toFun y - v.toH1.toFun y) →
-        0 < s → s < 1 → 0 < t → t < 1 / 2 → s + t < 1 →
-        0 < r → r < 1 → ForceBesovRegularity Q r g →
-        ForceBesovRegularity Q r (dirichletBoundaryGradientField v) →
-        x ∈ openCubeSet Q →
-          localizedCoeffEnergyValue (caccioppoliCoreSet Q x) (a.coeffOn Q) u ≤
-            2 * (caccioppoliWithRHSPrefactor C₁ Q a s t *
-                (Ch02.lambdaS Q t a *
-                  Real.rpow (3 : ℝ) (-2 * (((Q.scale : ℤ) : ℝ))) *
-                  normalizedL2SqOnSet (openCubeSet Q)
-                    (fun y => u.toFun y - v.toH1.toFun y))) +
-              2 * ((18 : ℝ) ^ d * dirichletEnergyWithRHSRHS C₂ Q a r g v ^ 2) := by
-  obtain ⟨C₁, hC₁pos, hcacc⟩ := exists_boundaryCaccioppoliEnergy_ofDifference d
-  obtain ⟨C₂, hC₂pos, henergy⟩ :=
-    exists_localizedCoeffEnergyValue_openCubeSet_le_dirichletEnergyWithRHSRHS_sq d
-  refine ⟨C₁, C₂, hC₁pos, hC₂pos, ?_⟩
-  intro Q a s t r x g u v hu hdiff hs hs1 ht ht2 hst hr hr1 hg hh hx
-  have hdiffbound := hcacc u v.toH1 hu v.weakSolution hdiff hs hs1 ht ht2 hst hx
-  have hvcore :=
-    localizedCoeffEnergyValue_core_le_eighteen_pow_mul_parent (a := a) hx v.toH1
-  have hvparent := henergy v hr hr1 hg hh
-  have hgeom : (0 : ℝ) ≤ (18 : ℝ) ^ d := by positivity
-  have hvbound : localizedCoeffEnergyValue (caccioppoliCoreSet Q x) (a.coeffOn Q) v.toH1 ≤
-      (18 : ℝ) ^ d * dirichletEnergyWithRHSRHS C₂ Q a r g v ^ 2 :=
-    hvcore.trans (mul_le_mul_of_nonneg_left hvparent hgeom)
-  have hmink := localizedCoeffEnergyValue_core_le_two_mul_sub_add (x := x) (a := a) u v.toH1
-  linarith only [hmink, hdiffbound, hvbound]
 
 end
 

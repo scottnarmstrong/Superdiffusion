@@ -16,7 +16,7 @@ gives `E[X^2] <= 1 + exp (-1)`.  This module packages the resulting explicit
 dimension-only envelope, with a harmless additive `1` so that the envelope is
 positive even before imposing the standing model's dimension lower bound.
 
-## Source and rulings
+## Sources and conventions
 
 * ABK26, `e.kn.reg.ass`, ABK26: the J2 observable and its normalized Gaussian
   tail.

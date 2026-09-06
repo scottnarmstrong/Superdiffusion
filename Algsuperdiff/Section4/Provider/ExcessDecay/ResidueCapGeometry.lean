@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.SealCaccioppoliGeometry
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoveringSlotObstruction
@@ -29,8 +29,7 @@ Three hinges — and only three — carry `hgeom` through the whole chain:
   (W)  wellPlacedCentre x m (n+2) + □_{n+2} ⊆ (z+□_{n+3}) ∩ □_m
        (`image_add_wellPlacedCentre_subset_anchorWindow`;  the window
         transports `BoundaryTransports`, `BoundaryGradH`,
-        `BoundaryCoveringPoincare`, the parent-`L²` pricing and the energy legs
-        use nothing else)
+        the parent-`L²` pricing and the energy legs use nothing else)
   (P)  translateSet (wellPlacedCentre x m (n+2) − z) (cubeSet □_{n+2})
          ⊆ cubeSet □_{n+3}
        (`translateSet_cubeSet_coveringCube_subset_anchorParent`;  the covering

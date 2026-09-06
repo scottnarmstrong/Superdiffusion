@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2Moments
 
@@ -369,25 +369,6 @@ theorem xcalScaleQuarter_le (d : ℕ) {s A2 : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1)
   rw [xcalScaleQuarter]
   refine mul_le_mul_of_nonneg_left ?_ gammaTriangleConst_pos.le
   exact tsum_weightThird_mul_annulusPenalty_quarter_le d hs0 hs1 (by positivity)
-
-theorem xcalScaleOne_nonneg (d : ℕ) (s A1 : ℝ) : 0 ≤ xcalScaleOne d s A1 := by
-  rw [xcalScaleOne]
-  refine mul_nonneg gammaTriangleConst_pos.le ?_
-  refine tsum_nonneg fun i => ?_
-  have h1 := one_le_annulusPenalty d (by norm_num : (0 : ℝ) < 1) (i + 1)
-  have hw := weightThird_pos (sprime := s / 4) (i + 1)
-  have : (0 : ℝ) ≤ 2 * A1 ^ 2 := by positivity
-  exact mul_nonneg hw.le (mul_nonneg (by linarith only [h1]) this)
-
-theorem xcalScaleQuarter_nonneg (d : ℕ) (s A2 : ℝ) :
-    0 ≤ xcalScaleQuarter d s A2 := by
-  rw [xcalScaleQuarter]
-  refine mul_nonneg gammaTriangleConst_pos.le ?_
-  refine tsum_nonneg fun i => ?_
-  have h1 := one_le_annulusPenalty d (by norm_num : (0 : ℝ) < 1 / 4) (i + 1)
-  have hw := weightThird_pos (sprime := s / 4) (i + 1)
-  have : (0 : ℝ) ≤ 2 * A2 ^ 2 := by positivity
-  exact mul_nonneg hw.le (mul_nonneg (by linarith only [h1]) this)
 
 end
 

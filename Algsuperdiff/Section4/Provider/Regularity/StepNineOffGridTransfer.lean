@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepNineOffGridGeometry
 import Algsuperdiff.Section4.Support.NormalizedL2
@@ -240,57 +240,6 @@ theorem energyDensityLhs_offGrid_transfer (nu : ℝ) (f : Vec d → ℝ) {x : Ve
           (ENNReal.ofReal (Real.sqrt nu) *
             eLpNorm f 2 (Support.normalizedVolumeMeasureOn
               (truncatedWindow (offGridCentre n x) m (n + 1)))) := by ring
-
-/-! ## 3. The `ℝ`-valued transfer, for the proved chain's carrier -/
-
-/-- **The off-grid transfer in the `‖·‖_{L̲²}` carrier of the Step-7 chain.** The
-`IntegrableOn` datum is the `H¹(□_m)` hypothesis of the theorem, read on the
-lattice window; nothing else is assumed. -/
-theorem normalizedL2On_offGrid_transfer {f : Vec d → ℝ} {x : Vec d} {m n : ℤ}
-    (hx : x ∈ openCubeSet (originCube d m)) (hnm : n ≤ m)
-    (hint : IntegrableOn (fun y => f y ^ 2)
-      (truncatedWindow (offGridCentre n x) m (n + 1))) :
-    Support.normalizedL2On (truncatedWindow x m n) f
-      ≤ (3 : ℝ) ^ d *
-        Support.normalizedL2On (truncatedWindow (offGridCentre n x) m (n + 1)) f := by
-  have hz : offGridCentre n x ∈ openCubeSet (originCube d m) :=
-    offGridCentre_mem_openCubeSet n hx
-  have hWpos : 0 < (volume (truncatedWindow (offGridCentre n x) m (n + 1))).toReal :=
-    ENNReal.toReal_pos (volume_truncatedWindow_pos (n + 1) hz).ne'
-      (volume_truncatedWindow_lt_top (offGridCentre n x) m (n + 1)).ne
-  have hW'pos : 0 < (volume (truncatedWindow x m n)).toReal :=
-    ENNReal.toReal_pos (volume_truncatedWindow_pos n hx).ne'
-      (volume_truncatedWindow_lt_top x m n).ne
-  have hratio :
-      (volume (truncatedWindow (offGridCentre n x) m (n + 1))).toReal /
-          (volume (truncatedWindow x m n)).toReal ≤ ((3 : ℝ) ^ d) ^ 2 := by
-    have hK := volume_offGridWindow_le_mul (x := x) (m := m) (n := n) hx hnm
-    have hfin : ((ENNReal.ofReal ((3 : ℝ) ^ d)) ^ (2 : ℕ) *
-        volume (truncatedWindow x m n)).toReal
-          = ((3 : ℝ) ^ d) ^ 2 * (volume (truncatedWindow x m n)).toReal := by
-      rw [ENNReal.toReal_mul, ← ENNReal.ofReal_pow (by positivity),
-        ENNReal.toReal_ofReal (by positivity)]
-    have htop : ((ENNReal.ofReal ((3 : ℝ) ^ d)) ^ (2 : ℕ) *
-        volume (truncatedWindow x m n)) ≠ ⊤ := by
-      refine ENNReal.mul_ne_top (by simp [ENNReal.pow_eq_top_iff]) ?_
-      exact (volume_truncatedWindow_lt_top x m n).ne
-    have hmono := ENNReal.toReal_mono htop hK
-    rw [hfin] at hmono
-    rw [div_le_iff₀ hW'pos]
-    exact hmono
-  have hsub := Support.normalizedL2On_le_of_subset
-    (W := truncatedWindow (offGridCentre n x) m (n + 1))
-    (W' := truncatedWindow x m n) (f := f) (truncatedWindow_subset_offGrid n m x)
-    hWpos hW'pos hint
-  have hsqrt : Real.sqrt
-      ((volume (truncatedWindow (offGridCentre n x) m (n + 1))).toReal /
-        (volume (truncatedWindow x m n)).toReal) ≤ (3 : ℝ) ^ d := by
-    have h := Real.sqrt_le_sqrt hratio
-    rwa [Real.sqrt_sq (by positivity)] at h
-  have hnn : 0 ≤ Support.normalizedL2On
-      (truncatedWindow (offGridCentre n x) m (n + 1)) f :=
-    Support.normalizedL2On_nonneg _ _
-  exact le_trans hsub (mul_le_mul_of_nonneg_right hsqrt hnn)
 
 end
 

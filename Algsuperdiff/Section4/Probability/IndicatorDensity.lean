@@ -15,10 +15,6 @@ measure-theoretic facts that every §4.1 ratio lemma consumes.
 * `scaleProp Ev M ω` — the proportion of scales `m ∈ {0,…,M}` at which `Ev m`
   holds.  With `Ev` the good event this is the paper's `avsum 𝟙{𝒢(m;s,ε)}`;
   with `Ev = (𝒢ᵢ ·)ᶜ` it is the density of *bad* scales.
-* `badProp_bound_of_concentration` — the measure-theoretic core: given the
-  conclusion of `p_concentration_for_scales` for an array `X` together with the
-  deterministic reduction embedding each bad event into the concentration
-  threshold event, the bad-scale density obeys the same exponential tail.
 * `scaleProp_inter_le` / `setOf_scaleProp_inter_subset` — the two-fold split
   (the paper's "apply `p.concentration.for.scales` twice at level `½θ`").
 * `scaleProp_subadd` / `measure_bad_density_union` — the three-fold union bound
@@ -59,38 +55,6 @@ open scoped Classical in
 noncomputable def scaleProp (Ev : ℤ → Set Ω) (M : ℕ) (ω : Ω) : ℝ :=
   (1 / ((M : ℝ) + 1)) *
     ∑ m ∈ Finset.Icc (0 : ℤ) (M : ℤ), (if ω ∈ Ev m then (1 : ℝ) else 0)
-
-/-! ### The measure-theoretic core of every ratio lemma -/
-
-/-- **The measure-theoretic core of every ratio lemma.**  Given the concentration
-output `hconc` for an array `X` (the conclusion of `p_concentration_for_scales`
-with its universal constant `C` extracted) and the deterministic reduction
-`hreduce` embedding each bad event `(Ev m)ᶜ` into the concentration threshold
-event, the density of bad scales `scaleProp (·ᶜ)` obeys the same exponential
-tail.  Pure `measure_mono` over an indicator-sum domination. -/
-theorem badProp_bound_of_concentration [MeasurableSpace Ω]
-    (P : Measure Ω) (X : ℤ → ℤ → Ω → ℝ) {p s : ℝ} {r : ℕ} (C : ℝ)
-    (hconc : ∀ (m : ℕ) (θ : ℝ), (r : ℤ) ≤ (m : ℤ) → 0 < θ → θ ≤ 1 →
-      P {ω | θ < (1 / ((m : ℝ) + 1)) *
-          ∑ k ∈ Finset.Icc (0 : ℤ) (m : ℤ),
-            (if 9 * s⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s k ω
-              then (1 : ℝ) else 0)}
-        ≤ ENNReal.ofReal (Real.exp (-(s * p * θ) / (16 * (r : ℝ)) * ((m : ℝ) + 1))))
-    (Ev : ℤ → Set Ω) (M : ℕ) (θ : ℝ) (hrM : (r : ℤ) ≤ (M : ℤ)) (hθ0 : 0 < θ) (hθ1 : θ ≤ 1)
-    (hreduce : ∀ m ∈ Finset.Icc (0 : ℤ) (M : ℤ), ∀ ω ∈ (Ev m)ᶜ,
-        9 * s⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s m ω) :
-    P {ω | θ < scaleProp (fun m => (Ev m)ᶜ) M ω}
-      ≤ ENNReal.ofReal (Real.exp (-(s * p * θ) / (16 * (r : ℝ)) * ((M : ℝ) + 1))) := by
-  classical
-  refine le_trans (measure_mono ?_) (hconc M θ hrM hθ0 hθ1)
-  intro ω hω
-  simp only [Set.mem_setOf_eq, scaleProp] at hω ⊢
-  refine lt_of_lt_of_le hω ?_
-  have hnn : (0 : ℝ) ≤ 1 / ((M : ℝ) + 1) := by positivity
-  refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun m hm => ?_)) hnn
-  by_cases hmem : ω ∈ (Ev m)ᶜ
-  · simp only [if_pos hmem, if_pos (hreduce m hm ω hmem), le_refl]
-  · rw [if_neg hmem]; split_ifs <;> norm_num
 
 /-! ### The two-fold split: `p.concentration.for.scales` applied twice at `½θ` -/
 

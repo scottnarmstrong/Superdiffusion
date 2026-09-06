@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepFiveShomComparison
 
@@ -12,14 +12,14 @@ import Algsuperdiff.Section4.Provider.Regularity.StepFiveShomComparison
 
 Step 4 of `t.regularity` consumes the excess-decay lemma one-step contraction
 and re-expresses its remainder in the Step-5 slots `ε_j`, `δ_j`.  The
-excess-decay lane (`ExcessDecay.excessDecay_oneStep_interior_anchored`)
-delivers that contraction with its remainder in the anchor's weights,
+excess-decay lane's anchored interior one-step delivers that contraction with
+its remainder in the anchor's weights,
 
 ```text
    3^{-n} · ( … + C s^{-7} σ̄_{n-2}^{-1} 3^{(1+s)(n-2)} [g]_{H̲^s(U_{n+1})} + … ) ,
 ```
 
-while the Step-5 slot `δ_j` (`StepFiveDeltaFamily.stepFiveDelta`) is weighted
+while the Step-5 slot `δ_j` of `StepFiveDeltaFamily` is weighted
 
 ```text
    C 3^{j/2} σ̄_j^{-1} [g]_{W̲^{1/2,∞}(□_m)} + … .
@@ -57,9 +57,8 @@ term it dominates.  Since `k = k(d)` is fixed before `δ₀`, that factor is a
 of this formalization changes.  Here the missing factor is exhibited rather than
 assumed.
 
-The corrected threshold is then `stepFourSecondTerm_le_of_threshold`, which
-carries that factor inside `Cprod`, and the absorption into `θ^k` is
-`excess_absorb_two_contractions`.  Nothing is discharged from `γ ≤ γ₀` alone
+The corrected threshold carries that factor inside `Cprod`, and the absorption
+into `θ^k` is `excess_absorb_two_contractions`.  Nothing is discharged from `γ ≤ γ₀` alone
 and nothing is hidden in a constant.
 
 ## References
@@ -184,47 +183,6 @@ theorem three_weight_flat (n : ℤ) :
   norm_num
 
 /-! ## 3. -/
-
-/-- ```text
-   9 · 3^k · √((3^k)^d)  =  9 · 3^{(1+d/2)k} .
-```
-
-is therefore a printed-display defect only: the formalization carries the
-factor, on the nose, in a constant that is a function of `d` and the
-once-and-for-all `k = k(d)`. -/
-theorem nine_mul_three_zpow_mul_sqrt (d k : ℕ) :
-    9 * (3 : ℝ) ^ (k : ℤ) * Real.sqrt (((3 : ℝ) ^ (k : ℤ)) ^ d) =
-      9 * (3 : ℝ) ^ ((1 + (d : ℝ) / 2) * (k : ℝ)) := by
-  have h3 : (0 : ℝ) < 3 := by norm_num
-  have hpow : ((3 : ℝ) ^ (k : ℤ)) ^ d = (3 : ℝ) ^ ((k : ℝ) * (d : ℝ)) := by
-    rw [← Real.rpow_natCast ((3 : ℝ) ^ (k : ℤ)) d, ← Real.rpow_intCast (3 : ℝ) (k : ℤ),
-      ← Real.rpow_mul h3.le]
-    congr 1
-  have hsqrt : Real.sqrt ((3 : ℝ) ^ ((k : ℝ) * (d : ℝ))) =
-      (3 : ℝ) ^ ((k : ℝ) * (d : ℝ) / 2) := by
-    rw [Real.sqrt_eq_rpow, ← Real.rpow_mul h3.le]
-    congr 1
-    ring
-  rw [hpow, hsqrt, ← Real.rpow_intCast (3 : ℝ) (k : ℤ), mul_assoc,
-    ← Real.rpow_add h3]
-  congr 2
-  push_cast
-  ring
-
-/-- ```text
-   Cprod · δ₀^{1/2} · s^{-1/2}  ≤  ½ θ^k
-```
-
-delivers the same bound at every `δ ≤ δ₀`. -/
-theorem stepFourSecondTerm_le_of_threshold {Cprod s delta delta0 thetaK : ℝ}
-    (hCprod : 0 ≤ Cprod) (hdd : delta ≤ delta0)
-    (hthr : Cprod * Real.sqrt delta0 * (Real.sqrt s)⁻¹ ≤ thetaK / 2) :
-    Cprod * Real.sqrt delta * (Real.sqrt s)⁻¹ ≤ thetaK / 2 := by
-  have hmono : Real.sqrt delta ≤ Real.sqrt delta0 := Real.sqrt_le_sqrt hdd
-  have hinv : (0 : ℝ) ≤ (Real.sqrt s)⁻¹ := inv_nonneg.mpr (Real.sqrt_nonneg s)
-  have hstep := mul_le_mul_of_nonneg_right
-    (mul_le_mul_of_nonneg_left hmono hCprod) hinv
-  linarith only [hstep, hthr]
 
 /-- **The Step-4 absorption.**  The one-step display contracts at `A` and the
 `ε_j`-leg contributes a S contraction `B` (the term prices); when both are at

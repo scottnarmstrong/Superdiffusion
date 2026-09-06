@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenCaccFinalDisplay
 import Algsuperdiff.Section4.Provider.Regularity.RootInterfaceGate
@@ -378,17 +378,6 @@ theorem exists_stepSevenGradientWithShom_gate_of_caps (d : ℕ) [NeZero d] :
   have hClam : (0 : ℝ) ≤ 256 / 63 * CB := by linarith only [hCB]
   exact hC M L mf m n n' Qf omega u v hval hgrad hgate hcore heq hforce hC1 halpha0
     halpha1 hnm hdelta hgap hbudget hCosc hClam hoscHi hdataOsc hrow2 hosc
-
-/-! ## 5. The interior branch is the special case -/
-
-/-- **The printed interior gate implies the geometric gate**, at every `n' ≤ m -
-1`: this module's hypothesis is weaker than `StepSevenCaccFinalInterior`'s, so
-the interior producers factor through it. -/
-theorem gate_of_mem_inner {m n' : ℤ} {z : Vec d}
-    (hz : z ∈ openCubeSet (originCube d (m - 1))) (hn' : n' ≤ m - 1) :
-    (fun y => z + y) '' openCubeSet (originCube d n') ⊆
-      openCubeSet (originCube d m) :=
-  image_add_subset_openCubeSet_of_mem_inner hz hn'
 
 end
 

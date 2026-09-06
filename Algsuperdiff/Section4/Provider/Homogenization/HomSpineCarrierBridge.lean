@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepThreeShallow
 
@@ -81,36 +81,6 @@ theorem volumeAverage_eq_toReal_lintegral (R : TriadicCube d) {f : Vec d → ℝ
     hbase, smul_eq_mul, ← ENNReal.ofReal_mul (by
       exact le_of_lt (inv_pos.mpr hvolpos))]
   rw [volumeAverage, toReal_volume_openCubeSet R]
-
-/-- The direction the descendants' hypothesis needs. -/
-theorem lintegral_le_of_volumeAverage_le {R : TriadicCube d} {f : Vec d → ℝ} {B : ℝ}
-    (hf0 : ∀ x, 0 ≤ f x) (hint : IntegrableOn f (openCubeSet R) volume)
-    (hle : volumeAverage (openCubeSet R) f ≤ B) :
-    (∫⁻ x, ENNReal.ofReal (f x) ∂normalizedCubeMeasure R) ≤ ENNReal.ofReal B := by
-  rw [volumeAverage_eq_toReal_lintegral R hf0 hint]
-  exact ENNReal.ofReal_le_ofReal hle
-
-/-- The direction the shallow-cube conclusion needs. -/
-theorem volumeAverage_le_of_lintegral_le {Q : TriadicCube d} {f : Vec d → ℝ} {B : ℝ}
-    (hf0 : ∀ x, 0 ≤ f x) (hint : IntegrableOn f (openCubeSet Q) volume) (hB : 0 ≤ B)
-    (hle : (∫⁻ x, ENNReal.ofReal (f x) ∂normalizedCubeMeasure Q) ≤ ENNReal.ofReal B) :
-    volumeAverage (openCubeSet Q) f ≤ B := by
-  rw [volumeAverage_eq_toReal_lintegral Q hf0 hint] at hle
-  exact (ENNReal.ofReal_le_ofReal_iff hB).mp hle
-
-/-- **Route (a) at the real carrier.**  A uniform bound on the real normalized
-averages over the depth-`j` descendants transfers to the cube itself, at the
-SAME constant — no `3^{(d/2)(m-j)}` volume factor. -/
-theorem volumeAverage_le_of_descendants {Q : TriadicCube d} (j : ℕ) {f : Vec d → ℝ}
-    {B : ℝ} (hf0 : ∀ x, 0 ≤ f x) (hB : 0 ≤ B)
-    (hintQ : IntegrableOn f (openCubeSet Q) volume)
-    (hintR : ∀ R ∈ descendantsAtDepth Q j, IntegrableOn f (openCubeSet R) volume)
-    (hdeep : ∀ R ∈ descendantsAtDepth Q j, volumeAverage (openCubeSet R) f ≤ B) :
-    volumeAverage (openCubeSet Q) f ≤ B := by
-  refine volumeAverage_le_of_lintegral_le hf0 hintQ hB ?_
-  refine cubeAverage_le_of_descendants Q j (fun x => ENNReal.ofReal (f x)) ?_
-  intro R hR
-  exact lintegral_le_of_volumeAverage_le hf0 (hintR R hR) (hdeep R hR)
 
 /-! ## 2. Bridge two: descendants versus the manuscript's lattice translates -/
 

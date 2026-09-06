@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2AtomTail
 import Algsuperdiff.Section4.Probability.IndicatorArray
@@ -257,34 +257,6 @@ theorem isTwoTermBigOWith_Xcal_scales (M : ABKModel d) (s : {s : ℝ // 0 < s}) 
       (gammaSigma 1) (gammaSigma (1 / 4)) (fun omega => (XcalE M s j omega).toReal)
       (xcalScaleOne d (s : ℝ) A1) (xcalScaleQuarter d (s : ℝ) A2) :=
   isTwoTermBigOWith_Xcal M s j hA1 hA2 hcube
-
-/-- **Step 3, `e.Xj.moment.bound`.**
-
-```
-E[X_j^p]^{1/p} ≤ C(1)·p·(Γ_1-scale) + C(1/4)·p⁴·(Γ_{1/4}-scale) ,
-```
-
-This is the printed display, with the manuscript's closed-form amplitudes
-replaced by the Step-2 series scales. -/
-theorem lintegral_rpow_Xcal_le (M : ABKModel d) (s : {s : ℝ // 0 < s}) (j : ℤ)
-    {A1 A2 p : ℝ} (hA1 : 0 < A1) (hA2 : 0 < A2) (hp : 1 ≤ p)
-    (hcube : ∀ n : ℤ, n ≤ j - 1 →
-      Probability.IsTwoTermBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-        (gammaSigma 2) (gammaSigma (1 / 2)) (Support.annularErrorObservable M n s)
-        A1 A2) :
-    ∫⁻ omega, ENNReal.ofReal ((XcalE M s j omega).toReal ^ p)
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure
-      ≤ ENNReal.ofReal ((gammaMomentConst 1 * p * xcalScaleOne d (s : ℝ) A1 +
-          gammaMomentConst (1 / 4) * p ^ (4 : ℝ) * xcalScaleQuarter d (s : ℝ) A2) ^ p) := by
-  have hp0 : (0 : ℝ) < p := lt_of_lt_of_le zero_lt_one hp
-  have hbase := lintegral_rpow_le_of_twoTerm (sigma1 := 1) (sigma2 := 1 / 4)
-    (by norm_num) (by norm_num) hp
-    (fun omega => ENNReal.toReal_nonneg)
-    (isTwoTermBigOWith_Xcal_scales M s j hA1 hA2 hcube)
-  have h1 : p ^ (1 : ℝ)⁻¹ = p := by
-    rw [inv_one, Real.rpow_one]
-  have h2 : p ^ ((1 : ℝ) / 4)⁻¹ = p ^ (4 : ℝ) := by norm_num
-  rwa [h1, h2] at hbase
 
 /-- **The `𝒢₂` Appendix-D array**, `X_{k,j} = D^{-1}X_j`.  The normalizer `D`
 carries the manuscript's `K₂ε^{−2}`. -/

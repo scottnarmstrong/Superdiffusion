@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.Book.Ch02.Theorems.MultiscaleEllipticity.Public
 import Homogenization.Book.Ch03.Definitions
@@ -101,9 +101,6 @@ theorem stepSevenStabilityIndex_pos : 0 < stepSevenStabilityIndex := by
 noncomputable def stepSevenStabilityConst : ℝ := 2
 
 @[simp] theorem stepSevenStabilityConst_eq : stepSevenStabilityConst = 2 := rfl
-
-theorem stepSevenStabilityConst_pos : 0 < stepSevenStabilityConst := by
-  rw [stepSevenStabilityConst_eq]; norm_num
 
 /-- **The printed exponent factor `(t/(t-s))^{2/q}`**, with the `q = ∞` endpoint
 value `1` (the limit of the finite-`q` expression). -/
@@ -284,25 +281,6 @@ theorem stepSevenLambdaStability_Lambda [NeZero d]
   refine hcore.trans (mul_le_mul_of_nonneg_right
     (rpow_three_le_stepSevenStabilityPrefactor hst hq)
     (Ch02.LambdaSq_nonneg Q a stepSevenStabilityIndex_pos hq))
-
-/-- **Clause (A), both displays, at one constant `C(d)`** — the packaged form of
-`l.lambdas.stability` that Step 7b consumes. -/
-theorem exists_stepSevenLambdaStability (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ {Q R : TriadicCube d} (a : CoeffFamily d) {t : ℝ}
-        {q : Ch02.MultiscaleExponent},
-        R ∈ descendantsAtScale Q (Q.scale - 1) →
-        stepSevenStabilityIndex < t → q.IsAdmissible →
-        (Ch02.lambdaSq R t q a)⁻¹ ≤
-            stepSevenStabilityPrefactor C stepSevenStabilityIndex t q *
-              (Ch02.lambdaSq Q stepSevenStabilityIndex q a)⁻¹ ∧
-          Ch02.LambdaSq R t q a ≤
-            stepSevenStabilityPrefactor C stepSevenStabilityIndex t q *
-              Ch02.LambdaSq Q stepSevenStabilityIndex q a := by
-  refine ⟨stepSevenStabilityConst, stepSevenStabilityConst_pos, ?_⟩
-  intro Q R a t q hR hst hq
-  exact ⟨stepSevenLambdaStability_lambdaInv a hR hst hq,
-    stepSevenLambdaStability_Lambda a hR hst hq⟩
 
 /-! ## 5. The lattice-aligned Step-7a sandwich pair -/
 

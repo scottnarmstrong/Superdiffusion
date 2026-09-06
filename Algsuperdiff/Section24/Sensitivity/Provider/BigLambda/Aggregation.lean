@@ -40,24 +40,6 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## The resummation with a general same-index coefficient -/
 
-omit [NeZero d] in
-/-- Passage from a per-descendant one-cube estimate to the finite descendant
-maximum, with a general same-index coefficient. -/
-theorem maxDescendantB_le_of_descendant_bound_coeff
-    (Q : TriadicCube d) (A₀ A₁ : Ch02.TriadicCoeffFamily d) {K c : ℝ}
-    (hK : 0 ≤ K) (hc : 0 ≤ c)
-    (hdesc : ∀ n : ℕ, ∀ R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)),
-      coarseBMatrixNorm R A₁ ≤
-        c * coarseBMatrixNorm R A₀ +
-          K * (Ch02.lambdaSq R (3 / 8 : ℝ) (.finite 2) A₀)⁻¹)
-    (n : ℕ) :
-    maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) A₁ ≤
-      c * maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) A₀ +
-        K * maxDescendantLowerEllipticityInvAtScale Q (Q.scale - (n : ℤ))
-          (3 / 8 : ℝ) (.finite 2) A₀ :=
-  Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.maxDescendantB_le_of_descendant_bound_coeff
-    Q A₀ A₁ hK hc hdesc n
-
 /-- **The `Lambda_{s,2}` endpoint with a general same-index coefficient.** -/
 theorem LambdaSq_two_le_of_descendant_bound_coeff
     (Q : TriadicCube d) (A₀ A₁ : Ch02.TriadicCoeffFamily d) {K c s : ℝ}

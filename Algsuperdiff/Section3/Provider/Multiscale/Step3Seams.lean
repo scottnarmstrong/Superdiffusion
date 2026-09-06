@@ -187,26 +187,6 @@ private theorem normalized_slope_core {J c W B G si sj R nq : ℝ}
           (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hinner hc) hW) hnq
     _ = 80 * c * W * R * nq := by ring
 
--- the triadic-cube crude constant the two cores reproduce `Step1Assembly`'s
--- own conclusions, `160 c = 80` on the flux leg and `80 c = 40` on the slope
--- leg, character for character.
-example {J W A B si sj Cb w T np : ℝ}
-    (hW : 0 ≤ W) (hsj : 0 < sj) (hsi : 0 < si) (hCb : 0 ≤ Cb)
-    (hnp : 0 ≤ np) (hA : A ≤ 10 * sj) (hB : B ≤ 10 * sj⁻¹) (hratio : sj ≤ 4 * si)
-    (hT : (sj ^ 2)⁻¹ ≤ T)
-    (hbase : J ≤ 1 / 2 * (W * (4 * A + Cb * 8 * w ^ 2 * B)) * (si⁻¹ * np)) :
-    J ≤ 80 * W * (1 + 2 * Cb * T * w ^ 2) * np :=
-  (normalized_flux_core (by norm_num) hW hsj hsi hCb hnp hA hB hratio hT
-    hbase).trans_eq (by ring)
-
-example {J W B G si sj R nq : ℝ}
-    (hW : 0 ≤ W) (hsi : 0 < si) (hnq : 0 ≤ nq) (hB0 : 0 ≤ B)
-    (hG : G ≤ 1) (hB : B ≤ 10 * sj⁻¹) (hrat : si * sj⁻¹ ≤ 4 * R)
-    (hbase : J ≤ 1 / 2 * (W * ((1 + G) * B)) * (si * nq)) :
-    J ≤ 40 * W * R * nq :=
-  (normalized_slope_core (by norm_num) hW hsi hnq hB0 hG hB hrat hbase).trans_eq
-    (by ring)
-
 /-! ## The two normalized legs at the simplex carrier -/
 
 /-- Almost surely, on `not B_osc(z + square_j)` and `not B_loc(z + square_j)` and

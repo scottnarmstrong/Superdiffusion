@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGDischargeInstantiation
 import Algsuperdiff.Section4.Provider.Homogenization.HomStepFourPairing
@@ -26,15 +26,14 @@ the two levels the Step-4 consumer wants, which are the two levels exactly:
 **merely Hölder** test fields, measured in the volume-normalized Hölder gauge
 `wsInftyGauge Q s Ksup KHol = 3^{-s·scale}·Ksup + KHol`.  `CoarseGraining`'s
 dual quantifies over **globally smooth** test fields measured in
-`cubeEuclideanWspFullENorm` at the conjugate exponent.
-`SmoothDualDominatesHolderTests` is exactly the missing comparison, and
-`weakNegDualBoundOn_of_smoothDual` shows it is the ONLY missing thing: given
-it, every smooth-dual level converts to a `WeakNegDualBoundOn` level at one
-uniform factor `Ktest`.
+`cubeEuclideanWspFullENorm` at the conjugate exponent.  The domination of the
+Hölder test gauge by the smooth-dual gauge is exactly the missing comparison,
+and it is the ONLY missing thing: given it, every smooth-dual level converts to
+a `WeakNegDualBoundOn` level at one uniform factor `Ktest`.
 
 ## MEASUREMENT: the conversion is FALSE at equal orders
 
-`SmoothDualDominatesHolderTests Q s p Ktest` must fail for `s` on both sides.
+That domination must fail when `s` is read on both sides.
 The reason is an index obstruction, not a constant:
 
 * the Hölder gauge is the `B^{s}_{∞,∞}(□_m)` norm (the manuscript declares
@@ -62,8 +61,8 @@ the level, and is paid only inside the right-hand side, where the printed
 `s^{-1}`, `s^{-9/2}` and `(s₂-s)^{-1}` are evaluated at `s′` instead of `s`.
 Because the spine's bundle quantifies `s`, `s₂`, `C_cg`, `E₁`, `E₂`, `D_g` and
 `S` **existentially**, that substitution is admissible for the spine; it is NOT
-admissible inside a single instance of `GeneralCoarseGrainingFiniteP`, whose
-three clauses share one `s`.
+admissible inside a single instance of the transcribed finite-`p`
+coarse-graining hypothesis, whose three clauses share one `s`.
 
 ## The two analytic inputs the order-loss route still needs
 
@@ -83,7 +82,7 @@ files:
    (McShane extension + mollification; the `mollifyBump` machinery
    and the Hölder preservation cover the mollification half).
 
-`SmoothDualDominatesHolderTests` is what those two inputs would produce.
+The domination at equal orders is what those two inputs would produce.
 -/
 
 open Homogenization Homogenization.Book.Ch03 Homogenization.Book.Ch03.ABK26
@@ -146,60 +145,6 @@ theorem smoothDual_legs_of_display {m : ℤ}
   · exact le_trans (by
       rw [hX, centeredCubeFluxComparisonSmoothDualLHS]
       exact le_add_left (le_refl _)) hfull
-
-/-! ## 3. The test-class residue, isolated -/
-
-/-- **THE TEST-CLASS RESIDUE.**
-
-`Ktest` compares the two dual gauges on one cube: every Hölder test field is
-handled by the smooth-dual norm at the cost of `Ktest` times its
-volume-normalized Hölder gauge.
-
-This is the ONE statement that separates `CoarseGraining`'s smooth `W^{s,p′}`
-dual from this repository's `WeakNegDualBoundOn`.  It is deliberately phrased
-as a property of the CUBE, the ORDER and the EXPONENT — not of any particular
-field — because that is where the obstruction lives (see the module docstring:
-it is FALSE when the two `s`'s coincide, and the honest instance carries `s′ <
-s` on the `CoarseGraining` side). -/
-def SmoothDualDominatesHolderTests (Q : TriadicCube d) (s : FractionalOrder)
-    (p : FiniteLpExponent) (Ktest : ℝ) : Prop :=
-  ∀ (F : CubeEuclideanLpField Q FiniteLpExponent.two) (phi : Vec d → Vec d)
-    (Ksup KHol : ℝ), 0 ≤ Ksup → 0 ≤ KHol →
-    (∀ x ∈ openCubeSet Q, ‖phi x‖ ≤ Ksup) →
-    HolderSeminormBoundOn (openCubeSet Q) s.1 KHol phi →
-    ENNReal.ofReal |cubePairing Q F.toField phi| ≤
-      cubeEuclideanNegativeWspSmoothDualENorm Q s p F *
-        ENNReal.ofReal (Ktest * wsInftyGauge Q s.1 Ksup KHol)
-
-/-- **The residue is the only gap.**
-
-Given the test-class comparison, every smooth-dual level `D` converts into the
-`WeakNegDualBoundOn` level `Ktest · D`, which is the carrier the Step-4 pairing
-consumes.  Nothing else about `F` is used. -/
-theorem weakNegDualBoundOn_of_smoothDual {Q : TriadicCube d} {s : FractionalOrder}
-    {p : FiniteLpExponent} {Ktest : ℝ} (hK : 0 ≤ Ktest)
-    (hclass : SmoothDualDominatesHolderTests Q s p Ktest)
-    {F : CubeEuclideanLpField Q FiniteLpExponent.two} {D : ℝ} (hD : 0 ≤ D)
-    (hF : cubeEuclideanNegativeWspSmoothDualENorm Q s p F ≤ ENNReal.ofReal D) :
-    WeakNegDualBoundOn Q s.1 (Ktest * D) F.toField := by
-  intro phi Ksup KHol hsup hhol hb hH
-  have hgauge : 0 ≤ wsInftyGauge Q s.1 Ksup KHol := wsInftyGauge_nonneg hsup hhol
-  have hstep := hclass F phi Ksup KHol hsup hhol hb hH
-  have hchain : ENNReal.ofReal |cubePairing Q F.toField phi| ≤
-      ENNReal.ofReal (Ktest * D * wsInftyGauge Q s.1 Ksup KHol) := by
-    calc ENNReal.ofReal |cubePairing Q F.toField phi|
-        ≤ cubeEuclideanNegativeWspSmoothDualENorm Q s p F *
-            ENNReal.ofReal (Ktest * wsInftyGauge Q s.1 Ksup KHol) := hstep
-      _ ≤ ENNReal.ofReal D * ENNReal.ofReal (Ktest * wsInftyGauge Q s.1 Ksup KHol) := by
-          gcongr
-      _ = ENNReal.ofReal (D * (Ktest * wsInftyGauge Q s.1 Ksup KHol)) :=
-          (ENNReal.ofReal_mul hD).symm
-      _ = ENNReal.ofReal (Ktest * D * wsInftyGauge Q s.1 Ksup KHol) := by
-          rw [show D * (Ktest * wsInftyGauge Q s.1 Ksup KHol) =
-            Ktest * D * wsInftyGauge Q s.1 Ksup KHol by ring]
-  have hrhs : 0 ≤ Ktest * D * wsInftyGauge Q s.1 Ksup KHol :=
-    mul_nonneg (mul_nonneg hK hD) hgauge
-  exact (ENNReal.ofReal_le_ofReal_iff hrhs).mp hchain
 
 end
 

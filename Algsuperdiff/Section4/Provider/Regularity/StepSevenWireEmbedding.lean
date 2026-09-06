@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenEndEmbedding
 import Algsuperdiff.Section4.Provider.ExcessDecay.TranslationTransportNorms
@@ -236,28 +236,6 @@ theorem normalizedL2On_image_add_sub_average_le_cubeBesovOscillation
       Real.sqrt_sq (cubeBesovOscillation_nonneg Q (2 : ℝ≥0∞) _)]
   rw [← hrhs]
   exact hmin
-
-/-- **`hembed` at the §4.4 window, end to end.**  The off-grid recovery composed
-with the embedding:'s `hmean` right-hand side is bounded by `Cemb · besovP1` at
-the origin-cube realization of `z'+□_{m'-1}`. -/
-theorem stepSevenEmbedding_offGrid [NeZero d] {Q : TriadicCube d} {c : Vec d}
-    {w : Vec d → ℝ} (v : H1Function (openCubeSet Q)) (hv : ∀ y, v.toFun y = w (y + c))
-    (hTm : MeasurableSet ((fun y => c + y) '' openCubeSet Q))
-    (hTpos : 0 < (volume ((fun y => c + y) '' openCubeSet Q)).toReal)
-    (hTfin : volume ((fun y => c + y) '' openCubeSet Q) ≠ ⊤)
-    (hw : IntegrableOn w ((fun y => c + y) '' openCubeSet Q))
-    (hw2 : IntegrableOn (fun x => w x ^ 2) ((fun y => c + y) '' openCubeSet Q))
-    (hbdd : BddAbove
-      (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminorm Q 1 N v.grad)) :
-    (cubeScaleFactor Q)⁻¹ *
-        normalizedL2On ((fun y => c + y) '' openCubeSet Q)
-          (fun x => w x - volumeAverage ((fun y => c + y) '' openCubeSet Q) w) ≤
-      stepSevenEmbeddingConst d * cubeBesovNegativeVectorSeminorm Q 1 v.grad := by
-  have hinv : (0 : ℝ) ≤ (cubeScaleFactor Q)⁻¹ :=
-    (inv_pos.mpr (cubeScaleFactor_pos_aux Q)).le
-  have hstep := normalizedL2On_image_add_sub_average_le_cubeBesovOscillation v hv hTm
-    hTpos hTfin hw hw2
-  exact le_trans (mul_le_mul_of_nonneg_left hstep hinv) (stepSevenEmbedding Q v hbdd)
 
 end
 

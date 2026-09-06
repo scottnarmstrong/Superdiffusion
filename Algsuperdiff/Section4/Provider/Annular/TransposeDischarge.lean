@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.NegationSymmetry
 import Algsuperdiff.Section4.Provider.Annular.SignLowDischarge
@@ -39,28 +39,18 @@ step above is a pointwise identity on the carrier, so the transposed estimate
 holds at each individual sample, not merely in law; the proved
 `Cutoff.map_negateCutoffSample_cutoffSampleLaw` is not used.  The only
 almost-sure input is the atom-versus-representative reconciliation
-`annularErrorAtomMax_ae_le_annularErrorLatticeMax`, which the field-side leg of
-`exists_clauseOne_final_four` already consumes at the same place.
+`annularErrorAtomMax_ae_le_annularErrorLatticeMax`, which the field-side leg
+already consumes at the same place.
 
 ## The payoff
 
-`exists_clauseOne_final_two` is `SignLowDischarge.exists_clauseOne_final_four`
-with **both** the `huglyt` slot and the `hpret` slot gone, and with the
-transposed response family `Jannt` no longer a free variable: it is the
-concrete `fun ω L ↦ annularResponseMax M L m (N ω)`, which
-`annularResponseMax_negateCutoffSample` identifies with the manuscript's own
-transposed annulus maximum `annularResponseMaxTranspose M L m ω` — so this is a
-transcription, not a substitution.  The endpoint's remaining mathematical
-inputs are exactly **two**: `hlam` and `hpref` (the Step-1 leg).
-
-## Why the endpoint is re-run rather than composed
-
-`exists_clauseOne_final_four` binds `huglyt` *pointwise* on the good event,
-whereas the atom-versus-representative reconciliation
-`annularErrorAtomMax_ae_le_annularErrorLatticeMax` is only almost sure.  The
-transposed estimate therefore has to be produced **inside** the
-`filter_upwards` of the display, exactly where the field-side estimate already
-is.
+The transposed ugly estimate is thereby available at **every** sample, with the
+transposed response family no longer a free variable: it is the concrete
+`fun ω L ↦ annularResponseMax M L m (N ω)`.  A consumer of it is therefore a
+transcription of the field-side leg, not a substitution.  Because the
+atom-versus-representative reconciliation is only almost sure, the transposed
+estimate has to be produced **inside** the `filter_upwards` of the display,
+exactly where the field-side estimate already is.
 
 ## References
 
@@ -191,19 +181,6 @@ theorem jLegField_negateCutoffSample_funext [NeZero d] (M : ABKModel d) (L m : �
 
 /-! ## Part B' -- the transposed annulus response family -/
 
-/-- **The manuscript's transposed annulus `J`-maximum**: the same annulus maximum
-as `annularResponseMax`, read at the *transposed* coefficient object
-`ã_{L,m}ᵀ`. -/
-def annularResponseMaxTranspose (M : ABKModel d) (L m : ℤ)
-    (omega : Cutoff.CutoffSample d) (j n : ℤ) : ℝ :=
-  Proportion.fmax (Proportion.latticeAnnulusFinset d n j (j - 1)) fun v =>
-    scalarResponseMax
-      ((subConstCutoffTriadicCoeffFamily M L
-        (Support.fluxIncrementAverage M L m (originCube d m) omega)
-        (matTranspose_fluxIncrementAverage M L m (originCube d m) omega)
-        omega).coeffOn (⟨n, v⟩ : TriadicCube d)).transpose
-      (Annealed.sigmaBar M m)
-
 /-- `ã_{L,m}` at `Nω` is `ã_{L,m}ᵀ` at `ω`, as a field identity. -/
 theorem subConstCutoffField_negateCutoffSample (M : ABKModel d) (L m : ℤ)
     (Q : TriadicCube d) (omega : Cutoff.CutoffSample d) (x : Vec d) :
@@ -227,182 +204,6 @@ theorem subConstCutoffField_negateCutoffSample (M : ABKModel d) (L m : ℤ)
     simp [matTranspose, Matrix.sub_apply]
   rw [subConstCutoffField_apply, subConstCutoffField_apply,
     fluxIncrementAverage_negateCutoffSample, hx', hT, hC]
-
-/-- **`Jannt` is the manuscript's transposed object.**  The annulus response
-maximum at the negated sample is exactly the transposed annulus response
-maximum at the sample; this is what makes the discharge below a transcription
-rather than a substitution. -/
-theorem annularResponseMax_negateCutoffSample [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (omega : Cutoff.CutoffSample d) (j n : ℤ) :
-    annularResponseMax M L m (Cutoff.negateCutoffSample omega) j n =
-      annularResponseMaxTranspose M L m omega j n := by
-  unfold annularResponseMax annularResponseMaxTranspose
-  refine congrArg _ (funext fun v => ?_)
-  refine scalarResponseMax_congr_aeeq ?_ (Annealed.sigmaBar M m)
-  refine Filter.Eventually.of_forall fun x => ?_
-  exact subConstCutoffField_negateCutoffSample M L m (originCube d m) omega x
-
-/-! ## Part C -- the two-slot clause-(i) endpoint -/
-
-/-- **The clause-(i) endpoint at two remaining slots.**
-
-The remaining inputs are exactly
-
-* the printed ranges `s ≤ 1/4`, `8γ ≤ s`, `c⋆⁴ ≤ 6`, `1 ≤ |log γ|` and the
-  standing regime `γ ≤ C_shom^{−10} c⋆^{10}`;
-* the typing nondegeneracies `0 < C₁`, `0 < C`, `0 ≤ C_l` and the constant
-  inequality fixing `C`; **and**
-* the two mathematical obligations `hlam` and `hpref` (the Step-1 leg).
-
-Nothing else is assumed. -/
-theorem exists_clauseOne_final_two (d : ℕ) (dimension : 2 ≤ d) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ Cs Cshom : ℝ, 0 < Cs ∧ 6 ≤ Cshom ∧
-      ∀ M : ABKModel d,
-        M.gamma ≤ (Cshom ^ (10 : ℕ))⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-        ∀ (Ccg : ℝ) (m : ℤ) (s : {s : ℝ // 0 < s}),
-          (s : ℝ) ≤ 1 / 4 → 8 * M.gamma ≤ (s : ℝ) → Disorder.cstar M ^ 4 ≤ 6 →
-          1 ≤ |Real.log M.gamma| →
-        ∀ C₁ Cl C : ℝ,
-          0 < C₁ → 0 < C → 0 ≤ Cl →
-          Cs * (1 + 196 * Cl) ^ 2 * 4 * (1 + Cl)
-              + 16 * Cs * (1 + 196 * Cl) ^ 2 * Cl * (1 + centeringConst d ^ 2)
-              + 4 * Cs * (1 + 4 * Cl ^ 2) ≤ C →
-          (∀ omega ∈ Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-            ∀ (n : ℤ) (v : Fin d → ℤ), n ≤ m - 1 →
-              v ∈ Support.latticeAnnulusSet d n m n →
-              (Annealed.sigmaBar M (n - 2) : ℝ) *
-                  (unitCubeLambda (2 * M.gamma) (.finite 2)
-                    (unitRescaledCutoffCoeff M (⟨n, v⟩ : TriadicCube d) (n - 2)
-                      omega))⁻¹ ≤
-                Cl * (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (n : ℝ)))) →
-          (∀ omega ∈ Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-            ∀ L : ℤ, m ≤ L →
-              IsAnnularDecompPre (s : ℝ) m (jLegField M L m omega)
-                (annularResponseMax M L m omega) C₁) →
-        ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          Set.indicator (Support.eventG0 M Ccg m ∩
-              Support.eventG1 M m (s : ℝ)
-                (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-              (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-            ≤ ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom * (s : ℝ))
-                * clauseOneTermOne M m s omega
-              + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
-                  * ((s : ℝ)⁻¹ ^ (3 : ℕ)) * ((Disorder.cstar M)⁻¹ ^ (4 : ℕ))
-                  * M.gamma ^ 2 * |Real.log M.gamma| ^ 4)
-              + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
-                  * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹ * M.gamma)
-                * clauseOneTermThree M m omega
-              + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
-                  * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹ * M.gamma)
-                * clauseOneTermFour M m s omega := by
-  haveI : NeZero d := ⟨by omega⟩
-  obtain ⟨Cs, hCs, hugly⟩ := exists_uglyJEstimate_annulus_of_eventG1 d dimension
-  obtain ⟨C₀, hC₀6, -, hstate⟩ :=
-    Algsuperdiff.Section4.Provider.GoodEvents.exists_allScalesInductionState_ge d 0
-  obtain ⟨Cshom, hC6, hC₀le, hshomGen⟩ := exists_shomSlot_ge d C₀
-  refine ⟨Cs, Cshom, hCs, hC6, ?_⟩
-  intro M hreg Ccg m s hs14 hsg hcstar4 hlog C₁ Cl C hC₁ hC0 hCl hCconst hlam hpref
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hs1 : (s : ℝ) ≤ 1 := by linarith only [hs14]
-  have hregA : M.gamma ≤ (Cshom⁻¹) ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) := by
-    rwa [inv_pow]
-  have hshom := hshomGen M hregA m
-  have hC₀0 : (0 : ℝ) < C₀ := lt_of_lt_of_le (by norm_num) hC₀6
-  have hregC : M.gamma ≤ (C₀⁻¹) ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregA.trans ?_
-    have hinv : Cshom⁻¹ ≤ C₀⁻¹ := inv_anti₀ hC₀0 hC₀le
-    have h10 : (Cshom⁻¹) ^ (10 : ℕ) ≤ (C₀⁻¹) ^ (10 : ℕ) :=
-      pow_le_pow_left₀ (inv_nonneg.mpr (le_trans hC₀0.le hC₀le)) hinv 10
-    exact mul_le_mul_of_nonneg_right h10 (pow_nonneg hcs0.le 10)
-  obtain ⟨E, -, -, hSall⟩ := hstate M hregC
-  have hsignlow : ∀ n : ℤ, n ≤ m - 1 →
-      1 / 4 * ((Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹)
-          * (3 : ℝ) ^ (M.gamma * (n : ℝ)))
-        ≤ (Annealed.sigmaBar M (n - 2) : ℝ) := fun n hn =>
-    sigmaBar_sub_two_lower_quarter_of_inductionState M (hSall m) (by omega)
-  -- the `(J3)` symmetry: the good event is invariant under whole-sequence negation
-  have hmemN : ∀ omega ∈ Support.eventG0 M Ccg m ∩
-      Support.eventG1 M m (s : ℝ)
-        (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹),
-      Cutoff.negateCutoffSample omega ∈ Support.eventG0 M Ccg m ∩
-        Support.eventG1 M m (s : ℝ)
-          (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹) := by
-    intro omega hmem
-    exact ⟨(mem_eventG0_negateCutoffSample_iff M Ccg m omega).2 hmem.1,
-      (mem_eventG1_negateCutoffSample_iff M m (s : ℝ) _ omega).2 hmem.2⟩
-  have hbound : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      omega ∈ Support.eventG0 M Ccg m ∩
-          Support.eventG1 M m (s : ℝ)
-            (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹) →
-        clauseOneTermOne M m s omega ≠ ⊤ → ∀ L : ℤ, m ≤ L →
-        IsClauseOneBound (Support.fluxCorrectedError M L m (s : ℝ) omega ^ 2)
-          (annDouble m (fun j n =>
-            (3 : ℝ) ^ (-((s : ℝ) * ((m - n : ℤ) : ℝ)))
-              * annularErrorLatticeMax M s omega j n))
-          (M.gamma ^ 2 * |Real.log M.gamma| ^ 4) (gradTailSq M m omega)
-          (∑' v : ℕ, (3 : ℝ) ^ (-((s : ℝ) / 2) * (v : ℝ))
-            * shellBlockLatticeReal M m omega (m - (v : ℤ)) ^ 2)
-          (s : ℝ) (Disorder.cstar M) M.gamma
-          (clauseOneOutConstant C₁ C 2 Cshom) := by
-    filter_upwards [annularErrorAtomMax_ae_le_annularErrorLatticeMax M s] with
-      omega hae hmem hfin L hL
-    have hpretN := hpref (Cutoff.negateCutoffSample omega) (hmemN omega hmem) L hL
-    rw [jLegField_negateCutoffSample_funext M L m omega] at hpretN
-    refine clauseOne_bound_final M L m s omega hs1 hsg hcstar4 hlog hmem.2
-      (summable_annFam_error_of_clauseOneTermOne_ne_top M m s omega hfin)
-      hC6 hshom hC₁.le hC0.le
-      (fun j n => annularResponseMax_nonneg M L m (Cutoff.negateCutoffSample omega) j n)
-      (hpref omega hmem L hL) hpretN ?_ ?_
-    · -- the field leg
-      intro j n hjm hnj
-      refine isUglyJEstimate_mono_E2 hC0.le (Real.rpow_nonneg (by norm_num) _)
-        (hae j n hnj) ?_
-      exact hugly M m L m E omega (s : ℝ) Cl C (hSall m) le_rfl hL s.2 hs14 hsg
-        hmem.2 hCl (hlam omega hmem) hsignlow hCconst j n hjm hnj
-    · -- the transposed leg: the field leg at the negated sample
-      intro j n hjm hnj
-      have hraw := hugly M m L m E (Cutoff.negateCutoffSample omega) (s : ℝ) Cl C
-        (hSall m) le_rfl hL s.2 hs14 hsg (hmemN omega hmem).2 hCl
-        (hlam (Cutoff.negateCutoffSample omega) (hmemN omega hmem)) hsignlow hCconst
-        j n hjm hnj
-      rw [annularErrorAtomMax_negateCutoffSample,
-        annularL2Block_negateCutoffSample, annularGradBlock_negateCutoffSample,
-        gradTailSq_negateCutoffSample] at hraw
-      exact isUglyJEstimate_mono_E2 hC0.le (Real.rpow_nonneg (by norm_num) _)
-        (hae j n hnj) hraw
-  have hdisplay := clauseOne_representative_display_dichotomy M m s
-    (Support.eventG0 M Ccg m ∩
-      Support.eventG1 M m (s : ℝ)
-        (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-    (C := clauseOneOutConstant C₁ C 2 Cshom)
-    (clauseOneOutConstant_pos hC₁ hC0 (by norm_num) hC6) hbound
-  filter_upwards [hdisplay] with omega hom
-  rwa [clauseOneDisplayRhs_eq] at hom
-
-/-- **Clause (ii) off the two-slot display.**  Unchanged from
-`SignLowDischarge.clauseTwo_of_final_four_display`; stated here so that the
-two-slot endpoint carries its own clause-(ii) consumer. -/
-theorem clauseTwo_of_final_two_display [NeZero d] (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) {ep C : ℝ} (hC0 : 0 ≤ C)
-    (hep : ep ∈ Set.Ioc (0 : ℝ) (1 / 2)) (hsep : (s : ℝ) * ep ≤ 1)
-    (hsmall : M.gamma * |Real.log M.gamma| ^ 2
-      ≤ (s : ℝ) ^ (3 / 2 : ℝ) * Disorder.cstar M ^ 2 * ep)
-    (hdisp : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.eventG0 M Ccg m ∩
-          Support.eventG1 M m (s : ℝ)
-            (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-          (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ clauseOneDisplayRhs M m s C omega) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.goodEventBase M Ccg m s ep)
-          (Support.fluxCorrectedErrorObservableSup M m s) omega
-        ≤ ENNReal.ofReal (2 * Real.sqrt C * ep) :=
-  clauseTwo_of_final_four_display M Ccg m s hC0 hep hsep hsmall hdisp
 
 end
 

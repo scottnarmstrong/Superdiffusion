@@ -54,13 +54,55 @@ import Algsuperdiff.Frozen.Section4.BoundsMathcalEaL
 import Algsuperdiff.Frozen.Section4.GoodEvents
 import Algsuperdiff.Frozen.Section4.HarmonicApproximation
 import Algsuperdiff.Frozen.Section4.IterationLemma
+import Algsuperdiff.Frozen.Section4.LocalHolderEstimate
 import Algsuperdiff.Frozen.Section4.MinimalScaleSeparation
 import Algsuperdiff.Frozen.Section4.ProportionGoodScales
+import Algsuperdiff.Frozen.Section4.S5ErrorMomentBound
+import Algsuperdiff.Frozen.Section4.S5RegularityMomentBoundV2
+
+/- ## Main results — the Section 5 frozen surface
+
+The Section 5 root theorem (Theorem A, `superdiffusivity_v2`, the quenched
+power-law superdiffusivity estimates), followed by the rest of the proved
+Section 5 surface: the injection estimate in `L^∞` at every integer scale and
+the chains-of-good-cubes proposition.  Importing them here keeps
+every build re-compiling the main results themselves; every file below is
+sorry-free.
+-/
+
+import Algsuperdiff.Frozen.Section5.SuperdiffusivityV2
+
+import Algsuperdiff.Frozen.Section5.InjectionInLInftyV2
+import Algsuperdiff.Frozen.Section5.PercolationGFv2
+
+/- ## Main results — the introduction's field versions
+
+The introduction prints Theorems B and C for the coefficient field
+`a = nu I + k` itself: the estimates the Section 4 surface states for the
+infrared truncations `a_L`, uniformly in the cutoff, carried to the
+untruncated field in the limit and read on the carrier of the full sample.
+Importing them here keeps every build re-compiling the main results
+themselves; every file below is sorry-free.
+-/
+
+import Algsuperdiff.Frozen.Introduction.GeneratorRenormalization
+import Algsuperdiff.Frozen.Introduction.AnomalousRegularity
+
+/- ## Complete project import coverage
+
+The two development index facades keep the default target responsible for every
+remaining Section 5 and stochastic-process module, including their focused
+sub-facades.
+-/
+
+import Algsuperdiff.Section5
+import Algsuperdiff.StochasticProcess
 
 /-!
 # ABK26 superdiffusion formalization
 
 This is the deliberately small root of the clean formalization. Project modules
 live below `Algsuperdiff/`; mathematical infrastructure is imported only from
-Mathlib and `Homogenization`.
+Mathlib, the `Homogenization` namespace of the CoarseGraining library, and the
+`MarkovProcess` library.
 -/

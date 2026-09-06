@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepOddValue
 
@@ -222,51 +222,6 @@ theorem oddClassDefect_oddPart_le_evenPart {m n : ℤ} {x : Vec d} {i : Fin d}
   linarith only [h]
 
 /-! ## 3. The refutation of the universally quantified pricing -/
-
-/-- The excess minimum of the zero competitor is `0`. -/
-theorem affineExcessRaw_zero (W : Set (Vec d)) :
-    affineExcessRaw W (fun _ => (0 : ℝ)) = 0 := by
-  refine le_antisymm ?_ (affineExcessRaw_nonneg _ _)
-  have h := affineExcessRaw_le_affineDistOn W (fun _ => (0 : ℝ)) 0 0
-  have hz : affineDistOn W (fun _ => (0 : ℝ)) 0 0 = 0 := by
-    rw [affineDistOn_eq_normalizedL2On]
-    have hfun : (fun y : Vec d => (0 : ℝ) - affineEval (0 : ℝ) (0 : Vec d) y)
-        = fun _ : Vec d => (0 : ℝ) := by
-      funext y
-      rw [affineEval_zero, sub_zero]
-    rw [hfun, normalizedL2On, Homogenization.volumeAverage]
-    simp
-  rwa [hz] at h
-
-/-- **The defect at the zero competitor is the datum's own seminorm.**  The
-competitor `0` is odd, harmonic on every window, and vanishes on every face, so
-it is admissible for every datum `h` vanishing on the met face — in particular
-for `h ≡ 0`, whose `C^{0,1/2}` gradient seminorm is `0`. -/
-theorem oddClassDefect_zero_competitor (x : Vec d) (m n : ℤ) (c : ℝ) (A : Vec d) :
-    oddClassDefect x m n (fun _ => (0 : ℝ)) c A
-      = normalizedL2On (truncatedWindow x m (n - 2)) (affineEval (c - vecDot A x) A) := by
-  rw [oddClassDefect, affineExcessRaw_zero, sub_zero, affineDistOn_eq_normalizedL2On]
-  have hfun : (fun y : Vec d => (0 : ℝ) - affineEval (c - vecDot A x) A y)
-      = fun y : Vec d => -affineEval (c - vecDot A x) A y := by
-    funext y
-    rw [zero_sub]
-  rw [hfun, normalizedL2On_neg]
-
-/-- **The refutation.**  On a window carrying the affine nondegeneracy lower bound
-— the same hypothesis `AffineMinimizerExistence` carries — the defect at the
-zero competitor is *strictly positive* for every nonzero affine datum, while
-the datum side's residue vanishes.  Hence the pricing cannot hold for an
-arbitrary member of the odd class; it must be read at the best one, which is
-what §2 does. -/
-theorem oddClassDefect_zero_competitor_pos {x : Vec d} {m n : ℤ} {c₀ : ℝ} (hc₀ : 0 < c₀)
-    (hlb : ∀ (c' : ℝ) (g' : Vec d),
-      c₀ * ‖((c', g') : ℝ × Vec d)‖
-        ≤ normalizedL2On (truncatedWindow x m (n - 2)) (affineEval c' g'))
-    {c : ℝ} {A : Vec d} (hne : ((c - vecDot A x, A) : ℝ × Vec d) ≠ 0) :
-    0 < oddClassDefect x m n (fun _ => (0 : ℝ)) c A := by
-  rw [oddClassDefect_zero_competitor]
-  refine lt_of_lt_of_le ?_ (hlb (c - vecDot A x) A)
-  exact mul_pos hc₀ (norm_pos_iff.2 hne)
 
 end
 

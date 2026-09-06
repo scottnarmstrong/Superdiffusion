@@ -244,9 +244,8 @@ private theorem quad_term_le {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) (j : ℕ) :
     rw [hprod, mul_pow, ← pow_mul, ← pow_mul, Nat.mul_comm]
   have hnn : (0 : ℝ) ≤ (1 + (j : ℝ)) * u ^ j :=
     mul_nonneg (by positivity) (pow_nonneg hu0 j)
-  have hsq : ((1 + (j : ℝ)) * u ^ j) ^ 2 ≤ (16 / s) ^ 2 := by
-    have h16 : (0 : ℝ) ≤ 16 / s := by positivity
-    nlinarith
+  have hsq : ((1 + (j : ℝ)) * u ^ j) ^ 2 ≤ (16 / s) ^ 2 :=
+    pow_le_pow_left₀ hnn hbase 2
   have hexpand : (3 : ℝ) ^ (-(3 / 4 * s) * (j : ℝ)) * (1 + (j : ℝ)) ^ 2 =
       ((1 + (j : ℝ)) * u ^ j) ^ 2 * v ^ j := by
     rw [hsplit]
@@ -425,11 +424,19 @@ private theorem cover_log_le (d : ℕ) (l : ℤ) (h : ℕ) :
   have hmax : max 1 (Real.log (((subcubeShifts d (l - (h : ℤ)) l).card : ℕ) : ℝ)) ≤
       (1 + 2 * (d : ℝ) * Real.log 3) * (1 + (h : ℝ)) := by
     refine max_le ?_ ?_
-    · nlinarith [mul_nonneg (mul_nonneg hd hlog3) hh]
+    · have hone : (1 : ℝ) ≤ 1 + 2 * (d : ℝ) * Real.log 3 := by
+        have h2d := mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hd) hlog3
+        linarith
+      calc (1 : ℝ) = 1 * 1 := (one_mul 1).symm
+        _ ≤ (1 + 2 * (d : ℝ) * Real.log 3) * (1 + (h : ℝ)) :=
+            mul_le_mul hone (by linarith) zero_le_one (by linarith)
     · refine hlogcard.trans ?_
-      nlinarith [mul_nonneg (mul_nonneg hd hlog3) hh]
+      linarith only [hh, mul_nonneg (mul_nonneg hd hlog3) hh]
   rw [waveCoverConst]
-  nlinarith
+  calc 3 * max 1 (Real.log (((subcubeShifts d (l - (h : ℤ)) l).card : ℕ) : ℝ))
+      ≤ 3 * ((1 + 2 * (d : ℝ) * Real.log 3) * (1 + (h : ℝ))) :=
+        mul_le_mul_of_nonneg_left hmax (by norm_num)
+    _ = 3 * (1 + 2 * (d : ℝ) * Real.log 3) * (1 + (h : ℝ)) := by ring
 
 /-! ## The zeroth-order leg -/
 
@@ -811,7 +818,7 @@ theorem legScaleAverage_waveSizeW2_sq_le (M : ABKModel d) (m : ℤ) (h j : ℕ) 
     (by positivity) (fun R _ => by positivity) (fun R hR => ?_) hd
   have hle := waveSizeW2_le_waveSizeMaxW2 M m h j hR omega
   have hnn := waveSizeW2_nonneg M m h R omega
-  nlinarith [waveSizeMaxW2_nonneg M m h j omega]
+  exact pow_le_pow_left₀ hnn hle 2
 
 /-- **Measurability hook, per-scale level, extended carrier.** -/
 theorem measurable_waveScaleAverageW2 (M : ABKModel d) (m : ℤ) (h j : ℕ) {s : ℝ}
@@ -847,7 +854,7 @@ theorem waveKW2_pos (d h : ℕ) : 0 < waveKW2 d h := by
     positivity
   rw [waveKW2]
   have h7 : (0 : ℝ) < waveCoverConst d * (1 + (h : ℝ)) ^ 2 * streamLinftyConst d ^ 2 +
-      waveAmp d h ^ 2 := by nlinarith
+      waveAmp d h ^ 2 := add_pos_of_nonneg_of_pos h4 (pow_pos h3 2)
   positivity
 
 theorem waveKW2_nonneg (d h : ℕ) : 0 ≤ waveKW2 d h := (waveKW2_pos d h).le
@@ -875,8 +882,15 @@ theorem waveLayerAmpW2_le (M : ABKModel d) (h j : ℕ) :
       IndependentSums.gammaTriangleConst 2 ^ 2 * 2 *
         (waveSupAmp M h j ^ 2 + waveAmp d h ^ 2) := by
     rw [waveAmpW2, mul_pow]
-    nlinarith [sq_nonneg (waveSupAmp M h j - waveAmp d h),
-      sq_nonneg (IndependentSums.gammaTriangleConst 2)]
+    have hab : (waveSupAmp M h j + waveAmp d h) ^ 2 ≤
+        2 * (waveSupAmp M h j ^ 2 + waveAmp d h ^ 2) := by
+      linarith only [sq_nonneg (waveSupAmp M h j - waveAmp d h)]
+    calc IndependentSums.gammaTriangleConst 2 ^ 2 * (waveSupAmp M h j + waveAmp d h) ^ 2
+        ≤ IndependentSums.gammaTriangleConst 2 ^ 2 *
+            (2 * (waveSupAmp M h j ^ 2 + waveAmp d h ^ 2)) :=
+          mul_le_mul_of_nonneg_left hab (sq_nonneg _)
+      _ = IndependentSums.gammaTriangleConst 2 ^ 2 * 2 *
+            (waveSupAmp M h j ^ 2 + waveAmp d h ^ 2) := by ring
   have hsupsq := waveSupAmp_sq M h j
   have hSpos : (0 : ℝ) ≤ waveCoverConst d * (1 + (h : ℝ)) * streamLinftyConst d ^ 2 := by
     positivity
@@ -884,9 +898,13 @@ theorem waveLayerAmpW2_le (M : ABKModel d) (h j : ℕ) :
   have hcross : (1 + (j : ℝ)) * ((j : ℝ) + (h : ℝ)) ≤
       (1 + (h : ℝ)) * (1 + (j : ℝ)) ^ 2 := by
     have hnn : (0 : ℝ) ≤ (1 + (j : ℝ)) * (1 + (h : ℝ) * (j : ℝ)) := by positivity
-    nlinarith [hnn]
+    linarith only [hnn]
   have hlin : (1 + (j : ℝ)) ≤ (1 + (j : ℝ)) ^ 2 * (3 : ℝ) ^ (2 * M.gamma * (j : ℝ)) := by
-    nlinarith
+    have hb : (0 : ℝ) ≤ 1 + (j : ℝ) := by linarith
+    have h1 : (1 + (j : ℝ)) ≤ (1 + (j : ℝ)) ^ 2 := by
+      rw [pow_two]
+      exact le_mul_of_one_le_right hb (by linarith)
+    exact h1.trans (le_mul_of_one_le_right (sq_nonneg _) hpow)
   have hSP : (0 : ℝ) ≤ waveCoverConst d * (1 + (h : ℝ)) * streamLinftyConst d ^ 2 *
       (3 : ℝ) ^ (2 * M.gamma * (j : ℝ)) := mul_nonneg hSpos hpow0.le
   have hkey : waveGridConst d * (1 + (j : ℝ)) *
@@ -1084,7 +1102,7 @@ private theorem waveAmp_sq_cutoff_le (d : ℕ) {C0 eps : ℝ} (hC0 : 0 < C0)
     have hpow : (3 : ℝ) ^ (2 * h) = ((3 : ℝ) ^ h) ^ 2 := by
       rw [pow_mul']
     rw [hpow]
-    nlinarith
+    exact pow_le_pow_left₀ hh0 hhle 2
   have h4h : (3 : ℝ) ^ (4 * h) = (3 : ℝ) ^ (2 * h) * (3 : ℝ) ^ (2 * h) := by
     rw [← pow_add]
     ring_nf
@@ -1092,15 +1110,20 @@ private theorem waveAmp_sq_cutoff_le (d : ℕ) {C0 eps : ℝ} (hC0 : 0 < C0)
   have h1le : (1 : ℝ) ≤ (3 : ℝ) ^ (2 * h) := one_le_pow₀ (by norm_num)
   have hinner : (h : ℝ) ^ 2 * (3 : ℝ) ^ (2 * h) + 1 ≤ 2 * (3 : ℝ) ^ (4 * h) := by
     rw [h4h]
-    nlinarith
+    have e1 : (h : ℝ) ^ 2 * (3 : ℝ) ^ (2 * h) ≤ (3 : ℝ) ^ (2 * h) * (3 : ℝ) ^ (2 * h) :=
+      mul_le_mul_of_nonneg_right hsq h2h0.le
+    have e2 : (1 : ℝ) ≤ (3 : ℝ) ^ (2 * h) * (3 : ℝ) ^ (2 * h) :=
+      h1le.trans (le_mul_of_one_le_right h2h0.le h1le)
+    linarith only [e1, e2]
   have hinner0 : (0 : ℝ) ≤ (h : ℝ) ^ 2 * (3 : ℝ) ^ (2 * h) + 1 := by positivity
   have hsq2 : ((h : ℝ) ^ 2 * (3 : ℝ) ^ (2 * h) + 1) ^ 2 ≤ 4 * (3 : ℝ) ^ (8 * h) := by
     have h8h : (3 : ℝ) ^ (8 * h) = (3 : ℝ) ^ (4 * h) * (3 : ℝ) ^ (4 * h) := by
       rw [← pow_add]
       ring_nf
-    have h4h0 : (0 : ℝ) < (3 : ℝ) ^ (4 * h) := by positivity
     rw [h8h]
-    nlinarith
+    calc ((h : ℝ) ^ 2 * (3 : ℝ) ^ (2 * h) + 1) ^ 2
+        ≤ (2 * (3 : ℝ) ^ (4 * h)) ^ 2 := pow_le_pow_left₀ hinner0 hinner 2
+      _ = 4 * ((3 : ℝ) ^ (4 * h) * (3 : ℝ) ^ (4 * h)) := by ring
   have hcut := three_pow_eight_cutoff_le (C0 := C0) (eps := eps) hC0 heps heps1
   rw [← hhdef] at hcut
   have hgt : (0 : ℝ) < IndependentSums.gammaTriangleConst 2 :=
@@ -1144,10 +1167,14 @@ private theorem one_add_cutoff_sq_le {C0 eps : ℝ} (hC0 : 0 < C0) (heps : 0 < e
     ring_nf
   have h6h : (1 : ℝ) ≤ (3 : ℝ) ^ (6 * h) := one_le_pow₀ (by norm_num)
   have hsq : (1 + (h : ℝ)) ^ 2 ≤ 4 * (3 : ℝ) ^ (8 * h) := by
-    have hpos : (0 : ℝ) < (3 : ℝ) ^ h := by positivity
-    have hstep : (1 + (h : ℝ)) ^ 2 ≤ 4 * ((3 : ℝ) ^ h) ^ 2 := by nlinarith
+    have hstep : (1 + (h : ℝ)) ^ 2 ≤ 4 * ((3 : ℝ) ^ h) ^ 2 := by
+      calc (1 + (h : ℝ)) ^ 2 ≤ (2 * (3 : ℝ) ^ h) ^ 2 :=
+            pow_le_pow_left₀ (by linarith) hsum 2
+        _ = 4 * ((3 : ℝ) ^ h) ^ 2 := by ring
+    have hST : ((3 : ℝ) ^ h) ^ 2 ≤ ((3 : ℝ) ^ h) ^ 2 * (3 : ℝ) ^ (6 * h) :=
+      le_mul_of_one_le_right (sq_nonneg _) h6h
     rw [h8h]
-    nlinarith [sq_nonneg ((3 : ℝ) ^ h)]
+    linarith only [hstep, hST]
   have hcut := three_pow_eight_cutoff_le (C0 := C0) (eps := eps) hC0 heps heps1
   rw [← hhdef] at hcut
   calc (1 + (h : ℝ)) ^ 2 ≤ 4 * (3 : ℝ) ^ (8 * h) := hsq
@@ -1185,8 +1212,12 @@ private theorem waveKW2_cutoff_le (d : ℕ) {C0 eps : ℝ} (hC0 : 0 < C0)
         4 * IndependentSums.gammaTriangleConst 2 ^ 2 * shellW1InfConst d ^ 2 * 6561) * E := by
     have h1 : waveCoverConst d * (1 + (h : ℝ)) ^ 2 * streamLinftyConst d ^ 2 ≤
         waveCoverConst d * (4 * 6561) * streamLinftyConst d ^ 2 * E := by
-      nlinarith [mul_nonneg hcovc hsl]
-    nlinarith
+      calc waveCoverConst d * (1 + (h : ℝ)) ^ 2 * streamLinftyConst d ^ 2
+          = waveCoverConst d * streamLinftyConst d ^ 2 * (1 + (h : ℝ)) ^ 2 := by ring
+        _ ≤ waveCoverConst d * streamLinftyConst d ^ 2 * (4 * 6561 * E) :=
+            mul_le_mul_of_nonneg_left hcov (mul_nonneg hcovc hsl)
+        _ = waveCoverConst d * (4 * 6561) * streamLinftyConst d ^ 2 * E := by ring
+    linarith only [h1, hamp]
   rw [waveKW2]
   calc waveGridConst d * (2 * IndependentSums.gammaTriangleConst 2 ^ 2) *
         (waveCoverConst d * (1 + (h : ℝ)) ^ 2 * streamLinftyConst d ^ 2 + waveAmp d h ^ 2)

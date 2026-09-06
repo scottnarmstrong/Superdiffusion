@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.NodeContract
 import Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.SubLandmarkDisplays
@@ -142,7 +142,7 @@ private theorem feed_pair (M : ABKModel d) {m0 : ℤ} {Ec : {E : ℝ // 1 ≤ E}
   have hEle1 : C * (Ec : ℝ) ^ 2 * Real.log M.gamma ^ 2 ≤
       recurrenceIntegrationSlack M C (Ec : ℝ) := by
     refine le_trans ?_ (le_max_right _ _)
-    nlinarith [hbase, hcap0]
+    exact le_mul_of_one_le_left hbase (by linarith only [hcap0])
   have hEle2 : (2 + shellIncrementCap) * (C * (Ec : ℝ) ^ 2 * Real.log M.gamma ^ 2) ≤
       recurrenceIntegrationSlack M C (Ec : ℝ) := le_max_right _ _
   have hFle : C ≤ max 1 C := le_max_right _ _
@@ -152,7 +152,7 @@ private theorem feed_pair (M : ABKModel d) {m0 : ℤ} {Ec : {E : ℝ // 1 ≤ E}
         (1 + recurrenceIntegrationSlack M C (Ec : ℝ) * M.gamma) *
           (Annealed.sigmaBar M n : ℝ) := by
       refine mul_le_mul_of_nonneg_right ?_ hsig.le
-      nlinarith [hEle1, hgamma0]
+      linarith only [mul_le_mul_of_nonneg_right hEle1 hgamma0.le]
     linarith [hupper0, hstep]
   · have hstep : (1 - recurrenceIntegrationSlack M C (Ec : ℝ) * M.gamma) *
         (Annealed.sigmaBar M n : ℝ) ≤
@@ -160,7 +160,7 @@ private theorem feed_pair (M : ABKModel d) {m0 : ℤ} {Ec : {E : ℝ // 1 ≤ E}
             (C * (Ec : ℝ) ^ 2 * Real.log M.gamma ^ 2) * M.gamma) *
           (Annealed.sigmaBar M n : ℝ) := by
       refine mul_le_mul_of_nonneg_right ?_ hsig.le
-      nlinarith [hEle2, hgamma0]
+      linarith only [mul_le_mul_of_nonneg_right hEle2 hgamma0.le]
     have hQ : (0 : ℝ) ≤ ((m : ℝ) - (n : ℝ)) ^ 2 *
         ((((Annealed.sigmaBar M n : ℝ))⁻¹) ^ 4 * ((Annealed.sigmaBar M m : ℝ) *
           (3 : ℝ) ^ (4 * M.gamma * (m : ℝ)))) := by

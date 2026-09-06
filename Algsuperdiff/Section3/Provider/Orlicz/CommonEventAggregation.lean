@@ -19,7 +19,7 @@ module is the first A on that carrier:
 * the countable aggregation itself, at the amplitudes
   `C_triangle(sigma) * sum a`.
 
-SSB.1 (the two Orlicz terms stay separate and one-sided) is respected
+The two Orlicz terms stay separate and one-sided
 throughout: the two lanes are never merged.  Positivity of the individual
 amplitudes is never a hypothesis; it is carried by each two-term datum.  The
 passage from the one-sided `IsBigOWith` of the weak-Orlicz notation to the

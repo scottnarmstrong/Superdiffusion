@@ -43,14 +43,6 @@ noncomputable def fluxCorrectedTwoScaleErrorFunctional [NeZero d] (M : ABKModel 
       (originCube d m) (n - (l : ℤ))
       (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega)
 
-/-- At a matched index pair the two-argument functional IS the proved one-argument
-functional (`(originCube d m).scale = m` definitionally). -/
-theorem fluxCorrectedTwoScaleErrorFunctional_self [NeZero d] (M : ABKModel d)
-    (L m : ℤ) (s : ℝ) :
-    fluxCorrectedTwoScaleErrorFunctional M L m m s =
-      fluxCorrectedErrorFunctional M L m s :=
-  rfl
-
 theorem fluxCorrectedTwoScaleErrorFunctional_nonneg [NeZero d] (M : ABKModel d)
     (L m n : ℤ) (s : ℝ) (omega : Cutoff.CutoffSample d) :
     0 ≤ fluxCorrectedTwoScaleErrorFunctional M L m n s omega :=
@@ -99,27 +91,12 @@ theorem measurable_fluxCorrectedTwoScaleErrorRepresentative (M : ABKModel d)
   change Measurable (fluxCorrectedTwoScaleErrorFunctional M L m n (s : ℝ))
   exact measurable_fluxCorrectedTwoScaleErrorFunctional M L hnm s.2
 
-theorem fluxCorrectedTwoScaleErrorRepresentative_nonneg (M : ABKModel d)
-    (L m n : ℤ) (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
-    0 ≤ fluxCorrectedTwoScaleErrorRepresentative M L m n s omega := by
-  letI : NeZero d := neZero_of_model M
-  change 0 ≤ fluxCorrectedTwoScaleErrorFunctional M L m n (s : ℝ) omega
-  exact fluxCorrectedTwoScaleErrorFunctional_nonneg M L m n (s : ℝ) omega
-
 /-- The two-argument `sup_{L ≥ m}` observable, taken in `[0,∞]` so no convergence
 side condition enters the statement. -/
 noncomputable def fluxCorrectedTwoScaleErrorObservableSup (M : ABKModel d)
     (m n : ℤ) (s : {s : ℝ // 0 < s}) : Cutoff.CutoffSample d → ℝ≥0∞ :=
   fun omega => ⨆ L : {L : ℤ // m ≤ L},
     ENNReal.ofReal (fluxCorrectedTwoScaleErrorRepresentative M L.1 m n s omega)
-
-/-- At a matched index pair the two-argument public observable IS the proved
-one-argument public observable. -/
-theorem fluxCorrectedTwoScaleErrorObservableSup_self (M : ABKModel d) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) :
-    fluxCorrectedTwoScaleErrorObservableSup M m m s =
-      fluxCorrectedErrorObservableSup M m s :=
-  rfl
 
 theorem measurable_fluxCorrectedTwoScaleErrorObservableSup (M : ABKModel d)
     {m n : ℤ} (hnm : n ≤ m) (s : {s : ℝ // 0 < s}) :
@@ -134,13 +111,6 @@ theorem le_fluxCorrectedTwoScaleErrorObservableSup (M : ABKModel d) (m n : ℤ)
   le_iSup
     (fun L : {L : ℤ // m ≤ L} =>
       ENNReal.ofReal (fluxCorrectedTwoScaleErrorRepresentative M L.1 m n s omega)) ⟨L, hL⟩
-
-theorem fluxCorrectedTwoScaleErrorObservableSup_le (M : ABKModel d) (m n : ℤ)
-    (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) {t : ℝ≥0∞}
-    (h : ∀ L : ℤ, m ≤ L →
-      ENNReal.ofReal (fluxCorrectedTwoScaleErrorRepresentative M L m n s omega) ≤ t) :
-    fluxCorrectedTwoScaleErrorObservableSup M m n s omega ≤ t :=
-  iSup_le fun L => h L.1 L.2
 
 end
 end Algsuperdiff.Section4.Support

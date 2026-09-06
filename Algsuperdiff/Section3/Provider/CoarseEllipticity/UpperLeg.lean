@@ -496,7 +496,7 @@ private theorem inv_sq_le_eight_mul_mul_gap_inv_cube {gamma s : ℝ}
     (inv_le_inv₀ (by positivity) hgap).2 hgap_le
   have hinv_nonneg : 0 ≤ (2 * s)⁻¹ := inv_nonneg.mpr (by positivity)
   have hcube : (2 * s)⁻¹ ^ 3 ≤ (2 * s - gamma)⁻¹ ^ 3 := by
-    gcongr
+    exact pow_le_pow_left₀ hinv_nonneg hinv 3
   calc
     s⁻¹ ^ 2 = 8 * s * (2 * s)⁻¹ ^ 3 := by field_simp [hs.ne']; ring
     _ ≤ 8 * s * (2 * s - gamma)⁻¹ ^ 3 :=
@@ -536,6 +536,8 @@ theorem directSmallUpper_mass_scale_le {d : ℕ}
       (Provider.Base.cutoffMassLinearWeightedScale_pos M m u).le
   have hloss_nonneg : 0 ≤ baseLoss d u := (baseLoss_pos d u).le
   have hgapfactor := inv_sq_le_eight_mul_mul_gap_inv_cube hgamma hs hgap
+  have hcoef : (0 : ℝ) ≤ 4 * (10 * s⁻¹) :=
+    mul_nonneg (by norm_num) (mul_nonneg (by norm_num) hsinv)
   calc
     4 * (Book.Ch02.geometricDiscount (s / 2) 2)⁻¹ *
           (IndependentSums.gammaTriangleConst 1 *
@@ -543,13 +545,20 @@ theorem directSmallUpper_mass_scale_le {d : ℕ}
         4 * (10 * s⁻¹) *
           (IndependentSums.gammaTriangleConst 1 *
             Provider.Base.cutoffMassLinearWeightedScale M m u) := by
-      gcongr
+      exact mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hdisc (by norm_num : (0 : ℝ) ≤ 4))
+        htail_nonneg
     _ ≤ 4 * (10 * s⁻¹) *
           (K ^ 2 * (Disorder.cstarPlus M)⁻¹ * M.gamma * baseLoss d u) := by
-      gcongr
+      exact mul_le_mul_of_nonneg_left htail hcoef
     _ ≤ 4 * (10 * s⁻¹) *
           (K ^ 2 * (Disorder.cstar M)⁻¹ * M.gamma * baseLoss d u) := by
-      gcongr
+      exact mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hcstar (sq_nonneg K)) hginv)
+          hloss_nonneg)
+        hcoef
     _ ≤ 40 * K ^ 2 * D * (Disorder.cstar M)⁻¹ * M.gamma * s⁻¹ ^ 2 := by
       change baseLoss d u ≤ D * s⁻¹ at hloss
       calc
@@ -557,7 +566,10 @@ theorem directSmallUpper_mass_scale_le {d : ℕ}
             (K ^ 2 * (Disorder.cstar M)⁻¹ * M.gamma * baseLoss d u) ≤
           4 * (10 * s⁻¹) *
             (K ^ 2 * (Disorder.cstar M)⁻¹ * M.gamma * (D * s⁻¹)) := by
-            gcongr
+            exact mul_le_mul_of_nonneg_left
+              (mul_le_mul_of_nonneg_left hloss
+                (mul_nonneg (mul_nonneg (sq_nonneg K) hcinv) hginv))
+              hcoef
         _ = 40 * K ^ 2 * D * (Disorder.cstar M)⁻¹ * M.gamma * s⁻¹ ^ 2 := by
           ring
     _ ≤ 320 * K ^ 2 * D * (Disorder.cstar M)⁻¹ * M.gamma *
@@ -769,7 +781,9 @@ private theorem cutoffUpperEllipticity_infinity_half_mul_sigmaBarInv_le
           Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
             (originCube d m) (m - (n : ℤ))
             (coefficientCutoff M.nu m omega')) := by dsimp only [raw]; ring
-    _ ≤ raw * (scaling * (M.nu + M.nu⁻¹ * F)) := by gcongr
+    _ ≤ raw * (scaling * (M.nu + M.nu⁻¹ * F)) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left hb hscaling) hraw
     _ = raw * (scaling * M.nu) + raw * (scaling * (M.nu⁻¹ * F)) := by ring
     _ ≤ 1 + D⁻¹ * mass omega' := by
       have hscnu0 : 0 ≤ scaling * M.nu := mul_nonneg hscaling M.nu_pos.le
@@ -807,7 +821,8 @@ theorem cutoffUpperEllipticity_mul_sigmaBarInv_le_four_add_mass {d : ℕ}
             (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹) := by ring
     _ ≤ 4 * (1 + (Ch02.geometricDiscount (s / 2) 2)⁻¹ *
         Provider.Base.cutoffMassLinearWeightedSum M (originCube d m) m
-          ⟨s / 2, by constructor <;> linarith⟩ omega) := by gcongr
+          ⟨s / 2, by constructor <;> linarith⟩ omega) :=
+      mul_le_mul_of_nonneg_left hinf (by norm_num)
     _ = 4 + 4 * (Ch02.geometricDiscount (s / 2) 2)⁻¹ *
         Provider.Base.cutoffMassLinearWeightedSum M (originCube d m) m
           ⟨s / 2, by constructor <;> linarith⟩ omega := by ring

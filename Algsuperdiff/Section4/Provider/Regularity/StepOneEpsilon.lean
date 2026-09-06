@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.GoodEventCaps
 import Algsuperdiff.Section4.Provider.Regularity.StepOneParameters
@@ -25,18 +25,16 @@ The printed first bullet asks for `γ|log γ|² ≤ s c⋆² (⅛ s δ^{1/2})`; 
 producer is at the strengthened hypothesis `γ|log γ|² ≤ t^{3/2} c⋆² ε` with `t` the index
 at which it is applied.  Step 1 applies it at `t = s/8` (that is the index
 inside `𝒢(j,z; ⅛s, …)` and inside `ε_j(z)`) and at `ε = ⅛ s δ^{1/2}`, so the
-honest requirement discharged here is
+honest requirement is
 
 ```
 γ |log γ|²  ≤  (s/8)^{3/2} · c⋆² · (⅛ s δ^{1/2}) .
 ```
 
-The discharge is NOT from `γ ≤ γ₀` alone: `δ` degenerates as `α → 1`, and the
-lower bound on `δ` is exactly the theorem's own hypothesis `α ≤ 1 - C(d,c⋆)
-γ^{1/2}` (the S Step-1 bullet), through `sqrt_stepOneDelta_ge`.  What survives
-is the one-variable condition `16 √(√γ) ≤ A √(C₁⁻¹C)` of
-`stepOne_annular_smallness`, met by `γ ≤ (A √(C₁⁻¹C)/16)⁴`.  This is the honest
-content of the printed sentence "by the condition `γ ≤ γ₀(d,c⋆)`".
+That requirement is carried here as a hypothesis of the cap, not discharged: it
+is NOT a consequence of `γ ≤ γ₀` alone, because `δ` degenerates as `α → 1`, and
+the lower bound on `δ` is the caller's own `α`-range hypothesis `α ≤ 1 - C(d,c⋆)
+γ^{1/2}` (the S Step-1 bullet).
 
 ## Contents
 
@@ -44,13 +42,8 @@ content of the printed sentence "by the condition `γ ≤ γ₀(d,c⋆)`".
   producers use (`fluxCorrectedErrorObservableSup` at the `z`-translated sample,
   gated by `goodEventAt`, `ℝ≥0∞`-valued).
 * `stepOneSEighth_mem_Icc` — the annular `s`-window at `γ ≤ 1/256`.
-* `stepOneSmallnessCoeff`, `stepOne_annular_smallness`,
-  `sqrt_sqrt_le_of_le_pow_four`, `smallness_threshold` — the arithmetic of the
-  admissibility bullet.
 * `ae_stepOneEpsJ_le` — **the `ε_j(z)` cap**: `ε_j(z) ≤ C_ann · (⅛ s δ^{1/2})`
   almost surely, for every scale `j` and every centre `z`.
-* `stepOneEpsJ_le_of_le` — the cap transported to any larger bound (used at
-  the Step-1 display value in `StepOneWeb.lean`).
 
 ## Deviations from the printed text
 
@@ -66,7 +59,6 @@ content of the printed sentence "by the condition `γ ≤ γ₀(d,c⋆)`".
    is the proved law-preserving translation, not a new assumption.
 3. **The cap's `ε` slot.**  The printed chain writes `ε_j(z) ≤ C_ann s δ^{1/2}`;
    the producer delivers `C_ann ε` at `ε = ⅛ s δ^{1/2}`, which is smaller.
-   Both are below the Step-1 display value (`annularCapEighth_le_display`).
 
 ## References
 
@@ -91,68 +83,7 @@ theorem stepOneSEighth_mem_Icc {gamma : ℝ} (hgamma : gamma ≤ 1 / 256) :
   rw [stepOneSEighth_eq]
   exact ⟨by linarith only [hgamma], by norm_num⟩
 
-/-! ## 2. The scalar arithmetic of the admissibility bullet -/
-
-/-- The coefficient `A := (s/8)^{3/2} c⋆² (s/8)` of the strengthened annular
-smallness hypothesis at the Step-1 slot, so that its right-hand side is `A ·
-δ^{1/2}`. -/
-noncomputable def stepOneSmallnessCoeff (cstar : ℝ) : ℝ :=
-  Real.rpow stepOneSEighth (3 / 2 : ℝ) * cstar ^ (2 : ℕ) * stepOneSEighth
-
-/-- `0 < A`. -/
-theorem stepOneSmallnessCoeff_pos {cstar : ℝ} (hcstar : 0 < cstar) :
-    0 < stepOneSmallnessCoeff cstar :=
-  mul_pos (mul_pos (Real.rpow_pos_of_pos stepOneSEighth_pos _) (pow_pos hcstar 2))
-    stepOneSEighth_pos
-
-/-- The right-hand side of the strengthened smallness hypothesis, in the form `A ·
-δ^{1/2}`. -/
-theorem stepOneSmallness_rhs (cstar delta : ℝ) :
-    Real.rpow stepOneSEighth (3 / 2 : ℝ) * cstar ^ (2 : ℕ) * stepOneEp delta =
-      stepOneSmallnessCoeff cstar * Real.sqrt delta := by
-  rw [stepOneSmallnessCoeff, stepOneEp]
-  ring
-
-/-- `√(√g) ≤ t` from `g ≤ t⁴`. -/
-theorem sqrt_sqrt_le_of_le_pow_four {g t : ℝ} (ht : 0 ≤ t) (hg : g ≤ t ^ 4) :
-    Real.sqrt (Real.sqrt g) ≤ t := by
-  have h2 : Real.sqrt (t ^ 4) = t ^ 2 := by
-    rw [show t ^ 4 = (t ^ 2) ^ 2 by ring, Real.sqrt_sq (pow_two_nonneg t)]
-  have h1 : Real.sqrt g ≤ t ^ 2 := by
-    rw [← h2]
-    exact Real.sqrt_le_sqrt hg
-  have h3 : Real.sqrt (Real.sqrt g) ≤ Real.sqrt (t ^ 2) := Real.sqrt_le_sqrt h1
-  rwa [Real.sqrt_sq ht] at h3
-
-/-- **The `γ`-threshold of the admissibility bullet**: `γ ≤ (AB/16)⁴` is exactly
-what the one-variable condition `16 √(√γ) ≤ A B` needs. -/
-theorem smallness_threshold {g A B : ℝ} (hAB : 0 ≤ A * B)
-    (hg : g ≤ (A * B / 16) ^ 4) : 16 * Real.sqrt (Real.sqrt g) ≤ A * B := by
-  have ht : (0:ℝ) ≤ A * B / 16 := by linarith only [hAB]
-  have h := sqrt_sqrt_le_of_le_pow_four ht hg
-  linarith only [h]
-
-/-- **The annular-admissibility bullet, scalar form** (at the strengthened
-hypothesis).
-
-From the theorem's own `α`-range hypothesis `C γ^{1/2} ≤ 1 - α` and the
-one-variable threshold `16 √(√γ) ≤ A √(C₁⁻¹C)`, the smallness demand of the
-frozen annular clause (ii) holds at the Step-1 slot `(s/8, ⅛ s δ^{1/2})`. -/
-theorem stepOne_annular_smallness {g C1 C alpha cstar : ℝ} (hg0 : 0 < g) (hg1 : g ≤ 1)
-    (hcstar : 0 < cstar) (hC1 : 0 < C1) (hC : 0 ≤ C)
-    (halpha : C * Real.sqrt g ≤ 1 - alpha)
-    (hthr : 16 * Real.sqrt (Real.sqrt g) ≤
-      stepOneSmallnessCoeff cstar * Real.sqrt (C1⁻¹ * C)) :
-    g * |Real.log g| ^ 2 ≤
-      Real.rpow stepOneSEighth (3 / 2 : ℝ) * cstar ^ (2 : ℕ) *
-        stepOneEp (stepOneDelta C1 alpha) := by
-  have h1 := gammaLogSq_le_of_sqrt_sqrt_le hg0 hg1 hthr
-  have h2 := sqrt_stepOneDelta_ge hC1 hC halpha
-  rw [stepOneSmallness_rhs]
-  exact le_trans h1
-    (mul_le_mul_of_nonneg_left h2 (le_of_lt (stepOneSmallnessCoeff_pos hcstar)))
-
-/-! ## 3. `ε_j(z)` -/
+/-! ## 2. `ε_j(z)` -/
 
 /-- **`ε_j(z)`**: the flux-corrected homogenization-error observable at the cube `z
 + □_j` and index `s/8`, restricted to the good event `𝒢(j, z; ⅛ s, ⅛ s
@@ -210,13 +141,5 @@ theorem ae_stepOneEpsJ_le (d : ℕ) :
     exact homega hmem
   · rw [Set.indicator_of_notMem hmem]
     exact zero_le _
-
-/-- Monotonicity of the cap in its right-hand side: the form in which the Step-1
-display value replaces the annular one. -/
-theorem stepOneEpsJ_le_of_le {M : ABKModel d} {j : ℤ} {z : Vec d} {delta a b : ℝ}
-    {omega : Cutoff.CutoffSample d}
-    (h : stepOneEpsJ M j z delta omega ≤ ENNReal.ofReal a) (hab : a ≤ b) :
-    stepOneEpsJ M j z delta omega ≤ ENNReal.ofReal b :=
-  le_trans h (ENNReal.ofReal_le_ofReal hab)
 
 end Algsuperdiff.Section4.Provider.Regularity

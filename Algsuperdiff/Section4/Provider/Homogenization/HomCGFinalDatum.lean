@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalDuality
 import Homogenization.Sobolev.Fractional.EuclideanWspLpMembership
@@ -43,30 +43,6 @@ namespace Algsuperdiff.Section4.Provider.Homogenization
 noncomputable section
 
 variable {d : ℕ}
-
-/-! ## 1. The subtype bridges -/
-
-/-- A raw real in `(0,1)` as a `FractionalOrder`. -/
-def mkFractionalOrder {s : ℝ} (h0 : 0 < s) (h1 : s < 1) : FractionalOrder := ⟨s, h0, h1⟩
-
-@[simp] theorem mkFractionalOrder_val {s : ℝ} (h0 : 0 < s) (h1 : s < 1) :
-    (mkFractionalOrder h0 h1).1 = s := rfl
-
-/-- A raw real `> 1` as a `FiniteLpExponent`. -/
-def mkFiniteLpExponent {p : ℝ} (hp : 1 < p) : FiniteLpExponent where
-  exponent := ENNReal.ofReal p
-  one_lt := by
-    have h : ENNReal.ofReal 1 < ENNReal.ofReal p :=
-      (ENNReal.ofReal_lt_ofReal_iff (lt_trans zero_lt_one hp)).mpr hp
-    rwa [ENNReal.ofReal_one] at h
-  lt_top := ENNReal.ofReal_lt_top
-
-@[simp] theorem mkFiniteLpExponent_exponent {p : ℝ} (hp : 1 < p) :
-    (mkFiniteLpExponent hp).exponent = ENNReal.ofReal p := rfl
-
-@[simp] theorem mkFiniteLpExponent_toReal {p : ℝ} (hp : 1 < p) :
-    (mkFiniteLpExponent hp).exponent.toReal = p :=
-  ENNReal.toReal_ofReal (le_of_lt (lt_trans zero_lt_one hp))
 
 /-! ## 2. The `L^p` half from the Hölder binder -/
 

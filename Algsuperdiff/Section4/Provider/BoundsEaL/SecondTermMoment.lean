@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.SecondTermSlots
 
@@ -66,24 +66,6 @@ variable {d : ℕ}
 at moment `r`, named: `1 + R_{B6a}(2r) R_{B5}(2r)`. -/
 def bracketMajorant (d : ℕ) (M : ABKModel d) (EB : ℝ) (j : ℤ) (r : ℝ) : ℝ :=
   1 + gradSlotMajorant M j (2 * r) * lambdaSlotMajorant d M EB j (2 * r)
-
-theorem lambdaSlotMajorant_def (d : ℕ) (M : ABKModel d) (E : ℝ) (j : ℤ) (p : ℝ) :
-    lambdaSlotMajorant d M E j p =
-      lambdaUpscaleConst d *
-          (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ * Support.cgEllipLowerConstant d) +
-        gammaMomentBound (1 / 3) p
-          (lambdaUpscaleConst d * lambdaMaxOrliczConst d *
-            (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ * Proportion.cgTailScale M E)) := rfl
-
-theorem bracketMajorant_def (d : ℕ) (M : ABKModel d) (EB : ℝ) (j : ℤ) (r : ℝ) :
-    bracketMajorant d M EB j r =
-      1 + gammaTwoMomentBound (2 * r)
-          (fullGradConst M * Real.rpow 3 (M.gamma * (j : ℝ))) *
-        (lambdaUpscaleConst d *
-            (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ * Support.cgEllipLowerConstant d) +
-          gammaMomentBound (1 / 3) (2 * r)
-            (lambdaUpscaleConst d * lambdaMaxOrliczConst d *
-              (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ * Proportion.cgTailScale M EB))) := rfl
 
 theorem bracketMajorant_nonneg (d : ℕ) (M : ABKModel d) (EB : ℝ) (j : ℤ) {r : ℝ}
     (hr : 0 ≤ r) : 0 ≤ bracketMajorant d M EB j r := by

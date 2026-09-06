@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.Localization.ShomContinuity
 import Algsuperdiff.Section4.Provider.GoodEvents.InductionState
@@ -73,11 +73,11 @@ absorbed into the constant using `γ <= 1`.
 
 ## What is delivered
 
-* `exists_sigmaBar_defect_ge` / `exists_sigmaBar_defect` — the symmetrized
-  display at every pair `n <= m`, under the printed regime alone, with the
-  `min` intact and the bracket in `c⋆^{-2}` form.
-* `exists_shomSlot_ge` / `exists_shomSlot` — the squared, index-shifted,
-  `min`-free form that is literally the `hshom` slot of `clauseOne_bound`.
+* `exists_sigmaBar_defect_ge` — the symmetrized display at every pair
+  `n <= m`, under the printed regime alone, with the `min` intact and the
+  bracket in `c⋆^{-2}` form.
+* `exists_shomSlot_ge` — the squared, index-shifted, `min`-free form that is
+  literally the `hshom` slot of `clauseOne_bound`.
 
 ## References
 
@@ -282,23 +282,6 @@ theorem exists_sigmaBar_defect_ge (d : ℕ) (C₀ : ℝ) :
   rw [hE2]
   ring
 
-/-- **`e.shom.m.vs.shom.n`, de-gated.**  `exists_sigmaBar_defect_ge` at the
-trivial floor. -/
-theorem exists_sigmaBar_defect (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ M : ABKModel d,
-        M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∀ m n : ℤ, n ≤ m →
-          |(Annealed.sigmaBar M m : ℝ) * ((Annealed.sigmaBar M n : ℝ))⁻¹ - 1| +
-              |(Annealed.sigmaBar M n : ℝ) *
-                ((Annealed.sigmaBar M m : ℝ))⁻¹ - 1| ≤
-            C * min 1 (M.gamma * ((m : ℝ) - (n : ℝ)) +
-                (Disorder.cstar M ^ 2)⁻¹ *
-                  (M.gamma * |Real.log M.gamma| ^ 2)) *
-              (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (n : ℝ))) := by
-  obtain ⟨C, hC6, -, hC⟩ := exists_sigmaBar_defect_ge d 0
-  exact ⟨C, lt_of_lt_of_le (by norm_num) hC6, hC⟩
-
 /-! ## 4. The `hshom` slot -/
 
 /-- **The `hshom` slot of `clauseOne_bound`, unconditional in the printed
@@ -391,23 +374,6 @@ theorem exists_shomSlot_ge (d : ℕ) (C₀ : ℝ) :
     ring
   rw [hu2, sq_abs] at hfin
   exact hfin
-
-/-- **The `hshom` slot of `clauseOne_bound`, unconditional in the printed
-regime.**  `exists_shomSlot_ge` at the trivial floor. -/
-theorem exists_shomSlot (d : ℕ) :
-    ∃ Cshom : ℝ, 0 < Cshom ∧
-      ∀ M : ABKModel d,
-        M.gamma ≤ (Cshom⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∀ m n : ℤ, n ≤ m - 1 →
-          ((Annealed.sigmaBar M m : ℝ) *
-              ((Annealed.sigmaBar M (n - 2) : ℝ))⁻¹ - 1) ^ 2 ≤
-            (Cshom * M.gamma * ((m - n : ℤ) : ℝ) +
-                Cshom * (2 * M.gamma +
-                  (Disorder.cstar M ^ 2)⁻¹ *
-                    (M.gamma * |Real.log M.gamma| ^ 2))) ^ 2 *
-              (3 : ℝ) ^ (2 * M.gamma * ((m - n : ℤ) : ℝ)) := by
-  obtain ⟨Cshom, hC6, -, hC⟩ := exists_shomSlot_ge d 0
-  exact ⟨Cshom, lt_of_lt_of_le (by norm_num) hC6, hC⟩
 
 end
 

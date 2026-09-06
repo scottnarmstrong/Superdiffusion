@@ -15,15 +15,15 @@ CoarseGraining about `responseJ` (`responseJ_smul`, `responseJ_parallelogram`),
 and nonnegativity is another (`responseJ_nonneg`).  No convexity A, no
 convexity predicate, no bilinear form and no convex hull is constructed.  The
 net used here is the `d` coordinate directions and the cost is `2 ^ d`, a
-constant depending only on `d`; SSB.2's own net is the `2 ^ d` sign vectors at
-cost `d`.  Both are admissible for a source node whose constant scope is
+constant depending only on `d`; the source's own net is the `2 ^ d` sign vectors
+at cost `d`.  Both are admissible for a source node whose constant scope is
 `C(d)`, and the coordinate net is the one for which the decomposition `e =
 sum_i e_i E_i` with `sum_i e_i ^ 2 = 1` is available directly.
 
-Two deliberate deviations from SSB.2 are recorded here.  First, the net is the
+Two deliberate deviations from the source are recorded here.  First, the net is the
 `d` coordinate directions rather than the `2 ^ d` sign vectors.  Second, the
 dimensional cost is `2 ^ d` (or `2 ^ d * d` in the existential form) rather
-than SSB.2's `d`; SSB.2's sharper constant comes from a genuine convexity
+than the printed `d`; the sharper printed constant comes from a genuine convexity
 argument over the `l^infinity` box, while the route taken here uses only the
 parallelogram identity through `R(x + y) <= 2 R(x) + 2 R(y)`.  Both costs
 depend on `d` alone, which is the constant scope recorded for the source node.
@@ -215,7 +215,7 @@ theorem ae_forall_cutoffResponseJ_eq_bookResponseJ (M : ABKModel d)
   rw [← _root_.Homogenization.responseJ_cubeSet_eq_openCubeSet_of_triadicCube]
   exact hresponse coefficientScale x
 
-/-- **The finite direction net of SSB.2.**  On one probability-one event, and
+/-- **The finite direction net.**  On one probability-one event, and
 simultaneously for every cutoff scale and every Euclidean unit direction, the
 Section 3.5 response is bounded by `2 ^ d` times the sum of its values at the
 `d` coordinate directions.

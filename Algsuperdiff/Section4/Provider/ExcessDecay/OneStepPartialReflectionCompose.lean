@@ -1,20 +1,19 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepPartialReflection
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepOddCompose
 
 /-!
-# The operator reconciliation, and the multi-face boundary producer
+# The operator reconciliation
 
 The closing half B ("the multi-face corner obstruction measured"): the
 multi-face `H¹` extension of `OneStepPartialReflection` is reconciled with the
-proved **partial odd reflection operator** `oddExtend` (`OddReflectionMap`),
-and the result is composed into the proved Schauder consumers, so that the
-boundary branch's reflection apparatus takes no undischarged analytic input
-beyond the base competitor's data.
+proved **partial odd reflection operator** `oddExtend` (`OddReflectionMap`), so
+that the boundary branch's reflection apparatus takes no undischarged analytic
+input beyond the base competitor's data.
 
 ## The reconciliation
 
@@ -28,29 +27,6 @@ such coordinate back (`windowFold` and `windowFoldSign` are invariant up to the
 reflected factor's sign, and the oddness pays the sign).
 `oddExtend_ae_eq_self_of_faceOdd_forall` is the global a.e. form (the met
 hyperplanes are Lebesgue-null).
-
-## The composed endpoint
-
-`exists_classicalCompetitor_gradientHolder_boundary_zeroTrace`: from
-
-* `v ∈ H¹((x+□_{n-2}) ∩ □_m)` weakly harmonic (`hv`),
-* an odd affine datum `(c, A) ∈ 𝕃_odd`,
-
-it produces the classical competitor `V` on the doubled window with the full
-four-slot Schauder package of
-`OneStepOddCompose.exists_classicalCompetitor_gradientHolder_boundary_odd` —
-**with no met-face restriction**: interior, one-face, edge and corner windows
-are all served by the same statement.  The chain: the multi-face `H¹` endpoint
-supplies the weakly harmonic reflected datum `w`; the reconciliation supplies
-`hOodd` at `O := w.toFun`, `c₀ := 0`; the proved consumer does the rest.  The
-conclusion's a.e. link is stated on the *window* (`V =ᵐ v` there), which is
-what the excess and defect transfers (`affineExcess_congr_ae`,
-`affineDistOn_congr_ae`) consume.
-
-What remains on the boundary branch after this module is exactly the corner
-pricing of `oddClassDefect` (the odd affine class collapses to `{0}` at two met
-faces, `affineLift_eq_zero_of_two_met` — a property of the class, not of this
-assembly) —'s disclosed residue (2), out of scope here.
 -/
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay
@@ -317,73 +293,3 @@ theorem oddExtend_ae_eq_self_of_faceOdd_forall {x : Vec d} {m k : ℤ} (hkm : k 
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay
-
-namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
-
-open MeasureTheory InnerProductSpace
-open Homogenization (Vec vecDot openCubeSet originCube coordFaceReflection H1Function
-  LocalizedZeroTraceFunctionOn)
-open Algsuperdiff.Section4.Support
-open Algsuperdiff.Section4.Provider.ExcessDecay
-
-open scoped ENNReal
-
-noncomputable section
-
-variable {d : ℕ}
-
-/-! ## 3. The multi-face boundary producer -/
-
-/-- **The boundary producer from the face-only zero trace, any met
-configuration.**  The composed endpoint of the reflection apparatus: from a
-weakly harmonic `v ∈ H¹((x+□_{n-2}) ∩ □_m)` with face-only zero trace on the
-met faces, and an odd affine datum, it delivers the classical competitor on the
-doubled window with the full four-slot Schauder package of
-`exists_classicalCompetitor_gradientHolder_boundary_odd` — with **no
-met-face restriction** (interior, one-face, edge and corner windows alike), and
-with the a.e. link stated on the window itself, ready for
-`affineExcess_congr_ae`/`affineDistOn_congr_ae`. -/
-theorem exists_classicalCompetitor_gradientHolder_boundary_zeroTrace [NeZero d]
-    (hd : d ≠ 0) {m n : ℤ} {x : Vec d} (hx : x ∈ openCubeSet (originCube d m))
-    (hmn : n - 2 < m)
-    (v : H1Function (truncatedWindow x m (n - 2)))
-    (hv : IsWeaklyHarmonicOn (truncatedWindow x m (n - 2)) v)
-    (hzt : LocalizedZeroTraceFunctionOn (truncatedWindow x m (n - 2))
-      (reflectedWindow x m (n - 2)) v.toFun)
-    {c : ℝ} {A : Vec d} (hodd : IsOddAffineData x m (n - 2) c A) :
-    ∃ V : Vec d → ℝ,
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m (n - 2)) ∧
-      MemLp V 2 (volume : Measure (Vec d)) ∧
-      V =ᵐ[volume.restrict (truncatedWindow x m (n - 2))] v.toFun ∧
-      ∃ K : ℝ, 0 ≤ K ∧
-        (∀ i, IntegrableOn (fun p => gradField V p i)
-          (truncatedWindow x m (n - 3)) volume) ∧
-        HasGradientOn (truncatedWindow x m (n - 3)) V (gradField V) ∧
-        HolderSeminormBoundOn (truncatedWindow x m (n - 3)) (1 / 2 : ℝ) K
-          (gradField V) ∧
-        K ≤ boundaryOddSchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-              * affineExcess (truncatedWindow x m (n - 2)) V
-            + boundaryOddSchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-              * ((3 : ℝ) ^ (-(n - 2)) * oddClassDefect x m n V c A) := by
-  obtain ⟨w, hwharm, hwpin, hwodd⟩ :=
-    exists_h1_oddReflection_reflectedWindow hmn v hv hzt
-  have hOodd : oddExtend x m (n - 2) w.toFun =ᵐ[volume] w.toFun :=
-    oddExtend_ae_eq_self_of_faceOdd_forall hmn
-      (fun i hi => (hwodd i).1 hi) (fun i hi => (hwodd i).2 hi)
-  have hodd0 : IsOddAffineData x m (n - 2) (c - 0) A := by rwa [sub_zero]
-  obtain ⟨V, hVharm, hVmem, hVae, K, hK0, hint, hgrad, hhol, hbound⟩ :=
-    exists_classicalCompetitor_gradientHolder_boundary_odd hd hx hmn hwharm
-      (O := w.toFun) (c₀ := 0) (fun y => (add_zero (w.toFun y)).symm) hOodd hodd0
-  have hae : V =ᵐ[volume.restrict (truncatedWindow x m (n - 2))] v.toFun := by
-    have h1 : V =ᵐ[volume.restrict (truncatedWindow x m (n - 2))] w.toFun :=
-      hVae.filter_mono (MeasureTheory.ae_mono (Measure.restrict_mono
-        (truncatedWindow_subset_reflectedWindow x m (n - 2)) le_rfl))
-    filter_upwards [h1, MeasureTheory.self_mem_ae_restrict
-      (measurableSet_truncatedWindow x m (n - 2))] with y hy hymem
-    rw [hy, hwpin y hymem]
-  exact ⟨V, hVharm, hVmem, hae, K, hK0, hint, hgrad, hhol, hbound⟩
-
-end
-
-end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Annular.LambdaBudget
 import Algsuperdiff.Section4.Provider.Annular.TransposeDischarge
@@ -19,10 +19,10 @@ the ugly chain's `λ`-budget outright, on `𝒢₀(m)` and at the gapped gauge
 C_l = annularLambdaConstant d C_cg = 8 (1 + 9^d) (1 + C_cg) .
 ```
 
-This module feeds it into the endpoint.  `exists_clauseOne_final_one` is
-`TransposeDischarge.exists_clauseOne_final_two` with the `hlam` binder **gone**
-and `C_l` pinned to that constant: its remaining mathematical input is exactly
-`hpref`, the Step-1 leg.
+This module feeds it into the endpoint.  `exists_clauseOne_final_one` is the
+transposed clause-(i) endpoint with the `hlam` binder **gone** and `C_l` pinned
+to that constant: its remaining mathematical input is exactly `hpref`, the
+Step-1 leg.
 
 ## `N`-invariance
 
@@ -39,14 +39,12 @@ below does exactly that.
 
 ## Why the endpoint is re-run rather than composed
 
-The endpoint
-cannot be composed on top of its predecessor: the induction state that
-discharges `hlam` is produced *inside* `exists_clauseOne_final_two`'s proof
-from a constant `C₀` of an `∃`-package whose `C_shom` is opaque from outside.
-The proof below is therefore the same composition re-run with the slot filled
-in place — a forced re-derivation, not new mathematics.  The
-display, the ranges, the event, the `s`-scaling and `clauseOneOutConstant C₁
-C_shom` are byte-identical to `exists_clauseOne_final_two`.
+The endpoint cannot be composed on top of its predecessor: the induction state
+that discharges `hlam` is produced *inside* the predecessor's proof from a
+constant `C₀` of an `∃`-package whose `C_shom` is opaque from outside.  The
+proof below is therefore the same composition re-run with the slot filled in
+place — a forced re-derivation, not new mathematics.  The display, the ranges,
+the event, the `s`-scaling and `clauseOneOutConstant C₁ C_shom` are unchanged.
 -/
 
 namespace Algsuperdiff.Section4.Provider.Annular
@@ -66,7 +64,7 @@ variable {d : ℕ}
 
 /-- **The clause-(i) endpoint at ONE remaining slot.**
 
-`TransposeDischarge.exists_clauseOne_final_two` with `hlam` discharged by
+The transposed clause-(i) endpoint with `hlam` discharged by
 `LambdaBudget.sigmaBar_mul_inv_unitCubeLambda_two_gamma_le_of_mem_eventG0` at
 `C_l = annularLambdaConstant d C_cg = 8(1+9^d)(1+C_cg)`, so that the remaining
 inputs are exactly
@@ -218,26 +216,6 @@ theorem exists_clauseOne_final_one (d : ℕ) (dimension : 2 ≤ d) :
     (clauseOneOutConstant_pos hC₁ hC0 (by norm_num) hC6) hbound
   filter_upwards [hdisplay] with omega hom
   rwa [clauseOneDisplayRhs_eq] at hom
-
-/-- **Clause (ii) off the one-slot display.**  Unchanged from
-`TransposeDischarge.clauseTwo_of_final_two_display`; stated here so that the
-one-slot endpoint carries its own clause-(ii) consumer. -/
-theorem clauseTwo_of_final_one_display [NeZero d] (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
-    (s : {s : ℝ // 0 < s}) {ep C : ℝ} (hC0 : 0 ≤ C)
-    (hep : ep ∈ Set.Ioc (0 : ℝ) (1 / 2)) (hsep : (s : ℝ) * ep ≤ 1)
-    (hsmall : M.gamma * |Real.log M.gamma| ^ 2
-      ≤ (s : ℝ) ^ (3 / 2 : ℝ) * Disorder.cstar M ^ 2 * ep)
-    (hdisp : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.eventG0 M Ccg m ∩
-          Support.eventG1 M m (s : ℝ)
-            (Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-          (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ clauseOneDisplayRhs M m s C omega) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      Set.indicator (Support.goodEventBase M Ccg m s ep)
-          (Support.fluxCorrectedErrorObservableSup M m s) omega
-        ≤ ENNReal.ofReal (2 * Real.sqrt C * ep) :=
-  clauseTwo_of_final_two_display M Ccg m s hC0 hep hsep hsmall hdisp
 
 end
 

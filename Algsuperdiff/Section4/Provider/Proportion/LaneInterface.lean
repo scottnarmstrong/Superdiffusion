@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.Events
 import Algsuperdiff.Section4.Probability.IndicatorDensity
@@ -17,14 +17,11 @@ of that step:
 * `LaneTail M Ev θ c₁` — the common endpoint shape of one lane: at **every**
   window `{0,…,n}` the density of scales at which `Ev` fails exceeds `θ` with
   probability at most `exp(−c₁n)/3`.  It is exactly the conclusion shape the
-  `𝒢₀` lane (`RatioTailClosed`/`RatioTailUniform`) and the `𝒢₁` lane
+  `𝒢₀` lane (`RatioTailClosed`) and the `𝒢₁` lane
   (`G1RatioTail`/`G1ThresholdArith`) deliver.
-* `measure_scaleProp_compl_goodEventBase_le` — the three-fold union bound:
-  three `LaneTail`s at level `θ/3` give the `θ`-level tail of the *intersection*
-  `goodEventBase`, at prefactor `1`.
-
-The `𝒢₂` lane enters here **only** as a named hypothesis of type `LaneTail M
-(fun k => Support.eventG2 M k s ε) (θ/3) c₁`.
+* `scaleProp_add_scaleProp_compl` — the complementarity
+  `avsum 𝟙{𝒢} + avsum 𝟙{𝒢ᶜ} = 1` of the good and bad scale densities, which
+  converts a bad-density endpoint into the frozen display's good form.
 
 ## References
 
@@ -70,89 +67,7 @@ theorem LaneTail.mono_level {M : ABKModel d} {Ev : ℤ → Set (Cutoff.CutoffSam
   intro omega homega
   exact lt_of_le_of_lt h homega
 
-/-- A lane endpoint transfers to every smaller rate: `exp(−c₁n)` grows as `c₁`
-falls. -/
-theorem LaneTail.mono_rate {M : ABKModel d} {Ev : ℤ → Set (Cutoff.CutoffSample d)}
-    {theta c1 c1' : ℝ} (h : c1' ≤ c1) (H : LaneTail M Ev theta c1) :
-    LaneTail M Ev theta c1' := by
-  intro n
-  refine le_trans (H n) (ENNReal.ofReal_le_ofReal ?_)
-  have hn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-  have hexp : Real.exp (-c1 * (n : ℝ)) ≤ Real.exp (-c1' * (n : ℝ)) := by
-    refine Real.exp_le_exp.2 ?_
-    have hstep : -c1 * (n : ℝ) ≤ -c1' * (n : ℝ) :=
-      mul_le_mul_of_nonneg_right (by linarith only [h]) hn
-    exact hstep
-  linarith only [hexp]
-
-/-- A lane endpoint transfers along an inclusion of the good events. -/
-theorem LaneTail.mono_event {M : ABKModel d} {Ev Ev' : ℤ → Set (Cutoff.CutoffSample d)}
-    {theta c1 : ℝ} (h : ∀ k, Ev k ⊆ Ev' k) (H : LaneTail M Ev theta c1) :
-    LaneTail M Ev' theta c1 := by
-  intro n
-  refine le_trans (measure_mono ?_) (H n)
-  intro omega homega
-  simp only [Set.mem_setOf_eq] at homega ⊢
-  refine lt_of_lt_of_le homega ?_
-  classical
-  simp only [scaleProp]
-  refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun m _ => ?_) (by positivity)
-  by_cases hm : omega ∈ (Ev' m)ᶜ
-  · rw [if_pos hm, if_pos (Set.compl_subset_compl.2 (h m) hm)]
-  · rw [if_neg hm]
-    split_ifs <;> norm_num
-
-/-! ## 2. The three-fold union bound -/
-
-/-- **The three lanes recombine into the good event.**  With the three lane
-endpoints at level `θ/3` — `𝒢₀`, `𝒢₁` at the substituted threshold
-`s ε √c⋆ (√γ)⁻¹` of `e.lambda.good.events`, and `𝒢₂` — the density of scales at
-which the frozen good event's untranslated body `goodEventBase` fails exceeds
-`θ` with probability at most `exp(−c₁n)`, at every window `n`. -/
-theorem measure_scaleProp_compl_goodEventBase_le (M : ABKModel d) (Ccg : ℝ)
-    (s : {s : ℝ // 0 < s}) (ep theta c1 : ℝ)
-    (h0 : LaneTail M (fun k => Support.eventG0 M Ccg k) (theta / 3) c1)
-    (h1 : LaneTail M
-      (fun k => Support.eventG1 M k (s : ℝ)
-        ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-      (theta / 3) c1)
-    (h2 : LaneTail M (fun k => Support.eventG2 M k s ep) (theta / 3) c1)
-    (n : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | theta <
-          scaleProp (fun k => (Support.goodEventBase M Ccg k s ep)ᶜ) n omega}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ))) := by
-  have hbase : ∀ k : ℤ, Support.goodEventBase M Ccg k s ep =
-      Support.eventG0 M Ccg k ∩
-        Support.eventG1 M k (s : ℝ)
-          ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹) ∩
-        Support.eventG2 M k s ep := fun _ => rfl
-  have hunion := measure_bad_density_union (Cutoff.cutoffSampleLaw M).toMeasure
-    (fun k => Support.eventG0 M Ccg k)
-    (fun k => Support.eventG1 M k (s : ℝ)
-      ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-    (fun k => Support.eventG2 M k s ep) n theta
-    (Real.exp (-c1 * (n : ℝ)) / 3) (Real.exp (-c1 * (n : ℝ)) / 3)
-    (Real.exp (-c1 * (n : ℝ)) / 3) (h0 n) (h1 n) (h2 n)
-  have hnn : (0 : ℝ) ≤ Real.exp (-c1 * (n : ℝ)) / 3 := by positivity
-  have hsum : ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +
-      ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +
-      ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3)
-      = ENNReal.ofReal (Real.exp (-c1 * (n : ℝ))) := by
-    rw [← ENNReal.ofReal_add hnn hnn, ← ENNReal.ofReal_add (by linarith only [hnn]) hnn]
-    congr 1
-    ring
-  rw [hsum] at hunion
-  simp only [hbase]
-  exact hunion
-
-/-! ## 3. The good-proportion form
-
-`IndicatorDensity` records the complementarity `avsum 𝟙{𝒢} + avsum 𝟙{𝒢ᶜ} = 1` as a
-note rather than a lemma.  The frozen proportion display is stated in the *good*
-form `avsum 𝟙{𝒢} ≤ 1 − θ`, which is the NON-strict complement of the bad form the
-lanes deliver, so the conversion costs one strict inequality: the lanes are run at
-`θ/4` instead of `θ/3`. -/
+/-! ## 2. The good and bad scale densities -/
 
 /-- **The good and bad scale densities are complementary.** -/
 theorem scaleProp_add_scaleProp_compl {Omega : Type*} (Ev : ℤ → Set Omega) (n : ℕ)
@@ -174,68 +89,6 @@ theorem scaleProp_add_scaleProp_compl {Omega : Type*} (Ev : ℤ → Set Omega) (
     norm_num
   · rw [if_neg h, if_pos (show omega ∈ (Ev m)ᶜ from h)]
     norm_num
-
-/-- **The good-proportion form of the three-lane union bound.**  With the three
-lane endpoints at level `θ/4`, the frozen display's own clause
-`avsum 𝟙{𝒢} ≤ 1 − θ` has probability at most `exp(−c₁n)`, at every window `n`. -/
-theorem measure_scaleProp_goodEventBase_le (M : ABKModel d) (Ccg : ℝ)
-    (s : {s : ℝ // 0 < s}) (ep theta c1 : ℝ) (htheta0 : 0 < theta)
-    (h0 : LaneTail M (fun k => Support.eventG0 M Ccg k) (theta / 4) c1)
-    (h1 : LaneTail M
-      (fun k => Support.eventG1 M k (s : ℝ)
-        ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-      (theta / 4) c1)
-    (h2 : LaneTail M (fun k => Support.eventG2 M k s ep) (theta / 4) c1)
-    (n : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | scaleProp (fun k => Support.goodEventBase M Ccg k s ep) n omega
-          ≤ 1 - theta}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ))) := by
-  have hbase : ∀ k : ℤ, Support.goodEventBase M Ccg k s ep =
-      Support.eventG0 M Ccg k ∩
-        Support.eventG1 M k (s : ℝ)
-          ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹) ∩
-        Support.eventG2 M k s ep := fun _ => rfl
-  have hsub : {omega | scaleProp (fun k => Support.goodEventBase M Ccg k s ep) n omega
-        ≤ 1 - theta}
-      ⊆ {omega | theta / 4 < scaleProp (fun k => (Support.eventG0 M Ccg k)ᶜ) n omega}
-        ∪ {omega | theta / 4 < scaleProp (fun k =>
-            (Support.eventG1 M k (s : ℝ)
-              ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))ᶜ) n omega}
-        ∪ {omega | theta / 4 < scaleProp (fun k => (Support.eventG2 M k s ep)ᶜ) n omega} := by
-    intro omega homega
-    simp only [Set.mem_setOf_eq] at homega
-    have hcompl := scaleProp_add_scaleProp_compl
-      (fun k => Support.goodEventBase M Ccg k s ep) n omega
-    have hbad : theta ≤ scaleProp
-        (fun k => (Support.goodEventBase M Ccg k s ep)ᶜ) n omega := by
-      linarith only [hcompl, homega]
-    have hsplit := scaleProp_subadd (fun k => Support.eventG0 M Ccg k)
-      (fun k => Support.eventG1 M k (s : ℝ)
-        ((s : ℝ) * ep * Real.sqrt (Disorder.cstar M) * (Real.sqrt M.gamma)⁻¹))
-      (fun k => Support.eventG2 M k s ep) n omega
-    simp only [← hbase] at hsplit
-    by_contra hc
-    simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_lt] at hc
-    linarith only [htheta0, hbad, hsplit, hc.1.1, hc.1.2, hc.2]
-  have hnn : (0 : ℝ) ≤ Real.exp (-c1 * (n : ℝ)) / 3 := by positivity
-  have hsum : ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +
-      ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +
-      ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3)
-      = ENNReal.ofReal (Real.exp (-c1 * (n : ℝ))) := by
-    rw [← ENNReal.ofReal_add hnn hnn, ← ENNReal.ofReal_add (by linarith only [hnn]) hnn]
-    congr 1
-    ring
-  calc (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | scaleProp (fun k => Support.goodEventBase M Ccg k s ep) n omega ≤ 1 - theta}
-      ≤ _ := measure_mono hsub
-    _ ≤ _ := measure_union_le _ _
-    _ ≤ _ := add_le_add (measure_union_le _ _) le_rfl
-    _ ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +
-          ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +
-          ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) :=
-        add_le_add (add_le_add (h0 n) (h1 n)) (h2 n)
-    _ = ENNReal.ofReal (Real.exp (-c1 * (n : ℝ))) := hsum
 
 end
 

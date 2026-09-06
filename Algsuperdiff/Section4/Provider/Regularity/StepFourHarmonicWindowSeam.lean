@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdFinalInputs
 import Algsuperdiff.Section4.Provider.ExcessDecay.EquationRestriction
@@ -58,47 +58,6 @@ theorem isWeaklyHarmonicOn_restrict {W V : Set (Vec d)} (hV : IsOpen V)
           ∂volume := by
           rw [hgradEq, hext]
     _ = 0 := h (h10ExtendToSuperset phi hV.measurableSet hVW)
-
-/-! ## 2. The harmonic replacement pair ON the §4.4 window -/
-
-/-- `EdFinalInputs.exists_harmonicReplacementPair_movedCube` is stated at the index
-`n - 2`; this is the same statement with the clamped cube's own scale `j` free,
-which is what the one-scale enlargement below needs. -/
-theorem exists_harmonicReplacementPair_clampedCube [NeZero d] {m j : ℤ} (z : Vec d)
-    (hjm : j ≤ m) (u : H1Function (openCubeSet (originCube d m))) :
-    ∃ (v : H1Function ((fun y => wellPlacedCentre z m j + y) ''
-          openCubeSet (originCube d j)))
-      (w : H10Function ((fun y => wellPlacedCentre z m j + y) ''
-          openCubeSet (originCube d j))),
-      IsWeaklyHarmonicOn ((fun y => wellPlacedCentre z m j + y) ''
-          openCubeSet (originCube d j)) v ∧
-        (∀ y, v.toFun y = u.toFun y - w.toH1Function.toFun y) ∧
-        (∀ y, v.grad y = u.grad y - w.toH1Function.grad y) := by
-  have h := exists_harmonicReplacementPair_movedCube (m := m) (n := j + 2) (z := z)
-    (by omega : j + 2 - 2 ≤ m) u
-  rwa [show j + 2 - 2 = j from by ring] at h
-
-/-- **The `U₂` carrier seam, closed.**
-
-The `H¹₀` corrector `w` stays on the enlarged clamped cube, where it is
-produced; the two pointwise identities of the pair are unchanged (the
-restriction shares `toFun` and `grad` definitionally). -/
-theorem exists_harmonicReplacementPair_truncatedWindow [NeZero d] {m n : ℤ}
-    {z : Vec d} (hnm : n - 1 ≤ m) (u : H1Function (openCubeSet (originCube d m))) :
-    ∃ (v : H1Function (truncatedWindow z m (n - 2)))
-      (w : H10Function ((fun y => wellPlacedCentre z m (n - 1) + y) ''
-          openCubeSet (originCube d (n - 1)))),
-      IsWeaklyHarmonicOn (truncatedWindow z m (n - 2)) v ∧
-        (∀ y, v.toFun y = u.toFun y - w.toH1Function.toFun y) ∧
-        (∀ y, v.grad y = u.grad y - w.toH1Function.grad y) := by
-  obtain ⟨v, w, hharm, hval, hgrad⟩ :=
-    exists_harmonicReplacementPair_clampedCube (m := m) (j := n - 1) z hnm u
-  have hsub : truncatedWindow z m (n - 2) ⊆
-      (fun y => wellPlacedCentre z m (n - 1) + y) '' openCubeSet (originCube d (n - 1)) :=
-    truncatedWindow_subset_image_add_wellPlacedCentre z hnm (by omega : n - 2 ≤ n - 1)
-  have hopen : IsOpen (truncatedWindow z m (n - 2)) := isOpen_truncatedWindow z m (n - 2)
-  exact ⟨v.restrict hopen hsub, w, isWeaklyHarmonicOn_restrict hopen hsub hharm,
-    hval, hgrad⟩
 
 end
 

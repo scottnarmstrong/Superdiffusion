@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.KickArith
 import Algsuperdiff.Section4.Provider.MinimalScale.StepTwoDTwo
@@ -154,8 +154,6 @@ def hessAmp (d : ℕ) : ℝ := latticeMaxAmp d
 
 theorem hessAmp_pos (d : ℕ) : 0 < hessAmp d := latticeMaxAmp_pos d
 
-theorem hessAmp_nonneg (d : ℕ) : 0 ≤ hessAmp d := (hessAmp_pos d).le
-
 /-- **The in-window channel has a `Γ₂` tail at the amplitude `step3WindowAmp`**:
 `V_i ≤ 𝒪_{Γ₂}(C s^{−3/2})` at `α = s/4`, uniformly in `i` (including below and
 above the window).  The route is `e.Gamma.sigma.triangle` over the finite
@@ -285,10 +283,6 @@ def hessHeadSeries (M : ABKModel d) (alpha : ℝ) (n m : ℤ) :
 theorem hessHeadSeries_nonneg (M : ABKModel d) (alpha : ℝ) (n m : ℤ)
     (omega : Cutoff.CutoffSample d) : 0 ≤ hessHeadSeries M alpha n m omega :=
   wsum_nonneg _ _ omega
-
-theorem measurable_hessHeadSeries (M : ABKModel d) (alpha : ℝ) (n m : ℤ) :
-    Measurable (hessHeadSeries M alpha n m) :=
-  measurable_wsum fun r => measurable_hessHead M alpha n m r
 
 /-- **The below-window channel closes at `step3TailAmp`** (`𝒪_{Γ₂}(Cs^{−5/2})` at
 `α = s/4`). -/

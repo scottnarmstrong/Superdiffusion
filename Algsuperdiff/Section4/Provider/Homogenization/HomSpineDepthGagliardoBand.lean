@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineDepthFarBandSize
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineSupFormClause
@@ -33,9 +33,9 @@ the size of the band sums the input must carry.  This file
 
 ## The two-sided pin is necessary, not a convenience
 
-`NegativeBesovGridSmoothDualConverse d p CA` fixes `CA` BEFORE the order `s`,
+The depth-summed grid/smooth-dual converse fixes `CA` BEFORE the order `s`,
 over the whole band `s·p' ≤ 1/2`.  The far half of the single-depth Gagliardo
-seminorm is `≍ min(j, (s·p')⁻¹)` (`farBand_sum_ge_min`, `farBand_sum_le_geom`),
+seminorm is `≍ min(j, (s·p')⁻¹)` (`farBand_sum_le_geom` and its lower mate),
 so it is unbounded as `s → 0` at fixed `p`: no finite `CA` can serve the whole
 band through this route.  Every statement below therefore carries the LOWER pin
 `x₀ ≤ s·p'` as an explicit hypothesis, and the constant is displayed as a
@@ -263,7 +263,7 @@ theorem depthEnergy_rpow_le_smoothDual_of_bandInput_pin {d : ℕ} {p : FiniteLpE
 
 /-! ## 4. The consumption interface, and the sup-form clause
 
-`NegativeBesovGridDepthSmoothDualConverse` of `HomSpineCzGridDepthTest` fixes
+The depth-wise converse of `HomSpineCzGridDepthTest` fixes
 one constant before the order, over the whole band `s·p' ≤ 1/2`; the far half
 is `≍ (s·p')⁻¹` there, so that shape is out of reach of this route and is NOT
 claimed.  The pinned predicate below is what the Step-3 realization actually
@@ -294,47 +294,6 @@ theorem depthConverseOn_of_bandInput {d : ℕ} {p : FiniteLpExponent} {Cd : ℝ�
         (gridDepthConverseConst p Cd x₀) :=
   fun m j s hpin =>
     negativeBesovGridSmoothDualConverseAtDepth_of_bandInput hx₀ h (originCube d m) s hpin j
-
-/-- **THE SUP-FORM MULTISCALE CLAUSE, PRODUCED FROM THE BAND INPUT.**
-
-The `exists_coarseGrainingSupMultiscale_of_depthConverseOn` at `CA = (1 +
-C(d)·(near + 2·x₀⁻¹))^{1/p'}`, on the pinned band.  This is the exact
-producibility statement of the S4.5 clause conjunct: the sup-form clause holds
-at a constant `√d·CA·C(p,d)` with the ONLY open input the dimensional Gagliardo
-band constant `C(d)` of `GridDepthGagliardoBandInput`. -/
-theorem exists_coarseGrainingSupMultiscale_of_bandInput (d : ℕ) (hd : 2 ≤ d)
-    (p : FiniteLpExponent) (hp : (2 : ℝ≥0∞) ≤ p.exponent) {Cd : ℝ≥0∞} (hCd : Cd ≠ ⊤)
-    {x₀ : ℝ} (hx₀ : 0 < x₀) (h : GridDepthGagliardoBandInput d p Cd) :
-    letI : NeZero d := ⟨by omega⟩
-    ∃ Ccg : ℝ, 0 ≤ Ccg ∧
-      ∀ (m : ℤ) (jn : ℕ), 0 < jn →
-      ∀ (s1 s s2 : FractionalOrder), s1.1 < s.1 → s.1 < s2.1 → DepthBandPin p x₀ s →
-      ∀ (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain (originCube d m)))
-        (sigma0 : ℝ) (hsigma0 : 0 < sigma0) (g : Vec d → Vec d)
-        (u v : H1Function (openCubeSet (originCube d m))),
-        MemCubeEuclideanFullWsp (originCube d m) s2 p g →
-        IsForcedEquation (originCube d m) a u g →
-        IsScalarForcedEquation (originCube d m) sigma0 v g →
-        HasH10Difference (originCube d m) u v →
-      ∀ (E1 E2 Dg : ℝ) (Gen : TriadicCube d → ℝ) (Fgrad Fflux : Vec d → Vec d),
-        0 ≤ E1 → 0 ≤ E2 → 0 ≤ Dg →
-        (∀ R, 0 ≤ Gen R) →
-        (∀ R, printedLocalEnergy a u R ≤ Gen R) →
-        Book.Ch02.parentTruncatedHomogenizationErrorInfinityOneScalar (originCube d m)
-            ((originCube d m).scale - (jn : ℤ)) (by omega) a sigma0 hsigma0 s1 ≤
-          ENNReal.ofReal E1 →
-        Book.Ch02.parentTruncatedHomogenizationErrorInfinityTwoScalar (originCube d m)
-            ((originCube d m).scale - (jn : ℤ)) (by omega) a sigma0 hsigma0
-            (fractionalOrderHalf s1) ≤ ENNReal.ofReal E2 →
-        ABK26.cubeEuclideanPositiveBesovOverlapESeminorm (originCube d m) s2 p g ≤
-          ENNReal.ofReal Dg →
-        Fgrad = (centeredCubeGradientDifferenceL2Field m u v).toField →
-        Fflux = (centeredCubeFluxDifferenceL2Field m a sigma0 u v).toField →
-          CoarseGrainingSupMultiscale (originCube d m) jn Ccg s.1 s1.1 s2.1
-            p.exponent.toReal sigma0 E1 E2 Dg Gen Fgrad Fflux :=
-  exists_coarseGrainingSupMultiscale_of_depthConverseOn d hd p hp
-    (gridDepthConverseConst_ne_top hCd x₀) (DepthBandPin p x₀)
-    (depthConverseOn_of_bandInput hx₀ h)
 
 end
 

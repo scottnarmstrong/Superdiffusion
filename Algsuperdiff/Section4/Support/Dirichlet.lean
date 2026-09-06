@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Homogenization.PDE.DirichletRHS
 import Homogenization.Sobolev.Fractional.Definitions
@@ -75,8 +75,8 @@ file are stated in one metric.
 * `HasZeroTraceDifferenceOn W u h` — `u - h ∈ H¹₀(W)`, with witness.
 * `IsDirichletSolutionOn a Q u h g` — the A7 rendering of the tex's problem.
 * `HolderSeminormBoundOn U α K f`, `MemHolder U α f` — the `C^{0,α}` carriers.
-* `normalizedGagliardo A s f` / `normalizedGagliardoSeminormOn` — the tex's
-  `[f]_{H̲^s(A)}` on an arbitrary finite-volume set.
+* `normalizedGagliardo A s f` — the tex's `[f]_{H̲^s(A)}` on an arbitrary
+  finite-volume set.
 
 ## References
 
@@ -103,12 +103,6 @@ tex's Dirichlet problem `e.harmonic.approx.v.def`. -/
 def IsWeaklyHarmonicOn (W : Set (Vec d)) (v : H1Function W) : Prop :=
   ∀ φ : H10Function W,
     ∫ x in W, vecDot (v.grad x) (φ.toH1Function.grad x) ∂volume = 0
-
-theorem isWeaklyHarmonicOn_def {W : Set (Vec d)} {v : H1Function W} :
-    IsWeaklyHarmonicOn W v ↔
-      ∀ φ : H10Function W,
-        ∫ x in W, vecDot (v.grad x) (φ.toH1Function.grad x) ∂volume = 0 :=
-  Iff.rfl
 
 /-! ## 2. Divergence-form weak solutions and the Dirichlet carrier -/
 
@@ -139,22 +133,6 @@ def HasZeroTraceDifferenceOn (W : Set (Vec d)) (u h : H1Function W) : Prop :=
     (∀ x, u.toFun x = h.toFun x + w.toH1Function.toFun x) ∧
       ∀ x, u.grad x = h.grad x + w.toH1Function.grad x
 
-theorem hasZeroTraceDifferenceOn_def {W : Set (Vec d)} {u h : H1Function W} :
-    HasZeroTraceDifferenceOn W u h ↔
-      ∃ w : H10Function W,
-        (∀ x, u.toFun x = h.toFun x + w.toH1Function.toFun x) ∧
-          ∀ x, u.grad x = h.grad x + w.toH1Function.grad x :=
-  Iff.rfl
-
-/-- The zero boundary datum: an `H¹` function that agrees with a zero-trace
-function satisfies the boundary condition against a vanishing datum `h`. -/
-theorem hasZeroTraceDifferenceOn_of_h10_of_datum_zero {W : Set (Vec d)} (u : H1Function W)
-    (w : H10Function W) (hu : ∀ x, u.toFun x = w.toH1Function.toFun x)
-    (hgrad : ∀ x, u.grad x = w.toH1Function.grad x)
-    (h : H1Function W) (hz : ∀ x, h.toFun x = 0) (hzg : ∀ x, h.grad x = 0) :
-    HasZeroTraceDifferenceOn W u h :=
-  ⟨w, fun x => by rw [hu x, hz x, zero_add], fun x => by rw [hgrad x, hzg x, zero_add]⟩
-
 /-- **The §4.3 Dirichlet problem**:
 
 ```text
@@ -169,13 +147,6 @@ def IsDirichletSolutionOn (a : CoeffField d) (Q : TriadicCube d)
     (u h : H1Function (openCubeSet Q)) (g : Vec d → Vec d) : Prop :=
   HasZeroTraceDifferenceOn (openCubeSet Q) u h ∧
     IsDivFormWeakSolutionOn a (openCubeSet Q) u g
-
-theorem isDirichletSolutionOn_def {a : CoeffField d} {Q : TriadicCube d}
-    {u h : H1Function (openCubeSet Q)} {g : Vec d → Vec d} :
-    IsDirichletSolutionOn a Q u h g ↔
-      HasZeroTraceDifferenceOn (openCubeSet Q) u h ∧
-        IsDivFormWeakSolutionOn a (openCubeSet Q) u g :=
-  Iff.rfl
 
 theorem IsDirichletSolutionOn.hasZeroTraceDifferenceOn {a : CoeffField d} {Q : TriadicCube d}
     {u h : H1Function (openCubeSet Q)} {g : Vec d → Vec d}
@@ -217,24 +188,6 @@ theorem isZeroTraceDirichletRhsWeakSolution_iff_isDivFormWeakSolutionOn
   unfold IsZeroTraceDirichletRhsWeakSolution IsDivFormWeakSolutionOn
   simp only [hgrad, integral_vecDot_neg_left]
 
-/-- The specialization of the compatibility anchor to the Dirichlet carrier at zero
-boundary datum: the `H¹₀` witness of `u = h + w` solves CoarseGraining's
-zero-trace problem at forcing `-g`. -/
-theorem isZeroTraceDirichletRhsWeakSolution_of_isDirichletSolutionOn
-    {a : CoeffField d} {Q : TriadicCube d} {u h : H1Function (openCubeSet Q)}
-    {g : Vec d → Vec d} (hu : IsDirichletSolutionOn a Q u h g)
-    (hh : ∀ x, h.grad x = 0) :
-    ∃ w : H10Function (openCubeSet Q),
-      (∀ x, u.grad x = w.toH1Function.grad x) ∧
-        IsZeroTraceDirichletRhsWeakSolution a (openCubeSet Q) w (fun x => -g x) := by
-  obtain ⟨w, _, hwgrad⟩ := hu.hasZeroTraceDifferenceOn
-  have hgrad : ∀ x, u.grad x = w.toH1Function.grad x := by
-    intro x
-    rw [hwgrad x, hh x, zero_add]
-  exact ⟨w, hgrad,
-    (isZeroTraceDirichletRhsWeakSolution_iff_isDivFormWeakSolutionOn hgrad).2
-      hu.isDivFormWeakSolutionOn⟩
-
 /-! ## 3. The Hölder carrier -/
 
 variable {E : Type*} [NormedAddCommGroup E]
@@ -254,14 +207,6 @@ def HolderSeminormBoundOn (U : Set (Vec d)) (alpha K : ℝ) (f : Vec d → E) : 
 theorem holderSeminormBoundOn_def {U : Set (Vec d)} {alpha K : ℝ} {f : Vec d → E} :
     HolderSeminormBoundOn U alpha K f ↔
       ∀ x ∈ U, ∀ y ∈ U, ‖f x - f y‖ ≤ K * ‖x - y‖ ^ alpha :=
-  Iff.rfl
-
-/-- **`f ∈ C^{0,α}(U)`**: some nonnegative `K` dominates the Hölder seminorm. -/
-def MemHolder (U : Set (Vec d)) (alpha : ℝ) (f : Vec d → E) : Prop :=
-  ∃ K : ℝ, 0 ≤ K ∧ HolderSeminormBoundOn U alpha K f
-
-theorem memHolder_def {U : Set (Vec d)} {alpha : ℝ} {f : Vec d → E} :
-    MemHolder U alpha f ↔ ∃ K : ℝ, 0 ≤ K ∧ HolderSeminormBoundOn U alpha K f :=
   Iff.rfl
 
 /-- The bound is monotone in the constant. -/
@@ -301,15 +246,6 @@ theorem holderSeminormBoundOn_zero (U : Set (Vec d)) (alpha : ℝ) {K : ℝ} (hK
   have h0 : ‖(0 : E) - (0 : E)‖ = 0 := by simp
   rw [h0]
   exact mul_nonneg hK (Real.rpow_nonneg (norm_nonneg _) alpha)
-
-theorem memHolder_zero (U : Set (Vec d)) (alpha : ℝ) :
-    MemHolder U alpha (fun _ => (0 : E)) :=
-  ⟨0, le_rfl, holderSeminormBoundOn_zero U alpha le_rfl⟩
-
-theorem MemHolder.mono_set {U V : Set (Vec d)} {alpha : ℝ} {f : Vec d → E}
-    (hf : MemHolder U alpha f) (hVU : V ⊆ U) : MemHolder V alpha f := by
-  obtain ⟨K, hK, hbd⟩ := hf
-  exact ⟨K, hK, hbd.mono_set hVU⟩
 
 /-! ## 4. The volume-normalized fractional (Gagliardo) gauge -/
 
@@ -368,38 +304,5 @@ theorem normalizedGagliardoESeminormOn_def (A : Set (Vec d)) (s : ℝ) (f : Vec 
     normalizedGagliardoESeminormOn A s f =
       eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2 (normalizedGagliardoMeasureOn A) :=
   rfl
-
-/-- The vector-field leg `[g]_{H̲^s(A)}` for `g : Vec d → Vec d`: the ambient `Vec
-d` is a normed space over `ℝ`, so CoarseGraining's `E`-valued kernel accepts it
-with no componentwise decomposition. -/
-theorem normalizedGagliardoESeminormOn_vec_def (A : Set (Vec d)) (s : ℝ) (g : Vec d → Vec d) :
-    normalizedGagliardoESeminormOn A s g =
-      eLpNorm (Gagliardo.gagliardoKernel s 2 g) 2 (normalizedGagliardoMeasureOn A) :=
-  rfl
-
-/-- Real-valued form of the normalized fractional seminorm (junk value `0` when
-infinite), mirroring CoarseGraining's `Gagliardo.cubeGagliardoSeminorm`. -/
-noncomputable def normalizedGagliardoSeminormOn (A : Set (Vec d)) (s : ℝ)
-    (f : Vec d → E) : ℝ :=
-  (normalizedGagliardoESeminormOn A s f).toReal
-
-theorem normalizedGagliardoSeminormOn_def (A : Set (Vec d)) (s : ℝ) (f : Vec d → E) :
-    normalizedGagliardoSeminormOn A s f = (normalizedGagliardoESeminormOn A s f).toReal :=
-  rfl
-
-theorem normalizedGagliardoSeminormOn_nonneg (A : Set (Vec d)) (s : ℝ) (f : Vec d → E) :
-    0 ≤ normalizedGagliardoSeminormOn A s f :=
-  ENNReal.toReal_nonneg
-
-/-- **The tex object is CoarseGraining's on a triadic cube.**  The correspondence
-anchor for the fractional legs. -/
-theorem normalizedGagliardoESeminormOn_cubeSet (Q : TriadicCube d) (s : ℝ) (f : Vec d → E) :
-    normalizedGagliardoESeminormOn (cubeSet Q) s f = Gagliardo.cubeGagliardoESeminorm Q s 2 f := by
-  rw [normalizedGagliardoESeminormOn, Gagliardo.cubeGagliardoESeminorm,
-    normalizedGagliardoMeasureOn_cubeSet]
-
-theorem normalizedGagliardoESeminormOn_zero (A : Set (Vec d)) (s : ℝ) :
-    normalizedGagliardoESeminormOn A s (0 : Vec d → E) = 0 := by
-  rw [normalizedGagliardoESeminormOn, Gagliardo.gagliardoKernel_zero, eLpNorm_zero]
 
 end Algsuperdiff.Section4.Support

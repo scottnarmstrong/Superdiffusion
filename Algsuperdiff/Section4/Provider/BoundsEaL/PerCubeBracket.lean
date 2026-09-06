@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.LambdaSlotConsumer
 import Algsuperdiff.Section4.Provider.BoundsEaL.MomentHolder
@@ -242,121 +242,6 @@ theorem exists_lintegral_rpow_step3Bracket_le (d : ℕ) :
   exact hkey
 
 /-! ## 5. The bracket majorant is `1 + O(√q √γ)` -/
-
-/-- **The bracket is `O(1)` in the printed regime.**
-
-The product majorant of `exists_lintegral_rpow_step3Bracket_le` is bounded by
-
-```
-C(2)√(2q) · fullGradConst M · 16 c⋆^{-1/2} √γ
-    · ( λUp·C_cg + C(1/3)(2q)³ · λUp·λMax · γ/2 ) ,
-```
-
-i.e. by `O(√q √γ (1 + q³γ))`.  Two proved inputs do all the work: the (B3)
-gauge slot at the (B5) index (`SigmaBarLandmark`), which turns the product
-`3^{γj}·σ̄_{j−1}^{-1}` of the two bullets into the `√γ` the anchor's scalar
-carries, and the `s`-window `LambdaWindow.cgTailScale_le_half_gamma`, which
-prices the `Γ_{1/3}` tail at `γ/2`.
-
-Consequently the bracket contributes `1 + O(√q√γ)` to Step 5's Hölder product;
-under the anchor's own `p ≤ C^{-1}γ^{-1}s` (which gives `√p√γ ≤ √(C^{-1}s)`)
-this is bounded, and NO `γ`-power is consumed by the bracket. -/
-theorem step3Bracket_majorant_le (d : ℕ) :
-    ∃ C : ℝ, 6 ≤ C ∧
-      ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∀ (j : ℤ) (q : ℝ), 1 ≤ q →
-          gammaTwoMomentBound (2 * q) (fullGradConst M * Real.rpow 3 (M.gamma * (j : ℝ))) *
-              (lambdaUpscaleConst d * (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ *
-                  Support.cgEllipLowerConstant d) +
-                gammaMomentBound (1 / 3) (2 * q)
-                  (lambdaUpscaleConst d * lambdaMaxOrliczConst d *
-                    (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ *
-                      Proportion.cgTailScale M (C * (Disorder.cstar M)⁻¹)))) ≤
-            gammaMomentConst 2 * Real.sqrt (2 * q) * fullGradConst M *
-              (16 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma)) *
-              (lambdaUpscaleConst d * Support.cgEllipLowerConstant d +
-                gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-                  (lambdaUpscaleConst d * lambdaMaxOrliczConst d * (M.gamma / 2))) := by
-  obtain ⟨C3, hC3, hgauge⟩ := exists_rpow_gamma_mul_inv_sigmaBar_sub_one_le d
-  refine ⟨max (max 6 (Support.cgEllipLowerConstant d)) C3,
-    le_trans (le_max_left _ _) (le_max_left _ _), ?_⟩
-  intro M hreg j q hq
-  have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hC6 : (6 : ℝ) ≤ max (max 6 (Support.cgEllipLowerConstant d)) C3 :=
-    le_trans (le_max_left _ _) (le_max_left _ _)
-  have hCcgle : Support.cgEllipLowerConstant d ≤
-      max (max 6 (Support.cgEllipLowerConstant d)) C3 :=
-    le_trans (le_max_right _ _) (le_max_left _ _)
-  have hgauge' := hgauge M
-    (gamma_regime_mono hC3 (le_max_right _ _) hcs0.le hreg) j
-  have htail := cgTailScale_le_half_gamma M hC6 hCcgle hreg
-  -- the abbreviations
-  have hK : (0 : ℝ) ≤ gammaMomentConst 2 * Real.sqrt (2 * q) * fullGradConst M :=
-    mul_nonneg (mul_nonneg (gammaMomentConst_pos (by norm_num)).le (Real.sqrt_nonneg _))
-      (fullGradConst_pos M).le
-  have hPS : (0 : ℝ) ≤ Real.rpow 3 (M.gamma * (j : ℝ)) *
-      ((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ :=
-    mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-      (inv_pos.mpr (Annealed.sigmaBar M (j - 1)).2).le
-  have hA : (0 : ℝ) ≤ lambdaUpscaleConst d * Support.cgEllipLowerConstant d :=
-    mul_nonneg (lambdaUpscaleConst_pos d).le (Support.cgEllipLowerConstant_pos d).le
-  have hT : (0 : ℝ) ≤ gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-      (lambdaUpscaleConst d * lambdaMaxOrliczConst d) := by
-    refine mul_nonneg (mul_nonneg (gammaMomentConst_pos (by norm_num)).le ?_) ?_
-    · exact Real.rpow_nonneg (by linarith only [hq]) _
-    · exact mul_nonneg (lambdaUpscaleConst_pos d).le (lambdaMaxOrliczConst_pos d).le
-  have htail0 : (0 : ℝ) ≤ Proportion.cgTailScale M
-      (max (max 6 (Support.cgEllipLowerConstant d)) C3 * (Disorder.cstar M)⁻¹) :=
-    (Proportion.cgTailScale_pos M _).le
-  -- the tail is priced at γ/2
-  have hbracket : lambdaUpscaleConst d * Support.cgEllipLowerConstant d +
-      gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-        (lambdaUpscaleConst d * lambdaMaxOrliczConst d) *
-        Proportion.cgTailScale M
-          (max (max 6 (Support.cgEllipLowerConstant d)) C3 * (Disorder.cstar M)⁻¹) ≤
-      lambdaUpscaleConst d * Support.cgEllipLowerConstant d +
-        gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-          (lambdaUpscaleConst d * lambdaMaxOrliczConst d) * (M.gamma / 2) := by
-    have := mul_le_mul_of_nonneg_left htail hT
-    linarith only [this]
-  -- the algebraic regrouping and the two monotone steps
-  unfold gammaTwoMomentBound gammaMomentBound
-  have hleft : gammaMomentConst 2 * Real.sqrt (2 * q) *
-        (fullGradConst M * Real.rpow 3 (M.gamma * (j : ℝ))) *
-        (lambdaUpscaleConst d * (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ *
-            Support.cgEllipLowerConstant d) +
-          gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-            (lambdaUpscaleConst d * lambdaMaxOrliczConst d *
-              (((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹ *
-                Proportion.cgTailScale M
-                  (max (max 6 (Support.cgEllipLowerConstant d)) C3 *
-                    (Disorder.cstar M)⁻¹)))) =
-      (gammaMomentConst 2 * Real.sqrt (2 * q) * fullGradConst M) *
-        ((Real.rpow 3 (M.gamma * (j : ℝ)) * ((Annealed.sigmaBar M (j - 1) : ℝ))⁻¹) *
-          (lambdaUpscaleConst d * Support.cgEllipLowerConstant d +
-            gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-              (lambdaUpscaleConst d * lambdaMaxOrliczConst d) *
-              Proportion.cgTailScale M
-                (max (max 6 (Support.cgEllipLowerConstant d)) C3 *
-                  (Disorder.cstar M)⁻¹))) := by ring
-  have hright : gammaMomentConst 2 * Real.sqrt (2 * q) * fullGradConst M *
-        (16 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma)) *
-        (lambdaUpscaleConst d * Support.cgEllipLowerConstant d +
-          gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-            (lambdaUpscaleConst d * lambdaMaxOrliczConst d * (M.gamma / 2))) =
-      (gammaMomentConst 2 * Real.sqrt (2 * q) * fullGradConst M) *
-        ((16 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma)) *
-          (lambdaUpscaleConst d * Support.cgEllipLowerConstant d +
-            gammaMomentConst (1 / 3) * (2 * q) ^ ((1 / 3 : ℝ))⁻¹ *
-              (lambdaUpscaleConst d * lambdaMaxOrliczConst d) * (M.gamma / 2))) := by ring
-  rw [hleft, hright]
-  refine mul_le_mul_of_nonneg_left ?_ hK
-  have hamp : (0 : ℝ) ≤ 16 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma) :=
-    mul_nonneg (by norm_num)
-      (mul_nonneg (inv_nonneg.mpr (Real.sqrt_nonneg _)) (Real.sqrt_nonneg _))
-  exact mul_le_mul hgauge' hbracket
-    (add_nonneg hA (mul_nonneg hT htail0)) hamp
 
 end
 

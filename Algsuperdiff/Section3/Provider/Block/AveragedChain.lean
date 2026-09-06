@@ -40,14 +40,6 @@ open Homogenization Homogenization.Book.Ch02
 
 variable {d : ℕ}
 
-/-! ## Block reflection is an order isomorphism -/
-
-/-- Block reflection preserves the doubled Loewner order. -/
-theorem blockMatLoewnerLE_blockReflect {A B : BlockMat d} (h : BlockMatLoewnerLE A B) :
-    BlockMatLoewnerLE (blockReflect A) (blockReflect B) := by
-  intro X
-  simpa using h (X.2, X.1)
-
 /-! ## Right inequality: `bfA(U) ≤ ⨍_U bfA(x) dx` -/
 
 /-- The constant doubled field at load `P` is admissible for the doubled `mu`

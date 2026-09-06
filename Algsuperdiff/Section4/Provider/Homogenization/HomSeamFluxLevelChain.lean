@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSqrtTwoChain
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxLane
@@ -11,9 +11,9 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamFluxLane
 
 ## Why the `Ccg` slot has to be freed
 
-`HomSeamSqrtTwoChain`'s pairing chain is stated at the pinned constant
-`HomSpineInstallPins.recutPinnedCcg d p = (cgDualBoundConst d p).toReal`, which
-is the `Classical.choose` of the `a_L` lane's existential.  The print-accurate
+`HomSeamSqrtTwoChain`'s pairing chain is stated at the pinned coarse-graining
+constant of the `a_L` lane, which is the `Classical.choose` of that lane's
+existential.  The print-accurate
 lane produces its own constant
 `HomSeamFluxLane.cgDualBoundConstFlux d p`, and `Classical.choose` does not
 reduce, so the two names are different reals even though they arise from the
@@ -22,9 +22,9 @@ SAME source constant `C(p,d)` of
 
 Section 1 therefore restates the pairing constants and the two pairing theorems
 with `Ccg` a bare nonnegative real.  Nothing in the mathematics changes: the
-proofs use the pinned constant only through its nonnegativity.  At `Ccg:=
-recutPinnedCcg d p` these are exactly `HomSeamSqrtTwoChain`'s
-`recutSeamLeg_ofReal_le` / `recutSeamSplit_of_seam`.
+proofs use the pinned constant only through its nonnegativity.  At the `a_L`
+lane's pinned constant these are exactly `HomSeamSqrtTwoChain`'s level leg and
+budget split.
 
 Section 2 instantiates at `Ccg:= recutPinnedCcgFlux d p` and at the
 print-accurate error slots `recutPinnedE1Flux`/`recutPinnedE2Flux`, producing
@@ -56,15 +56,15 @@ variable {d : ℕ}
 
 /-! ## 1. The pairing constants and the two legs at a FREE `Ccg` -/
 
-/-- `HomSpineResidueLevel.recutPairCwLeg` with the coarse-graining constant
-freed.  At `Ccg:= recutPinnedCcg d p` this is that definition. -/
+/-- The `a_L` lane's pairing-leg constant with the coarse-graining constant
+freed.  At that lane's pinned constant this is that definition. -/
 def pairCwLegOf (d : ℕ) (Ccg : ℝ) (p : FiniteLpExponent) (s2 : FractionalOrder)
     (Cgap Cen0 sbase kappa theta : ℝ) : ℝ :=
   kappa * Ccg * (theta * sbase)⁻¹ * Cen0 * sbase +
     kappa * Ccg * theta ^ (-(9 / 2) : ℝ) * (s2.1 - theta * sbase)⁻¹ *
       cgOverlapDataConst d s2 p * homGapConstAt s2.1 / Cgap
 
-/-- `HomSpineResidueLevel.recutPairCw` with the coarse-graining constant
+/-- The `a_L` lane's pairing constant with the coarse-graining constant
 freed. -/
 def pairCwOf (d : ℕ) (Ccg : ℝ) (p : FiniteLpExponent) (s2 : FractionalOrder)
     (Cgap Cen0 sbase Ktest : ℝ) : ℝ :=
@@ -95,7 +95,7 @@ theorem pairCwLegOf_nonneg (d : ℕ) {Ccg : ℝ} (p : FiniteLpExponent)
 /-- **THE PAIRING OF ONE LEVEL CONDITION, AT A FREE `Ccg` AND THE RE-PINNED
 BASE.**
 
-`HomSeamSqrtTwoChain.recutSeamLeg_ofReal_le` with the coarse-graining constant
+`HomSeamSqrtTwoChain`'s level leg with the coarse-graining constant
 freed; the proof is unchanged; it uses the pinned constant only through
 its nonnegativity. -/
 theorem seamLegOf_ofReal_le [NeZero d] (M : ABKModel d) {Cgap : ℝ}
@@ -226,7 +226,7 @@ theorem seamLegOf_ofReal_le [NeZero d] (M : ABKModel d) {Cgap : ℝ}
 
 /-- **THE BUDGET SPLIT, AT A FREE `Ccg` AND THE RE-PINNED BASE.**
 
-`HomSeamSqrtTwoChain.recutSeamSplit_of_seam` with the coarse-graining constant
+`HomSeamSqrtTwoChain`'s budget split with the coarse-graining constant
 freed. -/
 theorem seamSplitOf_of_seam [NeZero d] (M : ABKModel d) {Cgap : ℝ}
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (omega : Cutoff.CutoffSample d)
@@ -276,175 +276,6 @@ def recutPinnedCcgFlux (d : ℕ) (p : FiniteLpExponent) : ℝ :=
 
 theorem recutPinnedCcgFlux_nonneg (d : ℕ) (p : FiniteLpExponent) :
     0 ≤ recutPinnedCcgFlux d p := ENNReal.toReal_nonneg
-
-/-! ## 3. The two level conditions at `ã` and the re-pinned base -/
-
-/-- **`hlevel` AT `ã_{L,m}` AND THE RE-PINNED BASE `s/8`.**
-
-`HomSpineResidueLevel.recutHlevel_of_seam` with the coefficient moved to the
-printed flux-corrected field, the `EthmB(m)` base moved to `s' = s/8`, and the
-second domination taken at `√2`.  The remaining content-bearing hypotheses are
-exactly `hSbound` and the two `ã` dominations. -/
-theorem recutHlevelFlux_of_seam [NeZero d] (M : ABKModel d) (L : ℤ)
-    (omega : Cutoff.CutoffSample d) (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ}
-    (hsig : 0 < sigmaBarM) {Cgap : ℝ} (Y : Cutoff.CutoffSample d → ℝ≥0∞)
-    (p : FiniteLpExponent) (s2 : FractionalOrder) {g : Vec d → Vec d}
-    {Kg Kh KhInf S Cen0 Ktest : ℝ} (hs : 0 < homS M)
-    (hlog : 4 ≤ |Real.log M.gamma|) (hgamma1 : M.gamma < 1) (hCgap : 0 < Cgap)
-    (hss2 : homS M < s2.1) (hs2lt : s2.1 < 1 / 2)
-    (hs2gt : 1 / 2 - (d : ℝ) / p.exponent.toReal < s2.1)
-    (hs2gap : 5 < 10 * s2.1 * Real.log 3) (hKtest0 : 0 ≤ Ktest)
-    (hKg : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kg g)
-    (hKhInf0 : 0 ≤ KhInf) (hKh0 : 0 ≤ Kh) (hCen0 : 0 ≤ Cen0)
-    (hjn : (originCube d m).scale - (jn : ℤ) = homN M m)
-    (hSbound : S ≤ Cen0 * recutEnergyFactor M Y m omega *
-      energyBracket sigmaBarM (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh)
-    (hdom1 : ENNReal.ofReal
-        (recutPinnedE1Flux M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-        (homHalf (homSeamBase M hs)) omega)
-    (hdom2 : ENNReal.ofReal
-        (recutPinnedE2Flux M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      ENNReal.ofReal (Real.sqrt 2) *
-        fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-          (homQuarterOf (homSeamBase M hs)) omega)
-    (hfin : ethmB M Cgap Y m (homN M m) (homSeamBase M hs) omega ≠ ⊤) :
-    coarseGrainingFinitePRHS (recutPinnedCcgFlux d p) (recutOrderBase M hlog).1 s2.1
-        sigmaBarM (recutPinnedE1Flux M L omega m jn hsig (recutOrderBase M hlog))
-        (recutPinnedE2Flux M L omega m jn hsig (recutOrderBase M hlog))
-        (recutPinnedDg m s2 p g) S ((originCube d m).scale - (jn : ℤ)) ≤
-      sigmaBarM *
-        (2 * pairCwOf d (recutPinnedCcgFlux d p) p s2 Cgap Cen0 (homS M) Ktest *
-            (ethmB M Cgap Y m (homN M m) (homSeamBase M hs) omega).toReal *
-          dataBracket sigmaBarM (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh) := by
-  obtain ⟨x0, y0, hx0, hy0, hne⟩ := exists_ne_pair_openCubeSet (originCube d m)
-  have hKg0 : 0 ≤ Kg := hKg.nonneg hx0 hy0 hne
-  obtain ⟨hlo, _hhi⟩ := holderHalf_window (p := p) hs2lt hs2gt
-  have hCdata0 : (0 : ℝ) ≤ cgOverlapDataConst d s2 p := cgOverlapDataConst_nonneg d s2 p hlo
-  have hCcg0 : (0 : ℝ) ≤ recutPinnedCcgFlux d p := recutPinnedCcgFlux_nonneg d p
-  have hE10 : (0 : ℝ) ≤ recutPinnedE1Flux M L omega m jn hsig (recutOrderBase M hlog) :=
-    recutPinnedE1Flux_nonneg M L omega m jn hsig (recutOrderBase M hlog)
-  have hE20 : (0 : ℝ) ≤ recutPinnedE2Flux M L omega m jn hsig (recutOrderBase M hlog) :=
-    recutPinnedE2Flux_nonneg M L omega m jn hsig (recutOrderBase M hlog)
-  refine hlevel_of_energyBound (Cdata := cgOverlapDataConst d s2 p)
-    (Cen := Cen0 * recutEnergyFactor M Y m omega)
-    (Cw := 2 * pairCwOf d (recutPinnedCcgFlux d p) p s2 Cgap Cen0 (homS M) Ktest)
-    (EB := (ethmB M Cgap Y m (homN M m) (homSeamBase M hs) omega).toReal)
-    hsig (recutOrderBase M hlog).2.1 (by simpa only [recutOrderBase_val] using hss2)
-    hCcg0 hE10 hE20 hKg0 hKhInf0 hKh0
-    (mul_nonneg hCen0 (recutEnergyFactor_nonneg M Y m omega)) hCdata0 hSbound
-    (overlapSeminorm_toReal_le m s2 p hKg0 hs2lt hs2gt hKg) le_rfl le_rfl ?_
-  refine seamSplitOf_of_seam M Y m omega p s2 (Ccg := recutPinnedCcgFlux d p)
-    (sbase := homS M) (kappa := 1) (theta := 1) (Cen0 := Cen0) (Ktest := Ktest)
-    hCcg0 hs rfl hlog hgamma1 hCgap zero_le_one one_pos hCen0 hE10 hE20 hCdata0
-    (by linarith only [hss2]) hs2gap ?_ ?_ ?_ hdom1 hdom2 hfin
-  · rw [pairCwOf]
-    have h2 := pairCwLegOf_nonneg d p s2 (Ccg := recutPinnedCcgFlux d p)
-      (sbase := homS M) (kappa := Ktest) (theta := 7 / 8) hCcg0 hCgap hCen0 hs hKtest0
-      (by norm_num) (by linarith only [hss2, hs]) hCdata0 hs2gap
-    linarith only [h2]
-  · refine le_of_eq ?_
-    simp only [recutOrderBase_val]
-    ring
-  · rw [hjn]
-    refine le_of_eq ?_
-    simp only [recutOrderBase_val, one_mul]
-    rw [show (3 : ℝ) ^ (s2.1 * ((((homN M m : ℤ)) : ℝ) - (m : ℝ))) =
-        (3 : ℝ) ^ (s2.1 * (((homN M m : ℤ)) : ℝ) - s2.1 * (m : ℝ)) from by
-      congr 1
-      ring]
-
-/-- **`hlevelDual` AT `ã_{L,m}` AND THE RE-PINNED BASE `s/8`.**
-
-The same discharge at the dual order `7s/8`, with the test-class constant
-`K_test` as the leg's multiplier.  The `C_w` and the `E_B` are the SAME as
-`recutHlevelFlux_of_seam`'s, so the two conditions fit one bundle. -/
-theorem recutHlevelDualFlux_of_seam [NeZero d] (hd1 : 1 ≤ d) (M : ABKModel d) (L : ℤ)
-    (omega : Cutoff.CutoffSample d) (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ}
-    (hsig : 0 < sigmaBarM) {Cgap : ℝ} (Y : Cutoff.CutoffSample d → ℝ≥0∞)
-    (p : FiniteLpExponent) (s2 : FractionalOrder) {g : Vec d → Vec d}
-    {Kg Kh KhInf S Cen0 Ktest : ℝ} (hs : 0 < homS M)
-    (hlog : 4 ≤ |Real.log M.gamma|) (hgamma1 : M.gamma < 1) (hCgap : 0 < Cgap)
-    (hguard : homS M + (d : ℝ) / p.exponent.toReal ≤ 1 / 2)
-    (hss2 : homS M < s2.1) (hs2lt : s2.1 < 1 / 2)
-    (hs2gt : 1 / 2 - (d : ℝ) / p.exponent.toReal < s2.1)
-    (hs2gap : 5 < 10 * s2.1 * Real.log 3)
-    (hKtest : Ktest =
-      cgTestConstBase d (homS M) (7 * homS M / 8) p.conjugate.exponent.toReal)
-    (hKg : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kg g)
-    (hKhInf0 : 0 ≤ KhInf) (hKh0 : 0 ≤ Kh) (hCen0 : 0 ≤ Cen0)
-    (hjn : (originCube d m).scale - (jn : ℤ) = homN M m)
-    (hSbound : S ≤ Cen0 * recutEnergyFactor M Y m omega *
-      energyBracket sigmaBarM (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh)
-    (hdom1 : ENNReal.ofReal
-        (recutPinnedE1Flux M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-        (homHalf (homSeamBase M hs)) omega)
-    (hdom2 : ENNReal.ofReal
-        (recutPinnedE2Flux M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      ENNReal.ofReal (Real.sqrt 2) *
-        fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-          (homQuarterOf (homSeamBase M hs)) omega)
-    (hfin : ethmB M Cgap Y m (homN M m) (homSeamBase M hs) omega ≠ ⊤) :
-    cgTestConst d (originCube d m) (recutOrderBase M hlog).1
-        (7 * (recutOrderBase M hlog).1 / 8) p.conjugate.exponent.toReal *
-        (Real.rpow 3 (7 * (recutOrderBase M hlog).1 / 8 * (m : ℝ)) *
-          coarseGrainingFinitePRHS (recutPinnedCcgFlux d p)
-            (7 * (recutOrderBase M hlog).1 / 8) s2.1 sigmaBarM
-            (recutPinnedE1Flux M L omega m jn hsig (recutOrderBase M hlog))
-            (recutPinnedE2Flux M L omega m jn hsig (recutOrderBase M hlog))
-            (recutPinnedDg m s2 p g) S ((originCube d m).scale - (jn : ℤ))) ≤
-      Real.rpow 3 ((recutOrderBase M hlog).1 * (m : ℝ)) *
-        (sigmaBarM *
-          (2 * pairCwOf d (recutPinnedCcgFlux d p) p s2 Cgap Cen0 (homS M) Ktest *
-              (ethmB M Cgap Y m (homN M m) (homSeamBase M hs) omega).toReal *
-            dataBracket sigmaBarM (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh)) := by
-  obtain ⟨x0, y0, hx0, hy0, hne⟩ := exists_ne_pair_openCubeSet (originCube d m)
-  have hKg0 : 0 ≤ Kg := hKg.nonneg hx0 hy0 hne
-  obtain ⟨hlo2, _hhi2⟩ := holderHalf_window (p := p) hs2lt hs2gt
-  have hCdata0 : (0 : ℝ) ≤ cgOverlapDataConst d s2 p :=
-    cgOverlapDataConst_nonneg d s2 p hlo2
-  have hCcg0 : (0 : ℝ) ≤ recutPinnedCcgFlux d p := recutPinnedCcgFlux_nonneg d p
-  have hE10 : (0 : ℝ) ≤ recutPinnedE1Flux M L omega m jn hsig (recutOrderBase M hlog) :=
-    recutPinnedE1Flux_nonneg M L omega m jn hsig (recutOrderBase M hlog)
-  have hE20 : (0 : ℝ) ≤ recutPinnedE2Flux M L omega m jn hsig (recutOrderBase M hlog) :=
-    recutPinnedE2Flux_nonneg M L omega m jn hsig (recutOrderBase M hlog)
-  have hhalf : homS M / 2 ≤ 7 * homS M / 8 := by linarith only [hs]
-  have hlts : 7 * homS M / 8 < homS M := by linarith only [hs]
-  obtain ⟨hlodual, _hhidual⟩ := cgOrderWindow_of_guard (p := p) hd1 hs hguard hhalf hlts
-  have hKtest0 : (0 : ℝ) ≤ Ktest := by
-    rw [hKtest]; exact cgTestConstBase_nonneg d hlodual
-  refine hlevelDual_of_energyBound (Cdata := cgOverlapDataConst d s2 p)
-    (Cen := Cen0 * recutEnergyFactor M Y m omega)
-    (Cw := 2 * pairCwOf d (recutPinnedCcgFlux d p) p s2 Cgap Cen0 (homS M) Ktest)
-    (EB := (ethmB M Cgap Y m (homN M m) (homSeamBase M hs) omega).toReal)
-    hsig (by simp only [recutOrderBase_val]; linarith only [hs])
-    (by simp only [recutOrderBase_val]; linarith only [hss2, hs])
-    (by simpa only [recutOrderBase_val] using hlodual)
-    hCcg0 hE10 hE20 hKg0 hKhInf0 hKh0
-    (mul_nonneg hCen0 (recutEnergyFactor_nonneg M Y m omega)) hCdata0 hSbound
-    (overlapSeminorm_toReal_le m s2 p hKg0 hs2lt hs2gt hKg) le_rfl le_rfl ?_
-  refine seamSplitOf_of_seam M Y m omega p s2 (Ccg := recutPinnedCcgFlux d p)
-    (sbase := homS M) (kappa := Ktest) (theta := 7 / 8) (Cen0 := Cen0) (Ktest := Ktest)
-    hCcg0 hs rfl hlog hgamma1 hCgap hKtest0 (by norm_num) hCen0 hE10 hE20 hCdata0
-    (by linarith only [hss2, hs]) hs2gap ?_ ?_ ?_ hdom1 hdom2 hfin
-  · rw [pairCwOf]
-    have h1 := pairCwLegOf_nonneg d p s2 (Ccg := recutPinnedCcgFlux d p)
-      (sbase := homS M) (kappa := 1) (theta := 1) hCcg0 hCgap hCen0 hs zero_le_one one_pos
-      (by linarith only [hss2]) hCdata0 hs2gap
-    linarith only [h1]
-  · refine le_of_eq ?_
-    simp only [recutOrderBase_val]
-    rw [← hKtest]
-    ring
-  · rw [hjn]
-    refine le_of_eq ?_
-    simp only [recutOrderBase_val]
-    rw [← hKtest, show (7 * homS M / 8 : ℝ) = 7 / 8 * homS M from by ring,
-      show (3 : ℝ) ^ (s2.1 * ((((homN M m : ℤ)) : ℝ) - (m : ℝ))) =
-        (3 : ℝ) ^ (s2.1 * (((homN M m : ℤ)) : ℝ) - s2.1 * (m : ℝ)) from by
-      congr 1
-      ring]
 
 end
 

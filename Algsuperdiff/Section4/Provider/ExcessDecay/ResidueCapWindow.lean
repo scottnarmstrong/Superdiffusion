@@ -1,10 +1,10 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryGradH
-import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringPoincare
+import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryWindowNormalized
 
 /-!
 # The boundary covering-cube transports, re-cut at the window hinge
@@ -53,8 +53,7 @@ The seven declarations are, in dependency order:
 
 * ABK26, `l.harmonic.approximation.good.scales`, Step 2.
 * The proved originals: `BoundaryPoincareWindow.lean`,
-  `BoundaryTransports.lean`, `BoundaryCoveringPoincare.lean`,
-  `BoundaryGradH.lean`.
+  `BoundaryTransports.lean`, `BoundaryGradH.lean`.
 -/
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay
@@ -349,87 +348,6 @@ theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_atWindow {n m : ℤ}
         mul_le_mul_of_nonneg_left hmove hsqrtd
     _ = Real.sqrt (d : ℝ) * (3 : ℝ) ^ d *
           (eLpNorm H 2 (Support.normalizedVolumeMeasureOn W)).toReal := by ring
-
-/-! ## 5. The boundary Poincaré on the covering cube, at the hinge -/
-
-/-- **The boundary Poincaré on the covering cube, at the hinge.**
-
-The re-cut of `eLpNorm_coveringCube_sub_le_boundaryWindowPoincare`: section 1's
-covering transport composed with the boundary Poincaré on the window. -/
-theorem eLpNorm_coveringCube_sub_le_boundaryWindowPoincare_atWindow {n m : ℤ}
-    {x z : Vec d}
-    (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
-        openCubeSet (originCube d (n + 2)) ⊆
-      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m)))
-    (hfr : (((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-      frontier (openCubeSet (originCube d m))) ≠ ∅)
-    (u h : H1Function (openCubeSet (originCube d m)))
-    (w : H10Function (openCubeSet (originCube d m)))
-    (hval : ∀ y, w.toFun y = u.toFun y - h.toFun y)
-    (hgrad : ∀ y, w.grad y = u.grad y - h.grad y) :
-    (eLpNorm (fun y => u.toFun y - h.toFun y) 2
-        (Support.normalizedVolumeMeasureOn
-          ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-            openCubeSet (originCube d (n + 2))))).toReal ≤
-      (3 : ℝ) ^ d * (boundaryWindowPoincareConst d * (3 : ℝ) ^ n) *
-        ∑ i : Fin d,
-          (eLpNorm (fun y => u.grad y i - h.grad y i) 2
-            (Support.normalizedVolumeMeasureOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))))).toReal := by
-  classical
-  -- finiteness of the window norm
-  have hsub : (((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-      openCubeSet (originCube d m)) ⊆ openCubeSet (originCube d m) :=
-    Set.inter_subset_right
-  have hmemWin : MemLp (fun y => u.toFun y - h.toFun y) 2
-      (volume.restrict ((((fun y' => z + y') ''
-        openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m)))) :=
-    (u.memL2.sub h.memL2).mono_measure (Measure.restrict_mono hsub le_rfl)
-  have hfinWin : eLpNorm (fun y => u.toFun y - h.toFun y) 2
-      (Support.normalizedVolumeMeasureOn ((((fun y' => z + y') ''
-        openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m)))) ≠ ⊤ :=
-    eLpNorm_normalizedVolumeMeasureOn_ne_top hmemWin.2.ne
-  -- the covering transport, in real form
-  have htrans := eLpNorm_coveringCube_atWindow hcov
-    (fun y => u.toFun y - h.toFun y)
-  have hRne : ENNReal.ofReal ((3 : ℝ) ^ d) *
-      eLpNorm (fun y => u.toFun y - h.toFun y) 2
-        (Support.normalizedVolumeMeasureOn ((((fun y' => z + y') ''
-          openCubeSet (originCube d (n + 3))) ∩
-          openCubeSet (originCube d m)))) ≠ ⊤ :=
-    ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfinWin
-  have hreal := ENNReal.toReal_mono hRne htrans
-  rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (by positivity)] at hreal
-  -- the boundary Poincaré on the window
-  have hpoin := eLpNorm_sub_le_boundaryWindowPoincare hfr u h w hval hgrad
-  have h3d : (0 : ℝ) ≤ (3 : ℝ) ^ d := by positivity
-  calc (eLpNorm (fun y => u.toFun y - h.toFun y) 2
-        (Support.normalizedVolumeMeasureOn
-          ((fun y => wellPlacedCentre x m (n + 2) + y) ''
-            openCubeSet (originCube d (n + 2))))).toReal
-      ≤ (3 : ℝ) ^ d *
-          (eLpNorm (fun y => u.toFun y - h.toFun y) 2
-            (Support.normalizedVolumeMeasureOn ((((fun y' => z + y') ''
-              openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m))))).toReal := hreal
-    _ ≤ (3 : ℝ) ^ d *
-          (boundaryWindowPoincareConst d * (3 : ℝ) ^ n *
-            ∑ i : Fin d,
-              (eLpNorm (fun y => u.grad y i - h.grad y i) 2
-                (Support.normalizedVolumeMeasureOn ((((fun y' => z + y') ''
-                  openCubeSet (originCube d (n + 3))) ∩
-                  openCubeSet (originCube d m))))).toReal) :=
-        mul_le_mul_of_nonneg_left hpoin h3d
-    _ = (3 : ℝ) ^ d * (boundaryWindowPoincareConst d * (3 : ℝ) ^ n) *
-          ∑ i : Fin d,
-            (eLpNorm (fun y => u.grad y i - h.grad y i) 2
-              (Support.normalizedVolumeMeasureOn ((((fun y' => z + y') ''
-                openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))))).toReal := by ring
 
 end
 

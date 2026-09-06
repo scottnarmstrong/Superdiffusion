@@ -180,7 +180,8 @@ that the closed cube meets the boundary `∂□_m`. -/
 def TouchesBoundary (m : ℤ) (R : TriadicCube d) : Prop :=
   ∃ i : Fin d, R.index i = rootExtreme m R.scale ∨ R.index i = -rootExtreme m R.scale
 
-instance (m : ℤ) : DecidablePred (TouchesBoundary (d := d) m) := fun R => by
+instance instDecidablePredTouchesBoundary (m : ℤ) :
+    DecidablePred (TouchesBoundary (d := d) m) := fun R => by
   unfold TouchesBoundary; infer_instance
 
 /-! ## Triadic subdivision -/

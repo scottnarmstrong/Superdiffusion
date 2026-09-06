@@ -1,10 +1,10 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Frozen.Section4.HarmonicApproximation
-import Algsuperdiff.Section4.Provider.ExcessDecay.EdAssemblyLegs
+import Algsuperdiff.Section4.Provider.ExcessDecay.EnnrealShell
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepEntry
 import Algsuperdiff.Section4.Provider.ExcessDecay.RecutAtoms
 
@@ -36,9 +36,9 @@ chain: `𝓔` is only ever bounded downstream (`𝓔 ≤ ε_j`), never inverted.
 
 That leg is a bare `ofReal`, with no `ℝ≥0∞` carrier of its own.  So
 the shell atoms change shape — `ofReal c₁ * (X + ofReal b) + ofReal c₂ * Y +
-ofReal c₃ * Z + ofReal c₄` instead of `EdAssemblyLegs`' four-carrier form — and
+ofReal c₃ * Z + ofReal c₄` instead of the four-carrier form — and
 the finiteness slot needs three finite carriers instead of four: the `∇h` `L̲²`
-`MemLp` obligation of `EdAssemblyAnchor` is gone, because a real number's
+`MemLp` obligation of the unweighted anchor is gone, because a real number's
 `ofReal` is finite outright.
 
 ## References
@@ -112,7 +112,7 @@ theorem ofReal_mul_bracket_add_two_add_flat_ne_top {c₁ b c₂ c₃ c₄ : ℝ}
 /-- **The harmonic-approximation anchor, applied at the one-step window
 choice.**
 
-`EdAssemblyAnchor.exists_oneStepAnchorBound` re-run at the error-weighted
+The harmonic-approximation anchor bound re-run at the error-weighted
 statement.  For a.e.  `ω`, every Dirichlet datum on `□_m` and every harmonic
 replacement on the moved cube `y + □_{n-2}`, the general clause is available as
 a finite bound `B` on the (unchanged) gated indicator, together with the

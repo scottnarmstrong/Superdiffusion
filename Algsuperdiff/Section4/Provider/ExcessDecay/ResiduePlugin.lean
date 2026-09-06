@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.ResidueRouteOne
 import Algsuperdiff.Section4.Provider.ExcessDecay.ResidueScalarFlush
@@ -72,22 +72,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ## 1. The loop-resolution arithmetic -/
-
-/-- **The `S`-loop, solved.**
-
-`R ≤ B + p·S` with `S ≤ c·(a + R)` and `2·p·c ≤ 1` gives `R ≤ 2B + 2·p·c·a`.
-Pure real arithmetic on nonnegative data. -/
-theorem loop_resolution {R B S p c a : ℝ} (hR0 : 0 ≤ R) (hp : 0 ≤ p)
-    (hR : R ≤ B + p * S) (hS : S ≤ c * (a + R)) (hpc : 2 * (p * c) ≤ 1) :
-    R ≤ 2 * B + 2 * (p * c) * a := by
-  have hpS : p * S ≤ p * (c * (a + R)) := mul_le_mul_of_nonneg_left hS hp
-  have hR' : R ≤ B + p * (c * (a + R)) := by linarith only [hR, hpS]
-  have hexp : p * (c * (a + R)) = (p * c) * a + (p * c) * R := by ring
-  rw [hexp] at hR'
-  have hkey : (p * c) * R ≤ (1 / 2 : ℝ) * R := by
-    have h := mul_le_mul_of_nonneg_right hpc hR0
-    linarith only [h]
-  linarith only [hR', hkey]
 
 /-! ## 2. The plug-in corollary -/
 

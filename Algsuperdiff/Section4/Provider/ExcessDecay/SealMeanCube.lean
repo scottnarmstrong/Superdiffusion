@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.MeanFinalMeanBound
 import Algsuperdiff.Section4.Provider.ExcessDecay.MeanControlWindowCube
@@ -378,6 +378,54 @@ theorem coef_eq_of_sq {CH L lam w : ℝ} (hL0 : L ≠ 0) (hw : w ^ 2 = (lam * L)
 
 /-! ## 4. `(A)` at a cube with a flush face -/
 
+/-- The five slab memberships consumed at the **upper** flush face `{yᵢ = cᵢ + L/2}`.
+
+Stated separately so that the five-component anonymous constructor is elaborated
+in a five-hypothesis context rather than inside the main assembly. -/
+private theorem sealSlabMem_upper {c : Vec d} {i : Fin d} {L hs : ℝ} (hhs0 : 0 < hs) :
+    ∀ y ∈ axisBox c i (c i + L / 2 - hs) (c i + L / 2) (L / 4),
+      y ∈ axisBox c i (c i + L / 2 - 2 * hs) (c i + L / 2 + hs) (L / 4) ∧
+      coordFaceReflection (c i + L / 2) i y
+        ∈ axisBox c i (c i + L / 2 - 2 * hs) (c i + L / 2 + hs) (L / 4) ∧
+      y - hs • (basisVec i : Vec d)
+        ∈ axisBox c i (c i + L / 2 - 2 * hs) (c i + L / 2 + hs) (L / 4) ∧
+      0 < (c i + L / 2 - y i) / hs ∧ (c i + L / 2 - y i) / hs ≤ 1 := by
+  intro y hy
+  have hy' := mem_axisBox_iff.mp hy
+  refine ⟨axisBox_subset_axisBox (by linarith only [hhs0]) (by linarith only [hhs0])
+      (le_refl _) hy, ?_, ?_, ?_, ?_⟩
+  · exact coordFaceReflection_mem_axisBox hy (by linarith only [hhs0])
+      (by linarith only []) (le_refl _)
+  · exact sub_smul_basisVec_mem_axisBox hy (by linarith only [])
+      (by linarith only [hhs0]) (le_refl _)
+  · exact div_pos (by linarith only [hy'.1.2]) hhs0
+  · exact (div_le_one hhs0).mpr (by linarith only [hy'.1.1])
+
+/-- The five slab memberships consumed at the **lower** flush face `{yᵢ = cᵢ − L/2}`,
+the mirror image of `sealSlabMem_upper` with the inward step `-hs`. -/
+private theorem sealSlabMem_lower {c : Vec d} {i : Fin d} {L hs : ℝ} (hhs0 : 0 < hs) :
+    ∀ y ∈ axisBox c i (c i - L / 2) (c i - L / 2 + hs) (L / 4),
+      y ∈ axisBox c i (c i - L / 2 - hs) (c i - L / 2 + 2 * hs) (L / 4) ∧
+      coordFaceReflection (c i - L / 2) i y
+        ∈ axisBox c i (c i - L / 2 - hs) (c i - L / 2 + 2 * hs) (L / 4) ∧
+      y - (-hs) • (basisVec i : Vec d)
+        ∈ axisBox c i (c i - L / 2 - hs) (c i - L / 2 + 2 * hs) (L / 4) ∧
+      0 < (c i - L / 2 - y i) / (-hs) ∧ (c i - L / 2 - y i) / (-hs) ≤ 1 := by
+  intro y hy
+  have hy' := mem_axisBox_iff.mp hy
+  have hdiv : (c i - L / 2 - y i) / (-hs) = (y i - (c i - L / 2)) / hs := by
+    rw [show c i - L / 2 - y i = -(y i - (c i - L / 2)) from by ring, neg_div_neg_eq]
+  refine ⟨axisBox_subset_axisBox (by linarith only [hhs0]) (by linarith only [hhs0])
+      (le_refl _) hy, ?_, ?_, ?_, ?_⟩
+  · exact coordFaceReflection_mem_axisBox hy (by linarith only [])
+      (by linarith only [hhs0]) (le_refl _)
+  · exact sub_smul_basisVec_mem_axisBox hy (by linarith only [hhs0])
+      (by linarith only []) (le_refl _)
+  · rw [hdiv]
+    exact div_pos (by linarith only [hy'.1.1]) hhs0
+  · rw [hdiv]
+    exact (div_le_one hhs0).mpr (by linarith only [hy'.1.2])
+
 /-- **`(A)` at a flush cube.**
 
 Let `K = sealCube c L` be the cube of centre `c` and side `L > 0`, let `σ = ±1`
@@ -491,17 +539,8 @@ theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
           ∈ axisBox c i (c i + L / 2 - 2 * hs) (c i + L / 2 + hs) (L / 4) ∧
         y - hs • (basisVec i : Vec d)
           ∈ axisBox c i (c i + L / 2 - 2 * hs) (c i + L / 2 + hs) (L / 4) ∧
-        0 < (c i + L / 2 - y i) / hs ∧ (c i + L / 2 - y i) / hs ≤ 1 := by
-      intro y hy
-      have hy' := mem_axisBox_iff.mp hy
-      refine ⟨axisBox_subset_axisBox (by linarith only [hhs0]) (by linarith only [hhs0])
-          (le_refl _) hy, ?_, ?_, ?_, ?_⟩
-      · exact coordFaceReflection_mem_axisBox hy (by linarith only [hhs0])
-          (by linarith only []) (le_refl _)
-      · exact sub_smul_basisVec_mem_axisBox hy (by linarith only [])
-          (by linarith only [hhs0]) (le_refl _)
-      · exact div_pos (by linarith only [hy'.1.2]) hhs0
-      · exact (div_le_one hhs0).mpr (by linarith only [hy'.1.1])
+        0 < (c i + L / 2 - y i) / hs ∧ (c i + L / 2 - y i) / hs ≤ 1 :=
+      sealSlabMem_upper hhs0
     have hballs : ∀ z ∈ axisBox c i (c i + L / 2 - 2 * hs) (c i + L / 2 + hs) (L / 4),
         Metric.ball z (L / 8) ⊆ axisBox c i (c i - L / 2) (c i + 3 * L / 2) (L / 2) := by
       intro z hz
@@ -593,21 +632,8 @@ theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
           ∈ axisBox c i (c i - L / 2 - hs) (c i - L / 2 + 2 * hs) (L / 4) ∧
         y - (-hs) • (basisVec i : Vec d)
           ∈ axisBox c i (c i - L / 2 - hs) (c i - L / 2 + 2 * hs) (L / 4) ∧
-        0 < (c i - L / 2 - y i) / (-hs) ∧ (c i - L / 2 - y i) / (-hs) ≤ 1 := by
-      intro y hy
-      have hy' := mem_axisBox_iff.mp hy
-      have hdiv : (c i - L / 2 - y i) / (-hs) = (y i - (c i - L / 2)) / hs := by
-        rw [show c i - L / 2 - y i = -(y i - (c i - L / 2)) from by ring, neg_div_neg_eq]
-      refine ⟨axisBox_subset_axisBox (by linarith only [hhs0]) (by linarith only [hhs0])
-          (le_refl _) hy, ?_, ?_, ?_, ?_⟩
-      · exact coordFaceReflection_mem_axisBox hy (by linarith only [])
-          (by linarith only [hhs0]) (le_refl _)
-      · exact sub_smul_basisVec_mem_axisBox hy (by linarith only [hhs0])
-          (by linarith only []) (le_refl _)
-      · rw [hdiv]
-        exact div_pos (by linarith only [hy'.1.1]) hhs0
-      · rw [hdiv]
-        exact (div_le_one hhs0).mpr (by linarith only [hy'.1.2])
+        0 < (c i - L / 2 - y i) / (-hs) ∧ (c i - L / 2 - y i) / (-hs) ≤ 1 :=
+      sealSlabMem_lower hhs0
     have hballs : ∀ z ∈ axisBox c i (c i - L / 2 - hs) (c i - L / 2 + 2 * hs) (L / 4),
         Metric.ball z (L / 8) ⊆ axisBox c i (c i - 3 * L / 2) (c i + L / 2) (L / 2) := by
       intro z hz
@@ -698,11 +724,6 @@ theorem sealFlushSubCentre_apply_self (z : Vec d) (m k n : ℤ) (i : Fin d) (sg 
       = wellPlacedCentre z m k i + sg * (((3 : ℝ) ^ k - (3 : ℝ) ^ n) / 2) := by
   rw [sealFlushSubCentre_apply, if_pos (rfl : i = i)]
 
-theorem sealFlushSubCentre_apply_of_ne (z : Vec d) (m k n : ℤ) {i r : Fin d} (sg : ℝ)
-    (hr : r ≠ i) :
-    sealFlushSubCentre z m k n i sg r = wellPlacedCentre z m k r := by
-  rw [sealFlushSubCentre_apply, if_neg hr, add_zero]
-
 /-- **The flush face sits in the frontier hyperplane.**
 
 On the boundary branch the `σeᵢ` face of the well-placed cube of side `3ᵏ` lies
@@ -720,18 +741,6 @@ theorem sealFlushSubCentre_faceLevel {m k n : ℤ} (hkm : k ≤ m) {z : Vec d} {
     linarith only [hflush]
   · simp only [neg_mul, one_mul] at hflush ⊢
     linarith only [hflush]
-
-/-- The scale-`k` specialisation: the `σeᵢ` face of the well-placed cube itself. -/
-theorem wellPlacedCentre_faceLevel_signed {m k : ℤ} (hkm : k ≤ m) {z : Vec d}
-    {i : Fin d} {sg : ℝ} (hsg : sg = 1 ∨ sg = -1)
-    (hover : wellPlacedHalfGap m k < sg * z i) :
-    wellPlacedCentre z m k i + sg * ((3 : ℝ) ^ k / 2)
-      = sg * ((1 / 2 : ℝ) * (3 : ℝ) ^ m) := by
-  have h := sealFlushSubCentre_faceLevel (n := k) hkm hsg hover
-  rw [sealFlushSubCentre_apply_self] at h
-  have hz : (((3 : ℝ) ^ k - (3 : ℝ) ^ k) / 2) = 0 := by ring
-  rw [hz, mul_zero, add_zero] at h
-  exact h
 
 /-- **`(A)` at the flush sub-cube of the boundary branch.**
 

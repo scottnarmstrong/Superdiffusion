@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.SeriesTail
 import Algsuperdiff.Section4.Support.Events
@@ -24,9 +24,7 @@ This module proves it.
   has integer coordinates bounded by `3^{outer−j}` (crude by a factor `2`, which
   costs nothing downstream).
 * `latticeAnnulusFinset` — the `Finset` of those index vectors, with
-  `coe_latticeAnnulusFinset` identifying it with the proved *set*
-  `Support.latticeAnnulusSet` and `card_latticeAnnulusFinset_le` giving `# ≤
-  3^{d(outer−j+1)}`.
+  `card_latticeAnnulusFinset_le` giving `# ≤ 3^{d(outer−j+1)}`.
 * `log_card_latticeAnnulusFinset_le` — the form the union bound consumes, and
   `annulusPenalty` / `log_card_le_annulusPenalty_rpow_sub_one` — the admissible
   penalty `c` of `isBigOWith_fmax`, which at `σ = 1/3` is a *cubic* in
@@ -145,13 +143,6 @@ theorem mem_latticeAnnulusFinset_iff {j outer inner : ℤ} (hj : j ≤ outer)
     refine ⟨mem_boxIndexFinset_iff.2 fun i => ?_, h⟩
     exact abs_le_of_mem_latticeCubeSet hj
       (show v ∈ Support.latticeCubeSet d j outer from h.1) i
-
-/-- The `Finset` and the proved set coincide, as sets. -/
-theorem coe_latticeAnnulusFinset {j outer inner : ℤ} (hj : j ≤ outer) :
-    (↑(latticeAnnulusFinset d j outer inner) : Set (Fin d → ℤ))
-      = Support.latticeAnnulusSet d j outer inner := by
-  ext v
-  simpa only [Finset.mem_coe] using mem_latticeAnnulusFinset_iff (d := d) hj (v := v)
 
 /-- **The count.**  `#(3^j ℤ^d ∩ (□_outer ∖ □_inner)) ≤ 3^{d(outer−j+1)}`. -/
 theorem card_latticeAnnulusFinset_le (d : ℕ) {j outer inner : ℤ} :

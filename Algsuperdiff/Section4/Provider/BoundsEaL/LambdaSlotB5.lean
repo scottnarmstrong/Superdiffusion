@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.BoundsEaL.MomentEngine
 import Algsuperdiff.Section4.Provider.Proportion.AtomTail
@@ -64,13 +64,6 @@ variable {d : ℕ}
 
 /-! ## 1. The `σ = 1/3` moment majorant -/
 
-/-- The `q^{1/σ}` of `l.moments.gamma.psi` at `σ = 1/3` is `q³` -- the printed
-cubic factor of bullet (B5). -/
-theorem gammaMomentBound_third_eq (p A : ℝ) :
-    gammaMomentBound (1 / 3) p A = gammaMomentConst (1 / 3) * p ^ (3 : ℝ) * A := by
-  have he : (((1 : ℝ)) / 3)⁻¹ = (3 : ℝ) := by norm_num
-  rw [gammaMomentBound, he]
-
 /-! ## 2. The deterministic rearrangement -/
 
 /-- **The bullet's shape, pointwise.**
@@ -128,195 +121,9 @@ theorem measurable_cgExcess (M : ABKModel d) (Ccg : ℝ) (k : ℤ) (z : Vec d) :
   exact (((Support.measurable_lambdaAnnulusAtom M k z).const_mul _).sub_const
     _).max measurable_const
 
-/-- The Orlicz half of the bullet, with the `σ̄_{k−3}^{-1}` factor moved onto the
-amplitude: `σ̄_{k−3}^{-1}𝒳 ≤ 𝒪_{Γ_{1/3}}(σ̄_{k−3}^{-1}exp(−(C_cg C²)^{-1}c⋆²γ^{-1}))`,
-the printed `𝒪_{Γ_{1/3}}(Cσ̄_{j−1}^{-1}exp(−C^{-1}γ^{-1}))`. -/
-theorem isBigOWith_inv_sigmaBar_mul_cgExcess (M : ABKModel d) {Ccg A : ℝ}
-    (k : ℤ) (z : Vec d)
-    (h : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 3 : ℝ))
-      (fun omega => Localize.cgExcess M Ccg (k - 2) z omega) A) :
-    IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 3 : ℝ))
-      (fun omega => ((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ *
-        Localize.cgExcess M Ccg (k - 2) z omega)
-      (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ * A) :=
-  IsBigOWith.const_mul
-    (inv_nonneg.mpr (Provider.Orlicz.sigmaBar_pos M (k - 3)).le) h
-
 /-! ## 3. The moment conversion at the anchor's own premises -/
 
-/-- **(B5) at every moment `q ∈ [1,∞)`, at the anchor's own premises.**
-
-```
-E[λ_{γ,2}^{-q}(z+□_{k−2} ; 𝐚_{k−2})]^{1/q}
-  ≤ σ̄_{k−3}^{-1}C_cg + C(1/3) q³ σ̄_{k−3}^{-1}exp(−(C_cg^{-1}E^{-2}γ^{-1})) ,
-```
-the printed `C σ̄_{j−1}^{-1}(1 + C q³ exp(−C^{-1}γ^{-1}))` with the two
-summands kept apart (the printed factorization is a constant rearrangement,
-performed by the consumer).
-
-Hypotheses: exactly the `p.cg.ellipticity.bounds` premises of
-`Proportion.isBigOWith_cgExcess_of_state`, at `σ = 1/3`, `s = γ`, `q = 2`. -/
-theorem lintegral_rpow_lambdaAnnulusAtom_le_of_state (M : ABKModel d)
-    {E : {E : ℝ // 1 ≤ E}} (k : ℤ) (z : Vec d)
-    (hstate : Algsuperdiff.Frozen.Section3.inductionState M (k - 3) E)
-    (hE : max (Real.exp (Support.cgEllipLowerConstant d / (1 / 3 : ℝ)))
-        (Disorder.cstar M)⁻¹ ≤ (E : ℝ))
-    (hEup : (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)))
-    (hwin : Proportion.cgTailScale M (E : ℝ) ≤ M.gamma / 2)
-    {p : ℝ} (hp : 1 ≤ p) :
-    ∫⁻ omega : Cutoff.CutoffSample d,
-        ENNReal.ofReal (Support.lambdaAnnulusAtom M k z omega) ^ p
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure
-      ≤ ENNReal.ofReal
-          (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ * Support.cgEllipLowerConstant d +
-            gammaMomentBound (1 / 3) p
-              (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ *
-                Proportion.cgTailScale M (E : ℝ))) ^ p := by
-  have hSpos : (0 : ℝ) < (Annealed.sigmaBar M (k - 3) : ℝ) :=
-    Provider.Orlicz.sigmaBar_pos M (k - 3)
-  have hSinv : (0 : ℝ) < ((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ := inv_pos.mpr hSpos
-  have hCcg : (0 : ℝ) < Support.cgEllipLowerConstant d :=
-    Support.cgEllipLowerConstant_pos d
-  have htail := isBigOWith_inv_sigmaBar_mul_cgExcess M k z
-    (Proportion.isBigOWith_cgExcess_of_state M k z hstate hE hEup hwin)
-  refine lintegral_rpow_le_of_isBigOWith_add_const_of_ae_le (by norm_num)
-    (mul_pos hSinv (Proportion.cgTailScale_pos M (E : ℝ))) hp
-    (mul_nonneg hSinv.le hCcg.le)
-    (fun omega => mul_nonneg hSinv.le (Localize.cgExcess_nonneg M _ _ z omega))
-    (((measurable_cgExcess M (Support.cgEllipLowerConstant d) k z).const_mul
-      _).aemeasurable) htail ?_ le_rfl
-  refine Filter.Eventually.of_forall fun omega => ENNReal.ofReal_le_ofReal ?_
-  exact lambdaAnnulusAtom_le_inv_sigmaBar_mul_add M
-    (Support.cgEllipLowerConstant d) k z omega
-
-/-- **(B5) at every moment, packaged through the all-scales budget.**
-
-The induction state and both `E`-window premises of `p.cg.ellipticity.bounds`
-are discharged (`Proportion.exists_cgExcess_atomTail`).  The `s`-window `hwin` is the
-anchor's own and remains a caller obligation. -/
-theorem exists_lintegral_rpow_lambdaAnnulusAtom_le (d : ℕ) :
-    ∃ C : ℝ, 6 ≤ C ∧
-      ∀ M : ABKModel d,
-        M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∃ E : {E : ℝ // 1 ≤ E},
-          (E : ℝ) = C * (Disorder.cstar M)⁻¹ ∧
-            (Proportion.cgTailScale M (E : ℝ) ≤ M.gamma / 2 →
-              ∀ (k : ℤ) (z : Vec d) (p : ℝ), 1 ≤ p →
-                ∫⁻ omega : Cutoff.CutoffSample d,
-                    ENNReal.ofReal (Support.lambdaAnnulusAtom M k z omega) ^ p
-                    ∂(Cutoff.cutoffSampleLaw M).toMeasure
-                  ≤ ENNReal.ofReal
-                      (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ *
-                          Support.cgEllipLowerConstant d +
-                        gammaMomentBound (1 / 3) p
-                          (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ *
-                            Proportion.cgTailScale M (E : ℝ))) ^ p) := by
-  obtain ⟨C, hC6, hall⟩ := Proportion.exists_cgExcess_atomTail d
-  refine ⟨C, hC6, fun M hreg => ?_⟩
-  obtain ⟨E, hEval, htail⟩ := hall M hreg
-  refine ⟨E, hEval, fun hwin k z p hp => ?_⟩
-  have hSpos : (0 : ℝ) < (Annealed.sigmaBar M (k - 3) : ℝ) :=
-    Provider.Orlicz.sigmaBar_pos M (k - 3)
-  have hSinv : (0 : ℝ) < ((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ := inv_pos.mpr hSpos
-  have hCcg : (0 : ℝ) < Support.cgEllipLowerConstant d :=
-    Support.cgEllipLowerConstant_pos d
-  have hbig := isBigOWith_inv_sigmaBar_mul_cgExcess M k z (htail hwin k z)
-  refine lintegral_rpow_le_of_isBigOWith_add_const_of_ae_le (by norm_num)
-    (mul_pos hSinv (Proportion.cgTailScale_pos M (E : ℝ))) hp
-    (mul_nonneg hSinv.le hCcg.le)
-    (fun omega => mul_nonneg hSinv.le (Localize.cgExcess_nonneg M _ _ z omega))
-    (((measurable_cgExcess M (Support.cgEllipLowerConstant d) k z).const_mul
-      _).aemeasurable) hbig ?_ le_rfl
-  refine Filter.Eventually.of_forall fun omega => ENNReal.ofReal_le_ofReal ?_
-  exact lambdaAnnulusAtom_le_inv_sigmaBar_mul_add M
-    (Support.cgEllipLowerConstant d) k z omega
-
 /-! ## 4. The gapped gauge `s̃ = 2γ` -/
-
-/-- The dimension of a model is nonzero.  Local re-derivation (distinct name)
-of the `private neZero_of_model` of five proved modules. -/
-private theorem neZeroOfModel (M : ABKModel d) : NeZero d :=
-  ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
-
-/-- The centred `λ`-literal IS `λ_{s,q}^{-1}` of the Chapter 2 carrier on the
-origin cube.  Local re-derivation (distinct name) of
-`Localize.cutoffLowerEllipticityInvLiteral_eq_inv_lambdaSq`, whose module is
-not in this file's import closure; the proof is the same two-step composition
-of the proved `BadEvents.cubeLowerEllipticityInvLiteral_originCube` (an `rfl`)
-with `Multiscale.cubeLowerEllipticityInvLiteral_eq_lambdaSq_inv`. -/
-private theorem literal_eq_inv_lambdaSq [NeZero d] (M : ABKModel d)
-    (domainScale cutoffScale : ℤ) (s : ℝ) (q : CoarseEllipticityExponent)
-    (omega : Cutoff.CutoffSample d) :
-    Observable.cutoffLowerEllipticityInvLiteral M domainScale cutoffScale s q
-        omega =
-      (Ch02.lambdaSq (originCube d domainScale) s q.1
-        (Cutoff.coefficientCutoffTriadicCoeffFamily M cutoffScale omega))⁻¹ := by
-  rw [← Algsuperdiff.Section3.Provider.BadEvents.cubeLowerEllipticityInvLiteral_originCube
-      M domainScale cutoffScale s q,
-    Algsuperdiff.Section3.Provider.Multiscale.cubeLowerEllipticityInvLiteral_eq_lambdaSq_inv]
-
-/-- **Transport to the gapped gauge, at constant `1`.**  `λ^{-1}` is antitone in
-the gauge exponent, so the `γ`-gauge atom dominates the `2γ`-gauge one
-pointwise.  This is A9's "the event side is free" direction; the converse does
-NOT hold and is not claimed. -/
-theorem lambdaAtom_twoGamma_le_lambdaAnnulusAtom (M : ABKModel d) (k : ℤ)
-    (z : Vec d) (omega : Cutoff.CutoffSample d) :
-    Observable.cutoffLowerEllipticityInvLiteral M (k - 2) (k - 2) (2 * M.gamma)
-        Support.coarseEllipticityExponentTwo
-        (Cutoff.translateCutoffSample z omega) ≤
-      Support.lambdaAnnulusAtom M k z omega := by
-  haveI : NeZero d := neZeroOfModel M
-  have hg : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  rw [Support.lambdaAnnulusAtom,
-    literal_eq_inv_lambdaSq M (k - 2) (k - 2) (2 * M.gamma)
-      Support.coarseEllipticityExponentTwo (Cutoff.translateCutoffSample z omega),
-    literal_eq_inv_lambdaSq M (k - 2) (k - 2) M.gamma
-      Support.coarseEllipticityExponentTwo (Cutoff.translateCutoffSample z omega)]
-  exact Localize.inv_lambdaSq_antitone_gauge (originCube d (k - 2)) _ hg
-    (by linarith only [hg]) Support.coarseEllipticityExponentTwo.2
-
-/-- **(B5) at the gapped gauge `s̃ = 2γ`.**  The same moment bound, for the
-`λ`-slot the Step-3 consumer on this tree actually reads. -/
-theorem exists_lintegral_rpow_lambdaAtom_twoGamma_le (d : ℕ) :
-    ∃ C : ℝ, 6 ≤ C ∧
-      ∀ M : ABKModel d,
-        M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
-        ∃ E : {E : ℝ // 1 ≤ E},
-          (E : ℝ) = C * (Disorder.cstar M)⁻¹ ∧
-            (Proportion.cgTailScale M (E : ℝ) ≤ M.gamma / 2 →
-              ∀ (k : ℤ) (z : Vec d) (p : ℝ), 1 ≤ p →
-                ∫⁻ omega : Cutoff.CutoffSample d,
-                    ENNReal.ofReal
-                      (Observable.cutoffLowerEllipticityInvLiteral M (k - 2) (k - 2)
-                        (2 * M.gamma) Support.coarseEllipticityExponentTwo
-                        (Cutoff.translateCutoffSample z omega)) ^ p
-                    ∂(Cutoff.cutoffSampleLaw M).toMeasure
-                  ≤ ENNReal.ofReal
-                      (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ *
-                          Support.cgEllipLowerConstant d +
-                        gammaMomentBound (1 / 3) p
-                          (((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ *
-                            Proportion.cgTailScale M (E : ℝ))) ^ p) := by
-  obtain ⟨C, hC6, hall⟩ := Proportion.exists_cgExcess_atomTail d
-  refine ⟨C, hC6, fun M hreg => ?_⟩
-  obtain ⟨E, hEval, htail⟩ := hall M hreg
-  refine ⟨E, hEval, fun hwin k z p hp => ?_⟩
-  have hSpos : (0 : ℝ) < (Annealed.sigmaBar M (k - 3) : ℝ) :=
-    Provider.Orlicz.sigmaBar_pos M (k - 3)
-  have hSinv : (0 : ℝ) < ((Annealed.sigmaBar M (k - 3) : ℝ))⁻¹ := inv_pos.mpr hSpos
-  have hCcg : (0 : ℝ) < Support.cgEllipLowerConstant d :=
-    Support.cgEllipLowerConstant_pos d
-  have hbig := isBigOWith_inv_sigmaBar_mul_cgExcess M k z (htail hwin k z)
-  refine lintegral_rpow_le_of_isBigOWith_add_const_of_ae_le (by norm_num)
-    (mul_pos hSinv (Proportion.cgTailScale_pos M (E : ℝ))) hp
-    (mul_nonneg hSinv.le hCcg.le)
-    (fun omega => mul_nonneg hSinv.le (Localize.cgExcess_nonneg M _ _ z omega))
-    (((measurable_cgExcess M (Support.cgEllipLowerConstant d) k z).const_mul
-      _).aemeasurable) hbig ?_ le_rfl
-  refine Filter.Eventually.of_forall fun omega => ENNReal.ofReal_le_ofReal ?_
-  exact le_trans (lambdaAtom_twoGamma_le_lambdaAnnulusAtom M k z omega)
-    (lambdaAnnulusAtom_le_inv_sigmaBar_mul_add M
-      (Support.cgEllipLowerConstant d) k z omega)
 
 end
 

@@ -41,21 +41,20 @@ depending only on `d`.
 That is exactly the content of
 `Algsuperdiff.Section3.Probability.IsCommonEventTwoTermBigOWith`, and the
 aggregation below produces it through the abstract engine of
-`Provider/Orlicz/CommonEventAggregation.lean`.  SSB.1 (the two Orlicz terms
-stay separate and one-sided) is respected throughout: the two lanes are never
-merged.
+`Provider/Orlicz/CommonEventAggregation.lean`.  The two Orlicz terms stay
+separate and one-sided throughout: the two lanes are never merged.
 
 ## The direction net
 
-SSB.2 records that the maximization is over one Euclidean unit vector and that
-convexity reduces it to a finite net at a dimensional cost.  The reduction
+In the source the maximization is over one Euclidean unit vector, and convexity
+reduces it to a finite net at a dimensional cost.  The reduction
 against this repository's carrier is in the companion module
 `Provider/Homogenization/UnionDirectionNet.lean`: on one probability-one
 event, simultaneously for every cutoff scale and every unit direction, the
 Section 3.5 response is at most `2 ^ d` times the sum of its values at the `d`
 coordinate directions, hence at most `2 ^ d * d` times one of them.  The two
-deliberate deviations from SSB.2 --- the coordinate net in place of the sign
-vertices, and the cost
+deliberate deviations from that reduction --- the coordinate net in place of the
+sign vertices, and the cost
 `2 ^ d` (or `2 ^ d * d`) in place of `d` --- are recorded in that module's
 docstring, together with the two places inside the printed budget
 `k = k1 + k2 <= C(d) |log epsilon|` where the extra factor is absorbed: the

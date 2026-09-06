@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.RootPayloadDataB
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenLambdaSlots
@@ -38,7 +38,8 @@ theorem sqrt_rpow_three (e : ℝ) :
   have h3 : e * (1 / 2 : ℝ) = e / 2 := by ring
   rw [h1, ← h2, h3]
 
-/-- **The `dataM` field of `RootClauseBPayload`, produced.** -/
+/-- **The clause-(B) `dataM` leg, produced**: the Caccioppoli's own data leg
+against the printed `K_g`-leg. -/
 theorem rootClauseB_dataM [NeZero d] {M : ABKModel d} {m0 : ℤ}
     {Ecap : {E : ℝ // 1 ≤ E}}
     (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 Ecap)

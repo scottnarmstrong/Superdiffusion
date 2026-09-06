@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Support.FluxCorrectedTwoScale
 import Homogenization.Book.Ch03.ABK26.LocalCoarseGrainingResponse
@@ -59,12 +59,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ## 1. The comparator is literally CoarseGraining's scalar matrix -/
-
-/-- The Section 3 isotropic comparator IS CoarseGraining's scalar matrix at the
-same scalar.  Both are `σ • 1`; this only records the name change. -/
-theorem isotropicComparatorMatrix_eq_scalarMatrix (sigma : PositiveScalar) :
-    (isotropicComparatorMatrix sigma : Mat d) = scalarMatrix (d := d) (sigma : ℝ) :=
-  rfl
 
 /-! ## 2. The response maximum sees the coefficient only through its a.e. class -/
 
@@ -223,13 +217,6 @@ theorem parentTruncatedTwo_fluxCorrected_eq_ofReal_representative [NeZero d]
       Real.sqrt_sq (fluxCorrectedTwoScaleErrorFunctional_nonneg M L m n t.1 omega)
 
 /-! ## 4. The public carrier, at the `{s // 0 < s}` order and a.e. -/
-
-theorem fluxCorrectedTwoScaleErrorRepresentative_eq_functional [NeZero d]
-    (M : ABKModel d) (L m n : ℤ) (s : {s : ℝ // 0 < s})
-    (omega : Cutoff.CutoffSample d) :
-    fluxCorrectedTwoScaleErrorRepresentative M L m n s omega =
-      fluxCorrectedTwoScaleErrorFunctional M L m n (s : ℝ) omega :=
-  rfl
 
 /-- **The a.e. two-argument carrier identification.**
 

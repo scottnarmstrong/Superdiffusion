@@ -235,7 +235,7 @@ theorem gradient_mul_cubeScaleFactor_mul_lambdaSq_inv_le [NeZero d]
   refine hstep.trans ?_
   rw [show (jGateConst d)⁻¹ = 1 / jGateConst d from inv_eq_one_div _,
     le_div_iff₀ hCpos]
-  nlinarith [hkey']
+  linarith only [hkey']
 
 /-! ## The mesoscopic gauge along the path -/
 
@@ -278,7 +278,9 @@ theorem cubeGauge_le_two_mul_zero [NeZero d] (dimension : 2 ≤ d)
     hΨnn hKnn hBnn hcrude hengine hstrict hτ0 hτ1
   refine hmain.trans ?_
   rw [div_le_iff₀ hpos]
-  nlinarith [hΨ0, hsmall]
+  have hnn2 : (0 : ℝ) ≤ 2 * cubeGauge R a h.toLInfSkewMatrixFieldOn 0 := by
+    linarith only [hΨ0]
+  linarith only [mul_le_mul_of_nonneg_right hsmall hnn2]
 
 /-! ## The two ODE coefficients -/
 
@@ -367,8 +369,15 @@ theorem four_mul_jTermACoeff_sq_le [NeZero d] (h : UnitCubeSkewW2Infinity d)
   have hkey : (Real.sqrt (valueBudget h R) +
       cubeScaleFactor R * h.gradientW1Infinity) ^ 2 ≤
       2 * (valueBudget h R + cubeScaleFactor R ^ 2 * h.gradientW1Infinity ^ 2) := by
-    nlinarith [sq_nonneg (Real.sqrt (valueBudget h R) -
-      cubeScaleFactor R * h.gradientW1Infinity), hsqV]
+    calc (Real.sqrt (valueBudget h R) +
+          cubeScaleFactor R * h.gradientW1Infinity) ^ 2
+        ≤ 2 * (Real.sqrt (valueBudget h R) ^ 2 +
+            (cubeScaleFactor R * h.gradientW1Infinity) ^ 2) := by
+          linarith only [sq_nonneg (Real.sqrt (valueBudget h R) -
+            cubeScaleFactor R * h.gradientW1Infinity)]
+      _ = 2 * (valueBudget h R +
+            cubeScaleFactor R ^ 2 * h.gradientW1Infinity ^ 2) := by
+          rw [hsqV]; ring
   have hKle : 4 * pqCubeConstA d ^ 2 ≤ jErrorConst d := le_max_left _ _
   have hVtot : (0 : ℝ) ≤ valueBudget h R +
       cubeScaleFactor R ^ 2 * h.gradientW1Infinity ^ 2 := by positivity
@@ -379,7 +388,7 @@ theorem four_mul_jTermACoeff_sq_le [NeZero d] (h : UnitCubeSkewW2Infinity d)
       (Ch02.lambdaSq R (3 / 8) (.finite 2) F)⁻¹ *
       (valueBudget h R + cubeScaleFactor R ^ 2 * h.gradientW1Infinity ^ 2) := by
     positivity
-  nlinarith [hstep, mul_le_mul_of_nonneg_right hKle hrest]
+  linarith only [hstep, mul_le_mul_of_nonneg_right hKle hrest]
 
 theorem four_mul_jTermBCoeff_sq_le [NeZero d] (h : UnitCubeSkewW2Infinity d)
     (F : TriadicCoeffFamily d) (R : TriadicCube d) {T : ℝ} (hT : 0 ≤ T) :

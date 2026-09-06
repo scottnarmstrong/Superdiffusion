@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryCoveringGeometry
 
@@ -154,24 +154,6 @@ theorem wellPlacedCentre_faceLevel {m k : ℤ} (hkm : k ≤ m) {z : Vec d} {i : 
       (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
   rw [wellPlacedCentre_flush hkm hσ hover, wellPlacedHalfGap]
   ring
-
-/-- **Every point of the flush cube is within `3^k` of the frontier hyperplane.**
-
-This is the quantitative content of "flush": no point of the well-placed cube is
-farther than one side length from the zero-trace locus, uniformly over every
-configuration the anchor's binders admit. -/
-theorem faceLevel_sub_lt_of_mem_wellPlacedCube {m k : ℤ} (hkm : k ≤ m) {z : Vec d}
-    {i : Fin d} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hover : wellPlacedHalfGap m k < σ * z i) {y : Vec d}
-    (hy : y ∈ (fun y' => wellPlacedCentre z m k + y') '' openCubeSet (originCube d k)) :
-    (1 / 2 : ℝ) * (3 : ℝ) ^ m - σ * y i < (3 : ℝ) ^ k := by
-  have hface := wellPlacedCentre_faceLevel hkm hσ hover
-  obtain ⟨hlo, hhi⟩ := mem_image_add_openCubeSet_coord_iff.mp hy i
-  rcases hσ with h | h <;> subst h
-  · simp only [one_mul] at hface ⊢
-    linarith only [hface, hlo]
-  · simp only [neg_mul, one_mul] at hface ⊢
-    linarith only [hface, hhi]
 
 /-! ## 4. The flush cube sits inside the frozen window -/
 

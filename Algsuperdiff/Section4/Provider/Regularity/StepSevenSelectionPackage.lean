@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenGoodScales
 import Algsuperdiff.Section4.Provider.Regularity.StepSevenSandwich
@@ -26,10 +26,9 @@ before the first analytic estimate:
   `{(z',m'), (z'',n')}`,
   `(z + □_{k'-1}) ∩ □_m ⊆ y' + □_{k'-1} ⊆ (z + □_{k'}) ∩ □_m`.
 
-`stepSeven_goodScaleSelection` is the a.e. endpoint:
-`stepThree_windowsAndBadBudget` extended by the Step-7a selection at every
-printed centre simultaneously.  Its conclusion is the Step-3 conclusion plus one
-conjunct, so it is a drop-in successor of the Step-3 endpoint.
+`exists_stepSevenSelectionData_of_stepThreeWindowsAndBudget` builds the package
+at a printed centre from the Step-3 window/budget conclusion alone, so the
+selection is a drop-in successor of the Step-3 endpoint.
 
 ## What is not here
 
@@ -136,53 +135,5 @@ theorem exists_stepSevenSelectionData_of_stepThreeWindowsAndBudget
         n' m' zp zpp :=
   exists_stepSevenSelectionData (mem_openCubeSet_of_mem_latticeCubeSet hv)
     (hbudget v hv).2.2.2
-
-/-! ## 3. The a.e. endpoint -/
-
-/-- **`t.regularity` Step 7a, as one a.e. theorem.**
-
-The Step-3 endpoint `stepThree_windowsAndBadBudget` extended by one conjunct: at
-every window on which the `X`-gate holds and at every printed centre `z ∈ 3^n
-ℤ^d ∩ □_m` simultaneously, the Step-7a selection package exists.  The
-separation `|𝓑_z| + 7 ≤ m - n` — the side condition, and the source of `n' <
-m'` — is discharged inside from the Step-3 budget, so it appears in no
-hypothesis.
-
-`C_edos` is the abstract excess-decay one-step constant (floored at `1`),
-`C_iter` the abstract Step-6 iteration constant; the produced `(C₁, γ₀, C)`
-are's package verbatim. -/
-theorem stepSeven_goodScaleSelection (d : ℕ) (cstar : ℝ) (hcstar : 0 < cstar)
-    (Cedos Citer : ℝ) (hCedos : 1 ≤ Cedos) :
-    ∃ C1 gamma0 C : ℝ, 2 ≤ C1 ∧ 0 < gamma0 ∧ 0 < C ∧
-      ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
-        ∀ alpha : ℝ, 0 < alpha → alpha ≤ 1 - C * Real.sqrt M.gamma →
-          ∀ m : ℤ, ∃ Z : Cutoff.CutoffSample d → ℕ∞,
-            Measurable (minimalScaleX Z (stepOneK Cedos)) ∧
-            (∀ N : ℕ,
-                (Cutoff.cutoffSampleLaw M).toMeasure
-                    {omega | (N : ℕ∞) ≤ minimalScaleX Z (stepOneK Cedos) omega} ≤
-                  ENNReal.ofReal
-                    (C * Real.exp
-                      (-((1 - alpha) ^ (2 : ℕ) * ((N : ℝ) - C)) / (C * M.gamma)))) ∧
-            ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-              ∀ n : ℤ, n ≤ m →
-                minimalScaleX Z (stepOneK Cedos) omega ≤ (((m - n).toNat : ℕ) : ℕ∞) →
-                  (14 : ℤ) ≤ m - n ∧
-                  StepThreeWindowsAndBudget M (stepOneDelta C1 alpha) n m omega ∧
-                  ∀ v : Fin d → ℤ, v ∈ Support.latticeCubeSet d n m →
-                    ∃ (n' m' : ℤ) (zp zpp : Vec d),
-                      StepSevenSelectionData M (stepOneDelta C1 alpha) n m
-                        (Support.triadicLatticePoint n v) omega n' m' zp zpp := by
-  obtain ⟨C1, gamma0, C, hC1, hg0, hC, hthree⟩ :=
-    stepThree_windowsAndBadBudget d cstar hcstar Cedos Citer hCedos
-  refine ⟨C1, gamma0, C, hC1, hg0, hC, ?_⟩
-  intro M hcs hgamma alpha halpha0 halpha m
-  obtain ⟨Z, hXmeas, hXtail, hae⟩ := hthree M hcs hgamma alpha halpha0 halpha m
-  refine ⟨Z, hXmeas, hXtail, ?_⟩
-  filter_upwards [hae] with omega hw
-  intro n hn hgate
-  obtain ⟨hwin, hbudget⟩ := hw.2 n hn hgate
-  exact ⟨hwin, hbudget, fun v hv =>
-    exists_stepSevenSelectionData_of_stepThreeWindowsAndBudget hbudget hv⟩
 
 end Algsuperdiff.Section4.Provider.Regularity

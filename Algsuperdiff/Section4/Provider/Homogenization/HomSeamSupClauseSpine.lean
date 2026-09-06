@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
+import Algsuperdiff.Section4.Provider.Homogenization.HomSeamGradProvider
+import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSpineBudget
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSupClauseChain
-import Algsuperdiff.Section4.Provider.Homogenization.HomSeamGradProviderBudgeted
 
 /-!
 # The clause supplier and the budgeted supply layers, at the SUP-form clause
@@ -14,17 +15,16 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamGradProviderBudgeted
 `HomSeamSupClauseChain` re-cut the seam carriers at the sup-form multiscale
 clause.  This file carries the re-cut to the spine's clause supplier — the last
 place the clause is visible — and re-states the two budgeted supply layers of
-`HomSeamGradProviderBudgeted` at the sup carriers:
+the budgeted gradient provider at the sup carriers:
 
 ```text
   homSpineClauseSupplierAtGrad_of_datumRecutFluxHalfSupGrad
   SeamEnergySupplyOfRegularityGradSupBudget
   SeamBundleOfRegularityHalfSupGradBudget
-  seamBundleOfRegularityHalfSupGradBudget_of_energySupplyGradSupBudget
 ```
 
-The supplier's proof is the same, with EXACTLY ONE token changed:
-`spineClauseC3_of_multiscale` becomes
+The supplier's proof is the same, with EXACTLY ONE token changed: clause (C3)
+now runs through
 `HomSpineSupFormRethread.spineClauseC3_of_supMultiscale`.  Its argument list,
 its output constant `96 d² · liftGeomFactor (s + d/p) · C_w` and clause (C4)
 are untouched — that is the losslessness measurement, executed.
@@ -47,7 +47,7 @@ variable {d : ℕ}
 
 /-- **THE SPINE'S CLAUSE SUPPLIER, FROM THE SUP-FORM DATUM.**
 
-`HomSeamGradSpine.homSpineClauseSupplierAtGrad_of_datumRecutFluxHalfGrad` with
+The spine's clause supplier at the gradient binder, with
 the multiscale conjunct read at the print's own sup aggregation.  Clause (C3)
 now runs through `spineClauseC3_of_supMultiscale` at the IDENTICAL constant;
 clause (C4) never sees the aggregation at all. -/
@@ -201,7 +201,7 @@ theorem homSpineClauseSupplierAtGrad_of_datumRecutFluxHalfSupGrad [NeZero d] (hd
 
 /-! ## 2. The two budgeted supply layers, at the sup carriers -/
 
-/-- `HomSeamGradProviderBudgeted.SeamEnergySupplyOfRegularityGradBudget` at the
+/-- The budgeted gradient energy supply at the
 sup-form energy residue. -/
 def SeamEnergySupplyOfRegularityGradSupBudget (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)
     (cstar gamma0 : ℝ) (Cen0F : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop :=
@@ -216,7 +216,7 @@ def SeamEnergySupplyOfRegularityGradSupBudget (d : ℕ) [NeZero d] (hd1 : 1 ≤ 
             (seamEnlargedY M m Ctop (homMinimalScaleFactor (1 - homAlpha M) X)) m
             (Cen0F M) hd1 hlog omega
 
-/-- `HomSeamGradProviderBudgeted.SeamBundleOfRegularityHalfGradBudget` at the sup-form
+/-- The budgeted gradient seam bundle at the sup-form
 datum. -/
 def SeamBundleOfRegularityHalfSupGradBudget (d : ℕ) [NeZero d]
     (cstar gamma0 Cgap : ℝ) (KabsF : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop :=
@@ -235,45 +235,6 @@ def SeamBundleOfRegularityHalfSupGradBudget (d : ℕ) [NeZero d]
             (seamEnlargedY M m Ctop (homMinimalScaleFactor (1 - homAlpha M) X)) m
             (homSeamBase M hs) ((Annealed.sigmaBar M m : ℝ))
             (Annealed.sigmaBar M m).2 (KabsF M) omega
-
-/-- The reduction, at the sup carriers.  `K_abs(M)` is again the closed term
-`recutKabsHalf d hd1 C_gap (C_en⁰(M))`. -/
-theorem seamBundleOfRegularityHalfSupGradBudget_of_energySupplyGradSupBudget (d : ℕ)
-    [NeZero d] (hd : 2 ≤ d) {cstar gamma0 Cgap Ctop Creg : ℝ} {Cen0F : ABKModel d → ℝ}
-    (hCgap : 0 < Cgap)
-    (hCen0 : ∀ M : ABKModel d, 4 ≤ |Real.log M.gamma| → 0 ≤ Cen0F M)
-    (hsupply : SeamEnergySupplyOfRegularityGradSupBudget d (le_trans (by norm_num) hd)
-      cstar gamma0 Cen0F Ctop Creg) :
-    SeamBundleOfRegularityHalfSupGradBudget d cstar (min gamma0 (1 / 81)) Cgap
-      (fun M => recutKabsHalf d (le_trans (by norm_num) hd) Cgap (Cen0F M)) Ctop Creg := by
-  have hd1 : 1 ≤ d := le_trans (by norm_num) hd
-  have hCcg0 : (0 : ℝ) ≤ recutPinnedCcgFlux d (recutExponent d hd1) :=
-    recutPinnedCcgFlux_nonneg d (recutExponent d hd1)
-  have hCcgDom : cgDualBoundConstFlux d (recutExponent d hd1) ≤
-      ENNReal.ofReal (recutPinnedCcgFlux d (recutExponent d hd1)) :=
-    cgDualBoundConstFlux_le_ofReal_of_pinned_le d hd (recutExponent d hd1)
-      (recutExponent_two_le d hd1) le_rfl
-  intro M hcs hgamma hs m X hXmeas hXfin hXdisp hfin
-  have hgpos : 0 < M.gamma := M.shellPrefix.gamma_pos
-  have hg_s : M.gamma ≤ gamma0 := le_trans hgamma (min_le_left _ _)
-  have hg81 : M.gamma ≤ 1 / 81 := le_trans hgamma (min_le_right _ _)
-  have hlog : 4 ≤ |Real.log M.gamma| := four_le_absLog hgpos hg81
-  have hgamma1 : M.gamma < 1 := by linarith only [hg81]
-  have hsupF := ae_recutCoreSupplyFluxAtSupGrad_of_energySupGrad M
-    (seamEnlargedY M m Ctop (homMinimalScaleFactor (1 - homAlpha M) X)) m (Cen0F M) hd1
-    hlog (hsupply M hcs hg_s hlog m X hXmeas hXfin hXdisp)
-  have hKabsC : spineClauseConst d (homS M) (recutExponent d hd1).exponent.toReal
-      (recutCwHalfFluxAt d hd1 M (recutPinnedCcgFlux d (recutExponent d hd1)) Cgap
-        (Cen0F M))
-      (stepFourSchauderConstU d) ≤ recutKabsHalf d hd1 Cgap (Cen0F M) :=
-    spineClauseConst_le_abs_half d hd1 M hCcg0 hCgap (hCen0 M hlog) hlog
-  filter_upwards [hsupF, hfin] with omega hsupplyOmega hfinOmega
-  exact spineDatumCoarseGrainingRecutFluxAtHalfSupGrad_of_core_pinned hd M Cgap
-    (seamEnlargedY M m Ctop (homMinimalScaleFactor (1 - homAlpha M) X)) m
-    (homSeamBase M hs) (Annealed.sigmaBar M m).2 hCcg0 hCcgDom omega
-    (spineDatumRecutCoreFluxAtHalfSupGrad_of_supply hd1 M
-      (seamEnlargedY M m Ctop (homMinimalScaleFactor (1 - homAlpha M) X)) m hs hCcg0
-      omega hlog hgamma1 hCgap (hCen0 M hlog) hfinOmega hKabsC hsupplyOmega)
 
 end
 

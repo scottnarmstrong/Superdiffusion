@@ -808,7 +808,7 @@ private theorem finiteQLtTwo_rareGridProfile_strict_tail_budget
   have hPmajor1 : 1 ≤ 92160 * eps⁻¹ ^ 7 := by
     have hpow1 : 1 ≤ eps⁻¹ ^ 7 :=
       one_le_pow₀ (one_le_inv_of_le_one heps heps1)
-    nlinarith
+    linarith only [hpow1]
   have hPpower : (∑' k, P k) ^ p ≤
       (92160 : ℝ) ^ 2 * eps⁻¹ ^ 14 := by
     calc
@@ -872,7 +872,7 @@ private theorem finiteQLtTwo_rareGridProfile_zero_root_budget
     have hraw := gridBlockAmp_le_natPow (d := d) hamp0 6 hp 0
     dsimp only [A, base] at hraw ⊢
     norm_num at hraw ⊢
-    nlinarith
+    exact hraw.trans_eq (by ring)
   have hw0 : Book.Ch02.geometricWeight s q 0 ≤ 1 := by
     rw [Book.Ch02.geometricWeight]
     norm_num
@@ -974,7 +974,7 @@ private theorem finiteQLtTwo_rareGridProfile_pred_budget
       refine mul_le_mul_of_nonneg_left (add_le_add ?_ ?_) (by norm_num)
       · simpa only [common, mul_assoc] using hzeroRoot
       · simpa only [common, mul_assoc] using htailRoot
-    _ ≤ (1658880 : ℝ) ^ 2 * common := by nlinarith [hcommon0]
+    _ ≤ (1658880 : ℝ) ^ 2 * common := by linarith only [hcommon0]
     _ = (1658880 : ℝ) ^ 2 * gridNetConst d sigma * K⁻¹ * eps := by
       dsimp only [common]
       ring
@@ -1092,7 +1092,7 @@ theorem upper_finite_lt_two_of_per_descendant
     rw [upperAfterBandRareTriangleConst]
     have hpow : 1 ≤ (117649 : ℝ) ^ (12 : ℝ) :=
       Real.one_le_rpow (by norm_num) (by norm_num)
-    nlinarith
+    linarith only [hpow]
   have hTbar0 : 0 ≤ upperAfterBandRareTriangleConst := zero_le_one.trans hTbar1
   have hGbar0 : 0 ≤ upperAfterBandRareGridNetConst d := by
     rw [upperAfterBandRareGridNetConst]

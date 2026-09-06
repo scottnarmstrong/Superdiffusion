@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomLiftTelescope
 
@@ -47,12 +47,8 @@ derived from an `H^1_0` witness: the trace theorem that turns
   side length `3^{scale}` (the `hdiam` hypothesis of the lifting).
 * `linfty_of_holder_of_boundary_zero_cube` — the endpoint display, at
   constant `1`.
-* `linfty_of_regularization_cube` / `linfty_of_regularization_originCube` —
-  the composition with the lifting: the Step-3c display in the shape
-  `3^{-m}|u(x) - v(x)| ≤ 8 A 3^{-ms}` consumed by the frozen root's
-  conclusion (C3).
-* `ae_linfty_of_regularization_originCube` — the same, in the `∀ᵐ x` form the
-  frozen statement literally uses.
+* `ae_linfty_of_holder_of_boundary_zero_cube` — the same, in the `∀ᵐ x` form
+  the frozen statement literally uses.
 
 ## References
 
@@ -80,18 +76,10 @@ def closedCubeSet (Q : TriadicCube d) : Set (Vec d) :=
   { x | ∀ i, ((Q.index i : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q ≤ x i ∧
       x i ≤ ((Q.index i : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q }
 
-theorem closedCubeSet_def (Q : TriadicCube d) :
-    closedCubeSet Q =
-      { x | ∀ i, ((Q.index i : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q ≤ x i ∧
-        x i ≤ ((Q.index i : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q } := rfl
-
 /-- The face set of a triadic cube: the closed realization minus the open
 one. -/
 def cubeFaceSet (Q : TriadicCube d) : Set (Vec d) :=
   closedCubeSet Q \ openCubeSet Q
-
-theorem cubeFaceSet_def (Q : TriadicCube d) :
-    cubeFaceSet Q = closedCubeSet Q \ openCubeSet Q := rfl
 
 theorem openCubeSet_subset_closedCubeSet (Q : TriadicCube d) :
     openCubeSet Q ⊆ closedCubeSet Q := by
@@ -233,54 +221,6 @@ theorem linfty_of_holder_of_boundary_zero_cube [NeZero d] (Q : TriadicCube d)
 
 /-! ## 5. The composition with the lifting -/
 
-/-- **The Step-3c display from the regularization data, on a triadic cube.**
-
-The two scale estimates `(L)` and `(I)` of `HomLiftTelescope` — which is what
-a negative-order bound of order `-s` on `∇w` supplies — together with the
-vanishing of `w` on the cube's faces, give
-
-```text
-  3^{-scale} |w(x)| ≤ 8 A · 3^{-scale·s}   for every x in the open cube,
-```
-
-which is the manuscript's display with the explicit dimensional-free
-constant `8`. -/
-theorem linfty_of_regularization_cube [NeZero d] (Q : TriadicCube d)
-    {w : Vec d → ℝ} {W : ℤ → Vec d → ℝ} {s A : ℝ}
-    (hs0 : 0 < s) (hs2 : s ≤ 1 / 2) (hA : 0 ≤ A)
-    (hLip : ∀ n : ℤ, n ≤ Q.scale → ∀ x ∈ closedCubeSet Q, ∀ y ∈ closedCubeSet Q,
-      |W n x - W n y| ≤ A * (3 : ℝ) ^ (-(((n : ℤ) : ℝ) * s)) * ‖x - y‖)
-    (hInc : ∀ n : ℤ, n ≤ Q.scale → ∀ x ∈ closedCubeSet Q,
-      |W n x - W (n - 1) x| ≤ A * (3 : ℝ) ^ (((n : ℤ) : ℝ) * (1 - s)))
-    (hLim : ∀ x ∈ closedCubeSet Q, ∀ n : ℤ, n ≤ Q.scale →
-      Filter.Tendsto (fun k : ℕ => W (n - (k : ℤ)) x) Filter.atTop (nhds (w x)))
-    (hzero : ∀ y ∈ cubeFaceSet Q, w y = 0) :
-    ∀ x ∈ openCubeSet Q,
-      (3 : ℝ) ^ (-((Q.scale : ℤ) : ℝ)) * |w x| ≤
-        8 * A * (3 : ℝ) ^ (-((Q.scale : ℤ) : ℝ) * s) := by
-  have hs1 : s < 1 := by linarith only [hs2]
-  have hHol : HolderSeminormBoundOn (closedCubeSet Q) (1 - s) (8 * A) w :=
-    holderSeminormBoundOn_of_increments (W := W) (w := w) (m := Q.scale)
-      hs0 hs2 hA (norm_sub_le_cubeScaleFactor Q) hLip hInc hLim
-  exact linfty_of_holder_of_boundary_zero_cube Q hs1
-    (by linarith only [hA]) hHol hzero
-
-/-- The same at the origin cube `□_m`, in the manuscript's own indexing. -/
-theorem linfty_of_regularization_originCube [NeZero d] (m : ℤ)
-    {w : Vec d → ℝ} {W : ℤ → Vec d → ℝ} {s A : ℝ}
-    (hs0 : 0 < s) (hs2 : s ≤ 1 / 2) (hA : 0 ≤ A)
-    (hLip : ∀ n : ℤ, n ≤ m → ∀ x ∈ closedCubeSet (originCube d m),
-        ∀ y ∈ closedCubeSet (originCube d m),
-      |W n x - W n y| ≤ A * (3 : ℝ) ^ (-(((n : ℤ) : ℝ) * s)) * ‖x - y‖)
-    (hInc : ∀ n : ℤ, n ≤ m → ∀ x ∈ closedCubeSet (originCube d m),
-      |W n x - W (n - 1) x| ≤ A * (3 : ℝ) ^ (((n : ℤ) : ℝ) * (1 - s)))
-    (hLim : ∀ x ∈ closedCubeSet (originCube d m), ∀ n : ℤ, n ≤ m →
-      Filter.Tendsto (fun k : ℕ => W (n - (k : ℤ)) x) Filter.atTop (nhds (w x)))
-    (hzero : ∀ y ∈ cubeFaceSet (originCube d m), w y = 0) :
-    ∀ x ∈ openCubeSet (originCube d m),
-      (3 : ℝ) ^ (-(m : ℝ)) * |w x| ≤ 8 * A * (3 : ℝ) ^ (-(m : ℝ) * s) :=
-  linfty_of_regularization_cube (originCube d m) hs0 hs2 hA hLip hInc hLim hzero
-
 /-- **The `∀ᵐ x` form** used by the frozen root's conclusion (C3): the
 pointwise bound on the open cube upgrades to an almost-everywhere bound
 against the restricted volume measure. -/
@@ -293,26 +233,6 @@ theorem ae_linfty_of_holder_of_boundary_zero_cube [NeZero d] (Q : TriadicCube d)
         K * (3 : ℝ) ^ (-((Q.scale : ℤ) : ℝ) * s) := by
   have hptwise := linfty_of_holder_of_boundary_zero_cube Q hs1 hK hHol hzero
   refine (ae_restrict_iff' (measurableSet_openCubeSet Q)).2 ?_
-  exact Filter.Eventually.of_forall fun x hx => hptwise x hx
-
-/-- The `∀ᵐ x` form of the composed statement at the origin cube — the exact
-shape of the frozen root's first deterministic clause. -/
-theorem ae_linfty_of_regularization_originCube [NeZero d] (m : ℤ)
-    {w : Vec d → ℝ} {W : ℤ → Vec d → ℝ} {s A : ℝ}
-    (hs0 : 0 < s) (hs2 : s ≤ 1 / 2) (hA : 0 ≤ A)
-    (hLip : ∀ n : ℤ, n ≤ m → ∀ x ∈ closedCubeSet (originCube d m),
-        ∀ y ∈ closedCubeSet (originCube d m),
-      |W n x - W n y| ≤ A * (3 : ℝ) ^ (-(((n : ℤ) : ℝ) * s)) * ‖x - y‖)
-    (hInc : ∀ n : ℤ, n ≤ m → ∀ x ∈ closedCubeSet (originCube d m),
-      |W n x - W (n - 1) x| ≤ A * (3 : ℝ) ^ (((n : ℤ) : ℝ) * (1 - s)))
-    (hLim : ∀ x ∈ closedCubeSet (originCube d m), ∀ n : ℤ, n ≤ m →
-      Filter.Tendsto (fun k : ℕ => W (n - (k : ℤ)) x) Filter.atTop (nhds (w x)))
-    (hzero : ∀ y ∈ cubeFaceSet (originCube d m), w y = 0) :
-    ∀ᵐ x ∂(volume.restrict (openCubeSet (originCube d m))),
-      (3 : ℝ) ^ (-(m : ℝ)) * |w x| ≤ 8 * A * (3 : ℝ) ^ (-(m : ℝ) * s) := by
-  have hptwise :=
-    linfty_of_regularization_originCube (d := d) m hs0 hs2 hA hLip hInc hLim hzero
-  refine (ae_restrict_iff' (measurableSet_openCubeSet (originCube d m))).2 ?_
   exact Filter.Eventually.of_forall fun x hx => hptwise x hx
 
 end

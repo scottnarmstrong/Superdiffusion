@@ -1,17 +1,16 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.G2RowConversion
 import Algsuperdiff.Section4.Provider.Proportion.G2Locality
 
 /-!
-# The `𝒢₂` lane: `r`-dependence of the atoms `X_j` and the proportion tail
+# The `𝒢₂` lane: `r`-dependence of the atoms `X_j`
 
-ABK26, §4.1, `l.ratio.of.good.scales.for.mathcal.E`: the Appendix-D independence
-hypothesis and the application of `p.concentration.for.scales` at the lane rate
-`s' = ¼s`.
+ABK26, §4.1, `l.ratio.of.good.scales.for.mathcal.E`: the Appendix-D
+independence hypothesis of the lane's atoms.
 
 ## `r`-dependence
 
@@ -24,26 +23,9 @@ hypotheses), so the varying-level producer
 supplied by `Probability.separatedBy_annulusRegion_of_gap` at the truncation
 offset `c = 2`.
 
-## The lane tail
-
-`ratioTail_Xcal` assembles the Appendix-D unit moments
-(`G2Moments.lintegral_rpow_le_one_Xcal`), the independence above, the proved
-`ScalesConcentration.p_concentration_for_scales_Cstar` and the proved
-`IndicatorDensityTails.ratioTail_of_concentration` — which also closes the
-short-window gap with no extra hypothesis — into the tail
-
-```
-ℙ[ θ < (proportion of scales k ≤ n at which Ev k fails) ] ≤ exp(−c₁ n) / Q .
-```
-
-The event family `Ev` and its reduction `hreduce` are the caller's;
-`G2RowConversion.hreduce_eventG2` supplies them for the frozen `𝒢₂` event
-enlarged by the null set of `goodRowSetG2`.
-
 ## Scope
 
-Provider material: proved local helpers.  `hcube` and `hnorm` are conditional A
-obligations, discharged at the caller.
+Provider material: proved local helpers.
 
 ## References
 
@@ -92,69 +74,6 @@ theorem columnsIndep_Xcal (M : ABKModel d) (s : {s : ℝ // 0 < s}) (D : ℝ) {r
     exact separatedBy_annulusRegion_of_gap (c := 2) (r := r) hr1 hr hgap
   · intro j
     exact (measurable_Xcal_annulusRegion_local M s (j * (r : ℤ) + b)).const_mul D⁻¹
-
-/-! ## 2. The `𝒢₂` proportion tail, at the lemma level -/
-
-/-- **The `𝒢₂`-lane proportion tail, in the consumer's shape.**
-
-For every window `{0,…,n}` — including the short windows `n < r` that
-`p.concentration.for.scales` does not reach (closed by the proved
-`ratioTail_of_concentration` with no extra hypothesis) —
-
-```
-ℙ[ θ < (proportion of scales k ≤ n at which Ev k fails) ] ≤ exp(−c₁ n) / Q .
-```
-
-The lane rate is Appendix D's `s' = ¼s`, matching the weight `3^{−¼s(m−j)}` of
-the manuscript's row.  `hcube` is the per-cube two-term display and `hnorm` is
-the manuscript's constant-selection sentence `e.K.and.p.choices`; both are
-discharged at the caller. -/
-theorem ratioTail_Xcal (M : ABKModel d) (s : {s : ℝ // 0 < s}) (D : ℝ)
-    {A1 A2 p theta c1 Q : ℝ} {r : ℕ} (Ev : ℤ → Set (Cutoff.CutoffSample d))
-    (hA1 : 0 < A1) (hA2 : 0 < A2) (hD : 0 < D) (hp : 1 ≤ p)
-    (hs1 : (s : ℝ) ≤ 1) (hsp : 1 ≤ (s : ℝ) / 4 * p)
-    (hr1 : 1 ≤ r) (hQ : 1 ≤ Q) (htheta0 : 0 < theta)
-    (hthetar : theta * ((r : ℝ) + 1) < 1) (hc1 : 0 ≤ c1)
-    (hrate : Real.log (Q * (r : ℝ)) + c1 * (r : ℝ)
-      ≤ (s : ℝ) / 4 * p * theta / (16 * (r : ℝ)))
-    (hcube : ∀ n : ℤ,
-      Probability.IsTwoTermBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-        (gammaSigma 2) (gammaSigma (1 / 2)) (Support.annularErrorObservable M n s)
-        A1 A2)
-    (hnorm : gammaMomentConst 1 * p * xcalScaleOne d (s : ℝ) A1 +
-      gammaMomentConst (1 / 4) * p ^ (4 : ℝ) * xcalScaleQuarter d (s : ℝ) A2 ≤ D)
-    (hrgap : 3 + 2 * (3 : ℝ) ^ (1 - (2 : ℤ)) * Real.sqrt (d : ℝ) ≤ (3 : ℝ) ^ (r : ℕ))
-    (hreduce : ∀ m : ℤ, 0 ≤ m → ∀ omega ∈ (Ev m)ᶜ,
-      9 * ((s : ℝ) / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) <
-        Yk (xcalArray M s D) ((s : ℝ) / 4) m omega)
-    (n : ℕ) :
-    (Cutoff.cutoffSampleLaw M).toMeasure
-        {omega | theta < scaleProp (fun k => (Ev k)ᶜ) n omega}
-      ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / Q) := by
-  classical
-  have hs0 : (0 : ℝ) < (s : ℝ) := s.2
-  have hs40 : (0 : ℝ) < (s : ℝ) / 4 := by linarith only [hs0]
-  have hs41 : (s : ℝ) / 4 ≤ 1 := by linarith only [hs1, hs0]
-  have hrR : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-  have htheta1 : theta ≤ 1 := by
-    have hstep : theta * 2 ≤ theta * ((r : ℝ) + 1) :=
-      mul_le_mul_of_nonneg_left (by linarith only [hrR]) htheta0.le
-    linarith only [hstep, hthetar, htheta0]
-  have hmomL := lintegral_rpow_le_one_Xcal M s hA1 hA2 hp hD hcube hnorm
-  have hindep := columnsIndep_Xcal M s D hr1 hrgap
-  have hconc : ∀ Mwin : ℕ, (r : ℤ) ≤ (Mwin : ℤ) →
-      (Cutoff.cutoffSampleLaw M).toMeasure
-          (concEvent (xcalArray M s D) p ((s : ℝ) / 4) theta Cstar Mwin)
-        ≤ ENNReal.ofReal
-            (Real.exp (-((s : ℝ) / 4 * p * theta) / (16 * (r : ℝ)) * ((Mwin : ℝ) + 1))) := by
-    intro Mwin hMwin
-    exact p_concentration_for_scales_Cstar (Cutoff.cutoffSampleLaw M).toMeasure
-      (xcalArray M s D) hp hs40 hs41 hsp hr1
-      (fun k j => measurable_xcalArray M s D k j)
-      (fun k j omega => xcalArray_nonneg M s hD k j omega)
-      hmomL hindep Mwin theta hMwin htheta0 htheta1
-  exact ratioTail_of_concentration (Cutoff.cutoffSampleLaw M).toMeasure
-    (xcalArray M s D) Ev hr1 hQ htheta0 hthetar hc1 hrate hconc hreduce n
 
 end
 

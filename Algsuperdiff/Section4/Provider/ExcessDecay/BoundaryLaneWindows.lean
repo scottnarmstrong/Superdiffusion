@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CaccioppoliInteriorGeometry
 
@@ -64,25 +64,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ## 1. A general inclusion for translated origin cubes -/
-
-/-- **A translated cube inside a bigger cube.**  If the centre `w` lies in
-`□_a` and the side lengths satisfy `3^a + 3^k ≤ 3^b`, then `w + □_k ⊆ □_b`.
-
-This is the only cube arithmetic the boundary lane's window choice needs; the
-interior lane's `image_add_openCubeSet_subset_succ_succ` is the special case
-`a = n+1`, `b = n+2`. -/
-theorem image_add_openCubeSet_subset_of_mem {a b k : ℤ} {w : Vec d}
-    (hw : w ∈ openCubeSet (originCube d a))
-    (hside : (3 : ℝ) ^ a + (3 : ℝ) ^ k ≤ (3 : ℝ) ^ b) :
-    (fun y => w + y) '' openCubeSet (originCube d k) ⊆
-      openCubeSet (originCube d b) := by
-  rintro p ⟨y, hy, rfl⟩
-  rw [mem_openCubeSet_originCube_iff] at hw hy ⊢
-  intro i
-  have h1 := hw i
-  have h2 := hy i
-  refine ⟨?_, ?_⟩ <;> simp only [Pi.add_apply] <;>
-    linarith only [h1.1, h1.2, h2.1, h2.2, hside]
 
 /-! ## 2. The truncated windows -/
 
@@ -171,62 +152,6 @@ theorem sub_mem_openCubeSet_of_mem_truncatedWindow {j m : ℤ} {x z : Vec d}
     rw [← hy0]
     exact add_sub_cancel_left z y0
   rwa [hxy]
-
-/-- **The window choice, first inclusion.**
-
-If `x` lies in the printed window `(z + □_{n-3}) ∩ □_m`, then every truncated
-window `(x + □_k) ∩ □_m` with `k ≤ n-2` sits inside `(z + □_{n-1}) ∩ □_m`, and
-hence (`truncatedWindow_mono`) inside `(z + □_n) ∩ □_m`.
-
-This is the inclusion the printed proof asks of its auxiliary point `y`, now
-proved at `y := x` on the truncated window; the printed requirement on the
-*full* cube `y + □_{n-2}` is not available in the boundary regime and is not
-used. -/
-theorem truncatedWindow_subset_of_windowChoice {m n k : ℤ} {x z : Vec d}
-    (hx : x ∈ truncatedWindow z m (n - 3)) (hk : k ≤ n - 2) :
-    truncatedWindow x m k ⊆ truncatedWindow z m (n - 1) := by
-  have hside : (3 : ℝ) ^ (n - 3) + (3 : ℝ) ^ k ≤ (3 : ℝ) ^ (n - 1) := by
-    have h3 : (0 : ℝ) < (3 : ℝ) ^ (n - 3) := zpow_pos (by norm_num) _
-    have hkle : (3 : ℝ) ^ k ≤ (3 : ℝ) ^ (n - 2) :=
-      zpow_le_zpow_right₀ (by norm_num) hk
-    have h2 : (3 : ℝ) ^ (n - 2) = (3 : ℝ) ^ (n - 3) * 3 := by
-      rw [show n - 2 = n - 3 + 1 by ring, zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0)]
-    have h1 : (3 : ℝ) ^ (n - 1) = (3 : ℝ) ^ (n - 3) * 9 := by
-      rw [show n - 1 = n - 3 + 2 by ring, zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
-      norm_num
-    rw [h1]
-    linarith only [hkle, h2, h3]
-  have hkey : (fun y => (x - z) + y) '' openCubeSet (originCube d k) ⊆
-      openCubeSet (originCube d (n - 1)) :=
-    image_add_openCubeSet_subset_of_mem
-      (sub_mem_openCubeSet_of_mem_truncatedWindow hx) hside
-  refine Set.inter_subset_inter_left _ ?_
-  rintro p ⟨y, hy, rfl⟩
-  refine ⟨(x - z) + y, hkey ⟨y, hy, rfl⟩, ?_⟩
-  show z + ((x - z) + y) = x + y
-  abel
-
-/-- **The window choice, packaged.**
-
-At `y := x` both requirements hold on the truncated windows: `V:= (x + □_{n-2})
-∩ □_m` is contained in `(z + □_n) ∩ □_m` (the printed first inclusion, read on
-the truncated window), and `V ⊆ x + □_{n-2}` (the printed second inclusion at
-`y := x`, which is now definitional).  This is the window choice the printed
-proof asks for. -/
-theorem windowChoice_y_eq_x {m n : ℤ} {x z : Vec d}
-    (hx : x ∈ truncatedWindow z m (n - 3)) :
-    truncatedWindow x m (n - 2) ⊆ truncatedWindow z m n ∧
-      truncatedWindow x m (n - 2) ⊆
-        (fun y => x + y) '' openCubeSet (originCube d (n - 2)) := by
-  refine ⟨?_, truncatedWindow_subset_translate x m (n - 2)⟩
-  refine subset_trans (truncatedWindow_subset_of_windowChoice hx le_rfl) ?_
-  exact truncatedWindow_mono z m (by linarith only [] : n - 1 ≤ n)
-
-/-- The comparison window `V` sits inside the *outer* window `W_0 = (x+□_n) ∩ □_m`
-of the boundary lane: the draft's `W_j` family is nested. -/
-theorem truncatedWindow_two_subset_zero (x : Vec d) (m n : ℤ) :
-    truncatedWindow x m (n - 2) ⊆ truncatedWindow x m n :=
-  truncatedWindow_mono x m (by linarith only [] : n - 2 ≤ n)
 
 end
 

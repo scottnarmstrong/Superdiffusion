@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoarseGrainingEnvelope
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoarseGrainingSeminormScaling
@@ -24,7 +24,7 @@ the second step being `e.homogenization.L2.interior`, i.e.
 
 `coarseGraining_scaled_l2_le` below is that chain in one inequality, at
 CoarseGraining's carriers and with CoarseGraining's own right-hand side;
-`coarseGraining_l2_slot_le` is its specialization at the §4.3 slot with every
+and the §4.3 slot reads it with every
 constant explicit.  The comparator `σ₀` stays on the **left**, exactly as the
 printed display writes it (`3^{-sn/2} σ̄_n ‖∇u − ∇v‖`); dividing by `σ₀` is
 left to the consumer.
@@ -175,133 +175,6 @@ theorem negNormSqrtFactor_slot_le_three {s : ℝ} (hs1 : s ≤ 1) :
       ≤ Real.sqrt 9 := Real.sqrt_le_sqrt (by linarith only [hinv])
     _ = 3 := by
         rw [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-
-/-! ## 3. The §4.3 slot, with explicit constants -/
-
-/-- **`e.homogenization.L2.interior` at the §4.3 slot.**
-
-At `(s_prop, r, r₂, j) = (3s/4, s/4, s, 0)` and `0 < s ≤ 1`:
-
-```text
-  σ₀ · 3^{-Q.scale} ‖u - v_g‖_{L̲²(Q)}
-      ≤ 3 C_neg(d) C_cg(d) ·
-          ( (1024/3) s^{-4} |σ₀|^{1/2} 𝓔_{s/4,∞,1}(Q; a, σ₀) ‖∇u‖_{a,L̲²(Q)}
-          + (16384/3) s^{-6} (CoarseGraining forcing bracket) [g]_{H̲^s(Q)} ) .
-```
-
-Both dimensional constants are `d`-only: `C_neg(d) = negNormBaseConst d` is the
-zero-trace value constant, `C_cg(d) = coarseGraining d` is CoarseGraining's
-general coarse-graining constant.  The `s`-powers are the honest ones (see the
-module docstring). -/
-theorem coarseGraining_l2_slot_le [NeZero d] {Q : TriadicCube d}
-    {a : Ch03.CoeffFamily d} {sigma0 : ℝ} (hsigma0 : 0 < sigma0)
-    {g : Vec d → Vec d}
-    (w : Ch03.CoarseGrainingComparisonDatum Q a (scalarComparator hsigma0) g)
-    (z : H10Function (cubeSet Q))
-    (hz : ∀ x, z.toH1Function.grad x = w.u.grad x - w.v.grad x)
-    {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) (hg : Ch03.ForceBesovRegularity Q s g) :
-    sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-        cubeLpNorm Q (2 : ℝ≥0∞) (fun x => z.toH1Function.toFun x)) ≤
-      3 * negNormBaseConst d * coarseGrainingP2Const d *
-        ((1024 / 3) * (s⁻¹) ^ (4 : ℕ) *
-            coarseGrainingEnergyTerm Q a (scalarComparator hsigma0) (s / 4) w.u +
-          (16384 / 3) * (s⁻¹) ^ (6 : ℕ) *
-            coarseGrainingForceTerm Q a (scalarComparator hsigma0) (s / 4) s g) := by
-  have ht : (0 : ℝ) < 3 * s / 8 := by linarith only [hs]
-  have ht1 : 3 * s / 8 < 1 / 2 := by linarith only [hs1]
-  have hr : (0 : ℝ) < s / 4 := by linarith only [hs]
-  have hrt : s / 4 < 3 * s / 8 := by linarith only [hs]
-  have hbase := coarseGraining_scaled_l2_le hsigma0 w z hz ht ht1 hr hrt
-    (show s / 4 ≤ s by linarith only [hs]) hg (j := 0)
-  rw [show (2 : ℝ) * (3 * s / 8) = 3 * s / 4 by ring] at hbase
-  -- the envelope of the right-hand side
-  have henv := generalCoarseGrainingL2TwoExponentRHS_slot_le Q a
-    (scalarComparator hsigma0) hs hs1 hg w.u
-  have hCg : (0 : ℝ) ≤ coarseGrainingP2Const d := (coarseGrainingP2Const_pos d).le
-  have hsplit : Ch03.generalCoarseGrainingL2TwoExponentRHS (coarseGrainingP2Const d) Q a
-        (scalarComparator hsigma0) (3 * s / 4) (s / 4) s 0 g w.u =
-      coarseGrainingP2Const d *
-        Ch03.generalCoarseGrainingL2TwoExponentRHS 1 Q a (scalarComparator hsigma0)
-          (3 * s / 4) (s / 4) s 0 g w.u :=
-    generalCoarseGrainingL2TwoExponentRHS_eq_const_mul _ _ _ _ _ _ _ _ _ _
-  set E : ℝ := (1024 / 3) * (s⁻¹) ^ (4 : ℕ) *
-      coarseGrainingEnergyTerm Q a (scalarComparator hsigma0) (s / 4) w.u +
-    (16384 / 3) * (s⁻¹) ^ (6 : ℕ) *
-      coarseGrainingForceTerm Q a (scalarComparator hsigma0) (s / 4) s g with hEdef
-  have hEnonneg : 0 ≤ E := by
-    have h1 : 0 ≤ coarseGrainingEnergyTerm Q a (scalarComparator hsigma0) (s / 4) w.u :=
-      coarseGrainingEnergyTerm_nonneg Q a (scalarComparator hsigma0) hr w.u
-    have h2 : 0 ≤ coarseGrainingForceTerm Q a (scalarComparator hsigma0) (s / 4) s g := by
-      rw [coarseGrainingForceTerm]
-      exact mul_nonneg
-        (coarseGrainingForceBracket_nonneg Q a (scalarComparator hsigma0) hr)
-        (Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo_nonneg_of_forceBesovRegularity hg)
-    have e1 : 0 ≤ (1024 / 3 : ℝ) * (s⁻¹) ^ (4 : ℕ) *
-        coarseGrainingEnergyTerm Q a (scalarComparator hsigma0) (s / 4) w.u := by
-      have : (0 : ℝ) ≤ (1024 / 3 : ℝ) * (s⁻¹) ^ (4 : ℕ) := by positivity
-      exact mul_nonneg this h1
-    have e2 : 0 ≤ (16384 / 3 : ℝ) * (s⁻¹) ^ (6 : ℕ) *
-        coarseGrainingForceTerm Q a (scalarComparator hsigma0) (s / 4) s g := by
-      have : (0 : ℝ) ≤ (16384 / 3 : ℝ) * (s⁻¹) ^ (6 : ℕ) := by positivity
-      exact mul_nonneg this h2
-    rw [hEdef]
-    linarith only [e1, e2]
-  have hRHSle : Ch03.generalCoarseGrainingL2TwoExponentRHS (coarseGrainingP2Const d) Q a
-      (scalarComparator hsigma0) (3 * s / 4) (s / 4) s 0 g w.u ≤
-      coarseGrainingP2Const d * E := by
-    rw [hsplit]
-    exact mul_le_mul_of_nonneg_left henv hCg
-  have hfac : negNormBaseConst d *
-      Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 * s / 8)))⁻¹) ≤
-      3 * negNormBaseConst d := by
-    have h := mul_le_mul_of_nonneg_left (negNormSqrtFactor_slot_le_three hs1)
-      (negNormBaseConst_pos d).le
-    linarith only [h]
-  have hfacpos : (0 : ℝ) ≤ negNormBaseConst d *
-      Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 * s / 8)))⁻¹) :=
-    mul_nonneg (negNormBaseConst_pos d).le (Real.sqrt_nonneg _)
-  have hprod : (0 : ℝ) ≤ coarseGrainingP2Const d * E := mul_nonneg hCg hEnonneg
-  calc sigma0 * (cubeBesovScaleWeight (1 : ℝ) Q *
-        cubeLpNorm Q (2 : ℝ≥0∞) (fun x => z.toH1Function.toFun x))
-      ≤ negNormBaseConst d *
-          Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 * s / 8)))⁻¹) *
-        Ch03.generalCoarseGrainingL2TwoExponentRHS (coarseGrainingP2Const d) Q a
-          (scalarComparator hsigma0) (3 * s / 4) (s / 4) s 0 g w.u := hbase
-    _ ≤ negNormBaseConst d *
-          Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 * s / 8)))⁻¹) *
-        (coarseGrainingP2Const d * E) :=
-        mul_le_mul_of_nonneg_left hRHSle hfacpos
-    _ ≤ 3 * negNormBaseConst d * (coarseGrainingP2Const d * E) :=
-        mul_le_mul_of_nonneg_right hfac hprod
-    _ = 3 * negNormBaseConst d * coarseGrainingP2Const d * E := by ring
-
-/-! ## 4. The error object, in the development's own `q = 2` spelling -/
-
-/-- **The `q = 1 ← q = 2` conversion at the slot.**
-
-At `r = s/4` and depth `0`, CoarseGraining's error object in
-`coarseGrainingEnergyTerm` / `coarseGrainingForceBracket` is the printed
-`𝓔_{s/4,∞,1}(Q; a, a₀)`, and it is dominated by the development's own `q = 2`
-object at the good event's index `s/8`, at constant `1`:
-
-```text
-  𝓔_{s/4,∞,1}(Q; a, a₀)  ≤  𝓔_{s/8,∞,2}(Q; a, a₀) .
-```
-
-This is the object that `Support.fluxCorrectedErrorRepresentative` realizes (via
-`Provider.BoundsEaL.fluxCorrectedError_ae_eq_homogenizationErrorOnCube`) and
-that the good event caps read — **on the cube and in the frame where the caps
-are stated**; see the module docstring. -/
-theorem coarseGrainingHomogenizationErrorAtDepth_slot_le [NeZero d] (Q : TriadicCube d)
-    (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d) {s : ℝ} (hs : 0 < s) :
-    Ch03.coarseGrainingHomogenizationErrorAtDepth Q a a0 (s / 4) 0 ≤
-      Ch02.HomogenizationErrorOnCube Q (s / 8) .infinity (.finite 2) a a0.matrix := by
-  have h := coarseGrainingHomogenizationErrorAtDepth_le Q a a0 (r := s / 4) (t := s / 8) 0
-    (by linarith only [hs]) (by linarith only [hs])
-  have hone : Real.rpow (3 : ℝ) (s / 8 * ((0 : ℕ) : ℝ)) = 1 := by
-    norm_num
-  rw [hone, one_mul] at h
-  exact h
 
 end
 

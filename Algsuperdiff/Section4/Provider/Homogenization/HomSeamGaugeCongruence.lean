@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineRecutSupport
 
@@ -10,21 +10,21 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSpineRecutSupport
 
 ## What this file supplies
 
-`HomSeamFluxIdentification.RecutCoreSupplyFluxEnergy`'s multiscale conjunct is
+The energy residue's multiscale conjunct is
 quantified over EVERY field `G` that agrees with `∇u − ∇v` on the open cube:
 
 ```text
   ∀ G, (∀ x ∈ □_m, G x = ∇u x − ∇v x) → CoarseGrainingFinitePMultiscale … G F.
 ```
 
-The quantifier is FREE.  `CoarseGrainingFinitePMultiscale` reads its gradient
-slot only through `negBesovLpPartialNorm`, which reads it only through the cell
+The quantifier is FREE.  The multiscale clause reads its gradient
+slot only through the depth gauge, which reads it only through the cell
 averages `(G)_R` of the grid descendants `R ⊆ □_m`, and the cube average is an
 a.e. functional of its integrand.  So the whole `∀ G` family collapses onto ONE
 representative — the canonical `fun x => u.grad x - v.grad x`.
 
-`coarseGrainingFinitePMultiscale_forall_of_eqOn` is that collapse, stated in
-exactly the shape the supply's clause slot asks for.
+The congruence below is that collapse, stated in exactly the shape the supply's
+clause slot asks for.
 -/
 
 open Homogenization MeasureTheory
@@ -91,41 +91,6 @@ theorem negBesovLpDepthSeminorm_congr_of_eqOn (Q : TriadicCube d) (s p : ℝ) (j
     negBesovLpDepthSeminorm Q s p G j = negBesovLpDepthSeminorm Q s p G' j := by
   rw [negBesovLpDepthSeminorm_def, negBesovLpDepthSeminorm_def,
     negBesovLpDepthMean_congr_of_eqOn Q p j hG]
-
-/-- **THE PARTIAL GAUGE IS BLIND TO THE REPRESENTATIVE.** -/
-theorem negBesovLpPartialNorm_congr_of_eqOn (Q : TriadicCube d) (s p : ℝ) (N : ℕ)
-    {G G' : Vec d → Vec d} (hG : ∀ x ∈ openCubeSet Q, G x = G' x) :
-    negBesovLpPartialNorm Q s p N G = negBesovLpPartialNorm Q s p N G' := by
-  rw [negBesovLpPartialNorm_def, negBesovLpPartialNorm_def]
-  refine congrArg (fun t : ℝ => t ^ (1 / p)) ?_
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [negBesovLpDepthSeminorm_congr_of_eqOn Q s p j hG]
-
-/-! ## 3. THE `∀ G` COLLAPSE -/
-
-/-- **The multiscale clause transports along any representative.** -/
-theorem CoarseGrainingFinitePMultiscale.congr_grad_of_eqOn {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg : ℝ} {Gen : TriadicCube d → ℝ}
-    {G G' Fflux : Vec d → Vec d}
-    (h : CoarseGrainingFinitePMultiscale Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen G Fflux)
-    (hG : ∀ x ∈ openCubeSet Q, G x = G' x) :
-    CoarseGrainingFinitePMultiscale Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen G' Fflux := by
-  intro S hS N
-  have hkey := h S hS N
-  rwa [negBesovLpPartialNorm_congr_of_eqOn Q s p N hG] at hkey
-
-/-- **THE `∀ G` SLOT, PRODUCED FROM ONE REPRESENTATIVE.**
-
-Exactly the shape `RecutCoreSupplyFluxEnergy`'s multiscale conjunct asks for:
-the clause at the canonical difference field yields the clause at EVERY field
-that agrees with it on the open cube, at no cost. -/
-theorem coarseGrainingFinitePMultiscale_forall_of_eqOn {Q : TriadicCube d} {jn : ℕ}
-    {Ccg s s1 s2 p sigma E1 E2 Dg : ℝ} {Gen : TriadicCube d → ℝ}
-    {G0 Fflux : Vec d → Vec d}
-    (h : CoarseGrainingFinitePMultiscale Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen G0 Fflux) :
-    ∀ G : Vec d → Vec d, (∀ x ∈ openCubeSet Q, G x = G0 x) →
-      CoarseGrainingFinitePMultiscale Q jn Ccg s s1 s2 p sigma E1 E2 Dg Gen G Fflux :=
-  fun _ hG => h.congr_grad_of_eqOn fun x hx => (hG x hx).symm
 
 end
 

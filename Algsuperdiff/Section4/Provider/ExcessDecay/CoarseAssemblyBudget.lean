@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoarseBoundaryClause
 import Algsuperdiff.Section4.Provider.ExcessDecay.CoarseDirichletEnergy
@@ -271,137 +271,7 @@ theorem rpow_half_arg_neg {s : ℝ} (hs : 0 ≤ s) (e : ℝ) :
   rw [neg_neg] at h2
   exact h2
 
-theorem ledger_direct_gradh {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) * Real.rpow (s / 2) (-(1 / 2 : ℝ)) =
-      Real.rpow (2 : ℝ) (1 / 2 : ℝ) * Real.rpow s (-(9 / 2 : ℝ)) := by
-  have h12 := rpow_half_arg_neg hs.le (1 / 2 : ℝ)
-  have hsum : Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(1 / 2 : ℝ)) =
-      Real.rpow s (-(9 / 2 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  calc Real.rpow s (-(4 : ℝ)) * Real.rpow (s / 2) (-(1 / 2 : ℝ))
-      = Real.rpow (2 : ℝ) (1 / 2 : ℝ) *
-          (Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(1 / 2 : ℝ))) := by
-        rw [h12]; ring
-    _ = Real.rpow (2 : ℝ) (1 / 2 : ℝ) * Real.rpow s (-(9 / 2 : ℝ)) := by rw [hsum]
-
-theorem ledger_direct_force {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) * Real.rpow (s / 2) (-(3 / 2 : ℝ)) =
-      Real.rpow (2 : ℝ) (3 / 2 : ℝ) * Real.rpow s (-(11 / 2 : ℝ)) := by
-  have h32 := rpow_half_arg_neg hs.le (3 / 2 : ℝ)
-  have hsum : Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ)) =
-      Real.rpow s (-(11 / 2 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  calc Real.rpow s (-(4 : ℝ)) * Real.rpow (s / 2) (-(3 / 2 : ℝ))
-      = Real.rpow (2 : ℝ) (3 / 2 : ℝ) *
-          (Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ))) := by
-        rw [h32]; ring
-    _ = Real.rpow (2 : ℝ) (3 / 2 : ℝ) * Real.rpow s (-(11 / 2 : ℝ)) := by rw [hsum]
-
-theorem ledger_ga1_datum {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(1 / 2 : ℝ)) =
-      Real.rpow s (-(9 / 2 : ℝ)) :=
-  rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-
-theorem ledger_ga1_force {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) * Real.rpow (s / 2) (-(3 : ℝ)) =
-      Real.rpow (2 : ℝ) (3 : ℝ) * Real.rpow s (-(7 : ℝ)) := by
-  have h3 := rpow_half_arg_neg hs.le (3 : ℝ)
-  have hsum : Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 : ℝ)) =
-      Real.rpow s (-(7 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  calc Real.rpow s (-(4 : ℝ)) * Real.rpow (s / 2) (-(3 : ℝ))
-      = Real.rpow (2 : ℝ) (3 : ℝ) *
-          (Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 : ℝ))) := by
-        rw [h3]; ring
-    _ = Real.rpow (2 : ℝ) (3 : ℝ) * Real.rpow s (-(7 : ℝ)) := by rw [hsum]
-
-theorem ledger_move3_force {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) *
-        (Real.rpow (s / 2) (-(3 / 2 : ℝ)) * Real.rpow (s / 2) (-(3 / 2 : ℝ))) =
-      Real.rpow (2 : ℝ) (3 : ℝ) * Real.rpow s (-(7 : ℝ)) := by
-  have h32 := rpow_half_arg_neg hs.le (3 / 2 : ℝ)
-  have htwo : Real.rpow (2 : ℝ) (3 / 2 : ℝ) * Real.rpow (2 : ℝ) (3 / 2 : ℝ) =
-      Real.rpow (2 : ℝ) (3 : ℝ) :=
-    rpow_mul_rpow_of_add (by norm_num) _ _ _ (by norm_num)
-  have hsum1 : Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ)) =
-      Real.rpow s (-(11 / 2 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  have hsum2 : Real.rpow s (-(11 / 2 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ)) =
-      Real.rpow s (-(7 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  calc Real.rpow s (-(4 : ℝ)) *
-        (Real.rpow (s / 2) (-(3 / 2 : ℝ)) * Real.rpow (s / 2) (-(3 / 2 : ℝ)))
-      = (Real.rpow (2 : ℝ) (3 / 2 : ℝ) * Real.rpow (2 : ℝ) (3 / 2 : ℝ)) *
-          ((Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ))) *
-            Real.rpow s (-(3 / 2 : ℝ))) := by
-        rw [h32]; ring
-    _ = Real.rpow (2 : ℝ) (3 : ℝ) * Real.rpow s (-(7 : ℝ)) := by
-        rw [htwo, hsum1, hsum2]
-
-/-- The datum pricing's coarse-Poincaré leg against the Dirichlet energy's `∇h`
-half: `s^{-4} · (s/2)^{-3/2} · (s/2)^{-1/2} = 2^2 · s^{-6}`.  The frozen legs
-carry `s^{-9/2}`; see `frozen_gradh_leg_cannot_absorb_move3`. -/
-theorem ledger_move3_gradh {s : ℝ} (hs : 0 < s) :
-    Real.rpow s (-(4 : ℝ)) *
-        (Real.rpow (s / 2) (-(3 / 2 : ℝ)) * Real.rpow (s / 2) (-(1 / 2 : ℝ))) =
-      Real.rpow (2 : ℝ) (2 : ℝ) * Real.rpow s (-(6 : ℝ)) := by
-  have h32 := rpow_half_arg_neg hs.le (3 / 2 : ℝ)
-  have h12 := rpow_half_arg_neg hs.le (1 / 2 : ℝ)
-  have htwo : Real.rpow (2 : ℝ) (3 / 2 : ℝ) * Real.rpow (2 : ℝ) (1 / 2 : ℝ) =
-      Real.rpow (2 : ℝ) (2 : ℝ) :=
-    rpow_mul_rpow_of_add (by norm_num) _ _ _ (by norm_num)
-  have hsum1 : Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ)) =
-      Real.rpow s (-(11 / 2 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  have hsum2 : Real.rpow s (-(11 / 2 : ℝ)) * Real.rpow s (-(1 / 2 : ℝ)) =
-      Real.rpow s (-(6 : ℝ)) := rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  calc Real.rpow s (-(4 : ℝ)) *
-        (Real.rpow (s / 2) (-(3 / 2 : ℝ)) * Real.rpow (s / 2) (-(1 / 2 : ℝ)))
-      = (Real.rpow (2 : ℝ) (3 / 2 : ℝ) * Real.rpow (2 : ℝ) (1 / 2 : ℝ)) *
-          ((Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 / 2 : ℝ))) *
-            Real.rpow s (-(1 / 2 : ℝ))) := by
-        rw [h32, h12]; ring
-    _ = Real.rpow (2 : ℝ) (2 : ℝ) * Real.rpow s (-(6 : ℝ)) := by
-        rw [htwo, hsum1, hsum2]
-
 /-! ## 4. The refutation: the frozen `∇h` legs cannot hold row 6 -/
-
-/-- For every constant there is an admissible `s` at which `s^{-6}` exceeds it
-times `s^{-9/2}`. -/
-theorem exists_s_gradh_exponent_gap (C : ℝ) :
-    ∃ s : ℝ, 0 < s ∧ s ≤ 1 ∧
-      C * Real.rpow s (-(9 / 2 : ℝ)) < Real.rpow s (-(6 : ℝ)) := by
-  have hCabs : (0 : ℝ) ≤ |C| := abs_nonneg C
-  have hbpos : (0 : ℝ) < |C| + 2 := by linarith only [hCabs]
-  have hb1 : (1 : ℝ) ≤ |C| + 2 := by linarith only [hCabs]
-  have hs : (0 : ℝ) < (|C| + 2)⁻¹ := inv_pos.mpr hbpos
-  have hs1 : (|C| + 2)⁻¹ ≤ 1 := inv_le_one_of_one_le₀ hb1
-  refine ⟨(|C| + 2)⁻¹, hs, hs1, ?_⟩
-  have hsplit : Real.rpow ((|C| + 2)⁻¹) (-(3 / 2 : ℝ)) *
-      Real.rpow ((|C| + 2)⁻¹) (-(9 / 2 : ℝ)) =
-      Real.rpow ((|C| + 2)⁻¹) (-(6 : ℝ)) :=
-    rpow_mul_rpow_of_add hs _ _ _ (by norm_num)
-  have hinv : Real.rpow ((|C| + 2)⁻¹) (-(1 : ℝ)) = |C| + 2 := by
-    show ((|C| + 2)⁻¹ : ℝ) ^ (-(1 : ℝ)) = |C| + 2
-    rw [Real.rpow_neg hs.le, Real.rpow_one, inv_inv]
-  have hmono : Real.rpow ((|C| + 2)⁻¹) (-(1 : ℝ)) ≤
-      Real.rpow ((|C| + 2)⁻¹) (-(3 / 2 : ℝ)) :=
-    Real.rpow_le_rpow_of_exponent_ge hs hs1 (by norm_num)
-  have hbig : C < Real.rpow ((|C| + 2)⁻¹) (-(3 / 2 : ℝ)) := by
-    have hCle : C ≤ |C| := le_abs_self C
-    rw [hinv] at hmono
-    linarith only [hCle, hmono]
-  have hpow : (0 : ℝ) < Real.rpow ((|C| + 2)⁻¹) (-(9 / 2 : ℝ)) :=
-    Real.rpow_pos_of_pos hs _
-  calc C * Real.rpow ((|C| + 2)⁻¹) (-(9 / 2 : ℝ))
-      < Real.rpow ((|C| + 2)⁻¹) (-(3 / 2 : ℝ)) *
-          Real.rpow ((|C| + 2)⁻¹) (-(9 / 2 : ℝ)) :=
-        mul_lt_mul_of_pos_right hbig hpow
-    _ = Real.rpow ((|C| + 2)⁻¹) (-(6 : ℝ)) := hsplit
-
-/-- **The obstruction, machine-checked.** -/
-theorem frozen_gradh_leg_cannot_absorb_move3 :
-    ¬ ∃ C : ℝ, ∀ s A : ℝ, 0 < s → s ≤ 1 → 0 ≤ A →
-      Real.rpow s (-(6 : ℝ)) * A ≤ C * (Real.rpow s (-(9 / 2 : ℝ)) * A) := by
-  rintro ⟨C, hC⟩
-  obtain ⟨s, hs, hs1, hgap⟩ := exists_s_gradh_exponent_gap C
-  have h := hC s 1 hs hs1 zero_le_one
-  rw [mul_one, mul_one] at h
-  linarith only [h, hgap]
 
 end
 

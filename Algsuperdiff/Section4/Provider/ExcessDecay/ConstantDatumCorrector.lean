@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.NegNormToL2
 import Algsuperdiff.Section4.Provider.ExcessDecay.L2Bridge
@@ -39,8 +39,8 @@ Caccioppoli with right-hand side, but its internal bridge is stated at `t^{-8}
 a *deterministic* comparison of the two lower-ellipticity constants which costs
 a factor `t^{-2}`.  The two theorems below therefore re-run CoarseGraining's
 composition from its public parts and stop *before* the ellipticity comparison,
-leaving `λ_{t,2}^{-1}` visible for the caller (`GeneralClauseInteriorEnergy`)
-to discharge from the good event.
+leaving `λ_{t,2}^{-1}` visible for the caller to discharge from the good
+event.
 
 Nothing here is a new analytic input: every step is a public CoarseGraining
 theorem or the proved `NegNormToL2`/`L2Bridge` bridge.

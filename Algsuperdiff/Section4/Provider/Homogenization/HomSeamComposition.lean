@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSupClauseProvider
 
@@ -11,32 +11,26 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSeamSupClauseProvider
 ## The remaining distance, named
 
 `GeneratorRenormalizationShape d cstar` is the frozen conclusion, named
-once so that the composition can be stated without a `sorry`.  The composition
-theorem
-
-```text
-  generatorRenormalizationShape_of_supClauseProducer: SupClauseProducerAt d cstar → GeneratorRenormalizationShape d cstar
-```
-
-reduces the `generator_renormalization` root, at every `d` and every `cstar > 0`,
-to ONE remaining object: an a.e. producer of the sup-form multiscale clause at
-some positive `γ₀`.  Nothing else is left: the `C_gap` slot is pinned to the
+once so that a composition can be stated without a `sorry`.  Reducing the
+`generator_renormalization` root, at every `d` and every `cstar > 0`,
+to ONE remaining object — an a.e. producer of the sup-form multiscale clause at
+some positive `γ₀` — leaves nothing else: the `C_gap` slot is pinned to the
 numeral `1`, and the factor `D3` is discharged inside
 (`HomSeamBudgetArith.recut_geomFactor_le_absLog`).
 
 ## THE EXACT REMAINING APPLICATIONS
 
-To produce `SupClauseProducerAt d cstar` one has to run, at each admissible
+To produce such a clause producer one has to run, at each admissible
 `M`, `m` and a.e. `ω`, and at every `L ≥ m` and every datum tuple:
 
-1. `HomSpineSupFormClause.exists_coarseGrainingSupMultiscale_of_depthConverseOn`
+1. the single-depth dual-converse route of `HomSpineSupFormClause`
    at `p = recutExponent d hd1` (`= 4d`), `hp = recutExponent_two_le`, the
    predicate `Pred s:= s = recutOrderBase M hlog`, and the dual-converse
    constant `CA` — the target interface.  Its ONE hypothesis is
    `NegativeBesovGridSmoothDualConverseAtDepth (originCube d m) s p j CA` at
    every depth `j`.
 2. The constant reconciliation `Ccg ≤ recutPinnedCcgFlux d (recutExponent d hd1)`:
-   the clause carrier of `RecutCoreSupplyFluxSupClause` is pinned at the lane's
+   the lane's sup-form clause carrier is pinned at the lane's
    own constant, while (1) produces its own `Ccg = √d · CA · C(p,d)`.  Either
    `CoarseGrainingSupMultiscale` must be shown monotone in `Ccg`, or the pin
    must be re-cut at a model-dependent `CcgF` — see the open question below.
@@ -54,10 +48,9 @@ model-dependent (`≍ |log γ|^{1-1/(4d)}`), then `Ccg` is model-dependent too, 
 the lane's pinned
 `recutPinnedCcgFlux` cannot receive it.  The frozen budget has room for it — the
 whole `|log γ|` is spent on `GEOM` alone at present, and `GEOM ≤ 2|log γ|` is
-generous — but a `CcgF: ABKModel d → ℝ` re-thread of
-`RecutCoreSupplyFluxSupClause` / `RecutCoreSupplyFluxEnergySupGrad` (the only
-two carriers that pin `Ccg`; everything downstream already carries it free) is
-required first.  NOT attempted in this file.
+generous — but a `CcgF: ABKModel d → ℝ` re-thread of the lane's sup-form clause
+carrier and of `RecutCoreSupplyFluxEnergySupGrad` (the only two carriers that
+pin `Ccg`; everything downstream already carries it free) is required first.  NOT attempted in this file.
 -/
 
 open Algsuperdiff.Section3
@@ -121,40 +114,6 @@ def GeneratorRenormalizationShape (d : ℕ) (cstar : ℝ) : Prop :=
                           Real.sqrt sigmaBarM *
                             (KhInf + Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh)) ^
                         (2 : ℕ)
-
-/-! ## 2. The ONE remaining input -/
-
-/-- **THE ONE REMAINING INPUT.**  An a.e. producer of the sup-form multiscale
-clause at SOME positive `γ₀`.  This is the target interface, and nothing
-else stands between it and the frozen root. -/
-def SupClauseProducerAt (d : ℕ) (cstar : ℝ) : Prop :=
-  ∃ gamma0 : ℝ, 0 < gamma0 ∧
-    ∀ (hd : 2 ≤ d) (inst : NeZero d),
-      @SeamMultiscaleSupClauseSupply d inst (le_trans (by norm_num) hd) cstar gamma0
-
-/-! ## 3. THE COMPOSITION -/
-
-/-- **THE COMPOSITION.**  The frozen conclusion, at every dimension and
-every `cstar > 0`, from the sup-form clause producer ALONE.  `C_gap` is pinned
-to the numeral `1`; `C_en⁰`, `K_abs`, `C_top` and the geometric factor are
-all closed terms pinned inside. -/
-theorem generatorRenormalizationShape_of_supClauseProducer (d : ℕ) (cstar : ℝ)
-    (hcstar : 0 < cstar) (h : SupClauseProducerAt d cstar) :
-    GeneratorRenormalizationShape d cstar := by
-  obtain ⟨gamma0, hg0, hcl⟩ := h
-  exact generator_renormalization_provider_final_of_supClause d cstar hcstar hg0
-    one_pos hcl
-
-/-- The same from the `ℓ^p` clause producer, through the regression
-certificate `supClauseSupply_of_clauseSupply`. -/
-theorem generatorRenormalizationShape_of_clauseProducer (d : ℕ) (cstar : ℝ)
-    (hcstar : 0 < cstar) {gamma0 : ℝ} (hg0 : 0 < gamma0)
-    (hcl : ∀ (hd : 2 ≤ d) (inst : NeZero d),
-      @SeamMultiscaleClauseSupply d inst (le_trans (by norm_num) hd) cstar gamma0) :
-    GeneratorRenormalizationShape d cstar :=
-  generatorRenormalizationShape_of_supClauseProducer d cstar hcstar
-    ⟨gamma0, hg0, fun hd inst =>
-      supClauseSupply_of_clauseSupply d (le_trans (by norm_num) hd) (hcl hd inst)⟩
 
 end
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Proportion.ScoreDomination
 import Algsuperdiff.Section4.Provider.Proportion.Concentration
@@ -13,7 +13,7 @@ ABK26, §4.1, `l.good.scales.ratio.lambda`, score domination, and the threshold
 identification.
 
 `ScoreDomination.one_lt_YcalRowE_of_notMem_eventG0` is the *deterministic* half of
-the reduction `hreduce` consumed by `Concentration.ratioTail_Ycal`: off `𝒢₀(m)`
+the reduction `hreduce` the `𝒢₀` lane consumes: off `𝒢₀(m)`
 the `ℝ≥0∞`-formed row sum `Σ_{n ≤ m} 3^{−s'(m−n)} 𝒴_n` exceeds `1`.  The
 Appendix-D row sum `Y_m`, by contrast, is the **real**, **two-sided** series
 `Σ_{j ∈ ℤ} 3^{−s'|m−j|} D^{-1}𝒴_j`, which is a `tsum` in `ℝ` and therefore only
@@ -137,11 +137,6 @@ theorem measurable_YcalE (M : ABKModel d) (Ccg sprime : ℝ) (n : ℤ) :
   rw [hrw]
   exact Measurable.ennreal_tsum fun j =>
     ((measurable_annMax M Ccg n (n - (j : ℤ))).const_mul _).ennreal_ofReal
-
-/-- The real score field is the `.toReal` of the `ℝ≥0∞` one. -/
-theorem Ycal_eq_toReal (M : ABKModel d) (Ccg sprime : ℝ) (n : ℤ)
-    (omega : Cutoff.CutoffSample d) :
-    Ycal M Ccg sprime n omega = (YcalE M Ccg sprime n omega).toReal := rfl
 
 /-- **`E[𝒴_n] < ∞`, by Tonelli over the `k`-series.**  The per-annulus maxima
 have `Γ_σ` tails at the penalised atom scales (`isBigOWith_annMax`), so each has
@@ -420,22 +415,6 @@ theorem lt_Yk_of_notMem_eventG0 (M : ABKModel d) (Ccg : ℝ) {D : ℝ} (hD : 0 <
   calc D⁻¹ = D⁻¹ * 1 := (mul_one _).symm
     _ < D⁻¹ * (YcalRowTwoE M Ccg (M.gamma / 4) m omega).toReal :=
         mul_lt_mul_of_pos_left h1lt (inv_pos.2 hD)
-
-/-- **The `hreduce` slot of `ratioTail_Ycal`, for the enlarged family.**  The
-threshold hypothesis `hthr` is the manuscript's own threshold identification:
-the Appendix-D level `9 s'^{-1} C^{1/p} θ^{-1/p}` must sit below the
-normalizer's reciprocal. -/
-theorem hreduce_eventG0 (M : ABKModel d) (Ccg : ℝ) {p theta D : ℝ} (hD : 0 < D)
-    (hthr : 9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) ≤ D⁻¹)
-    (m : ℤ) (_hm : 0 ≤ m) (omega : Cutoff.CutoffSample d)
-    (homega : omega ∈ (Support.eventG0 M Ccg m ∪ (goodRowSet M Ccg (M.gamma / 4))ᶜ)ᶜ) :
-    9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p)
-      < Yk (ycalArray M Ccg (M.gamma / 4) D) (M.gamma / 4) m omega := by
-  have h1 : omega ∉ Support.eventG0 M Ccg m := fun hc => homega (Or.inl hc)
-  have h2 : omega ∈ goodRowSet M Ccg (M.gamma / 4) := by
-    by_contra hc
-    exact homega (Or.inr hc)
-  exact lt_of_le_of_lt hthr (lt_Yk_of_notMem_eventG0 M Ccg hD m h2 h1)
 
 end
 

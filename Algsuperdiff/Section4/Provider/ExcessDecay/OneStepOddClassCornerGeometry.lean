@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepEvenBoundFinal
 
@@ -110,13 +110,6 @@ theorem windowHi_le_reflectedHi {x : Vec d} {m k : ℤ}
     rw [windowHi_of_meetsUpperFace hup] at h
     linarith only [h]
   · rw [reflectedHi_of_not_meetsUpperFace hup]
-
-/-- On a met upper face the window's `i`-edge is read off the face:
-`windowHi = a` and `windowLo = a − e`. -/
-theorem windowHi_eq_half_zpow_of_meetsUpperFace {x : Vec d} {m k : ℤ} {i : Fin d}
-    (hup : MeetsUpperFace x m k i) :
-    windowHi x m k i = (1 / 2 : ℝ) * (3 : ℝ) ^ m :=
-  windowHi_of_meetsUpperFace hup
 
 /-- On a met upper face the reflected upper endpoint is the face plus the full
 edge. -/
@@ -240,17 +233,6 @@ theorem cornerFaceSlabLo_lt_hi {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
   · rw [if_neg hli, if_neg hli]
     exact hugLo_lt_hugHi hx hkm l
 
-theorem cornerFaceTaylorLo_lt_hi {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
-    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k < m) (hdelta : 0 < delta)
-    (l : Fin d) :
-    cornerFaceTaylorLo x m k i delta l < cornerFaceTaylorHi x m k i delta l := by
-  rw [cornerFaceTaylorLo, cornerFaceTaylorHi]
-  by_cases hli : l = i
-  · rw [if_pos hli, if_pos hli]
-    linarith only [hdelta]
-  · rw [if_neg hli, if_neg hli]
-    exact hugLo_lt_hugHi hx hkm l
-
 theorem cornerPairSlabLo_lt_hi {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ}
     (hx : x ∈ openCubeSet (originCube d m)) (hkm : k < m) (hdelta : 0 < delta)
     (l : Fin d) :
@@ -261,20 +243,6 @@ theorem cornerPairSlabLo_lt_hi {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : �
     linarith only [hdelta]
   · rw [if_neg hlij, if_neg hlij]
     exact hugLo_lt_hugHi hx hkm l
-
-theorem cornerPairTaylorLo_lt_hi {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ}
-    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k < m) (hdelta : 0 < delta)
-    (l : Fin d) :
-    cornerPairTaylorLo x m k i j delta l < cornerPairTaylorHi x m k i j delta l := by
-  rw [cornerPairTaylorLo, cornerPairTaylorHi]
-  by_cases hli : l = i
-  · rw [if_pos hli, if_pos hli]
-    linarith only [hdelta]
-  · by_cases hlj : l = j
-    · rw [if_neg hli, if_pos hlj, if_neg hli, if_pos hlj]
-      linarith only [hdelta]
-    · rw [if_neg hli, if_neg hlj, if_neg hli, if_neg hlj]
-      exact hugLo_lt_hugHi hx hkm l
 
 /-! ## 5. The slabs sit inside the window -/
 

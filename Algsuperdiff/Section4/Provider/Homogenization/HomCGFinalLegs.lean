@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomCGFinalDuality
 
@@ -29,8 +29,8 @@ Since `K = d·3^{m(s-s′)}·(1 + C(d,β)^{1/p′})`, the produced levels are
   d(1+C)·3^{sm}·σ₀⁻¹·R      and      d(1+C)·3^{sm}·R,
 ```
 
-which is EXACTLY the shape of `GeneralCoarseGrainingFiniteP`'s two duality
-clauses, `3^{s·scale}σ⁻¹·RHS` and `3^{s·scale}·RHS`, with the dimensional factor
+which is EXACTLY the shape of the finite-`p` coarse-graining hypothesis's two
+duality clauses, `3^{s·scale}σ⁻¹·RHS` and `3^{s·scale}·RHS`, with the dimensional factor
 `d(1 + C(d,β)^{1/p′})` absorbed into the printed constant `C_cg` — which the
 spine's bundle quantifies existentially.  The order loss has vanished from the
 LEVEL; it survives only inside `R`, where the printed `s^{-1}`, `s^{-9/2}` and

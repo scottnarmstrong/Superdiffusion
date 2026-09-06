@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section3.Provider.BadEvents.LambdaTransfer
 import Algsuperdiff.Section3.Provider.Localization.ResponseTransport
@@ -308,24 +308,6 @@ theorem w1Infinity_cubeUnitCube_le (Q : TriadicCube d) (h : ShellField d) :
         (localCubeControl Q.scale (ShellField.translate (cubeBasePoint Q) h)) := by
   rw [cubeUnitCube, ← max_unitCubeValueNorm_cube Q h]
   exact w1Infinity_shellFieldUnitCube_le_max _
-
-/-- ** The two-index zeroth-order bridge.**  The zeroth-order Section 2.4
-sensitivity quantity of the rescaled literal increment `k_L - k_n` is bounded
-by the scale-weighted cube norms of the realized increment on `z + square_l`.
-
-This is the exact zeroth-order twin of the proved
-`BadEvents.gradientW1Infinity_incrementUnitCube₂_le`
-(`Provider/BadEvents/IncrementGaugeTwoIndex.lean`). -/
-theorem w1Infinity_incrementUnitCube₂_le (Q : TriadicCube d) (n L : ℤ)
-    (omega : CutoffSample d) :
-    (incrementUnitCube₂ Q n L omega).w1Infinity ≤
-      max
-        ((3 : ℝ) ^ Q.scale *
-          localCubeDerivNorm Q.scale
-            (ShellField.translate (cubeBasePoint Q) (shellIncrement omega.1 n L)))
-        (localCubeControl Q.scale
-          (ShellField.translate (cubeBasePoint Q) (shellIncrement omega.1 n L))) :=
-  w1Infinity_cubeUnitCube_le Q _
 
 /-! ## (fingerprint) The `3^{4l}` weight -/
 

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
@@ -44,36 +44,29 @@ the disclosure).
 
 ## Scope
 
-Proved outright: the two domination slots, at the re-pinned base, from ONE
-named input.
+The two domination slots at the re-pinned base are NOT proved here.  They would
+need the COEFFICIENT half of the seam: the bundle's slots live at the cutoff
+field `a_L` (`Cutoff.coefficientCutoffCoeffOn`), while `EthmB(m)` and all four
+printed displays carry the flux-corrected field `ã_{L,m}`, and nothing in this
+file asserts a bridge between the two.
 
-Still an input, and named as `FluxCorrectedParentBridge`: the COEFFICIENT half
-of the seam — the bundle's slots live at the cutoff field `a_L`
-(`Cutoff.coefficientCutoffCoeffOn`), while `EthmB(m)` and all four printed
-displays carry the flux-corrected field
-`ã_{L,m}`.  This file does not assert that bridge anywhere; it is a hypothesis
-of both theorems, at ONE `q` index and at the two orders the re-pin needs.
-
-CORRECTION: `FluxCorrectedParentBridge` is NOT the standing
-`bounds_mathcal_E_aL` provider obligation — it is strictly stronger and NOT
-provable: it would bound the uncut-`a_L` error by an `L`-free right side, i.e.
-`sup_L 𝓔(□_m; a_L, σ̄_m) < ∞`, which the manuscript never asserts (the print's
-the `bounds_mathcal_E_aL` lemma, is stated at `ã`, and / transport the
-Dirichlet datum to `ã` rather than bounding `a_L`). The two theorems below
-remain correct but vacuously consumable; the print-accurate replacements live
-in `HomSeamFluxCoefficient.lean` (`seamDom1Flux_of_identification` /
-`seamDom2Flux_of_identification`, from the honest
-`FluxCorrectedParentIdentification` with BOTH sides at `ã`).  The two
-bridge-consuming theorems are queued for the cleanup sweep, not deleted here.
+CORRECTION: such a bridge is NOT the standing `bounds_mathcal_E_aL` provider
+obligation — it is strictly stronger and NOT provable: it would bound the
+uncut-`a_L` error by an `L`-free right side, i.e. `sup_L 𝓔(□_m; a_L, σ̄_m) < ∞`,
+which the manuscript never asserts: the print's `bounds_mathcal_E_aL` lemma is
+stated at `ã`, and transports the Dirichlet datum to `ã` rather than bounding
+`a_L`.  The print-accurate replacements live in `HomSeamFluxCoefficient.lean`
+(`seamDom1Flux_of_identification` / `seamDom2Flux_of_identification`, from the
+honest `FluxCorrectedParentIdentification` with BOTH sides at `ã`).
 
 Also NOT carried here: the re-pinned Step-1 moment bound
-(`HomStepOneAnchor.exists_ethmB_factor_moments` is stated at the printed base
+(the anchor's Step-1 factor-moment display is stated at the printed base
 `s`; its sibling at `s/8` needs the anchor's `s`-endpoint at `s/32` and
 its `p`-range at `64 d |log γ|` — the machine-traced correction of this
 file's original `32 d |log γ|`: the binding slot is `homQuarterOf (homSeamBase)
 = s/32`, so the scaling is exactly ×8, matching the gauge's `16 → 128`), and
 the level chain's absorption of the `√2`
-of the second slot — `HomSpineResiduePairing.ofReal_gapLeg_le` takes its
+of the second slot — `HomSpineResiduePairing`'s gap pairing takes its
 domination at constant one.  `ofReal_one_add_sq_le_of_const` below is the exact
 arithmetic that sibling has to consume.
 -/
@@ -321,103 +314,13 @@ theorem fluxCorrectedTwoScaleErrorObservableSup_congr_order (M : ABKModel d) (m 
   have hEq : s1 = s2 := Subtype.ext h
   rw [hEq]
 
-/-! ## 4. The one remaining input -/
-
-/-- **THE `ã` BRIDGE** — the coefficient half of the carrier seam, named.
-
-At a fixed sample and every admissible `L`, the printed `q = 2` truncated
-parent error of the CUTOFF field `a_L` on `□_m` is below the flux-corrected
-`(m, n)` observable at the same order.  This is the only input of the two
-domination theorems below; nothing in this file asserts it. -/
-def FluxCorrectedParentBridge [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ)
-    {sigmaBarM : ℝ} (hsig : 0 < sigmaBarM) (omega : Cutoff.CutoffSample d) : Prop :=
-  ∀ L : ℤ, m ≤ L → ∀ t : FractionalOrder,
-    Ch02.parentTruncatedHomogenizationErrorInfinityTwoScalar (originCube d m)
-        ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
-        (Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m)) sigmaBarM hsig t ≤
-      fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) ⟨t.1, t.2.1⟩ omega
-
-/-! ## 5. The two domination slots, at the re-pinned base -/
-
-/-- **THE FIRST DOMINATION SLOT, PRODUCED.**
-
-The bundle's `𝓔₁` slot — the `q = 1` parent error at the display order `s/8`,
-at the cutoff field — is below the FIRST `𝓔` factor of `EthmB(m)` re-pinned at
-the base `s' = s/8`, i.e. the factor of order `s/16`.  Constant one: the
-`q`-index step of section 2 is exactly Cauchy--Schwarz at a probability
-weight.
-
-The single input is the `ã` bridge. -/
-theorem seamDom1_of_bridge [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ}
-    (hsig : 0 < sigmaBarM) (omega : Cutoff.CutoffSample d) (hs : 0 < homS M)
-    (hlog : 4 ≤ |Real.log M.gamma|)
-    (hbridge : FluxCorrectedParentBridge M m jn hsig omega) (L : ℤ) (hL : m ≤ L) :
-    ENNReal.ofReal (recutPinnedE1 M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-        (homHalf (homSeamBase M hs)) omega := by
-  set u : FractionalOrder :=
-    fractionalOrderHalf (recutOrderLow (recutOrderBase M hlog)) with hu
-  have hcut : ENNReal.ofReal (recutPinnedE1 M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      Ch02.parentTruncatedHomogenizationErrorInfinityOneScalar (originCube d m)
-        ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
-        (Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m)) sigmaBarM hsig
-        (recutOrderLow (recutOrderBase M hlog)) := ENNReal.ofReal_toReal_le
-  have hq := parentTruncatedOne_le_parentTruncatedTwo_half (originCube d m)
-    ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
-    (Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m)) sigmaBarM hsig
-    (recutOrderLow (recutOrderBase M hlog)) u rfl
-  have hbr := hbridge L hL u
-  have horder : ((⟨u.1, u.2.1⟩ : {s : ℝ // 0 < s}) : ℝ) =
-      ((homHalf (homSeamBase M hs) : {s : ℝ // 0 < s}) : ℝ) := by
-    simp only [hu, fractionalOrderHalf_value, recutOrderLow_val, recutOrderBase_val,
-      homHalf_val, homSeamBase_val]
-  rw [fluxCorrectedTwoScaleErrorObservableSup_congr_order M m (homN M m) horder] at hbr
-  exact le_trans hcut (le_trans hq hbr)
-
-/-- **THE SECOND DOMINATION SLOT, PRODUCED.**
-
-The bundle's `𝓔₂` slot — the `q = 2` parent error at the half display order
-`s/16` — is below the `γ⁵` factor of the re-pinned `EthmB(m)`, of order `s/32`,
-times `√2`.  The constant is exactly the ratio of the two geometric
-normalizations `c_{s/8,2}/c_{s/16,2} = 1 + 3^{-s/16} ≤ 2`; the scale sum itself
-moves the right way.
-
-The single input is the same `ã` bridge. -/
-theorem seamDom2_of_bridge [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ}
-    (hsig : 0 < sigmaBarM) (omega : Cutoff.CutoffSample d) (hs : 0 < homS M)
-    (hlog : 4 ≤ |Real.log M.gamma|)
-    (hbridge : FluxCorrectedParentBridge M m jn hsig omega) (L : ℤ) (hL : m ≤ L) :
-    ENNReal.ofReal (recutPinnedE2 M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      ENNReal.ofReal (Real.sqrt 2) *
-        fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-          (homQuarterOf (homSeamBase M hs)) omega := by
-  set u : FractionalOrder :=
-    fractionalOrderHalf (recutOrderLow (recutOrderBase M hlog)) with hu
-  set v : FractionalOrder := fractionalOrderHalf u with hv
-  have hcut : ENNReal.ofReal (recutPinnedE2 M L omega m jn hsig (recutOrderBase M hlog)) ≤
-      Ch02.parentTruncatedHomogenizationErrorInfinityTwoScalar (originCube d m)
-        ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
-        (Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m)) sigmaBarM hsig u :=
-    ENNReal.ofReal_toReal_le
-  have hord := parentTruncatedTwo_le_sqrtTwo_half (originCube d m)
-    ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
-    (Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m)) sigmaBarM hsig u v rfl
-  have hbr := hbridge L hL v
-  have horder : ((⟨v.1, v.2.1⟩ : {s : ℝ // 0 < s}) : ℝ) =
-      ((homQuarterOf (homSeamBase M hs) : {s : ℝ // 0 < s}) : ℝ) := by
-    simp only [hv, hu, fractionalOrderHalf_value, recutOrderLow_val, recutOrderBase_val,
-      homQuarterOf_val, homSeamBase_val]
-    ring
-  rw [fluxCorrectedTwoScaleErrorObservableSup_congr_order M m (homN M m) horder] at hbr
-  exact le_trans hcut (le_trans hord (mul_le_mul' le_rfl hbr))
-
 /-! ## 6. The absorption the level chain still owes -/
 
 /-- **THE `√2` IS FREE.**  A domination with a constant `K ≥ 1` enters the gap
 leg only through `1 + E²`, where it costs exactly `K²`.  This is the arithmetic
-a sibling of `HomSpineResiduePairing.ofReal_gapLeg_le` has to consume in order
-to accept `seamDom2_of_bridge`; nothing else in the level chain sees the
-constant. -/
+a sibling of `HomSpineResiduePairing`'s gap pairing has to consume in order
+to accept the second domination at `√2`; nothing else in the level chain sees
+the constant. -/
 theorem ofReal_one_add_sq_le_of_const {E K : ℝ} {Ecar : ℝ≥0∞} (hE : 0 ≤ E) (hK : 1 ≤ K)
     (hdom : ENNReal.ofReal E ≤ ENNReal.ofReal K * Ecar) :
     ENNReal.ofReal (1 + E ^ (2 : ℕ)) ≤

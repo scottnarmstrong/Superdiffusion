@@ -1,10 +1,9 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepCornerTransport
-import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryFull
 
 /-!
 # The one-met-face regime at the lower face
@@ -12,8 +11,8 @@ import Algsuperdiff.Section4.Provider.ExcessDecay.OneStepBoundaryFull
 `OneStepCornerTransport` removed the orientation restriction from the corner
 pricing `(★★)`.  This module does the same for the one-met-face pricing `(★)`
 and its producer, which the proved
-`OneStepEvenBoundFinal`/`OneStepBoundaryFull` state at a met **upper** face
-only.
+`OneStepEvenBoundFinal` and the one-met-face producer state at a met **upper**
+face only.
 
 ## What travels, and what the datum becomes
 
@@ -31,8 +30,8 @@ on the lower face exactly as `oddAffineIntercept`'s vanishes on the upper one.
 With that datum the odd-class membership `isOddAffineData_oddAffineDatumLower`
 and the pricing `exists_oddClassDefect_le_affineExcessRaw_lower` are the mirror
 images of the proved upper-face statements, and the producer
-`exists_gradientHolder_boundary_faceOdd_lower` is `OneStepBoundaryFull`'s proof
-run at those data.
+`exists_gradientHolder_boundary_faceOdd_lower` is the upper-face producer's
+proof run at those data.
 -/
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -176,94 +175,6 @@ theorem exists_oddClassDefect_le_affineExcessRaw_lower (d : ℕ) [NeZero d] :
     oddClassDefect_comp_coordFaceReflection_zero,
     affineExcessRaw_truncatedWindow_comp_coordFaceReflection_zero] at hmain
   exact hmain
-
-/-! ## 3. The producer at a met lower face -/
-
-/-- **The boundary producer at a lower-face-odd competitor: one leg.**  The
-lower-face twin of `OneStepBoundaryFull.exists_gradientHolder_boundary_faceOdd`. -/
-theorem exists_gradientHolder_boundary_faceOdd_lower (d : ℕ) [NeZero d] (hd : d ≠ 0) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (m n : ℤ) (x : Vec d) (i : Fin d) (V : Vec d → ℝ) (c : ℝ)
-      (A : Vec d),
-      x ∈ openCubeSet (originCube d m) → n - 2 < m →
-      MeetsLowerFace x m (n - 2) i →
-      (∀ j, j ≠ i → ¬ MeetsUpperFace x m (n - 2) j ∧ ¬ MeetsLowerFace x m (n - 2) j) →
-      (∀ z, V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -V z) →
-      HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m (n - 2)) →
-      MemLp V 2 (volume.restrict (reflectedWindow x m (n - 2))) →
-      IsAffineMinimizer (truncatedWindow x m (n - 2)) V (c - vecDot A x) A →
-      ∃ K : ℝ, 0 ≤ K ∧
-        (∀ j, IntegrableOn (fun p => gradField V p j)
-          (truncatedWindow x m (n - 3)) volume) ∧
-        HasGradientOn (truncatedWindow x m (n - 3)) V (gradField V) ∧
-        HolderSeminormBoundOn (truncatedWindow x m (n - 3)) (1 / 2 : ℝ) K
-          (gradField V) ∧
-        K ≤ C * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-              * affineExcess (truncatedWindow x m (n - 2)) V := by
-  obtain ⟨Cd, hCd0, hCd⟩ := exists_oddClassDefect_le_affineExcessRaw_lower d
-  refine ⟨(1 + Cd) * boundaryOddSchauderConst d,
-    mul_nonneg (by linarith only [hCd0]) (boundaryOddSchauderConst_nonneg d), ?_⟩
-  intro m n x i V c A hx hmn hlow hother hVodd hharm hVR hmin
-  have hnup : ¬ MeetsUpperFace x m (n - 2) i := fun h =>
-    not_meetsLowerFace_of_meetsUpperFace hmn h hlow
-  have hVO : V =ᵐ[volume.restrict (reflectedWindow x m (n - 2))]
-      fun y => V y + 0 := by
-    filter_upwards with y
-    ring
-  have hOodd : oddExtend x m (n - 2) V
-      =ᵐ[volume.restrict (reflectedWindow x m (n - 2))] V :=
-    MeasureTheory.ae_restrict_of_ae
-      (oddExtend_ae_eq_self_of_faceOdd_lower hnup hlow hother hVodd)
-  have hodd : IsOddAffineData x m (n - 2)
-      (oddAffineInterceptLower x m i A - 0) (oddAffineSlope i A) := by
-    rw [sub_zero]
-    exact isOddAffineData_oddAffineDatumLower hmn hlow hother A
-  obtain ⟨K, hK, hint, hgrad, hhol, hbound⟩ :=
-    exists_gradientHolder_boundary_odd_ae hd hx hmn hVO hOodd hodd hharm hVR
-  refine ⟨K, hK, hint, hgrad, hhol, le_trans hbound ?_⟩
-  set kappa : ℝ := boundaryOddSchauderConst d * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-    with hkappadef
-  have hkappa0 : 0 ≤ kappa := by
-    rw [hkappadef]
-    exact mul_nonneg (boundaryOddSchauderConst_nonneg d)
-      (Real.rpow_nonneg (zpow_pos (by norm_num) (-n)).le _)
-  have hscale : (0 : ℝ) < (3 : ℝ) ^ (-(n - 2)) := zpow_pos (by norm_num) _
-  have hnormz : (3 : ℝ) ^ (-(n - 2))
-        * affineExcessRaw (truncatedWindow x m (n - 2)) V
-      ≤ affineExcess (truncatedWindow x m (n - 2)) V := by
-    rw [affineExcess]
-    exact mul_le_mul_of_nonneg_right
-      (rpow_volume_truncatedWindow_bounds hd x hx (by omega)).1
-      (affineExcessRaw_nonneg _ _)
-  have hdefect := hCd m n x i V c A hx hmn hlow hother hVodd hharm hVR hmin
-  have hstep : (3 : ℝ) ^ (-(n - 2))
-        * oddClassDefect x m n V (oddAffineInterceptLower x m i A)
-            (oddAffineSlope i A)
-      ≤ Cd * affineExcess (truncatedWindow x m (n - 2)) V := by
-    calc (3 : ℝ) ^ (-(n - 2))
-          * oddClassDefect x m n V (oddAffineInterceptLower x m i A)
-              (oddAffineSlope i A)
-        ≤ (3 : ℝ) ^ (-(n - 2))
-            * (Cd * affineExcessRaw (truncatedWindow x m (n - 2)) V) :=
-          mul_le_mul_of_nonneg_left hdefect hscale.le
-      _ = Cd * ((3 : ℝ) ^ (-(n - 2))
-            * affineExcessRaw (truncatedWindow x m (n - 2)) V) := by ring
-      _ ≤ Cd * affineExcess (truncatedWindow x m (n - 2)) V :=
-          mul_le_mul_of_nonneg_left hnormz hCd0
-  have hfold : kappa * ((3 : ℝ) ^ (-(n - 2))
-        * oddClassDefect x m n V (oddAffineInterceptLower x m i A)
-            (oddAffineSlope i A))
-      ≤ kappa * (Cd * affineExcess (truncatedWindow x m (n - 2)) V) :=
-    mul_le_mul_of_nonneg_left hstep hkappa0
-  have hrewrite : (1 + Cd) * boundaryOddSchauderConst d
-        * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ)
-        * affineExcess (truncatedWindow x m (n - 2)) V
-      = kappa * affineExcess (truncatedWindow x m (n - 2)) V
-        + kappa * (Cd * affineExcess (truncatedWindow x m (n - 2)) V) := by
-    rw [hkappadef]
-    ring
-  rw [hrewrite]
-  linarith only [hfold]
 
 end
 

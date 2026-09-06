@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Homogenization.HomSpineResidueLevel
 
@@ -10,12 +10,12 @@ import Algsuperdiff.Section4.Provider.Homogenization.HomSpineResidueLevel
 
 ## The trap
 
-`HomSpineRecutSupport.stepFourSchauderConst d s` is a `Classical.choose` of an
+The §4.5 Step-4 Schauder constant `C_S4(d,s)` is a `Classical.choose` of an
 `s`-indexed existential.  Its defining property is UPWARD CLOSED in the
 constant, so nothing in the tree bounds the chosen value: the frame condition
 
 ```text
-  spineClauseConst d s p C_w (stepFourSchauderConst d s) ≤ K_abs
+  spineClauseConst d s p C_w (C_S4 d s) ≤ K_abs
 ```
 
 can be met at each fixed `s`, but NOT by one `K_abs` produced before the model
@@ -47,11 +47,10 @@ for `C_w` — both available before the model.
 
 ## Scope
 
-The `HomSpineInstallPins.SpineDatumRecutCore` refers to `stepFourSchauderConst
-d s.1` inside its `hKabs` conjunct, so consuming the uniform constant requires
-a SIBLING of that bundle (and of `HomSpineRecutClose`'s two consumption sites,
-which spend `hKabs` through `spineClauseConst`) with `stepFourSchauderConst d
-s.1` replaced by `stepFourSchauderConstU d`. That re-cut is NOT performed here;
+The §4.5 bundle core refers to `C_S4(d, s.1)` inside its `hKabs` conjunct, so
+consuming the uniform constant requires a SIBLING of that bundle (and of the
+re-cut's two consumption sites, which spend `hKabs` through `spineClauseConst`)
+with `C_S4(d, s.1)` replaced by `stepFourSchauderConstU d`. That re-cut is NOT performed here;
 what is proved here is that the replacement is sound — the uniform constant
 satisfies the same package at every admissible `s`.
 -/
@@ -187,9 +186,9 @@ theorem exists_comparator_schauder_package_uniform (dimension : 2 ≤ d) :
 
 /-! ## 3. The `s`-free constant and the `K_abs` closure -/
 
-/-- **THE `s`-UNIFORM SCHAUDER CONSTANT.**  Unlike
-`HomSpineRecutSupport.stepFourSchauderConst`, this is a `Classical.choose` of an
-`s`-FREE existential, so it is a function of `d` alone. -/
+/-- **THE `s`-UNIFORM SCHAUDER CONSTANT.**  Unlike the `s`-indexed Step-4
+Schauder constant, this is a `Classical.choose` of an `s`-FREE existential, so it
+is a function of `d` alone. -/
 def stepFourSchauderConstU (d : ℕ) : ℝ :=
   if h : 2 ≤ d then Classical.choose (exists_comparator_schauder_package_uniform (d := d) h)
   else 0

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.ExcessDecay.EdFinalInputs
 import Algsuperdiff.Section4.Provider.Regularity.StepFourCollapseInterface
@@ -24,7 +24,7 @@ module composes them at `x := z`, with the carried items discharged from
    δ_n = C_δ 3^{n/2} σ̄_n^{-1} K_g .
 ```
 
-`δ_n` is the `g`-leg shape of `StepFiveDeltaFamily.stepFiveDelta`, at the
+`δ_n` is the `g`-leg shape of the Step-5 family, at the
 root's own Hölder datum `K_g` in place of the `W̲^{1/2,∞}` seminorm (which it
 dominates).  The ungated, non-decaying flat `∇h` leg
 is gone: the interior clause carries no `∇h` leg at all.
@@ -79,7 +79,7 @@ def edFinalDeltaConst (d : ℕ) [NeZero d] (C : ℝ) (k : ℕ) (s : ℝ) : ℝ :
     Real.sqrt (((3 : ℝ) ^ (2 : ℤ)) ^ d) * (C * s ^ (-(19 / 2 : ℝ))))
 
 /-- **The interior branch's `δ_n`**: `C_δ 3^{n/2} σ̄_n^{-1} K_g`, the `g`-leg of
-`StepFiveDeltaFamily.stepFiveDelta` at the root's own Hölder datum.  There is
+the Step-5 family at the root's own Hölder datum.  There is
 no `∇h` leg and no boundary indicator. -/
 def edFinalDelta (M : ABKModel d) (Cdel Kg : ℝ) (n : ℤ) : ℝ :=
   Cdel * (3 : ℝ) ^ ((n : ℝ) / 2) * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Kg

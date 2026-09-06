@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Scott. All rights reserved.
+Copyright (c) 2026 Scott Armstrong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Scott
+Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.MinimalScale.StepOneGoodEvent
 
@@ -352,12 +352,6 @@ theorem dOne_ne_top (M : ABKModel d) (s : {s : ℝ // 0 < s}) (Ccg : ℝ) {k : �
   refine ne_top_of_le_ne_top ENNReal.ofReal_ne_top
     (dOne_le_ofReal_windowKickSum M s Ccg (lam := 0) (K := 216 * ((Real.sqrt (s : ℝ)) ^ 9)⁻¹)
       le_rfl hs1 le_rfl omega)
-
-/-- The `ℝ≥0∞` group `D₁(k)` is `ofReal` of its real reading. -/
-theorem dOne_eq_ofReal (M : ABKModel d) (s : {s : ℝ // 0 < s}) (Ccg : ℝ) {k : ℤ}
-    (hs1 : (s : ℝ) ≤ 1) (omega : Cutoff.CutoffSample d) :
-    dOne M Ccg s k omega = ENNReal.ofReal (dOne M Ccg s k omega).toReal :=
-  (ENNReal.ofReal_toReal (dOne_ne_top M s Ccg hs1 omega)).symm
 
 /-- The real reading of the Step-1 pointwise estimate. -/
 theorem dOne_toReal_le (M : ABKModel d) (s : {s : ℝ // 0 < s}) (Ccg : ℝ) {k : ℤ}
