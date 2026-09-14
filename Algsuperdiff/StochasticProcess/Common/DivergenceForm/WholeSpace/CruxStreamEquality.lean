@@ -58,8 +58,8 @@ theorem killedResolvent_eq_partResolvent_stream
         (PositiveC0ContractiveResolvent.onePointLiveExtension
           (fun y => ENNReal.ofReal (P.f y))) (x : OnePoint (Vec d)) =
       ENNReal.ofReal (P.utilde x) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hTop : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
       R.toContractiveResolvent.operator mu g =
         WholeSpaceAnalyticData.analyticMinimalC0ResolventOfVanishing

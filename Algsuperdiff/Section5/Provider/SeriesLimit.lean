@@ -241,9 +241,9 @@ theorem exists_isCubeRepresentative_of_tendsto (hd : 0 < d) (hK0 : 0 ≤ K0) (hr
       HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) (K0 / (1 - rho)) uRep ∧
       HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) (K0 * rho / (1 - rho))
         fun x => uRep x - wRep 0 x := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
-  haveI : IsFiniteMeasure (volume.restrict (cubeSetAt y n)) := inferInstance
+  have : IsFiniteMeasure (volume.restrict (cubeSetAt y n)) := inferInstance
   have hone : (0 : ℝ) < 1 - rho := by linarith only [hrho1]
   have hPpos : (0 : ℝ) < Real.rpow 3 ((n : ℝ) / 2) := Real.rpow_pos_of_pos (by norm_num) _
   refine ⟨seriesTail wRep 0, ?_, ?_, ?_⟩

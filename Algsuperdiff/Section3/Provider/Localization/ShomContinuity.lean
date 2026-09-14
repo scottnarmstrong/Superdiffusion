@@ -714,7 +714,7 @@ theorem shom_continuity (d : ℕ) :
                 (E : ℝ) ^ 2 * (M.gamma * |Real.log M.gamma| ^ 2)) *
               (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (n : ℝ))) := by
   by_cases hd : 2 ≤ d
-  · haveI : NeZero d := ⟨by omega⟩
+  · have : NeZero d := ⟨by omega⟩
     obtain ⟨Cflow, -, hflow⟩ :=
       ApproximateRecurrence.Closure.diffusivity_asymptotics_proved d hd
     obtain ⟨Crec, hCrec0, hbind⟩ :=

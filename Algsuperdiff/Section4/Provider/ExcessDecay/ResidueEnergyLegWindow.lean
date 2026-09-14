@@ -198,8 +198,8 @@ theorem ae_windowEnergy_boundary_le_anchorLegs_atHinges (d : ℕ) [NeZero d] :
     have hle := measure_mono (μ := (volume : Measure (Vec d))) hcov
     rw [hzero] at hle
     exact volume_image_add_openCubeSet_ne_zero (wellPlacedCentre x m (n + 2))
-      (originCube d (n + 2)) (le_antisymm hle (zero_le _))
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
+      (originCube d (n + 2)) (le_antisymm hle zero_le)
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
   have huL2W : MemLp u.toFun 2
       (Support.normalizedVolumeMeasureOn
         ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩

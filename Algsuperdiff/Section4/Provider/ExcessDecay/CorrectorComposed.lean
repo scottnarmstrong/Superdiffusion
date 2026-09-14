@@ -126,7 +126,7 @@ theorem exists_residualCorrector_affineLift {m k : ℤ} {x : Vec d}
           |w.toFun y| ≤ affineResidualLevel d K k := by
   have hV : IsOpenBoundedConvexDomain (truncatedWindow x m k) :=
     isOpenBoundedConvexDomain_truncatedWindow x m k
-  haveI : IsFiniteMeasure (volumeMeasureOn (truncatedWindow x m k)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (truncatedWindow x m k)) :=
     hV.isFiniteMeasure_restrict_volume
   set A : Vec d := volumeAverageVec (truncatedWindow x m k) G with hA
   set Phi : H1Function (truncatedWindow x m k) :=

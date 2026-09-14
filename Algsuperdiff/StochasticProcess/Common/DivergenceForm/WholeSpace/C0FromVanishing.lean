@@ -220,7 +220,7 @@ noncomputable def analyticMinimalPositiveC0ContractiveResolventOfVanishing
   opNorm_le_inv := A.norm_analyticMinimalC0ResolventCLMOfVanishing_le hVanish
   denseRange := by
     intro mu
-    simpa only [analyticMinimalC0ResolventCLMOfVanishing_apply] using hDense mu
+    simpa only [analyticMinimalC0ResolventCLMOfVanishing_apply] using! hDense mu
   isPositive := A.analyticMinimalC0ResolventCLMOfVanishing_nonnegative hVanish
 
 @[simp] theorem analyticMinimalPositiveC0ContractiveResolventOfVanishing_operator

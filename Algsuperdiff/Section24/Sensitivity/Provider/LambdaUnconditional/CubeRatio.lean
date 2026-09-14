@@ -75,7 +75,7 @@ theorem responseJ_perturb_le_two_mul [NeZero d] (dimension : 2 ≤ d)
   have hKnn : 0 ≤ K := mesoFluxConst_nonneg d h R
   have hRscale : R.scale ≤ 0 := by
     have hRk : R.scale = k := scale_eq_of_mem_descendantsAtScale hR
-    have hk0 : k ≤ 0 := by simpa using hk
+    have hk0 : k ≤ 0 := by simpa using! hk
     omega
   have hRR : R ∈ descendantsAtScale R k := by
     have hRk : R.scale = k := scale_eq_of_mem_descendantsAtScale hR

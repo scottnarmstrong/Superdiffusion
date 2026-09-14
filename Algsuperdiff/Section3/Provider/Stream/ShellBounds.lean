@@ -69,12 +69,12 @@ private theorem isBigOWith_gammaSigma_of_map_eq
     μ.real {omega | A * t < X omega} = (Measure.map X μ).real {x : ℝ | A * t < x} := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := μ) hX.aemeasurable hE)
-      simpa only [Set.preimage_setOf_eq] using h.symm
+      simpa only [Set.preimage_ofPred_eq] using! h.symm
     _ = (Measure.map Y μ').real {x : ℝ | A * t < x} := by rw [hmap]
     _ = μ'.real {omega | A * t < Y omega} := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := μ') hY.aemeasurable hE)
-      simpa only [Set.preimage_setOf_eq] using h
+      simpa only [Set.preimage_ofPred_eq] using! h
     _ ≤ Real.exp (-(t ^ σ)) := hYtail ht
 
 /-! ## The J2 tail under the zero-shell marginal law -/
@@ -90,14 +90,14 @@ theorem zeroShell_j2Observable_gaussian_tail (M : ABKModel d) (t : ℝ) (ht : 1 
   rw [Measure.map_apply_of_aemeasurable
     ShellField.measurable_zeroShellMap.aemeasurable
     (measurableSet_lt measurable_const (ShellField.j2Observable_measurable d))]
-  simpa only [Set.preimage_setOf_eq] using M.J2.gaussian_tail t ht
+  simpa only [Set.preimage_ofPred_eq] using M.J2.gaussian_tail t ht
 
 /-- The J2 observable has a unit-scale `Γ₂` tail under the zero-shell law. -/
 theorem isBigOWith_gammaSigma_zeroShell_j2Observable (M : ABKModel d) :
     IndependentSums.IsBigOWith (ShellField.zeroShellLaw M.P).toMeasure
       (IndependentSums.gammaSigma 2) (ShellField.j2Observable d) 1 :=
   Algsuperdiff.Probability.isBigOWith_gammaSigma_two_of_gaussian_tail
-    (by simpa only [one_mul, ← Real.rpow_natCast] using
+    (by simpa only [one_mul, ← Real.rpow_natCast] using!
       zeroShell_j2Observable_gaussian_tail M)
 
 /-- The unit-cube value norm has a unit-scale `Γ₂` tail under the zero-shell
@@ -166,6 +166,7 @@ theorem isBigOWith_gammaSigma_localCubeControl_shell (M : ABKModel d) (k : ℤ) 
   apply Measure.map_congr
   filter_upwards with j
   rw [sub_self, localCubeControl_zero_eq_unitCubeValueNorm]
+  rfl
 
 /-! ## `e.nabla.jk.O`: the derivative display -/
 

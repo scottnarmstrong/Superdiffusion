@@ -310,7 +310,7 @@ theorem ae_h1EnergyNormOnCube_boundary_le_anchorLegs (d : ℕ) [NeZero d] :
       (anchorWindowInner_subset_anchorWindow (d := d) n m z)
     rw [hzero, le_zero_iff] at hmono
     exact hW20 hmono
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
   have huL2W : MemLp u.toFun 2
       (Support.normalizedVolumeMeasureOn
         ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩

@@ -246,14 +246,14 @@ theorem exists_countable_doubledMuFieldCompetitors (U : Domain d) :
       simp [hzero]
     rw [hmu, hrange]
     exact isGLB_singleton
-  · letI : NeZero d := ⟨hd⟩
-    letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
-    letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
-    haveI : SecondCountableTopology (HilbertBlockL2 (U : Set (Vec d))) := inferInstance
+  · let : NeZero d := ⟨hd⟩
+    let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+    let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+    have : SecondCountableTopology (HilbertBlockL2 (U : Set (Vec d))) := inferInstance
     set E : {Y : DoubledField d // IsDoubledTestField U Y} → HilbertBlockL2 (U : Set (Vec d)) :=
       fun Y => toHilbertBlockL2OfBlockField (memBlockL2_blockField Y.2.1.1 Y.2.2.1) with hEdef
     set A : Set (HilbertBlockL2 (U : Set (Vec d))) := Set.range E with hAdef
-    haveI : Nonempty A := ⟨⟨E ⟨0, isDoubledTestField_zero U⟩, Set.mem_range_self _⟩⟩
+    have : Nonempty A := ⟨⟨E ⟨0, isDoubledTestField_zero U⟩, Set.mem_range_self _⟩⟩
     have hchoose : ∀ n : ℕ, ∃ Y : {Y : DoubledField d // IsDoubledTestField U Y},
         E Y = ((TopologicalSpace.denseSeq A n : A) : HilbertBlockL2 (U : Set (Vec d))) :=
       fun n => (TopologicalSpace.denseSeq A n).2
@@ -348,7 +348,7 @@ theorem exists_countable_doubledMuFieldCompetitors (U : Domain d) :
       refine le_csInf htne ?_
       intro m hm
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       obtain ⟨n, hn⟩ := happrox m hm (w - m) (by linarith)
       have hwn : w ≤ doubledMuValue U a (F + (theta n).1) := hw ⟨n, rfl⟩
       linarith

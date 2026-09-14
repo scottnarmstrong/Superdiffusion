@@ -131,7 +131,7 @@ theorem exists_harmonicReplacementPair [NeZero d] {V : Set (Vec d)}
       IsWeaklyHarmonicOn V v ∧
         (∀ y, v.toFun y = Phi.toFun y - w.toH1Function.toFun y) ∧
         (∀ y, v.grad y = Phi.grad y - w.toH1Function.grad y) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
   have hgrad : MemVectorL2 V Phi.grad := Phi.grad_memVectorL2
   have hrealize :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization V :=

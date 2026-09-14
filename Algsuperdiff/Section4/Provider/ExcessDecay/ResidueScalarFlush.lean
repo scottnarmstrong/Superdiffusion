@@ -152,7 +152,7 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
   have hK'meas := measurableSet_image_add_openCubeSet_originCube c' n
   have hK'pos := volume_toReal_image_add_openCubeSet_pos c' n
   have hK'top := volume_image_add_openCubeSet_ne_top c' n
-  haveI : IsFiniteMeasure (volume.restrict
+  have : IsFiniteMeasure (volume.restrict
       ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
         openCubeSet (originCube d m)))) := by
     refine ⟨?_⟩
@@ -182,7 +182,7 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
         normalizedL2On (translateSet c' (openCubeSet (originCube d n))) f :=
     fun f => congrArg (fun S => normalizedL2On S f) hKT
   refine ⟨wu, rhou, hharmu, hvalu, hgradu, ?_⟩
-  haveI : IsFiniteMeasure (volume.restrict
+  have : IsFiniteMeasure (volume.restrict
       ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
@@ -304,9 +304,9 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
         ?_ hK'top hmemK
       have := hK'pos
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have h0 : volume ((fun y => c' + y) '' openCubeSet (originCube d n)) = 0 :=
-        le_antisymm hcon (zero_le _)
+        le_antisymm hcon zero_le
       rw [h0] at this
       simp only [ENNReal.toReal_zero] at this
       exact lt_irrefl _ this
@@ -471,9 +471,9 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
       refine Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
         ?_ hK'top (hmemH_K.sub (memLp_const _))
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have h0 : volume ((fun y => c' + y) '' openCubeSet (originCube d n)) = 0 :=
-        le_antisymm hcon (zero_le _)
+        le_antisymm hcon zero_le
       have := hK'pos
       rw [h0] at this
       simp only [ENNReal.toReal_zero] at this
@@ -496,9 +496,9 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
         refine Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
           ?_ hK'top (memLp_grad_of_subset h hK'm i')
         by_contra hcon
-        push_neg at hcon
+        push Not at hcon
         have h0 : volume ((fun y => c' + y) '' openCubeSet (originCube d n)) = 0 :=
-          le_antisymm hcon (zero_le _)
+          le_antisymm hcon zero_le
         have := hK'pos
         rw [h0] at this
         simp only [ENNReal.toReal_zero] at this
@@ -675,9 +675,9 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
     refine Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
       ?_ hW'top (hmemU_W.sub (memLp_const _))
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have h0 : volume ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m))) = 0 := le_antisymm hcon (zero_le _)
+        openCubeSet (originCube d m))) = 0 := le_antisymm hcon zero_le
     have := hW'pos
     rw [h0] at this
     simp only [ENNReal.toReal_zero] at this

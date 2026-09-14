@@ -151,7 +151,7 @@ private theorem exists_streamForcing_gradient_oscillation_core (hd : 0 < d) :
   obtain ⟨C, hCnn, hC⟩ := exists_gradient_oscillation_nested_telescope_norm hd
   refine ⟨C, hCnn, ?_⟩
   intro Q z n N hN hsub sigmaInv hsigma omega lowScale highScale e Kgrad hKgrad u hu
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z (n + (N : ℤ)))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z (n + (N : ℤ)))) :=
     isFiniteMeasure_restrict.mpr (volume_openCubeAtScale_ne_top z (n + (N : ℤ)))
   -- the forcing, in the sign convention of the CoarseGraining weak-solution predicates
   set G : Vec d → Vec d :=
@@ -274,7 +274,7 @@ theorem exists_freshShellNeumann_gradient_oscillation_interior_mesh (hd : 0 < d)
   obtain ⟨C, hCnn, hC⟩ := exists_streamForcing_gradient_oscillation_core hd
   refine ⟨C, hCnn, ?_⟩
   intro K n N hN z hsub sigmaInv hsigma omega lowScale highScale e' Kgrad hKgrad wN hwN
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d K))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d K))) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet (originCube d K)
   refine hC (originCube d K) z n N hN hsub sigmaInv hsigma omega lowScale highScale e'
     Kgrad hKgrad wN.toH1Function ?_

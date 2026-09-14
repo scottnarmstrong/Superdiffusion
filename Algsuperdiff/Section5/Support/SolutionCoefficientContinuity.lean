@@ -67,7 +67,7 @@ theorem abs_setIntegral_vecDot_le_of_norm_le (U : Set (Vec d)) (hU : MeasurableS
   have hHn : MemLp (fun x => ‖H x‖) 2 (volume.restrict U) := hH.norm
   have hGn : MemLp (fun x => ‖G x‖) 2 (volume.restrict U) := hG.norm
   have hint : Integrable (fun x => ‖H x‖ * ‖G x‖) (volume.restrict U) := by
-    simpa [Pi.mul_apply] using hHn.integrable_mul hGn
+    simpa [Pi.mul_apply] using! hHn.integrable_mul hGn
   have h1 : |∫ x in U, vecDot (F x) (G x) ∂volume| ≤
       ∫ x in U, |vecDot (F x) (G x)| ∂volume := by
     simpa [Real.norm_eq_abs] using
@@ -193,7 +193,7 @@ theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam 
     have hn : MemLp (fun x => ‖w.toH1Function.grad x‖) 2
         (volume.restrict (cubeSetAt y n)) := hwL2.norm
     have := hn.integrable_mul hn
-    simpa [Pi.mul_apply, pow_two] using this
+    simpa [Pi.mul_apply, pow_two] using! this
   have hEucInt : IntegrableOn (fun x => vecNormSq (w.toH1Function.grad x))
       (cubeSetAt y n) := integrableOn_vecDot_of_memVectorL2 hwL2 hwL2
   have hcompare : ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume ≤

@@ -145,8 +145,8 @@ private theorem tendsto_frobeniusMass_finiteLowerCutoff_on_cube
   show Tendsto (fun q : ℕ =>
       ∑ i : Fin d, ∑ j : Fin d, finiteLowerCutoff m q omega.1 x i j ^ 2)
     atTop (nhds (∑ i : Fin d, ∑ j : Fin d, cutoff m omega x i j ^ 2))
-  exact tendsto_finset_sum _ fun i _ =>
-    tendsto_finset_sum _ fun j _ =>
+  exact tendsto_finsetSum _ fun i _ =>
+    tendsto_finsetSum _ fun j _ =>
       (tendsto_finiteLowerCutoff_entry_on_cube Q m omega hx i j).pow 2
 
 /-- On every triadic cube and for every cutoff sample, the finite lower
@@ -155,7 +155,7 @@ theorem tendsto_finiteLowerCutoffFrobeniusMass
     (Q : TriadicCube d) (m : ℤ) (omega : CutoffSample d) :
     Tendsto (fun q : ℕ => finiteLowerCutoffFrobeniusMass Q m q omega)
       atTop (nhds (cutoffFrobeniusMass Q m omega)) := by
-  letI : IsFiniteMeasure (volume.restrict (openCubeSet Q)) :=
+  let : IsFiniteMeasure (volume.restrict (openCubeSet Q)) :=
     ⟨by
       rw [Measure.restrict_apply_univ]
       exact volume_openCubeSet_lt_top Q⟩

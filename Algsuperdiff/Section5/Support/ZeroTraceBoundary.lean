@@ -92,7 +92,7 @@ theorem exists_abs_coord_eq_of_mem_frontier_cubeSetAt {y : Vec d} {n : ℤ} {x�
     have h := hx₀.2
     rwa [(isOpen_cubeSetAt y n).interior_eq] at h
   rw [mem_cubeSetAt_iff_abs_coord] at hnot
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨i, hi⟩ := hnot
   exact ⟨i, le_antisymm (abs_coord_le_of_mem_frontier_cubeSetAt hx₀ i) hi⟩
 
@@ -223,7 +223,7 @@ theorem exists_mem_cubeSetAt_abs_lt_of_mem_frontier {y : Vec d} {n : ℤ}
     {rho eps : ℝ} (hrho : 0 < rho) (heps : 0 < eps) :
     ∃ x ∈ cubeSetAt y n, ‖x - x₀‖ < rho ∧ |v x| < eps := by
   by_contra hcontra
-  push_neg at hcontra
+  push Not at hcontra
   have hA : (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ n := by positivity
   obtain ⟨i₀, hi₀⟩ := exists_abs_coord_eq_of_mem_frontier_cubeSetAt hx₀
   obtain ⟨sgn, hsgn1, hsgn⟩ :

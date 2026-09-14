@@ -126,7 +126,7 @@ theorem sqrt_energy_grad_sub_le_of_h10Diff {y : Vec d} {n : ℤ} {a b : CoeffFie
     have hn : MemLp (fun x => ‖w.toH1Function.grad x‖) 2
         (volume.restrict (cubeSetAt y n)) := hwL2.norm
     have := hn.integrable_mul hn
-    simpa [Pi.mul_apply, pow_two] using this
+    simpa [Pi.mul_apply, pow_two] using! this
   have hEucInt : IntegrableOn (fun x => vecNormSq (w.toH1Function.grad x))
       (cubeSetAt y n) := integrableOn_vecDot_of_memVectorL2 hwL2 hwL2
   have hcompare : ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume ≤
@@ -204,7 +204,7 @@ theorem tendsto_l2_cutoff_of_h10Diff (M : ABKModel d) (omega : FullSample d M.ga
     Tendsto (fun L : ℤ =>
         Real.sqrt (∫ x in cubeSetAt y n, ((u L).toFun x - v.toFun x) ^ (2 : ℕ) ∂volume))
       atTop (𝓝 0) := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   obtain ⟨C, hC⟩ := fullTailGood_sharp omega.2
   obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
   have hgamma : M.gamma < 1 := by
@@ -297,7 +297,7 @@ theorem ae_abs_sub_le_of_cutoff_bounds (M : ABKModel d) (omega : FullSample d M.
     {v : H1Function (cubeSetAt y n)} (hv : HasZeroTraceDifferenceOn (cubeSetAt y n) v h)
     (hvw : IsDivFormWeakSolutionOn (streamCoefficient M.nu omega) (cubeSetAt y n) v g) :
     ∀ᵐ x ∂(volume.restrict (cubeSetAt y n)), |v.toFun x - f x| ≤ K := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   have hU := isOpenBoundedConvexDomain_cubeSetAt y n
   have hne := cubeSetAt_nonempty y n
   have hex : ∀ L : ℤ, ∃ uL : H1Function (cubeSetAt y n),

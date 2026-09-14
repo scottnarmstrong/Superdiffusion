@@ -87,10 +87,10 @@ private theorem abs_dyadicAverage_sub_tripleAverage_le [NeZero d]
     dsimp only [V]
     rw [Real.volume_pi_ball y hr]
     exact ENNReal.ofReal_ne_top
-  letI : IsFiniteMeasure (volume.restrict W) := ⟨by
+  let : IsFiniteMeasure (volume.restrict W) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hWtop⟩
-  letI : IsFiniteMeasure (volume.restrict V) := ⟨by
+  let : IsFiniteMeasure (volume.restrict V) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hVtop⟩
   have hdiffW : MemLp (fun z => u.toFun z - volumeAverage W u.toFun) 2

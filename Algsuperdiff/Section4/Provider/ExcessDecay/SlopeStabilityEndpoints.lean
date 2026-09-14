@@ -115,7 +115,7 @@ theorem affineExcess_add_slope_le_oscillationOn {W : Set (Vec d)} {u : Vec d →
         ≤ normalizedL2On W (affineEval a b)) :
     affineExcess W u + slopeMagnitude g ≤ (1 + 2 / c₀) * oscillationOn W u := by
   have hfin : volume W ≠ ⊤ := volume_ne_top_of_toReal_pos hW
-  haveI : IsFiniteMeasure (volume.restrict W) := by
+  have : IsFiniteMeasure (volume.restrict W) := by
     constructor
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hfin
@@ -178,7 +178,7 @@ theorem oscillationOn_le_affineExcess_add_slope {W : Set (Vec d)} {u : Vec d →
         ≤ K * ((volume W).toReal) ^ ((d : ℝ)⁻¹) * slopeMagnitude b) :
     oscillationOn W u ≤ (2 + K) * (affineExcess W u + slopeMagnitude g) := by
   have hfin : volume W ≠ ⊤ := volume_ne_top_of_toReal_pos hW
-  haveI : IsFiniteMeasure (volume.restrict W) := by
+  have : IsFiniteMeasure (volume.restrict W) := by
     constructor
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hfin

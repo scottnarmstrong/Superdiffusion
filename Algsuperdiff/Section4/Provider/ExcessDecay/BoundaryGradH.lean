@@ -142,7 +142,7 @@ theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
     volume_image_add_openCubeSet_ne_zero c (originCube d (n + 2))
   have hWne : volume W ≠ 0 := by
     intro h0
-    exact hcovne (le_antisymm (h0 ▸ measure_mono hsubcov) (zero_le _))
+    exact hcovne (le_antisymm (h0 ▸ measure_mono hsubcov) zero_le)
   have hWtop : volume W ≠ ⊤ :=
     ne_top_of_le_ne_top (volume_openCubeSet_ne_top (originCube d m))
       (measure_mono Set.inter_subset_right)

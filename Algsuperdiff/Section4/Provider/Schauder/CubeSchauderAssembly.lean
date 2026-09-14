@@ -133,7 +133,7 @@ theorem exists_mem_norm_le_of_energy {U : Set (Vec d)} (hUmeas : MeasurableSet U
     {delta : ℝ} (hdelta : 0 < delta) :
     ∃ y ∈ U, ‖Psi y‖ ≤ A + delta := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hlow : (fun _ : Vec d => (A + delta) ^ 2) ≤ᵐ[volume.restrict U]
       fun y => vecNormSq (F y) := by
     filter_upwards [hae, self_mem_ae_restrict hUmeas] with y hy hyU
@@ -144,7 +144,7 @@ theorem exists_mem_norm_le_of_energy {U : Set (Vec d)} (hUmeas : MeasurableSet U
       rw [← hy]
       linarith only [h2, h3]
   have hconst : Integrable (fun _ : Vec d => (A + delta) ^ 2) (volume.restrict U) := by
-    haveI : IsFiniteMeasure (volume.restrict U) := by
+    have : IsFiniteMeasure (volume.restrict U) := by
       refine ⟨?_⟩
       rw [Measure.restrict_apply_univ]
       exact lt_top_iff_ne_top.2 hUtop
@@ -250,7 +250,7 @@ theorem exists_zeroDatumWitness_of_campanato [NeZero d] (hd : 0 < d) {m : ℤ}
   -- the sup leg
   intro x hx
   -- the energy bound at the frozen forcing
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
     hUdom.isFiniteMeasure_restrict_volume
   have hGL2 : MemVectorL2 (openCubeSet (originCube d m)) G :=
     memVectorL2_of_holderSeminormBoundOn hKG (by norm_num) hG
@@ -383,7 +383,7 @@ theorem zeroDatumCubeSchauder_of_residues (hd : 0 < d) {C : ℝ} (hC : 0 ≤ C)
           (∀ᵐ y ∂(volume.restrict (openCubeSet (originCube d m))),
             campanatoSlopeLimit m (m + 1) w.toH1Function.toFun y = w.toH1Function.grad y)) :
     ZeroDatumCubeSchauder d (zeroDatumRouteConst d C) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   intro m G KG hG
   have hKG : 0 ≤ KG := holderSeminormBoundOn_nonneg_openCubeSet hd hG
   obtain ⟨w, hw, hE, hae⟩ := hres m G KG hKG hG

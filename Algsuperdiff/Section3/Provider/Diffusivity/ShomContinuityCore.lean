@@ -57,7 +57,7 @@ is dominated. -/
 private lemma le_of_sq_le_sq_nonneg {x y : ℝ} (hy : 0 ≤ y) (hsq : x ^ 2 ≤ y ^ 2) :
     x ≤ y := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hsum : (0 : ℝ) < x + y := by linarith
   have hprod : 0 < (x - y) * (x + y) := mul_pos (by linarith) hsum
   linarith [hprod, hsq]

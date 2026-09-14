@@ -164,7 +164,7 @@ theorem isBigOWith_gammaSigma_finset_sum_momentBoosted_colored
       apply le_of_not_gt
       intro hgt
       apply hnot
-      simp only [Set.mem_iUnion, upperTailEvent, Set.mem_setOf_eq]
+      simp only [Set.mem_iUnion, upperTailEvent, Set.mem_ofPred_eq]
       exact ⟨b, hb, hgt⟩
     have hsum :
         ∑ b ∈ colors, ∑ i ∈ s.filter (fun j => color j = b), X i omega ≤

@@ -69,7 +69,7 @@ private theorem coefficient_truncation_error_le
   have henergy : lam * ‖F‖ ^ 2 ≤
       inner ℝ (HilbertVec.applyMat A F) F := by
     simpa only [HilbertVec.applyMat_apply, HilbertVec.inner_def,
-      HilbertVec.toVec_ofVec, HilbertVec.norm_sq_eq_vecDot, vecDot_comm] using
+      HilbertVec.toVec_ofVec, HilbertVec.norm_sq_eq_vecDot, vecDot_comm] using!
         hA.2.2.1 F.toVec
   have hyoung := abs_mul_mul_vecDot_le_add_halves_mul_sq_vecNormSq
     n n⁻¹ (HilbertVec.applyMat A F).toVec G.toVec
@@ -206,7 +206,7 @@ theorem exists_part_truncation [NeZero d]
           HilbertVec.ofVec (w.toH1Function.grad x) := by
         simpa only [hilbertifyVecField] using hwgrad
       rw [← hwgrad', hwg]
-    simp only [Set.indicator_apply, Set.mem_setOf_eq, w₂,
+    simp only [Set.indicator_apply, Set.mem_ofPred_eq, w₂,
       H1Function.sub_toFun, H1Function.smul_toFun, H1Function.sub_grad,
       H1Function.smul_grad]
     simp only [hwux]
@@ -382,7 +382,7 @@ theorem part_solution_test_inequality [NeZero d]
           coefficient_truncation_error_le (d := d) (K := K) (n := nR)
             rfl hnR hlam hM hLamM (hEll.2 x hxV)
             (ZeroTraceSobolev.gradient u x) (φ.gradToHilbertVectorL2 x) using 1
-        all_goals ring
+        all_goals first | rfl | ring
       · rw [if_neg hx, inner_zero_right]
         exact mul_nonneg (div_nonneg (sq_nonneg _) (by norm_num)) real_inner_self_nonneg
     have hpre : D ≤

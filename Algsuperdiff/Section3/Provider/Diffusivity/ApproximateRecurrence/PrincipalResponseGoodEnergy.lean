@@ -394,7 +394,7 @@ theorem exists_gamma0_integrable_switchEllipLoad_principalPz_sq (d : ℕ) (hd : 
   refine ⟨gamma0, hg0pos, hg0quarter, ?_⟩
   intro M hMgamma m0 Eind hstate m K hgap hhpos hm hh hK e e' he he' jd R hR wD wN
     hwD hwN
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hgamma : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hnm : m - (hgap : ℤ) < m := by omega
   have hmK : m ≤ K := by
@@ -459,7 +459,6 @@ theorem exists_gamma0_integrable_switchEllipLoad_principalPz_sq (d : ℕ) (hd : 
     exact hkappa omega (wD omega) (wN omega) (hDmem omega) (hNmem omega)
   · have h1 := hTflbd omega (wD omega) (hwD omega) (wN omega) (hwN omega)
     have h2 := hTbd omega
-    simp only
     linarith
 
 
@@ -532,7 +531,7 @@ private theorem integrable_blockQuadratic_shellSplit (M : ABKModel d) {L n m : �
     funext omega
     exact blockQuadratic_eq_sum_entry' _ _
   rw [hEq]
-  exact integrable_finset_sum _ fun a _ => integrable_finset_sum _ fun b _ => hprod a b
+  exact integrable_finsetSum _ fun a _ => integrable_finsetSum _ fun b _ => hprod a b
 
 /-! ## Sample measurability of the coarse matrix and of the good-event energy -/
 
@@ -652,7 +651,7 @@ private theorem ccg_pos_of_gate' [NeZero d] {Ccg : ℝ}
     exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne d)
   have hd6 : (1 : ℝ) ≤ (d : ℝ) ^ 6 := one_le_pow₀ hd1
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   nlinarith [mul_nonneg (neg_nonneg.2 hcon) hCsq.le]
 
 
@@ -738,7 +737,7 @@ theorem exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_an
     le_trans (min_le_left _ _) hg1q, ?_⟩
   intro M hMgamma m0 Eind hstate m K hgap hhpos hm hh hK e e' he he' j a ha hscale
     Ccg hccg
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have h1 : M.gamma ≤ g1 := le_trans hMgamma (min_le_left _ _)
   have h2 : M.gamma ≤ g2 :=
     le_trans hMgamma (le_trans (min_le_right _ _) (min_le_left _ _))

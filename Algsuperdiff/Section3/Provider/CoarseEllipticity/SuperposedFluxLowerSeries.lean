@@ -317,7 +317,19 @@ theorem tsum_rootedWeight_mul_depthAmp_le
           (mul_nonneg (superposedFluxDepthAmpConst_pos hd).le (Real.exp_pos _).le)
           (mul_nonneg superposedFluxLowerPoleConst_pos.le (by positivity))
       have hmass := mul_le_mul_of_nonneg_right (gridSumConst_le_one hs hq) hrest0
-      convert hmass using 1 <;> ring
+      calc
+        (gridSumConst s q * superposedFluxDepthAmpConst d *
+              Real.exp (-(superposedFluxBfaRate d * (E⁻¹ ^ 2 * M.gamma⁻¹)))) *
+            (superposedFluxLowerPoleConst * eps⁻¹ ^ (5 : ℕ))
+            = gridSumConst s q * (superposedFluxDepthAmpConst d *
+                Real.exp (-(superposedFluxBfaRate d * (E⁻¹ ^ 2 * M.gamma⁻¹))) *
+                (superposedFluxLowerPoleConst * eps⁻¹ ^ (5 : ℕ))) := by ring
+        _ ≤ 1 * (superposedFluxDepthAmpConst d *
+                Real.exp (-(superposedFluxBfaRate d * (E⁻¹ ^ 2 * M.gamma⁻¹))) *
+                (superposedFluxLowerPoleConst * eps⁻¹ ^ (5 : ℕ))) := hmass
+        _ = (1 * superposedFluxDepthAmpConst d *
+              Real.exp (-(superposedFluxBfaRate d * (E⁻¹ ^ 2 * M.gamma⁻¹)))) *
+            (superposedFluxLowerPoleConst * eps⁻¹ ^ (5 : ℕ)) := by ring
     _ = _ := by ring
 
 theorem tsum_endpointWeight_mul_depthAmp_le

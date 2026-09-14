@@ -122,9 +122,14 @@ theorem memVectorL2_h10SkewMatrixDiv {U : Set (Vec d)}
     (fun x => h10SkewDimInv d • ∑ i : Fin d, ∑ j : Fin d,
       q j • skewGradientField (u i).toH1Function.grad j i x)
     2 (volumeMeasureOn U)
-  convert hsum.const_smul (h10SkewDimInv d) using 1
-  funext x
-  simp only [Pi.smul_apply, Finset.sum_apply]
+  have hfun : (fun x => h10SkewDimInv d • ∑ i : Fin d, ∑ j : Fin d,
+      q j • skewGradientField (u i).toH1Function.grad j i x) =
+      h10SkewDimInv d • (∑ i : Fin d, ∑ j : Fin d,
+        q j • skewGradientField (u i).toH1Function.grad j i) := by
+    funext x
+    simp only [Pi.smul_apply, Finset.sum_apply]
+  rw [hfun]
+  exact hsum.const_smul (h10SkewDimInv d)
 
 /-- Coordinate formula for the weak divergence of the antisymmetric matrix. -/
 theorem h10SkewMatrixDiv_apply {U : Set (Vec d)}
@@ -319,8 +324,8 @@ private theorem h10SkewMatrixDiv_isSolenoidalZeroNormalTraceOn
         q j * vecDot
           (skewGradientField (u i).toH1Function.grad j i x) (φ.grad x))
       (volumeMeasureOn U) :=
-    integrable_finset_sum _ fun i _ =>
-      integrable_finset_sum _ fun j _ => hterm i j
+    integrable_finsetSum _ fun i _ =>
+      integrable_finsetSum _ fun j _ => hterm i j
   have hpoint :
       (fun x => vecDot (h10SkewMatrixDiv u q x) (φ.grad x)) =
       fun x => h10SkewDimInv d * ∑ i : Fin d, ∑ j : Fin d,
@@ -337,16 +342,16 @@ private theorem h10SkewMatrixDiv_isSolenoidalZeroNormalTraceOn
         q j * vecDot
           (skewGradientField (u i).toH1Function.grad j i x) (φ.grad x)
         ∂volume) = 0 := by
-    rw [integral_finset_sum]
+    rw [integral_finsetSum]
     · refine Finset.sum_eq_zero fun i _ => ?_
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · refine Finset.sum_eq_zero fun j _ => ?_
         rw [integral_const_mul,
           integral_skewGradientField_pairing_eq_zero, mul_zero]
       · intro j _
         exact hterm i j
     · intro i _
-      exact integrable_finset_sum _ fun j _ => hterm i j
+      exact integrable_finsetSum _ fun j _ => hterm i j
   rw [hintegral, mul_zero]
 
 /-- The weak divergence of the antisymmetric `H¹₀` matrix belongs to the

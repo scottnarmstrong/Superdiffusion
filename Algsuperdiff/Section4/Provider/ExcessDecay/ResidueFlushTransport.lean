@@ -130,7 +130,7 @@ theorem volume_anchorWindow_ne_zero_of_flushSubCube {n m : ℤ} (hnm : n + 2 ≤
     (flushSubCube_subset_anchorWindow hnm hz i hσ)
   rw [hzero] at hle
   have hzeroK : volume ((fun y => flushSubCentre z m n i σ + y) ''
-      openCubeSet (originCube d n)) = 0 := le_antisymm hle (zero_le _)
+      openCubeSet (originCube d n)) = 0 := le_antisymm hle zero_le
   have hpos := volume_toReal_image_add_openCubeSet_pos
     (flushSubCentre z m n i σ) n
   rw [hzeroK] at hpos

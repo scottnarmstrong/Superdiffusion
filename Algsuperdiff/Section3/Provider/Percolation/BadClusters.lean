@@ -356,7 +356,7 @@ theorem measureReal_badExtendedDensity_gt_le_exp_of_gates (M : ABKModel d) {m : 
           omega} := by
     intro omega homega
     have hdom := badExtendedDensity_le_densityAverage_add M m h hp omega
-    simp only [Set.mem_setOf_eq] at homega ⊢
+    simp only [Set.mem_ofPred_eq] at homega ⊢
     linarith
   exact le_trans (measureReal_mono hsubset (measure_ne_top _ _)) hdens'
 

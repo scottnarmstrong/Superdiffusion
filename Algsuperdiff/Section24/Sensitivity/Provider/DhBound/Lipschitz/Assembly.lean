@@ -171,7 +171,7 @@ theorem exists_lipschitzWith_ae_eq_of_hasWeakPartialDeriv_bound
   classical
   have hUmeas : MeasurableSet U := hU.isOpen.measurableSet
   rcases Set.eq_empty_or_nonempty U with hUempty | hne
-  · refine ⟨fun _ => 0, (LipschitzWith.const (0 : ℝ)).weaken (zero_le _), ?_⟩
+  · refine ⟨fun _ => 0, (LipschitzWith.const (0 : ℝ)).weaken zero_le, ?_⟩
     rw [hUempty, MeasureTheory.Measure.restrict_empty]
     simp only [MeasureTheory.ae_zero]
     exact Filter.eventually_bot
@@ -180,7 +180,7 @@ theorem exists_lipschitzWith_ae_eq_of_hasWeakPartialDeriv_bound
   have hr : (0 : ℝ) < r0 / 2 := by linarith
   have hball : Metric.closedBall z (r0 / 2) ⊆ U :=
     (Metric.closedBall_subset_ball (by linarith)).trans hball0
-  haveI hfin : IsFiniteMeasure (volume.restrict U) := hU.isFiniteMeasure_restrict_volume
+  have hfin : IsFiniteMeasure (volume.restrict U) := hU.isFiniteMeasure_restrict_volume
   have hu2 : MemLpOn U 2 u := hu.mono_exponent le_top
   -- truncate the derivative fields to a uniform bound
   have hg'ae : ∀ i, g i =ᵐ[volume.restrict U] boundedTruncation B (g i) := fun i =>

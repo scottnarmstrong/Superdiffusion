@@ -110,7 +110,7 @@ private theorem continuous_add_entries (a b : RegCoeffField d)
     (hb : ∀ i j, Continuous fun x : Vec d => b x i j) :
     ∀ i j, Continuous fun x : Vec d => (a + b) x i j := by
   intro i j
-  simpa only [RegCoeffField.add_apply, Matrix.add_apply] using
+  simpa only [RegCoeffField.add_apply, Matrix.add_apply] using!
     (ha i j).add (hb i j)
 
 /-- On continuous fields the mass representative is the literal Frobenius
@@ -137,7 +137,7 @@ theorem regFieldFrobeniusMassRep_cubeSet_eq
       rw [Finset.mul_sum]
     _ = (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q,
         ∑ p : Fin d × Fin d, (a x p.1 p.2) ^ 2 ∂volume := by
-      rw [integral_finset_sum _ fun p _ => hint p]
+      rw [integral_finsetSum _ fun p _ => hint p]
     _ = (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q,
         ∑ i, ∑ j, (a x i j) ^ 2 ∂volume := by
       congr 2
@@ -168,19 +168,19 @@ theorem regFieldFrobeniusPairingRep_cubeSet_eq
   have hab := continuous_add_entries a b ha hb
   have hintA : IntegrableOn (fun x => matrixFrobeniusNormSq (a x))
       (cubeSet Q) volume :=
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (ha i j).pow 2).continuousOn.integrableOn_compact
       (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)) |>.mono_set
         (cubeSet_subset_closedBall Q)
   have hintB : IntegrableOn (fun x => matrixFrobeniusNormSq (b x))
       (cubeSet Q) volume :=
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (hb i j).pow 2).continuousOn.integrableOn_compact
       (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)) |>.mono_set
         (cubeSet_subset_closedBall Q)
   have hintAB : IntegrableOn (fun x => matrixFrobeniusNormSq ((a + b) x))
       (cubeSet Q) volume :=
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (hab i j).pow 2).continuousOn.integrableOn_compact
       (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)) |>.mono_set
         (cubeSet_subset_closedBall Q)
@@ -289,7 +289,7 @@ theorem regFieldFrobeniusMassRep_cubeSet_smulReg_eq
     _ = (cubeVolume (dilateCube s Q))⁻¹ *
         ∫ x in cubeSet (dilateCube s Q),
           ∑ p : Fin d × Fin d, (a x p.1 p.2) ^ 2 ∂volume := by
-      rw [integral_finset_sum _ fun p _ => hint p]
+      rw [integral_finsetSum _ fun p _ => hint p]
     _ = (cubeVolume (dilateCube s Q))⁻¹ *
         ∫ x in cubeSet (dilateCube s Q),
           ∑ i, ∑ j, (a x i j) ^ 2 ∂volume := by
@@ -336,7 +336,7 @@ theorem sum_cubeFrobeniusMassReg_descendantsAtScale
       ((descendantsAtScale Q k).card : ℝ) * cubeFrobeniusMassReg Q a := by
   have hint : IntegrableOn (fun x => matrixFrobeniusNormSq (a x))
       (cubeSet Q) volume :=
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (ha i j).pow 2).continuousOn.integrableOn_compact
       (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)) |>.mono_set
         (cubeSet_subset_closedBall Q)
@@ -369,7 +369,7 @@ theorem descendantAverage_regFieldFrobeniusPairingRep
   classical
   have hint : IntegrableOn
       (fun x => ∑ i, ∑ j, a x i j * b x i j) (cubeSet Q) volume :=
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (ha i j).mul (hb i j)).continuousOn.integrableOn_compact
         (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)) |>.mono_set
           (cubeSet_subset_closedBall Q)
@@ -418,14 +418,14 @@ theorem abs_cubeFrobeniusPairingReg_le
   let G : Vec d → ℝ := fun x => Real.sqrt (matrixFrobeniusNormSq (b x))
   have hFa : Continuous F := by
     apply Real.continuous_sqrt.comp
-    exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (ha i j).pow 2
   have hGb : Continuous G := by
     apply Real.continuous_sqrt.comp
-    exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (hb i j).pow 2
   have hpair : Continuous fun x : Vec d => ∑ i, ∑ j, a x i j * b x i j :=
-    continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (ha i j).mul (hb i j)
   have hFint : IntegrableOn F U volume :=
     hFa.continuousOn.integrableOn_compact

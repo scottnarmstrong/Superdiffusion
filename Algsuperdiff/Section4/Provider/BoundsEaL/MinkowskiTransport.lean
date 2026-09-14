@@ -74,7 +74,7 @@ private theorem ofRealTsumLe {f : ℕ → ℝ} (hf : ∀ l, 0 ≤ f l) :
   by_cases h : Summable f
   · exact le_of_eq (ENNReal.ofReal_tsum_of_nonneg hf h)
   · rw [tsum_eq_zero_of_not_summable h, ENNReal.ofReal_zero]
-    exact zero_le _
+    exact zero_le
 
 /-- Every scale-`k` descendant family of `□_m` with `k ≤ m` is nonempty. -/
 private theorem descNonempty (d : ℕ) {m k : ℤ} (hk : k ≤ m) :
@@ -259,7 +259,7 @@ private theorem observableSup_rpow_le_minkowski_core [NeZero d] (M : ABKModel d)
         ∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
           ENNReal.ofReal (Maj R omega) ^ (p / 2) :=
       Finset.single_le_sum
-        (f := fun R => ENNReal.ofReal (Maj R omega) ^ (p / 2)) (fun _ _ => zero_le _) hR0
+        (f := fun R => ENNReal.ofReal (Maj R omega) ^ (p / 2)) (fun _ _ => zero_le) hR0
     have hraise := ENNReal.rpow_le_rpow hsingle hqinv.le
     rwa [← ENNReal.rpow_mul, mul_one_div_cancel (ne_of_gt hq0), ENNReal.rpow_one] at hraise
   -- STEP B: countable Minkowski in `L^{p/2}`
@@ -297,7 +297,7 @@ private theorem observableSup_rpow_le_minkowski_core [NeZero d] (M : ABKModel d)
             ∫⁻ omega, ENNReal.ofReal (Maj R omega) ^ (p / 2)
               ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
       rw [lintegral_congr hpow, lintegral_const_mul' _ _ hconstNeTop,
-        lintegral_finset_sum' _ fun R _ => hmeasR R]
+        lintegral_finsetSum' _ fun R _ => hmeasR R]
     have hsumle : (∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
           ∫⁻ omega, ENNReal.ofReal (Maj R omega) ^ (p / 2)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
@@ -438,7 +438,7 @@ theorem lintegral_observableSup_rpow_le_minkowskiScaleSum (d : ℕ) (dimension :
             ENNReal.ofReal (Real.rpow 3 (1 / 2 * (s : ℝ) * ((m : ℝ) - (n : ℝ)))) ^ p *
               (∑' l : ℕ, ENNReal.ofReal (Ch02.geometricDiscount (s : ℝ) 2 *
                 (Real.rpow 3 (-(s : ℝ) * (l : ℝ)) * G l))) ^ (p / 2) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C, hC, hmaj⟩ :=
     exists_normalizedBlockResponseMax_le_lFreeStep3Majorant_of_tail d dimension
   refine ⟨C, hC, ?_⟩

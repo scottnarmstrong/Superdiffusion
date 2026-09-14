@@ -30,7 +30,7 @@ theorem memVectorL2_of_memVectorLpOn_of_subset
       MemLp (fun x => HilbertVec.ofVec (f x)) 2 (volume.restrict W) :=
     (hf.mono_measure (Measure.restrict_mono hWU le_rfl)).mono_exponent hp2E
   simpa only [Function.comp_apply,
-    HilbertVec.continuousLinearEquivVec_apply, HilbertVec.toVec_ofVec] using
+    HilbertVec.continuousLinearEquivVec_apply, HilbertVec.toVec_ofVec] using!
     (HilbertVec.continuousLinearEquivVec d).toContinuousLinearMap.comp_memLp'
       hfHilbert2W
 
@@ -90,7 +90,7 @@ theorem vectorNormalizedL2On_le_volume_rpow_mul_vectorLpSizeOn
     hfScalar.mono_measure (Measure.restrict_mono hWU le_rfl)
   have hW0 : volume W ≠ 0 := (ENNReal.toReal_ne_zero.mp hW.ne').1
   have hWtop : volume W ≠ ∞ := (ENNReal.toReal_ne_zero.mp hW.ne').2
-  letI : IsProbabilityMeasure (normalizedVolumeOn W) :=
+  let : IsProbabilityMeasure (normalizedVolumeOn W) :=
     normalizedVolumeOn_isProbability hW0 hWtop
   have hfWn : MemLp g (ENNReal.ofReal p) (normalizedVolumeOn W) := by
     dsimp [normalizedVolumeOn]
@@ -114,7 +114,7 @@ theorem vectorNormalizedL2On_le_volume_rpow_mul_vectorLpSizeOn
       (ENNReal.rpow_ne_top_of_nonneg (by positivity) (ENNReal.inv_ne_top.mpr hW0))
       hfScalar.eLpNorm_ne_top
   have hreal := ENNReal.toReal_mono htop (hdown.trans hscaled)
-  letI : IsFiniteMeasure (volume.restrict W) :=
+  let : IsFiniteMeasure (volume.restrict W) :=
     ⟨by
       rw [Measure.restrict_apply_univ]
       exact lt_top_iff_ne_top.mpr hWtop⟩

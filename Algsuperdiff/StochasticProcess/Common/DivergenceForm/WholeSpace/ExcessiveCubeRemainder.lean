@@ -53,7 +53,8 @@ theorem abs_utilde_le (x : Vec d) : |P.utilde x| ≤ P.D / (P.lam : ℝ) := by
         (abs_boundedMeasurableToScalarL2_le P.hV
           (P.hf.comp measurable_subtype_coe) (fun y => P.hfD y))
       filter_upwards [hbound, P.hutildeRep] with y hy hrep
-      rw [hrep, ← alphaShiftedResolvent_apply]
+      rw [hrep, ← alphaShiftedResolvent_apply A.a P.lam.property A.hnu
+        (partEllipticity A P.hV) (partDatumL2 P.hV P.hf P.hfD)]
       rw [abs_mul, abs_of_pos P.lam.property] at hy
       rw [abs_of_nonneg P.bound_nonneg] at hy
       rw [le_div_iff₀ P.lam.property]
@@ -182,7 +183,11 @@ theorem cubeBarrier_ae (m : ℕ) (hVU : P.V ⊆ wholeSpaceCube d m) :
               (P.hf.comp measurable_subtype_coe) (fun y => P.hfD y))) x -
         ZeroTraceSobolev.toL2 (P.cubeZeroExtension m hVU) x := by
     rw [cubeRemainder, map_sub, h3, Pi.sub_apply]
-  rw [hgoal, ← h2, ← alphaShiftedResolvent_apply, ← h1]
+  rw [hgoal, ← h2,
+    ← alphaShiftedResolvent_apply A.a P.lam.property A.hnu (A.cubeEllipticity m)
+      (boundedMeasurableToScalarL2 (isOpenBoundedConvexDomain_wholeSpaceCube d m)
+        (P.hf.comp measurable_subtype_coe) (fun y => P.hfD y)),
+    ← h1]
   rfl
 
 /-- **The truncated barrier is nonnegative everywhere.** -/

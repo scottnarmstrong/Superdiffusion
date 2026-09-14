@@ -71,7 +71,7 @@ private theorem isProbeR_mollifierProbe (epsilon : ℝ) (hepsilon : 0 < epsilon)
     IsProbeR.of_smooth
       (shrinkingBump (d := d) epsilon hepsilon n).contDiff_normed
       (shrinkingBump (d := d) epsilon hepsilon n).hasCompactSupport_normed
-  simpa [mollifierProbe, h] using hbase.comp_homeomorph h
+  simpa [mollifierProbe, h] using! hbase.comp_homeomorph h
 
 private theorem support_mollifierProbe_subset_thickening
     {U : Set (Vec d)} {epsilon : ℝ} (hepsilon : 0 < epsilon)
@@ -88,7 +88,7 @@ private theorem support_mollifierProbe_subset_thickening
     nlinarith [show 0 ≤ (n : ℝ) by positivity]
   have hyx : dist y x < epsilon := by
     apply lt_of_lt_of_le _ hr_le
-    simpa [mem_ball, dist_eq_norm, norm_sub_rev] using hbump
+    simpa [mem_ball, dist_eq_norm, norm_sub_rev] using! hbump
   exact mem_thickening_iff.mpr ⟨x, hx, hyx⟩
 
 private theorem entryTestR_mollifierProbe_eq_convolution
@@ -112,7 +112,7 @@ private theorem measurable_pullback_apply_entry_of_continuous
     @Measurable Omega ℝ
       (MeasurableSpace.comap A (LocalSigmaR (thickening epsilon U))) (borel ℝ)
       (fun omega ↦ A omega x i j) := by
-  letI : MeasurableSpace Omega :=
+  let : MeasurableSpace Omega :=
     MeasurableSpace.comap A (LocalSigmaR (thickening epsilon U))
   have hAmeas : @Measurable Omega (RegCoeffField d)
       (MeasurableSpace.comap A (LocalSigmaR (thickening epsilon U)))

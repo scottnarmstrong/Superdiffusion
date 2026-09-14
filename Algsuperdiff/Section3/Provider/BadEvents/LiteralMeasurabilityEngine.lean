@@ -137,7 +137,7 @@ theorem exists_localSigmaR_measurable_eq_Mu_cubeSet (Q : TriadicCube d)
       exact Set.mem_iUnion.mpr ⟨some k, by simpa [cover] using hk⟩
     · exact Set.mem_iUnion.mpr ⟨none, by simpa [cover] using ha⟩
   refine ⟨Set.liftCover cover f hagree hcover, ?_, ?_⟩
-  · letI : MeasurableSpace (RegCoeffField d) := LocalSigmaR (cubeSet Q)
+  · let : MeasurableSpace (RegCoeffField d) := LocalSigmaR (cubeSet Q)
     have hcover_meas : ∀ i : Option ℕ, MeasurableSet (cover i) := by
       intro i
       cases i with
@@ -195,10 +195,8 @@ theorem measurable_comp_coarseB_cubeSet (hX : Measurable X)
     (hell : ∀ omega, Ch04.AELocallyUniformlyEllipticField (X omega))
     (Q : TriadicCube d) :
     Measurable fun omega => (coarseBlockMatrix (cubeSet Q) (X omega).toFun).upperLeft := by
-  rw [measurable_pi_iff]
-  intro i
-  rw [measurable_pi_iff]
-  intro j
+  refine measurable_pi_iff.2 fun i => ?_
+  refine measurable_pi_iff.2 fun j => ?_
   by_cases hij : i = j
   · subst hij
     have hrw :
@@ -227,10 +225,8 @@ theorem measurable_comp_coarseSigmaStarInv_cubeSet (hX : Measurable X)
     (hell : ∀ omega, Ch04.AELocallyUniformlyEllipticField (X omega))
     (Q : TriadicCube d) :
     Measurable fun omega => (coarseBlockMatrix (cubeSet Q) (X omega).toFun).lowerRight := by
-  rw [measurable_pi_iff]
-  intro i
-  rw [measurable_pi_iff]
-  intro j
+  refine measurable_pi_iff.2 fun i => ?_
+  refine measurable_pi_iff.2 fun j => ?_
   by_cases hij : i = j
   · subst hij
     have hrw :

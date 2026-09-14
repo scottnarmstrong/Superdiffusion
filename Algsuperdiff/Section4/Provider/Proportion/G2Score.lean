@@ -193,7 +193,7 @@ theorem errorAnnSup_eq_ofReal_errorAnnMax (M : ABKModel d) (s : {s : ℝ // 0 < 
       ((mem_latticeAnnulusFinset_iff (d := d) hn).2 v.2)
   · rcases Finset.eq_empty_or_nonempty (latticeAnnulusFinset d n j (j - 1)) with hE | hE
     · rw [errorAnnMax, hE, fmax_empty, ENNReal.ofReal_zero]
-      exact zero_le _
+      exact zero_le
     · obtain ⟨v, hv, hveq⟩ :=
         exists_mem_eq_fmax (f := fun w : Fin d → ℤ =>
           errorAtomSq M n s (Support.triadicLatticePoint n w) omega) hE
@@ -291,7 +291,7 @@ theorem eventG2_eq_row (M : ABKModel d) (m : ℤ) (s : {s : ℝ // 0 < s}) (ep :
     rw [XrowE]
     exact tsum_congr fun j => inner_eq_annularWeight_mul_XcalE M s m j.1 omega
   rw [Support.mem_eventG2_iff]
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   rw [hkey]
 
 /-- The complement of the frozen `𝒢₂` event, in row form. -/

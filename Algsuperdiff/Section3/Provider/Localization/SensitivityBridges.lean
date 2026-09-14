@@ -471,7 +471,7 @@ theorem inv_unitCubeLambda_unitRescaledCutoffCoeff_le_inv_lambdaSq (M : ABKModel
     (ht : 0 < t) (hts : t < s) (hq : q.IsAdmissible) (omega : CutoffSample d) :
     (unitCubeLambda s q (unitRescaledCutoffCoeff M Q n omega))⁻¹ ≤
       (lambdaSq Q t q (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ := by
-  letI : NeZero d := neZero_of_abkModel M
+  let : NeZero d := neZero_of_abkModel M
   exact inv_anti₀ (lambdaSq_pos Q (coefficientCutoffTriadicCoeffFamily M n omega) ht hq)
     (lambdaSq_le_unitCubeLambda_unitRescaledCutoffCoeff M Q n ht hts hq omega)
 
@@ -496,7 +496,7 @@ theorem inv_unitCubeLambda_sq_le_inv_lambdaSq_sq_oneEighth (M : ABKModel d)
         (unitRescaledCutoffCoeff M Q n omega))⁻¹ ^ 2 ≤
       (lambdaSq Q (1 / 8) (.finite 2)
         (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ ^ 2 := by
-  letI : NeZero d := neZero_of_abkModel M
+  let : NeZero d := neZero_of_abkModel M
   refine pow_le_pow_left₀ ?_ (inv_unitCubeLambda_le_inv_lambdaSq_oneEighth M Q n omega) 2
   refine inv_nonneg.2 ?_
   rw [unitCubeLambda_unitRescaledCutoffCoeff]

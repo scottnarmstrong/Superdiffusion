@@ -130,7 +130,7 @@ theorem sum_stepFiveEps_le_of_goodScaleWindows_fine {M : ABKModel d} {delta : �
     refine ne_top_of_le_ne_top ENNReal.ofReal_ne_top (le_trans ?_ hE)
     exact Finset.single_le_sum (f := fun k =>
       stepOneEpsJ M k (Support.triadicLatticePoint (n - 1) w) delta omega)
-      (fun i _ => zero_le _) hk
+      (fun i _ => zero_le) hk
   have hrnn : 0 ≤ delta * (((m - n).toNat : ℝ) + 1) :=
     mul_nonneg hdelta (by positivity)
   calc ∑ k ∈ Finset.Icc n m,

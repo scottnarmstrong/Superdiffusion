@@ -195,7 +195,7 @@ theorem sqrt_mul_zpow_le_vecNorm_sub_of_siteDist (hd : 2 ≤ d) (n : ℤ) {l : �
   classical
   obtain ⟨z, hz, hxz⟩ := Set.mem_iUnion₂.1 hx
   obtain ⟨w, hw, hyw⟩ := Set.mem_iUnion₂.1 hy
-  haveI : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
   obtain ⟨i, -, hi⟩ := Finset.exists_mem_eq_sup (Finset.univ : Finset (Fin d))
     Finset.univ_nonempty (fun j => (z j - w j).natAbs)
   set L : ℕ := l - Provider.Percolation.sepShift d with hLdef
@@ -346,7 +346,7 @@ theorem sepTwoBlockIndep_shiftedSiteBadEventFive (M : ABKModel d) (Creg C0 ep : 
     exact ProbabilityTheory.indep_of_indep_of_le_right
       (ProbabilityTheory.indep_of_indep_of_le_left
         (ProbabilityTheory.indep_bot_left _) (htrivial Z)) (htrivial Z')
-  · push_neg at hlq
+  · push Not at hlq
     have hEuclid : ∀ ⦃x y : Vec d⦄, x ∈ siteRegionFive n Z → y ∈ siteRegionFive n Z' →
         Real.sqrt (d : ℝ) *
             (3 : ℝ) ^ (n + ((l - Provider.Percolation.sepShift d : ℕ) : ℤ)) ≤

@@ -64,7 +64,7 @@ theorem cubeScaleFactor_mul_multiscaleDescendantWeight_le_one
     cubeScaleFactor R *
         Ch02.multiscaleDescendantWeight (originCube d 0) k (3 / 8 : ℝ) ≤ 1 := by
   have hscale : R.scale = k := scale_eq_of_mem_descendantsAtScale hR
-  have hk0 : k ≤ 0 := by simpa using hk
+  have hk0 : k ≤ 0 := by simpa using! hk
   have hfac : cubeScaleFactor R = Real.rpow (3 : ℝ) ((k : ℝ)) := by
     rw [cubeScaleFactor, hscale]
     simp only [rpow_eq_pow']
@@ -169,7 +169,7 @@ theorem abs_dhFluxForm_le_root_gauge [NeZero d]
   have hL : cubeScaleFactor R ≤ 1 := by
     have hw := cubeScaleFactor_mul_multiscaleDescendantWeight_le_one hk hR
     have hscale : R.scale = k := scale_eq_of_mem_descendantsAtScale hR
-    have hk0 : k ≤ 0 := by simpa using hk
+    have hk0 : k ≤ 0 := by simpa using! hk
     have : cubeScaleFactor R = Real.rpow (3 : ℝ) ((k : ℝ)) := by
       rw [cubeScaleFactor, hscale]
       simp only [rpow_eq_pow']
@@ -240,7 +240,7 @@ theorem lambda_sensitivity {d : ℕ} (dimension : 2 ≤ d) :
               (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹) *
             (unitCubeLambda s q a)⁻¹ := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hspos : 0 < fluxSpineConst d := fluxSpineConst_pos d
   refine ⟨8 * fluxSpineConst d, by positivity, ?_⟩
   intro a h hgate s q hs _hs2 hq

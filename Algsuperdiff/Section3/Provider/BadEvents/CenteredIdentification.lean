@@ -189,7 +189,7 @@ theorem one_lt_cubeHomogenizationErrorLiteral_of_mem_badLoc [NeZero d]
       exact lt_of_lt_of_le hscaled (le_max_left _ _)
   rw [hEeq]
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hchain : (10 : ℝ) < 1 + 2 * Elit ^ 2 + Real.sqrt 2 * Elit :=
     lt_of_lt_of_le h10 hcmp
   have hsq : Elit ^ 2 ≤ 1 := by nlinarith
@@ -211,7 +211,7 @@ theorem badLoc_ae_le_preimage (M : ABKModel d) (Q : TriadicCube d) :
     badLoc M Q ≤ᵐ[(cutoffSampleLaw M).toMeasure]
       (translateCutoffSample (triadicCubeShift Q)) ⁻¹'
         {omega | 1 < Observable.cutoffHomogenizationError M Q.scale quarter omega} := by
-  letI : NeZero d := neZeroOfModel M
+  let : NeZero d := neZeroOfModel M
   have hlow := cubeLowerEllipticityInv_ae_eq_literal M Q Q.scale (1 / 4)
     (by norm_num) exponentTwo
   have hup := cubeUpperEllipticity_ae_eq_literal M Q Q.scale (1 / 4)

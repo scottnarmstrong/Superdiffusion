@@ -135,7 +135,7 @@ theorem measurable_YcalE (M : ABKModel d) (Ccg sprime : ℝ) (n : ℤ) :
       ∑' j : ℕ, ENNReal.ofReal (weightThird sprime j *
         annMax M Ccg n (n - (j : ℤ)) omega) := rfl
   rw [hrw]
-  exact Measurable.ennreal_tsum fun j =>
+  exact Measurable.tsum fun j =>
     ((measurable_annMax M Ccg n (n - (j : ℤ))).const_mul _).ennreal_ofReal
 
 /-- **`E[𝒴_n] < ∞`, by Tonelli over the `k`-series.**  The per-annulus maxima
@@ -222,7 +222,7 @@ theorem measurable_YcalRowTwoE (M : ABKModel d) (Ccg sprime : ℝ) (m : ℤ) :
   have hrw : YcalRowTwoE M Ccg sprime m = fun omega =>
       ∑' j : ℤ, ENNReal.ofReal (wt sprime m j * Ycal M Ccg sprime j omega) := rfl
   rw [hrw]
-  exact Measurable.ennreal_tsum fun j =>
+  exact Measurable.tsum fun j =>
     ((measurable_Ycal M Ccg sprime j).const_mul _).ennreal_ofReal
 
 private theorem summable_wt_row {sprime : ℝ} (hs0 : 0 < sprime) (hs2 : 2 * sprime ≤ 1)
@@ -311,7 +311,7 @@ private theorem measure_eq_top_eq_zero {f : Cutoff.CutoffSample d → ℝ≥0∞
   have h := ae_lt_top (μ := (Cutoff.cutoffSampleLaw M).toMeasure) hf hfin
   rw [MeasureTheory.ae_iff] at h
   refine measure_mono_null (fun omega homega => ?_) h
-  rw [Set.mem_setOf_eq] at homega ⊢
+  rw [Set.mem_ofPred_eq] at homega ⊢
   rw [homega]
   exact lt_irrefl _
 
@@ -349,11 +349,11 @@ theorem measure_compl_goodRowSet (M : ABKModel d) (Ccg : ℝ) {sigma sprime A K 
     by_cases h1 : ∀ n : ℤ, YcalE M Ccg sprime n omega ≠ ⊤
     · refine Or.inr ?_
       have h2 : ¬ ∀ m : ℤ, YcalRowTwoE M Ccg sprime m omega ≠ ⊤ := fun h2 => homega ⟨h1, h2⟩
-      push_neg at h2
+      push Not at h2
       obtain ⟨m, hm⟩ := h2
       exact Set.mem_iUnion.2 ⟨m, hm⟩
     · refine Or.inl ?_
-      push_neg at h1
+      push Not at h1
       obtain ⟨n, hn⟩ := h1
       exact Set.mem_iUnion.2 ⟨n, hn⟩
   refine measure_mono_null hsub ?_
@@ -382,7 +382,7 @@ theorem YcalRowE_le_YcalRowTwoE (M : ABKModel d) (Ccg sprime : ℝ) (m : ℤ)
         (ENNReal.ofReal_toReal (hfin n)).symm,
       ← ENNReal.ofReal_mul (wt_nonneg sprime m n)]
   · rw [if_neg hn]
-    exact zero_le _
+    exact zero_le
 
 /-- **The Appendix-D reduction of `𝒢₀`, off the null set.**
 

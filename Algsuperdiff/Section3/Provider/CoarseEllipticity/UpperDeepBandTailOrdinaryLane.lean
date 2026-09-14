@@ -154,8 +154,8 @@ private theorem measurable_probeSharpDeepBandTailTunedBaseTerm
       (probeDeepBandTail_measurable M (originCube d root)
         (probeSharpLayerAnchor root bfaProfileB k₀ n + (k₀ : ℤ))
         k₀ k₀)
-  simpa only [probeSharpDeepBandTailTunedBaseTerm] using
-    measurable_const.mul (htail.pow_const (2 : ℕ))
+  unfold probeSharpDeepBandTailTunedBaseTerm
+  exact measurable_const.mul (htail.pow_const (2 : ℕ))
 private theorem probeSharpDeepBandTailTunedBaseScale_nonneg
     (M : ABKModel d) (root : ℤ) (k₀ k n : ℕ) :
     0 ≤ probeSharpDeepBandTailTunedBaseScale M root k₀ k n := by
@@ -180,8 +180,8 @@ private theorem isBigOWith_gammaSigma_one_probeSharpDeepBandTailTunedBaseTerm
           (k₀ : ℝ)))) :=
     mul_nonneg (probeSharpDeepBandTailGoodMassCoeff_nonneg d n)
       (Real.rpow_nonneg (by norm_num) _)
-  simpa only [probeSharpDeepBandTailTunedBaseTerm,
-    probeSharpDeepBandTailTunedBaseScale, ell] using htail.const_mul hc
+  unfold probeSharpDeepBandTailTunedBaseTerm probeSharpDeepBandTailTunedBaseScale
+  exact htail.const_mul hc
 /-- At a strict descendant, the literal good centered-tail summand is the
 outer coefficient times the separated hsep factor and explicit-depth base. -/
 private theorem probeSharpFramedGoodWavePart_deepBandTail_tuned_eq
@@ -734,7 +734,12 @@ theorem exists_tunedDeepBandTail_good_finite_trace_split
       ((measurable_probeSharpAfterBandHsepResidual M R.scale (E : ℝ)).mul
         (measurable_probeSharpDeepBandTailTunedBaseTerm
           M R.scale k₀ k n))
-      (by simpa only [V, B, Q, k₀, shift] using hcenter)
+      (show IsBigOWith (cutoffSampleLaw M).toMeasure
+          (gammaSigma (upperProfileTargetSigma sigma))
+          (fun omega => probeSharpAfterBandHsepResidual M R.scale (E : ℝ) omega *
+            probeSharpDeepBandTailTunedBaseTerm M R.scale k₀ k n omega)
+          (probeSharpDeepBandTailRareGoodMassLayerBound M (E : ℝ) n) from
+        hcenter)
   have hObig : IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 1) (fun omega => ∑' n, O n omega) AO := by
     have h := Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_gammaSigma_tsum_of_tsum_le
@@ -786,7 +791,7 @@ theorem exists_tunedDeepBandTail_good_finite_trace_split
     exact mul_nonneg (Nat.cast_nonneg d)
       (mul_nonneg hC0 (tsum_nonneg fun n => hV0 n omega))
   have hOsumMeas : Measurable (fun omega => ∑' n, O n omega) := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
+    have hnn := (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       (hOmeas n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
     funext omega
@@ -795,7 +800,7 @@ theorem exists_tunedDeepBandTail_good_finite_trace_split
       rw [Real.toNNReal_of_nonneg (hO0 n omega)]
       rfl
   have hVsumMeas : Measurable (fun omega => ∑' n, V n omega) := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
+    have hnn := (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       (hVmeas n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
     funext omega

@@ -36,7 +36,7 @@ private theorem integrableOn_vecDot_coords {W : Set (Vec d)} {A B : Vec d → Ve
     funext y
     rw [vecDot]
   rw [IntegrableOn, hsum]
-  exact integrable_finset_sum _ fun j _ => (hA j).integrable_mul (hB j)
+  exact integrable_finsetSum _ fun j _ => (hA j).integrable_mul (hB j)
 
 private theorem vecDot_sub_left_local (A B C : Vec d) :
     vecDot (A - B) C = vecDot A C - vecDot B C := by
@@ -73,7 +73,7 @@ theorem integral_vecDot_oddFaceExtendGrad_eq
       MemLp (fun y => G (coordFaceReflection c i y) j) 2 (volume : Measure (Vec d)) :=
     fun j => (hF j).comp_measurePreserving (measurePreserving_coordFaceReflection c i)
   have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection c i z) := by
-    simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection c i)
+    simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection c i)
   have hφrc : HasCompactSupport fun z => φ (coordFaceReflection c i z) :=
     hasCompactSupport_comp_coordFaceReflection hφc c i
   have hDφL2 : ∀ j : Fin d,
@@ -107,7 +107,7 @@ theorem integral_vecDot_oddFaceExtendGrad_eq
       ∫ y in U, vecDot (G y) (K y) ∂volume =
         ∫ y in H, vecDot (F y) (K y) ∂volume := by
     intro K _hK
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hUmeas hHsub ?_]
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUmeas hHsub ?_]
     · refine setIntegral_congr_fun hHmeas fun y hy => ?_
       rw [hGdef, zeroExtendGrad_of_mem _ hy]
     · intro y hy
@@ -205,7 +205,7 @@ theorem integral_mul_oddFaceExtend_eq
       (volume : Measure (Vec d)) :=
     hh.comp_measurePreserving (measurePreserving_coordFaceReflection c i)
   have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection c i z) := by
-    simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection c i)
+    simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection c i)
   have hφrc : HasCompactSupport fun z => φ (coordFaceReflection c i z) :=
     hasCompactSupport_comp_coordFaceReflection hφc c i
   have hφL2 : MemLp φ 2 (volume : Measure (Vec d)) :=
@@ -227,7 +227,7 @@ theorem integral_mul_oddFaceExtend_eq
   have hcollapse : ∀ K : Vec d → ℝ,
       ∫ y in U, Z y * K y ∂volume = ∫ y in H, h y * K y ∂volume := by
     intro K
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hUmeas hHsub ?_]
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUmeas hHsub ?_]
     · refine setIntegral_congr_fun hHmeas fun y hy => ?_
       rw [hZdef, zeroExtend_of_mem _ hy]
     · intro y hy

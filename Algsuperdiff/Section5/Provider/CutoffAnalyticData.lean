@@ -55,6 +55,7 @@ theorem continuous_coefficientCutoff (M : ABKModel d) (m : ℤ)
   have hconst : Continuous fun _ : Vec d => M.nu • (1 : Mat d) := continuous_const
   refine (hconst.add hcut).congr fun y => ?_
   rw [Homogenization.RegCoeffField.toCoeffField_apply, Cutoff.coefficientCutoff_apply]
+  rfl
 
 end
 

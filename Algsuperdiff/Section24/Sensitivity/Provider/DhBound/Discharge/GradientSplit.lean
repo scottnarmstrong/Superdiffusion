@@ -142,7 +142,7 @@ theorem cubeBesovNegativeVectorPartialSeminormTwo_const_smul (Q : TriadicCube d)
 
 theorem isFiniteMeasure_volumeMeasureOn_cubeSet (Q : TriadicCube d) :
     IsFiniteMeasure (volumeMeasureOn (cubeSet Q)) := by
-  letI : Fact (MeasureTheory.volume (cubeSet Q) < ⊤) := ⟨volume_cubeSet_lt_top Q⟩
+  let : Fact (MeasureTheory.volume (cubeSet Q) < ⊤) := ⟨volume_cubeSet_lt_top Q⟩
   change IsFiniteMeasure (MeasureTheory.volume.restrict (cubeSet Q))
   infer_instance
 
@@ -330,7 +330,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_witnessGrad_le [NeZero d]
       (fun x => (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x)) :=
     hL2sum.const_smul ((2 : ℝ)⁻¹)
   have hL2const : MemVectorL2 (cubeSet (originCube d 0)) (fun _ : Vec d => p) := by
-    letI := isFiniteMeasure_volumeMeasureOn_cubeSet (originCube d 0)
+    let := isFiniteMeasure_volumeMeasureOn_cubeSet (originCube d 0)
     exact memVectorL2_const p
   -- the bounded-above data
   have hBddAdj := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad

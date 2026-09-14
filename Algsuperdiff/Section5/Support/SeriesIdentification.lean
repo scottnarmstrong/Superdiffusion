@@ -161,7 +161,7 @@ theorem isDirichletSolutionAt_iterationPartialSum_background {y : Vec d} {n : �
   | succ J ih =>
       have hsum : MemVectorL2 (cubeSetAt y n)
           fun x => g x + ∑ j ∈ Finset.range J, matVecMul (kap x) ((w j).grad x) :=
-        hg.add (memLp_finset_sum _ fun j _ =>
+        hg.add (memLp_finsetSum _ fun j _ =>
           memVectorL2_matVecMul_of_coeff_add hEllA hEllB hab (w j).grad_memVectorL2)
       have hlast : MemVectorL2 (cubeSetAt y n)
           fun x => matVecMul (kap x) ((w J).grad x) :=
@@ -195,7 +195,7 @@ theorem isDirichletSolutionAt_iterationPartialSum {y : Vec d} {n : ℤ}
     hw0 hwsucc J
   have hsum : MemVectorL2 (cubeSetAt y n)
       fun x => g x + ∑ j ∈ Finset.range J, matVecMul (kap x) ((w j).grad x) :=
-    hg.add (memLp_finset_sum _ fun j _ =>
+    hg.add (memLp_finsetSum _ fun j _ =>
       memVectorL2_matVecMul_of_coeff_add hEllA hEllB hab (w j).grad_memVectorL2)
   have hshift := isDirichletSolutionAt_coeff_add hEllA hEllB hab hsum hbase
   have hdat : (fun x => (g x + ∑ j ∈ Finset.range J, matVecMul (kap x) ((w j).grad x)) -
@@ -227,7 +227,7 @@ theorem isDirichletSolutionAt_sub_iterationPartialSum {y : Vec d} {n : ℤ}
   have hS := isDirichletSolutionAt_iterationPartialSum hEllA hEllB hab hg hw0 hwsucc J
   have hsub : MemVectorL2 (cubeSetAt y n)
       fun x => g x - matVecMul (kap x) ((w J).grad x) := by
-    simpa only [Pi.sub_apply] using hg.sub hlast
+    simpa only [Pi.sub_apply] using! hg.sub hlast
   have hdiff := isDirichletSolutionAt_sub hEllB hg hsub hu hS
   have hdat : (fun x => g x - (g x - matVecMul (kap x) ((w J).grad x))) =
       fun x => matVecMul (kap x) ((w J).grad x) := by
@@ -446,7 +446,7 @@ theorem tendsto_sub_iterationPartialSum_cutoff (M : ABKModel d) (m n : ℤ) (y :
       Filter.Tendsto (fun J => Real.sqrt (∫ x in cubeSetAt y n,
         (u.toFun x - (iterationPartialSum w J).toFun x) ^ (2 : ℕ) ∂volume))
         Filter.atTop (nhds 0) := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   obtain ⟨LamA, hEllA⟩ := exists_isEllipticFieldOn_cutoff M n n y omega
   obtain ⟨LamB, hEllB⟩ := exists_isEllipticFieldOn_cutoff M m n y omega
   have hab := coefficientCutoff_eq_add_cutoff_sub M m n omega

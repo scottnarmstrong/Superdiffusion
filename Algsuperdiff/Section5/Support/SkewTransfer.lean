@@ -124,8 +124,8 @@ theorem matFieldDiv_apply (k : Vec d → Mat d) (x : Vec d) (j : Fin d) :
 theorem continuous_matFieldDiv_apply {k : Vec d → Mat d}
     (hk : ∀ a b : Fin d, ContDiff ℝ 1 fun x => k x a b) (j : Fin d) :
     Continuous fun x => matFieldDiv k x j := by
-  refine continuous_finset_sum _ fun i _ => ?_
-  exact ((hk i j).continuous_fderiv le_rfl).clm_apply continuous_const
+  refine continuous_finsetSum _ fun i _ => ?_
+  exact ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
 
 /-- Entrywise antisymmetry, read off the matrix identity. -/
 private theorem skew_entry_of_matTranspose {A : Mat d} (h : matTranspose A = -A)
@@ -166,7 +166,7 @@ private theorem exists_bound_of_continuous {U : Set (Vec d)} (hU : IsBoundedDoma
 
 private theorem memScalarL2_of_continuous {U : Set (Vec d)} (hUm : MeasurableSet U)
     (hU : IsBoundedDomain U) {f : Vec d → ℝ} (hf : Continuous f) : MemScalarL2 U f := by
-  haveI := hU.isFiniteMeasure_restrict_volume
+  have := hU.isFiniteMeasure_restrict_volume
   obtain ⟨C, hC⟩ := exists_bound_of_continuous hU hf
   refine MemLp.of_bound hf.aestronglyMeasurable C ?_
   filter_upwards [ae_restrict_mem hUm] with x hx
@@ -184,13 +184,13 @@ private theorem memH1_of_contDiff_one {U : Set (Vec d)} (hUm : MeasurableSet U)
      memL2 := memScalarL2_of_continuous hUm hU hf.continuous
      gradMemL2 := fun i => memScalarL2_of_continuous
        (f := fun x => (fderiv ℝ f x) (basisVec i)) hUm hU
-       ((hf.continuous_fderiv le_rfl).clm_apply continuous_const)
+       ((hf.continuous_fderiv (by simp)).clm_apply continuous_const)
      hasWeakGradient := HasWeakGradientOn.of_contDiff hf }, rfl⟩
 
 private theorem integrable_mul_of_memScalarL2 {U : Set (Vec d)} {f g : Vec d → ℝ}
     (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
     Integrable (fun x => f x * g x) (volume.restrict U) := by
-  simpa only [Pi.mul_apply] using hf.integrable_mul hg
+  simpa only [Pi.mul_apply] using! hf.integrable_mul hg
 
 /-! ## 4. From smooth tests to zero-trace tests -/
 
@@ -201,7 +201,7 @@ private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {F G : Vec d → 
       ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
   rw [show (fun x : Vec d => vecDot (F x) (G x)) =
       fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  exact integral_finset_sum Finset.univ fun i _ => integrable_mul_of_memScalarL2 (hF i) (hG i)
+  exact integral_finsetSum Finset.univ fun i _ => integrable_mul_of_memScalarL2 (hF i) (hG i)
 
 private theorem integral_vecDot_congr_of_forall_smooth {U : Set (Vec d)} {P Q : Vec d → Vec d}
     (hP : ∀ i : Fin d, MemScalarL2 U fun x => P x i)
@@ -229,11 +229,11 @@ private theorem integral_vecDot_congr_of_forall_smooth {U : Set (Vec d)} {P Q : 
       using phi.tendsto_approx_grad i
   have hPconv : Tendsto (fun n => ∑ i : Fin d, ∫ x in U, P x i * Dn n x i ∂volume) atTop
       (nhds (∑ i : Fin d, ∫ x in U, P x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finset_sum Finset.univ fun i _ =>
+    tendsto_finsetSum Finset.univ fun i _ =>
       tendsto_integral_mul_of_tendsto_toScalarL2 (hP i) (fun n => hDn n i) (hDlim i) (hconv i)
   have hQconv : Tendsto (fun n => ∑ i : Fin d, ∫ x in U, Q x i * Dn n x i ∂volume) atTop
       (nhds (∑ i : Fin d, ∫ x in U, Q x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finset_sum Finset.univ fun i _ =>
+    tendsto_finsetSum Finset.univ fun i _ =>
       tendsto_integral_mul_of_tendsto_toScalarL2 (hQ i) (fun n => hDn n i) (hDlim i) (hconv i)
   have heq : ∀ n : ℕ, (∑ i : Fin d, ∫ x in U, P x i * Dn n x i ∂volume) =
       ∑ i : Fin d, ∫ x in U, Q x i * Dn n x i ∂volume := by
@@ -255,7 +255,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
     (hpsiU : tsupport psi ⊆ U) :
     ∫ x in U, vecDot (w.toFun x • matFieldDiv k x) (euclideanGradient psi x) ∂volume =
       ∫ x in U, vecDot (matVecMul (k x) (w.grad x)) (euclideanGradient psi x) ∂volume := by
-  haveI := hU.isBoundedDomain.isFiniteMeasure_restrict_volume
+  have := hU.isBoundedDomain.isFiniteMeasure_restrict_volume
   have hDpsi_smooth : ∀ j : Fin d, ContDiff ℝ (⊤ : ℕ∞) (euclideanCoordDeriv j psi) :=
     fun j => contDiff_euclideanCoordDeriv hpsi j
   have hDpsi_cs : ∀ j : Fin d, HasCompactSupport (euclideanCoordDeriv j psi) :=
@@ -268,7 +268,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
     fun i j => (contDiff_euclideanCoordDeriv (hDpsi_smooth j) i).continuous
   have hDk_cont : ∀ i j : Fin d,
       Continuous fun x => euclideanCoordDeriv i (fun y => k y i j) x :=
-    fun i j => ((hk i j).continuous_fderiv le_rfl).clm_apply continuous_const
+    fun i j => ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
   have hS1 : ∀ i j : Fin d,
       MemScalarL2 U fun x => k x i j * euclideanCoordSecondDeriv j i psi x := fun i j =>
     memScalarL2_of_continuous_hasCompactSupport ((hk i j).continuous.mul (hD2_cont i j))
@@ -317,7 +317,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
       HasWeakPartialDerivOn.ae_eq hU.isOpen
         (MeasureTheory.IntegrableOn.locallyIntegrableOn
           ((X.toH1Function.gradMemL2 i).integrable one_le_two))
-        (((hchi.continuous_fderiv le_rfl).clm_apply
+        (((hchi.continuous_fderiv (by simp)).clm_apply
           continuous_const).locallyIntegrable.locallyIntegrableOn U)
         hweakX (HasWeakPartialDerivOn.of_contDiff hchi)
     have hprod : ∀ x : Vec d,
@@ -330,7 +330,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
         ((hDpsi_smooth j).differentiable (by norm_num) x).hasFDerivAt
       have hg : HasFDerivAt (fun y : Vec d => k y i j)
           (fderiv ℝ (fun y : Vec d => k y i j) x) x :=
-        ((hk i j).differentiable le_rfl x).hasFDerivAt
+        ((hk i j).differentiable (by norm_num) x).hasFDerivAt
       show (fderiv ℝ (fun y : Vec d => euclideanCoordDeriv j psi y * k y i j) x) (basisVec i) =
         k x i j * (fderiv ℝ (euclideanCoordDeriv j psi) x) (basisVec i) +
           euclideanCoordDeriv j psi x * (fderiv ℝ (fun y : Vec d => k y i j) x) (basisVec i)
@@ -338,7 +338,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
           (euclideanCoordDeriv j psi x • fderiv ℝ (fun y : Vec d => k y i j) x +
             k x i j • fderiv ℝ (euclideanCoordDeriv j psi) x) x := hf.mul hg
       rw [hmul.fderiv]
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+      simp only [add_apply, smul_apply, smul_eq_mul]
       ring
     have hibp := H1Function.integral_mul_zeroTrace_gradCoord_eq_neg_integral_gradCoord_mul w X i
     have hL : ∫ x in U, w.toFun x * X.toH1Function.grad x i ∂volume =
@@ -371,8 +371,8 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
         fun x : Vec d => ∑ j : Fin d, ∑ i : Fin d, w.toFun x *
           (euclideanCoordDeriv j psi x *
             euclideanCoordDeriv i (fun y => k y i j) x) from funext hpt,
-      integral_finset_sum Finset.univ
-        fun j _ => integrable_finset_sum Finset.univ fun i _ => hQ_int i j,
+      integral_finsetSum Finset.univ
+        fun j _ => integrable_finsetSum Finset.univ fun i _ => hQ_int i j,
       show (∑ j : Fin d, ∫ x in U, ∑ i : Fin d, w.toFun x *
             (euclideanCoordDeriv j psi x *
               euclideanCoordDeriv i (fun y => k y i j) x) ∂volume) =
@@ -380,7 +380,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
             (euclideanCoordDeriv j psi x *
               euclideanCoordDeriv i (fun y => k y i j) x) ∂volume from
         Finset.sum_congr rfl fun j _ =>
-          integral_finset_sum Finset.univ fun i _ => hQ_int i j]
+          integral_finsetSum Finset.univ fun i _ => hQ_int i j]
     exact Finset.sum_comm
   -- The right-hand side as a double sum, after using the skewness of `k` once.
   have hRHS : ∫ x in U, vecDot (matVecMul (k x) (w.grad x)) (euclideanGradient psi x) ∂volume =
@@ -406,14 +406,14 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
     rw [show (fun x : Vec d => vecDot (matVecMul (k x) (w.grad x)) (euclideanGradient psi x)) =
         fun x : Vec d => ∑ i : Fin d, ∑ j : Fin d,
           w.grad x j * (euclideanCoordDeriv i psi x * k x i j) from funext hpt,
-      integral_finset_sum Finset.univ
-        fun i _ => integrable_finset_sum Finset.univ fun j _ => hR_int j i j,
+      integral_finsetSum Finset.univ
+        fun i _ => integrable_finsetSum Finset.univ fun j _ => hR_int j i j,
       show (∑ i : Fin d, ∫ x in U, ∑ j : Fin d,
             w.grad x j * (euclideanCoordDeriv i psi x * k x i j) ∂volume) =
           ∑ i : Fin d, ∑ j : Fin d,
             ∫ x in U, w.grad x j * (euclideanCoordDeriv i psi x * k x i j) ∂volume from
         Finset.sum_congr rfl fun i _ =>
-          integral_finset_sum Finset.univ fun j _ => hR_int j i j]
+          integral_finsetSum Finset.univ fun j _ => hR_int j i j]
     calc (∑ i : Fin d, ∑ j : Fin d,
             ∫ x in U, w.grad x j * (euclideanCoordDeriv i psi x * k x i j) ∂volume)
         = ∑ i : Fin d, ∑ j : Fin d,
@@ -432,10 +432,10 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
         ∫ x in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x) ∂volume) =
         ∫ x in U, ∑ i : Fin d, ∑ j : Fin d,
           w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x) ∂volume := by
-      rw [integral_finset_sum Finset.univ
-        fun i _ => integrable_finset_sum Finset.univ fun j _ => hP_int i j]
+      rw [integral_finsetSum Finset.univ
+        fun i _ => integrable_finsetSum Finset.univ fun j _ => hP_int i j]
       exact Finset.sum_congr rfl fun i _ =>
-        (integral_finset_sum Finset.univ fun j _ => hP_int i j).symm
+        (integral_finsetSum Finset.univ fun j _ => hP_int i j).symm
     rw [hswap]
     refine integral_eq_zero_of_ae (Filter.Eventually.of_forall fun x => ?_)
     have hzero : ∑ i : Fin d, ∑ j : Fin d,
@@ -518,7 +518,7 @@ theorem integral_vecDot_smul_matFieldDiv_eq_integral_vecDot_matVecMul
     exact memScalarL2_mul_of_continuous_right hUm hUb w.memL2
       (continuous_matFieldDiv_apply hk i)
   · intro i
-    exact memLp_finset_sum Finset.univ fun j _ =>
+    exact memLp_finsetSum Finset.univ fun j _ =>
       memScalarL2_mul_of_continuous_left hUm hUb (hk i j).continuous (w.gradMemL2 j)
   · intro psi hpsi hpsic hpsiU
     exact integral_smul_matFieldDiv_eq_of_smooth hU hk hskew w hpsi hpsic hpsiU

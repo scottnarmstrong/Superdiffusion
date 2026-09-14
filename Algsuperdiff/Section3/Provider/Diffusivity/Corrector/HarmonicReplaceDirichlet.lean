@@ -72,7 +72,7 @@ theorem isEllipticFieldOn_one {U : Set (Vec d)} (hU : MeasurableSet U) :
       Measurable (U.piecewise (fun _ : Vec d => (scalarMatrix (d := d) (1 : ℝ)) i j)
         (fun _ => 0)) :=
     measurable_const.piecewise hU measurable_const
-  simpa [Set.piecewise] using hpiece
+  simpa [Set.piecewise] using! hpiece
 
 /-- **The Laplace-Dirichlet solve with divergence-form right-hand side.**
 
@@ -92,7 +92,7 @@ theorem exists_h10Function_integral_vecDot_grad_eq [NeZero d] {U : Set (Vec d)}
     ∃ φ : H10Function U, ∀ ψ : H10Function U,
       ∫ x in U, vecDot (φ.toH1Function.grad x) (ψ.toH1Function.grad x) ∂volume =
         ∫ x in U, vecDot (g x) (ψ.toH1Function.grad x) ∂volume := by
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   obtain ⟨φ, hφ⟩ :=
     exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization
       (a := fun _ => scalarMatrix (d := d) (1 : ℝ)) (U := U) (g := g) (lam := 1) (Lam := 1)

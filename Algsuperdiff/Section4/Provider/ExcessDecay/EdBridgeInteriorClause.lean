@@ -265,7 +265,7 @@ theorem exists_oneStepAnchorBound_interior (d : ℕ) :
   have hW20 : volume ((((fun y' => z + y') ''
       openCubeSet (originCube d (n - 2 + 2))) ∩
       openCubeSet (originCube d m))) ≠ 0 := volume_anchorWindowInner_ne_zero hgeom
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hW20 hWtop
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW20 hWtop
   have hS4 : (0 : ℝ) ≤ Real.rpow s (-(4 : ℝ)) := Real.rpow_nonneg hs.le _
   have hS192 : (0 : ℝ) ≤ Real.rpow s (-(19 / 2 : ℝ)) := Real.rpow_nonneg hs.le _
   have h3sn : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((1 + s) * ((n - 2 : ℤ) : ℝ)) :=
@@ -306,7 +306,7 @@ theorem exists_oneStepAnchorBound_interior (d : ℕ) :
     memLp_normalizedGagliardoMeasureOn_subset Set.inter_subset_right
       (volume_openCubeSet_ne_zero (originCube d m))
       (volume_openCubeSet_ne_top (originCube d m)) hW2n hgW
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hW2n
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW2n
     (volume_anchorWindow_ne_top n m z)
   refine ⟨_, ofReal_mul_add_two_ne_top
     (hu2.sub (memLp_const _)).eLpNorm_ne_top hg2.eLpNorm_ne_top, hclauseInt, ?_⟩

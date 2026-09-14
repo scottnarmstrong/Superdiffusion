@@ -162,7 +162,7 @@ theorem geometricWeight_succ_eq_decay_mul
       Real.rpow (3 : ℝ) (-s * q + (-s * q * (k : ℝ))) =
         Real.rpow (3 : ℝ) (-s * q) *
           Real.rpow (3 : ℝ) (-s * q * (k : ℝ)) := by
-    simpa only using
+    simpa only using!
       (Real.rpow_add (by norm_num : (0 : ℝ) < 3)
         (-s * q) (-s * q * (k : ℝ)))
   rw [hpow]

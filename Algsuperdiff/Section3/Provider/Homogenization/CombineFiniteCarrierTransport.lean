@@ -270,7 +270,7 @@ theorem exists_coefficientCutoff_finiteCorridor_starredFluctuationVariance_bound
     exists_relativeCutoff_finiteCorridor_fluctuationVariance_bound d
   refine ⟨Chom, Cvar, hChom64, hChomShift, hCvarOne, ?_⟩
   intro M m E hLower epsilon hepsilon hgamma L hseparation n hn
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hcorridor :=
     hbound M m E hLower epsilon hepsilon hgamma L hseparation n hn

@@ -117,7 +117,10 @@ private theorem measurable_tsum_nat_of_nonneg {Omega : Type*} [MeasurableSpace O
     (term : ℕ → Omega → ℝ) (hmeas : ∀ n, Measurable (term n))
     (hnonneg : ∀ n omega, 0 ≤ term n omega) :
     Measurable fun omega => ∑' n : ℕ, term n omega := by
-  have hnn := (Measurable.nnreal_tsum fun n => (hmeas n).real_toNNReal).coe_nnreal_real
+  have hnn : Measurable (fun omega => ∑' n : ℕ, (term n omega).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+      (hmeas n).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]

@@ -226,7 +226,7 @@ private theorem sq_norm_zeroShellPotentialCorrector_le (M : ABKModel d)
       (ShellField.zeroShellRegLaw M.P).toMeasure) :
     ‖ShellField.zeroShellPotentialCorrector M.P hstationary e hmem‖ ^ 2 ≤
       ‖ShellField.zeroShellForcingL2 M.P e hmem‖ ^ 2 := by
-  letI := ShellField.zeroShellRegLaw_vaddInvariant M.P hstationary
+  let := ShellField.zeroShellRegLaw_vaddInvariant M.P hstationary
   have hnorm :=
     Submodule.norm_starProjection_apply_le
       (Algsuperdiff.Probability.Stationary.stationaryPotentialSubspace
@@ -236,7 +236,7 @@ private theorem sq_norm_zeroShellPotentialCorrector_le (M : ABKModel d)
     (norm_nonneg (ShellField.zeroShellForcingL2 M.P e hmem))).mpr hnorm
   simpa only [ShellField.zeroShellPotentialCorrector,
     ShellField.zeroShellProjectedForcing, ShellField.zeroShellPotentialSubspace,
-    norm_neg] using hsq
+    norm_neg] using! hsq
 
 /-! ## The bound -/
 

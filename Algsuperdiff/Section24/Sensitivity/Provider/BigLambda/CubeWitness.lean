@@ -143,7 +143,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_potWitnessGrad_le [NeZero d]
       (fun x => (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x)) :=
     hL2sum.const_smul ((2 : ℝ)⁻¹)
   have hL2const : MemVectorL2 (cubeSet Q) (fun _ : Vec d => p) := by
-    letI := isFiniteMeasure_volumeMeasureOn_cubeSet Q
+    let := isFiniteMeasure_volumeMeasureOn_cubeSet Q
     exact memVectorL2_const p
   have hBddAdj := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad Q vAdj.toH1
   have hBddv := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad Q v.toH1

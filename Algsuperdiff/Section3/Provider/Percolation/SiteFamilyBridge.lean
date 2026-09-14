@@ -116,7 +116,7 @@ theorem closedBall_subset_closedBall_of_cubeSet_subset {Q R : TriadicCube d}
       simp only [cubeScaleFactor] at hQ
       exact hQ.1
     · by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       set t : ℝ := min ((1 / 2 : ℝ) * (3 : ℝ) ^ R.scale)
         (((R.index i : ℝ) + 1 / 2) * (3 : ℝ) ^ R.scale -
           ((Q.index i : ℝ) + 1 / 2) * (3 : ℝ) ^ Q.scale) with htdef
@@ -181,7 +181,7 @@ manuscript's scale-resolved bad events. -/
 theorem measurableSet_badScaleEvent_zero_cutoffSampleLocal (M : ABKModel d)
     (Q : TriadicCube d) {U : Set (Vec d)} (hU : cubeTreeRegion Q ⊆ U) :
     MeasurableSet[cutoffSampleLocalSigma M Q.scale U] (badScaleEvent M Q 0) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M Q.scale U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M Q.scale U
   refine Finset.measurableSet_biUnion _ fun i hi => ?_
   refine Finset.measurableSet_biUnion _ fun R hR => ?_
   have hscale : R.scale = Q.scale - (i : ℤ) :=
@@ -305,7 +305,7 @@ theorem vecNorm_sub_ge_of_mem_cubeTreeRegion (hd : 0 < d) (base : ℤ)
     (((latDist u v : ℕ) : ℝ) - 1) * (3 : ℝ) ^ base ≤
       Homogenization.Book.Ch02.vecNorm (x - y) := by
   have hpos : (0 : ℝ) < (3 : ℝ) ^ base := zpow_pos (by norm_num) _
-  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   obtain ⟨i, -, hi⟩ := Finset.exists_mem_eq_sup (Finset.univ : Finset (Fin d))
     Finset.univ_nonempty (fun j => (u j - v j).natAbs)
   have hxball := cubeTreeRegion_subset_closedBall_half (siteCube base u) hx
@@ -381,7 +381,7 @@ theorem siteSigma_le_cutoffSampleLocalSigma (M : ABKModel d) (base : ℤ) (l : �
   · exact @MeasurableSet.empty (CutoffSample d)
       (cutoffSampleLocalSigma M (base + ((l - sepShift d : ℕ) : ℤ)) (siteRegion base S))
   · rename_i hLq
-    push_neg at hLq
+    push Not at hLq
     have hbase := measurableSet_badScaleEvent_cutoffSampleLocal M (siteCube base y)
       (L - sepShift d) (U := cubeTreeRegion (siteCube base y)) (le_refl _)
     refine cutoffSampleLocalSigma_mono M ?_ (cubeTreeRegion_subset_siteRegion hy) _ hbase
@@ -412,7 +412,7 @@ theorem indep_siteSigma_siteBadEvent (M : ABKModel d) (base : ℤ) (l : ℕ)
     exact ProbabilityTheory.indep_of_indep_of_le_right
       (ProbabilityTheory.indep_of_indep_of_le_left
         (ProbabilityTheory.indep_bot_left _) (htrivial S)) (htrivial S')
-  · push_neg at hlq
+  · push Not at hlq
     set n : ℕ := l - sepShift d with hndef
     have hln : l = n + sepShift d := by omega
     have hEuclid : ∀ ⦃x y : Vec d⦄, x ∈ siteRegion base S → y ∈ siteRegion base S' →

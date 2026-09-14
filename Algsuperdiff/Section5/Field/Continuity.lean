@@ -78,7 +78,7 @@ private theorem continuousOn_upperTail (omega : FullSample d gamma) (ell : ℕ)
   refine (tendstoUniformlyOn_upperTail omega ell i k).continuousOn ?_
   refine (Filter.Eventually.of_forall fun q => ?_).frequently
   refine Continuous.continuousOn ?_
-  refine continuous_finset_sum (Finset.range q) fun r _ => ?_
+  refine continuous_finsetSum (Finset.range q) fun r _ => ?_
   exact (continuous_shell_entry (omega.1.1 ((ell : ℤ) + 1 + (r : ℤ))) i k).sub
     continuous_const
 

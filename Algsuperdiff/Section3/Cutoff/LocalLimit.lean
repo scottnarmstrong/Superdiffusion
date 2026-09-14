@@ -25,6 +25,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+set_option warn.classDefReducibility false in
 /-- The local information on the public cutoff carrier induced from the
 completed lower-shell local sigma-field on the canonical shell sequence. -/
 def cutoffSampleLocalSigma (M : ABKModel d) (m : ℤ) (U : Set (Vec d)) :
@@ -65,7 +66,7 @@ private theorem exists_openOriginCube_of_isCompact {K : Set (Vec d)}
   let g : Vec d → ℝ := fun x => 2 * ∑ i : Fin d, |x i|
   have hg : Continuous g := by
     exact continuous_const.mul
-      (continuous_finset_sum Finset.univ
+      (continuous_finsetSum Finset.univ
         (fun i _ => (continuous_apply i).abs))
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg.continuousOn
   obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt C (by norm_num : (1 : ℝ) < 3)
@@ -97,7 +98,7 @@ private theorem tendsto_entryTestR_of_tendstoUniformlyOn
       (𝓝 (entryTestR i j phi f)) := by
   set K := tsupport phi with hK
   have hKcompact : IsCompact K := by
-    simpa [hK] using hphi.hasCompactSupport
+    simpa [hK] using! hphi.hasCompactSupport
   have hKmeas : MeasurableSet K := hKcompact.measurableSet
   obtain ⟨C0, hC0⟩ := hKcompact.exists_bound_of_continuousOn hcont.continuousOn
   let C : ℝ := max C0 0

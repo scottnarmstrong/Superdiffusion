@@ -116,7 +116,7 @@ theorem affineExcess_initial_le [NeZero d] (hd : d ≠ 0) {m : ℤ} {x : Vec d}
       ≤ schauderInitialConst d * KG * Real.sqrt ((3 : ℝ) ^ m) := by
   have hQdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
     hQdom.isFiniteMeasure_restrict_volume
   have hvolQ : (volume (openCubeSet (originCube d m))).toReal = ((3 : ℝ) ^ m) ^ d := by
     rw [volume_openCubeSet_toReal, cubeVolume_eq_pow_scale]

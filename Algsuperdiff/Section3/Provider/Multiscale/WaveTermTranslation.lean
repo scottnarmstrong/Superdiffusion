@@ -89,7 +89,7 @@ private theorem measurable_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) :
           {omega : CutoffSample d | 0 < hsep M m E b omega}ᶜ := by
         ext omega
         simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff,
-          Set.mem_setOf_eq]
+          Set.mem_ofPred_eq]
         omega
       rw [hset]
       exact (measurableSet_lt_hsep M m E b 0).compl
@@ -99,7 +99,7 @@ private theorem measurable_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) :
             {omega : CutoffSample d | j + 1 < hsep M m E b omega}ᶜ := by
         ext omega
         simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff,
-          Set.mem_compl_iff, Set.mem_setOf_eq]
+          Set.mem_compl_iff, Set.mem_ofPred_eq]
         omega
       rw [hset]
       exact (measurableSet_lt_hsep M m E b j).inter

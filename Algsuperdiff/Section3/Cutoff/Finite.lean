@@ -105,13 +105,24 @@ private theorem ioc_eq_range_desc (m : ℤ) (q : ℕ) :
           linarith
         exact_mod_cast hab'⟩ := by
   ext k
-  simp only [Finset.mem_Ioc, Finset.mem_map, Finset.mem_range,
-    Function.Embedding.coeFn_mk]
+  simp only [Finset.mem_Ioc, Finset.mem_map, Finset.mem_range]
   constructor
   · rintro ⟨hlo, hhi⟩
-    exact ⟨(m - k).toNat, by omega, by omega⟩
+    have hk : 0 ≤ m - k := by omega
+    have htoNat : ((m - k).toNat : ℤ) = m - k := Int.toNat_of_nonneg hk
+    refine ⟨(m - k).toNat, ?_, ?_⟩
+    · have h2 : ((m - k).toNat : ℤ) < (q : ℤ) := by omega
+      exact_mod_cast h2
+    · show m - ((m - k).toNat : ℤ) = k
+      rw [htoNat]
+      ring
   · rintro ⟨r, hr, rfl⟩
-    omega
+    have hr' : (r : ℤ) < (q : ℤ) := by exact_mod_cast hr
+    have hr0 : (0 : ℤ) ≤ (r : ℤ) := by exact_mod_cast Nat.zero_le r
+    show m - (q : ℤ) < m - (r : ℤ) ∧ m - (r : ℤ) ≤ m
+    constructor
+    · linarith
+    · linarith
 
 /-- The finite lower cutoff is the descending partial sum
 `\sum_{r < q} \mathbf j_{m-r}`. -/

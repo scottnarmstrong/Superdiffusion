@@ -253,7 +253,7 @@ theorem exists_continuousOn_of_ballAverageHolderOn_lt_top [NeZero d] {U D : Set 
         Tendsto (fun k : ℕ => ⨍ w in Metric.ball y (1 / (k + 1 : ℝ)),
             U.indicator f w ∂volume) atTop (𝓝 (U.indicator f y)) := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have hnull : volume {z : Vec d | ¬ Tendsto
           (fun k : ℕ => ⨍ w in Metric.ball z (1 / (k + 1 : ℝ)), U.indicator f w ∂volume)
           atTop (𝓝 (U.indicator f z))} = 0 := by

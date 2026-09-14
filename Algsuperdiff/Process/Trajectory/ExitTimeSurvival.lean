@@ -112,11 +112,11 @@ theorem IsConservative.lintegral_exitTime_sq_le_of_lintegral_le
         ∂(IsConservative.continuousProcess P hP x) ≤ 288 * (M : ℝ≥0∞) ^ 2 := by
   have hExit : Measurable fun omega : ContinuousPath alpha ↦ ContinuousPath.exitTime U omega :=
     ContinuousPath.measurable_exitTime U hU
-  rcases eq_or_lt_of_le (zero_le M) with hM0 | hM0
+  rcases eq_or_lt_of_le (zero_le : (0 : ℝ≥0) ≤ M) with hM0 | hM0
   · have hzero : ∫⁻ omega, ContinuousPath.exitTime U omega
         ∂(IsConservative.continuousProcess P hP x) = 0 := by
-      refine le_antisymm ?_ (zero_le _)
-      simpa only [← hM0, ENNReal.coe_zero] using hM x
+      refine le_antisymm ?_ zero_le
+      simpa only [← hM0, ENNReal.coe_zero] using! hM x
     have hae := (lintegral_eq_zero_iff hExit).mp hzero
     have hsq : ∫⁻ omega, ContinuousPath.exitTime U omega ^ 2
         ∂(IsConservative.continuousProcess P hP x) = 0 := by
@@ -125,7 +125,7 @@ theorem IsConservative.lintegral_exitTime_sq_le_of_lintegral_le
       simp only [Pi.zero_apply] at homega ⊢
       rw [homega, zero_pow (by norm_num)]
     rw [hsq]
-    exact zero_le _
+    exact zero_le
   · have hMR : (0 : ℝ) < (M : ℝ) := by exact_mod_cast hM0
     set lam : ℝ := Real.log (4 / 3) / (4 * (M : ℝ)) with hlamdef
     have hlogpos : (0 : ℝ) < Real.log (4 / 3) :=
@@ -250,7 +250,7 @@ theorem IsConservative.sq_le_mul_measure_half_le_exitTime_of_lintegral_le
         ContinuousPath.exitTime U omega} =
       {omega | (mLow : ℝ≥0∞) / 2 ≤ ContinuousPath.exitTime U omega} := by
     ext omega
-    rw [Set.mem_setOf_eq, Set.mem_setOf_eq, hcoe, ENNReal.div_eq_inv_mul]
+    rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, hcoe, ENNReal.div_eq_inv_mul]
   rw [hone, hset] at hhalf
   have hfour : (4 : ℝ≥0∞) * ((2 : ℝ≥0∞)⁻¹ ^ 2) = 1 := by
     rw [← ENNReal.inv_pow]

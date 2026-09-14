@@ -191,7 +191,7 @@ theorem cubeTorsionRepresentative_sub_analyticCubeResolvent_cubeOneDatum_le (v :
   filter_upwards [A.analyticCubeResolvent_cubeOneDatum_ae v lam,
     A.cubeTorsionRepresentative_ae v,
     A.cubeTorsionL2_sub_alphaShiftedResolvent_cubeOneL2_le v lam] with y h1 h2 h3
-  rw [h1, h2]
+  simp only [Pi.sub_apply, h1, h2]
   exact h3
 
 theorem cubeTorsionRepresentative_le (v : ℕ) (x : Vec d) :

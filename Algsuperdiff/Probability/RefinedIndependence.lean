@@ -16,6 +16,7 @@ open scoped BigOperators
 
 variable {Ω : Type*} [mΩ : MeasurableSpace Ω] {μ : Measure Ω}
 
+set_option warn.classDefReducibility false in
 /-- Split each index into its left and right local sigma-field. -/
 def refinedSigma {ι : Type*} (a b : ι → MeasurableSpace Ω) :
     ι × Bool → MeasurableSpace Ω :=
@@ -90,8 +91,8 @@ theorem iIndep_refinedSigma [IsProbabilityMeasure μ] {ι : Type*}
   have hnκ : ∀ p : ι × Bool, refinedSigma a b p ≤ κ p.1 := by
     rintro ⟨i, c⟩
     cases c
-    · simpa using ha i
-    · simpa using hb i
+    · simpa using! ha i
+    · simpa using! hb i
   set L := S'.image Prod.fst with hL
   set fib : ι → Finset (ι × Bool) := fun i => S'.filter (fun q => q.1 = i) with hfib
   have hInter : (⋂ p ∈ S', g p) = ⋂ i ∈ L, ⋂ p ∈ fib i, g p := by
@@ -131,12 +132,12 @@ theorem indep_iSup_of_indep_of_iIndep [IsProbabilityMeasure μ] {ι : Type*}
   have hnle : ∀ p : ι × Bool, refinedSigma a b p ≤ mΩ := by
     rintro ⟨i, c⟩
     cases c
-    · exact le_trans (by simpa using ha i) (hle i)
-    · exact le_trans (by simpa using hb i) (hle i)
+    · exact le_trans (by simpa using! ha i) (hle i)
+    · exact le_trans (by simpa using! hb i) (hle i)
   have hdisj : Disjoint ({p : ι × Bool | p.2 = false}) ({p : ι × Bool | p.2 = true}) := by
     rw [Set.disjoint_left]
     rintro ⟨i, c⟩ hs ht
-    simp only [Set.mem_setOf_eq] at hs ht
+    simp only [Set.mem_ofPred_eq] at hs ht
     rw [hs] at ht
     exact absurd ht (by decide)
   have hmain := indep_iSup_of_disjoint hnle hind hdisj

@@ -67,7 +67,7 @@ theorem ofReal_fmax_le_iSup {iota : Type*} {S : Finset iota} {T : Set iota}
   classical
   rcases S.eq_empty_or_nonempty with rfl | hne
   · rw [Proportion.fmax_empty, ENNReal.ofReal_zero]
-    exact zero_le _
+    exact zero_le
   · obtain ⟨i, hi, hsup⟩ := Finset.exists_mem_eq_sup S hne fun j => (f j).toNNReal
     have hval : Proportion.fmax S f = max (f i) 0 := by
       show ((S.sup fun j => (f j).toNNReal : ℝ≥0) : ℝ) = max (f i) 0
@@ -77,7 +77,7 @@ theorem ofReal_fmax_le_iSup {iota : Type*} {S : Finset iota} {T : Set iota}
     · rw [max_eq_left h]
       exact le_iSup (fun k : ↥T => ENNReal.ofReal (f k.1)) ⟨i, hST i hi⟩
     · rw [max_eq_right h, ENNReal.ofReal_zero]
-      exact zero_le _
+      exact zero_le
 
 /-! ## Part C -- the `hE2dom` slot -/
 
@@ -185,7 +185,8 @@ theorem ofReal_shellSingleSum_le_clauseOneTermFour (M : ABKModel d) (m : ℤ)
     rw [hexp]
     refine mul_le_mul_right (le_trans (hA (m - (v : ℤ)) (by omega)) ?_) _
     exact Finset.single_le_sum
-      (f := fun k => shellBlockLatticeAtom M m omega k ^ 2) (fun _i _hi => zero_le _)
+      (f := fun k => shellBlockLatticeAtom M m omega k ^ 2)
+      (fun _i _hi => (zero_le : (0 : ℝ≥0∞) ≤ shellBlockLatticeAtom M m omega _i ^ 2))
       (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
   calc ENNReal.ofReal
         (∑' v : ℕ, (3 : ℝ) ^ (-((s : ℝ) / 2) * (v : ℝ)) * A (m - (v : ℤ)) ^ 2)

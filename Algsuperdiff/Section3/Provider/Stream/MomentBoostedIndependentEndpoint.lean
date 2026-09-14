@@ -227,7 +227,6 @@ private theorem momentBoostedIndependent_cutoff_tail_absorption
             congr 1
             rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hR.le]
             congr 1
-            dsimp [z]
             field_simp [sub_ne_zero.mpr hsigma_one.ne.symm]
   have hz0 : 0 ≤ z := by positivity
   rw [hcutoff_pow]

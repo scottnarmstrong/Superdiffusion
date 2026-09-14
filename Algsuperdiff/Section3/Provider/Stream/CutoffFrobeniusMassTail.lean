@@ -202,7 +202,7 @@ theorem isBigOWith_gammaSigma_one_cutoffFrobeniusMass
   apply Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_gammaSigma_of_ae_tendsto_uniform
       (W := fun q omega => finiteLowerCutoffFrobeniusMass Q m (q + 1) omega)
   · exact Filter.Eventually.of_forall fun omega => by
-      simpa only using
+      simpa only using!
         (tendsto_finiteLowerCutoffFrobeniusMass Q m omega).comp
           (Filter.tendsto_add_atTop_nat 1)
   · intro q

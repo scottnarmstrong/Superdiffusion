@@ -43,7 +43,7 @@ theorem sq_sum_Ioc_eq_diag_add_two_cross (n : ℤ) (a : ℤ → ℝ) :
     simp
   · have hbase : n + 1 ≤ m := hlt
     clear hlt
-    induction m, hbase using Int.le_induction with
+    induction m, hbase using Int.leInduction with
     | base =>
         have h1 : Finset.Ioc n (n + 1) = {n + 1} := by
           ext q
@@ -259,7 +259,7 @@ theorem cubeFrobeniusMassFiniteShellIncrement_eq_diagonal_add_pairs
         (finiteShellIncrement omega (k - 1) k x))
       (cubeSet (originCube d l)) volume := by
     intro k _
-    exact (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (continuous_finiteShellIncrement_entry omega (k - 1) k i j).pow 2
       ).continuousOn.integrableOn_compact
         (isCompact_closedBall (cubeCenter (originCube d l))
@@ -271,7 +271,7 @@ theorem cubeFrobeniusMassFiniteShellIncrement_eq_diagonal_add_pairs
           finiteShellIncrement omega (p.2 - 1) p.2 x i j)
       (cubeSet (originCube d l)) volume := by
     intro p _
-    exact (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (continuous_finiteShellIncrement_entry omega (p.1 - 1) p.1 i j).mul
         (continuous_finiteShellIncrement_entry omega (p.2 - 1) p.2 i j)
       ).continuousOn.integrableOn_compact
@@ -280,10 +280,10 @@ theorem cubeFrobeniusMassFiniteShellIncrement_eq_diagonal_add_pairs
             (cubeSet_subset_closedBall (originCube d l))
   unfold cubeFrobeniusMassFiniteShellIncrement cubeFrobeniusPairingReg cubeAverage
   rw [hpoint, integral_add
-    (integrable_finset_sum _ hdiagInt)
-    ((integrable_finset_sum _ hpairInt).const_mul 2),
-    integral_finset_sum _ hdiagInt, integral_const_mul,
-    integral_finset_sum _ hpairInt]
+    (integrable_finsetSum _ hdiagInt)
+    ((integrable_finsetSum _ hpairInt).const_mul 2),
+    integral_finsetSum _ hdiagInt, integral_const_mul,
+    integral_finsetSum _ hpairInt]
   rw [mul_add, Finset.mul_sum, Finset.mul_sum]
   dsimp only [S]
   congr 1

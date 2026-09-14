@@ -17,10 +17,12 @@ open MeasureTheory
 def latticeGraph (d : ℕ) : SimpleGraph (Site d) where
   Adj := Adj
   symm := by
+    constructor
     intro x y hxy
     unfold Adj at hxy ⊢
     rwa [siteDist_comm]
   loopless := by
+    constructor
     intro x hx
     unfold Adj at hx
     rw [siteDist_self] at hx

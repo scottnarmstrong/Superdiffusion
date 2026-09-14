@@ -55,7 +55,7 @@ theorem holderSeminormBoundOn_half_of_supNorm_of_lipschitz {U : Set (Vec d)} {S 
       rwa [Real.rpow_one] at h
     have hL0 : 0 ≤ L := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have hneg : L * ‖x - z‖ < 0 := mul_neg_of_neg_of_pos hcon ht
       linarith only [hneg, hLt, norm_nonneg (F x - F z)]
     have h2S : ‖F x - F z‖ ≤ 2 * S := by

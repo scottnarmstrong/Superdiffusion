@@ -265,7 +265,7 @@ theorem IsFellerKernelSemigroup.lintegral_iteratedStoppingWeight_le
           exact mul_le_mul_right (ih (omega ((sigma omega).untopD 0))
             (hstay omega (homega.symm ▸ hx) hs)) _
         · rw [Set.indicator_of_notMem hs]
-          simpa only [mul_zero] using (zero_le (W omega * rho ^ n))
+          simpa only [mul_zero] using (zero_le : (0 : ℝ≥0∞) ≤ W omega * rho ^ n)
       have hleft :
           (∫⁻ omega, ContinuousPath.iteratedStoppingWeight lam sigma (n + 1) omega ∂Q x) =
             ∫⁻ omega, W omega * S.indicator
@@ -339,7 +339,7 @@ theorem IsConservative.lintegral_exp_neg_exitTime_le_rho_pow
         exact mul_le_mul_of_nonpos_left hreal (neg_nonpos.mpr hlam.le)
       · have hmem : omega ∉ {omega | ContinuousPath.exitTime U omega < ⊤} := hexit
         rw [Set.indicator_of_notMem hmem]
-        exact zero_le _
+        exact zero_le
     _ ≤ rho ^ N := IsFellerKernelSemigroup.lintegral_iteratedStoppingWeight_le P hP hFeller hK W sigma
       hsigma lam rho hrho hsmall hstay N x hx
 

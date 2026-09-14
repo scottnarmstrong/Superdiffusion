@@ -106,7 +106,7 @@ theorem hasCompactSupport_indicator_openCubeSet (Q : TriadicCube d) (f : Vec d �
 theorem integrable_indicator_openCubeSet_of_memL2 (Q : TriadicCube d) {f : Vec d → ℝ}
     (hf : MemLp f 2 (volume.restrict (openCubeSet Q))) :
     Integrable (Set.indicator (openCubeSet Q) f) volume := by
-  haveI hfin : IsFiniteMeasure (volume.restrict (openCubeSet Q)) := by
+  have hfin : IsFiniteMeasure (volume.restrict (openCubeSet Q)) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.mpr (volume_openCubeSet_ne_top Q)
@@ -156,7 +156,7 @@ theorem isClosed_closedCubeSet (Q : TriadicCube d) : IsClosed (closedCubeSet Q) 
         (Set.Icc (((Q.index i : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q)
           (((Q.index i : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q)) := by
     ext x
-    simp only [closedCubeSet, Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_Icc]
+    simp only [closedCubeSet, Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_Icc]
   rw [h]
   exact isClosed_iInter fun i => isClosed_Icc.preimage (continuous_apply i)
 
@@ -172,7 +172,7 @@ theorem cubeFaceSet_subset_closure_compl (Q : TriadicCube d) :
       ¬ (((Q.index i : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q < y i ∧
         y i < ((Q.index i : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q) := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hyo fun i => hcon i
   obtain ⟨i0, hi0⟩ := hex
   rw [Metric.mem_closure_iff]
@@ -183,7 +183,7 @@ theorem cubeFaceSet_subset_closure_compl (Q : TriadicCube d) :
   have hface : y i0 = ((Q.index i0 : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q ∨
       y i0 = ((Q.index i0 : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hi0 ⟨lt_of_le_of_ne hlo (Ne.symm hcon.1), lt_of_le_of_ne hhi hcon.2⟩
   /- the shift, outwards, by `eps/2` -/
   set delta : ℝ := if y i0 = ((Q.index i0 : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q

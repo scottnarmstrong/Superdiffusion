@@ -67,7 +67,7 @@ theorem exists_seedControl (d : ℕ) (hdim : 2 ≤ d) :
     (Algsuperdiff.Section4.Provider.Holder.volume_cubeSetAt_pos y n).ne'
   have hUtop : volume U ≠ ⊤ :=
     Algsuperdiff.Section4.Provider.Holder.volume_cubeSetAt_ne_top y n
-  letI normalizedVolumeMeasureOn_isProbabilityMeasure :
+  let normalizedVolumeMeasureOn_isProbabilityMeasure :
       IsProbabilityMeasure (normalizedVolumeMeasureOn U) :=
     Algsuperdiff.Section4.Provider.ExcessDecay.isProbabilityMeasure_normalizedVolumeMeasureOn
       hU0 hUtop
@@ -90,7 +90,7 @@ theorem exists_seedControl (d : ℕ) (hdim : 2 ≤ d) :
     have hsum := eLpNorm_add_le
       (u.memL2.aestronglyMeasurable.sub v.memL2.aestronglyMeasurable)
       v.memL2.aestronglyMeasurable (show (1 : ℝ≥0∞) ≤ ⊤ by simp)
-    simpa only [Pi.add_apply, Pi.sub_apply, sub_add_cancel] using hsum
+    simpa only [Pi.add_apply, Pi.sub_apply, sub_add_cancel] using! hsum
   have hmeanTop : eLpNorm
         (fun x => u.toFun x - volumeAverage U u.toFun) 2
         (normalizedVolumeMeasureOn U) ≤

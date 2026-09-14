@@ -153,7 +153,10 @@ theorem vertex_kuhnEdge_sub_apply (T : KuhnCell d) (r j : Fin d) :
     T.vertex (kuhnEdgeVertex r) j - T.vertex (kuhnEdgePrevVertex r) j =
       if j = T.order r then cubeScaleFactor T.supportCube else 0 := by
   have hr : r.val < d := r.isLt
-  simp only [KuhnCell.vertex, kuhnEdgeVertex, kuhnEdgePrevVertex]
+  have hkv : (kuhnEdgeVertex r).val = d - r.val := rfl
+  have hkpv : (kuhnEdgePrevVertex r).val = d - r.val - 1 := rfl
+  simp only [KuhnCell.vertex]
+  rw [hkv, hkpv]
   by_cases hj : j = T.order r
   · subst hj
     rw [Equiv.symm_apply_apply, if_pos (by omega : d ≤ r.val + (d - r.val)),

@@ -115,7 +115,7 @@ theorem continuous_affineEval (c : ℝ) (g : Vec d) : Continuous (affineEval c g
     rw [affineEval, vecDot]
   rw [hfun]
   exact continuous_const.add
-    (continuous_finset_sum _ fun i _ => continuous_const.mul (continuous_apply i))
+    (continuous_finsetSum _ fun i _ => continuous_const.mul (continuous_apply i))
 
 /-- **The normalizer, applied once.**  If `|U| = V ≠ 0` and `∫_U f = V · A`, then `⨍_U f = A`.
 Every average in this module is computed through this lemma, so that no step depends on a
@@ -285,23 +285,25 @@ theorem affineEval_eq_center_add (c : ℝ) (g y x : Vec d) :
 private theorem integrableOn_axisCube_coordSum (z : Vec d) (L : ℝ) (a : Fin d → ℝ) :
     IntegrableOn (fun x : Vec d => ∑ i, a i * (x i - axisCubeCenter z L i)) (axisCube z L) :=
   integrableOn_axisCube_of_continuous
-    (continuous_finset_sum _ fun i _ =>
+    (continuous_finsetSum _ fun i _ =>
       continuous_const.mul ((continuous_apply i).sub continuous_const)) z L
 
 private theorem integrableOn_axisCube_coordQuad (z : Vec d) (L : ℝ) (g : Vec d) :
     IntegrableOn (fun x : Vec d => ∑ i, ∑ j, (g i * g j)
         * ((x i - axisCubeCenter z L i) * (x j - axisCubeCenter z L j))) (axisCube z L) :=
   integrableOn_axisCube_of_continuous
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       continuous_const.mul (((continuous_apply i).sub continuous_const).mul
         ((continuous_apply j).sub continuous_const))) z L
 
 /-- The linear part of an affine function integrates to zero over a cube. -/
 theorem setIntegral_axisCube_coordSum (z : Vec d) {L : ℝ} (hL : 0 < L) (a : Fin d → ℝ) :
     (∫ x in axisCube z L, ∑ i, a i * (x i - axisCubeCenter z L i)) = 0 := by
-  rw [MeasureTheory.integral_finset_sum _ (fun i _ =>
+  have hint : ∀ i : Fin d, IntegrableOn (fun x : Vec d => a i * (x i - axisCubeCenter z L i))
+      (axisCube z L) := fun i =>
     integrableOn_axisCube_of_continuous
-      (continuous_const.mul ((continuous_apply i).sub continuous_const)) z L)]
+      (continuous_const.mul ((continuous_apply i).sub continuous_const)) z L
+  rw [MeasureTheory.integral_finsetSum _ (fun i _ => hint i)]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [MeasureTheory.integral_const_mul, setIntegral_axisCube_centered z hL i, mul_zero]
 
@@ -318,15 +320,15 @@ theorem setIntegral_axisCube_coordQuad (z : Vec d) {L : ℝ} (hL : 0 < L) (g : V
   have hinner : ∀ i : Fin d, IntegrableOn (fun x : Vec d => ∑ j, (g i * g j)
       * ((x i - axisCubeCenter z L i) * (x j - axisCubeCenter z L j))) (axisCube z L) :=
     fun i => integrableOn_axisCube_of_continuous
-      (continuous_finset_sum _ fun j _ => continuous_const.mul
+      (continuous_finsetSum _ fun j _ => continuous_const.mul
         (((continuous_apply i).sub continuous_const).mul
           ((continuous_apply j).sub continuous_const))) z L
-  rw [MeasureTheory.integral_finset_sum _ (fun i _ => hinner i)]
+  rw [MeasureTheory.integral_finsetSum _ (fun i _ => hinner i)]
   have hstep : ∀ i : Fin d, (∫ x in axisCube z L, ∑ j, (g i * g j)
       * ((x i - axisCubeCenter z L i) * (x j - axisCubeCenter z L j)))
       = g i * g i * (L ^ d * (L ^ 2 / 12)) := by
     intro i
-    rw [MeasureTheory.integral_finset_sum _ (fun j _ => hint i j)]
+    rw [MeasureTheory.integral_finsetSum _ (fun j _ => hint i j)]
     have hj : ∀ j : Fin d, (∫ x in axisCube z L, (g i * g j)
         * ((x i - axisCubeCenter z L i) * (x j - axisCubeCenter z L j)))
         = if j = i then g i * g i * (L ^ d * (L ^ 2 / 12)) else 0 := by
@@ -398,7 +400,7 @@ theorem volumeAverage_axisCube_affineEval_sq (z : Vec d) {L : ℝ} (hL : 0 < L) 
       + ∑ i, (2 * affineEval c g (axisCubeCenter z L) * g i) * (x i - axisCubeCenter z L i))
       (axisCube z L) :=
     integrableOn_axisCube_of_continuous
-      (continuous_const.add (continuous_finset_sum _ fun i _ =>
+      (continuous_const.add (continuous_finsetSum _ fun i _ =>
         continuous_const.mul ((continuous_apply i).sub continuous_const))) z L
   rw [hcongr, MeasureTheory.integral_add hint12 (integrableOn_axisCube_coordQuad z L g),
     MeasureTheory.integral_add (integrableOn_axisCube_of_continuous continuous_const z L)

@@ -41,7 +41,7 @@ theorem abs_alpha_mul_potentialResolvent_le_ae [NeZero d]
     have hgValue : ∀ᵐ x ∂volumeMeasureOn U, g x = C⁻¹ * f x := by
       filter_upwards [MeasureTheory.Lp.coeFn_smul C⁻¹ f] with x hsmul
       change (C⁻¹ • f) x = C⁻¹ * f x
-      simpa only [smul_eq_mul] using hsmul
+      simpa only [smul_eq_mul] using! hsmul
     have hgUpper : ∀ᵐ x ∂volumeMeasureOn U, g x ≤ 1 := by
       filter_upwards [hf, hgValue] with x hfx hg
       rw [hg]

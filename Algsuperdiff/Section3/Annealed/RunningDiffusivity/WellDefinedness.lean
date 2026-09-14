@@ -39,7 +39,7 @@ theorem existsUnique_sigmaBar (M : ABKModel d) (m : ℤ) :
           atTop
           (nhds (toFullBlockMat (Ch02.blockDiag
             (sigma • (1 : Mat d)) (sigma⁻¹ • (1 : Mat d))))) := by
-  letI : NeZero d := ⟨Nat.ne_of_gt
+  let : NeZero d := ⟨Nat.ne_of_gt
     (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   exact existsUnique_pos_annealedFullBlockMatrixAtScale_limit_of_scaleNormalized_P4
     (coefficientCutoffLaw_lawCarrier M m)

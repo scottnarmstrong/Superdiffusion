@@ -116,8 +116,7 @@ private theorem measurable_probeSharpWaveTailTunedBaseTerm
   have htail := measurable_waveTailTerm M root E bfaProfileB root
     (probeSharpLayerAnchor root bfaProfileB
       (collarBandMeanDepth M E) n)
-  simpa only [probeSharpWaveTailTunedBaseTerm] using
-    measurable_const.mul (htail.pow_const (2 : ℕ))
+  exact measurable_const.mul (htail.pow_const (2 : ℕ))
 private theorem probeSharpWaveTailTunedBaseScale_nonneg
     (M : ABKModel d) (root : ℤ) (E sigma : ℝ) (k n : ℕ) :
     0 ≤ probeSharpWaveTailTunedBaseScale M root E sigma k n := by
@@ -215,8 +214,7 @@ private theorem isBigOWith_upperProfileTail_probeSharpWaveTailTunedBaseTerm
         probeSharpWaveTailTunedOffset M (E : ℝ) k n)) :=
     mul_nonneg (probeSharpWaveTailGoodMassCoeff_nonneg d n)
       (Real.rpow_nonneg (by norm_num) _)
-  simpa only [probeSharpWaveTailTunedBaseTerm,
-    probeSharpWaveTailTunedBaseScale] using htail.const_mul hc
+  exact htail.const_mul hc
 private theorem isBigOWith_upperProfileTail_probeSharpWaveTailTunedBoundedLayer
     (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
     (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
@@ -231,9 +229,7 @@ private theorem isBigOWith_upperProfileTail_probeSharpWaveTailTunedBoundedLayer
       (probeSharpWaveTailTunedBoundedLayer M R.scale (E : ℝ) k n)
       (probeSharpWaveTailTunedBoundedLayerScale
         M R.scale (E : ℝ) sigma k n) := by
-  simpa only [probeSharpWaveTailTunedBoundedLayer,
-    probeSharpWaveTailTunedBoundedLayerScale] using
-      (isBigOWith_upperProfileTail_probeSharpWaveTailTunedBaseTerm
+  exact (isBigOWith_upperProfileTail_probeSharpWaveTailTunedBaseTerm
         M hR hS hsigma0 hsigma hmax hEgamma n).const_mul
           (by norm_num : (0 : ℝ) ≤ 2)
 private theorem isBigOWith_upperProfileTarget_probeSharpWaveTailTunedRareLayer
@@ -263,8 +259,7 @@ private theorem isBigOWith_upperProfileTarget_probeSharpWaveTailTunedRareLayer
     (probeSharpAfterBandHsepResidual_nonneg M R.scale (E : ℝ))
     (probeSharpWaveTailTunedBaseTerm_nonneg
       M R.scale (E : ℝ) k n) hresidual hbase
-  simpa only [probeSharpWaveTailTunedRareLayer,
-    probeSharpWaveTailTunedRareLayerScale, upperHsepResidualScale] using hproduct
+  exact hproduct
 /-- Pointwise, the literal common-depth framed wave-tail layer is dominated by its
 two explicit witnesses. -/
 private theorem probeSharpFramedGoodWavePart_waveTail_tuned_le
@@ -648,8 +643,7 @@ private theorem summable_probeSharpWaveTailTunedBoundedLayerBound
     Real.rpow_nonneg (by norm_num) _
   have hr1 : (3 : ℝ) ^ (-(1 / 2 : ℝ)) < 1 :=
     Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
-  simpa only [probeSharpWaveTailTunedBoundedLayerBound] using
-    ((((summable_geometric_of_lt_one hr0 hr1).mul_left
+  exact ((((summable_geometric_of_lt_one hr0 hr1).mul_left
       (probeSharpWaveTailBoundedLayerConst d)).mul_right
         (sigma⁻¹ ^ 2)).mul_right
       (Real.exp (-(probeSharpWaveTailTunedRate d *
@@ -661,8 +655,7 @@ private theorem summable_probeSharpWaveTailTunedRareLayerBound
     Real.rpow_nonneg (by norm_num) _
   have hr1 : (3 : ℝ) ^ (-(1 / 2 : ℝ)) < 1 :=
     Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
-  simpa only [probeSharpWaveTailTunedRareLayerBound] using
-    ((((summable_geometric_of_lt_one hr0 hr1).mul_left
+  exact ((((summable_geometric_of_lt_one hr0 hr1).mul_left
       (probeSharpWaveTailRareLayerConst d)).mul_right
         (sigma⁻¹ ^ 2)).mul_right
       (Real.exp (-(probeSharpWaveTailTunedRate d *
@@ -945,7 +938,7 @@ theorem exists_good_wave_tail_tuned_finite_trace_split
         (probeSharpWaveTailTunedRareLayerScale_le
           M R.scale E.property hsigma0 hsigma k n)
   have hBmeas : Measurable B := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
+    have hnn := (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       (measurable_probeSharpWaveTailTunedBoundedLayer
         M R.scale (E : ℝ) k n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
@@ -954,7 +947,7 @@ theorem exists_good_wave_tail_tuned_finite_trace_split
     exact tsum_congr fun n => by rw [Real.toNNReal_of_nonneg
       (probeSharpWaveTailTunedBoundedLayer_nonneg M R.scale (E : ℝ) k n eta)]; rfl
   have hVmeas : Measurable V := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
+    have hnn := (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       (measurable_probeSharpWaveTailTunedRareLayer
         M R.scale (E : ℝ) k n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
@@ -1012,8 +1005,8 @@ theorem exists_good_wave_tail_tuned_finite_trace_split
     dsimp only [C]
     rw [probeMeanGoodWaveConst_eq_dimension_mul_cstarInv]
     rw [probeSharpWaveTailTunedTraceScale]
-    convert mul_le_mul_of_nonneg_right hBcoef hpoly0 using 1
-    all_goals ring_nf
+    refine le_trans (le_of_eq ?_) (mul_le_mul_of_nonneg_right hBcoef hpoly0)
+    ring
   have hVscale : C * (gammaTriangleConst (upperProfileTargetSigma sigma) *
       (probeSharpWaveTailRareSumConst d * sigma⁻¹ ^ 2 *
         Real.exp (-(probeSharpWaveTailTunedRate d * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹))))) ≤
@@ -1021,8 +1014,8 @@ theorem exists_good_wave_tail_tuned_finite_trace_split
     dsimp only [C]
     rw [probeMeanGoodWaveConst_eq_dimension_mul_cstarInv]
     rw [probeSharpWaveTailTunedTraceScale]
-    convert mul_le_mul_of_nonneg_right hVcoef hpoly0 using 1
-    all_goals ring_nf
+    refine le_trans (le_of_eq ?_) (mul_le_mul_of_nonneg_right hVcoef hpoly0)
+    ring
   have hBtarget := Homogenization.Book.Ch04.IsBigOWith.gammaSigma_mono_exponent
     (upperProfileTargetSigma_le_tailSigma hsigma0 hsigma) hBcenter
   have hBOrlicz : IsBigOWith (cutoffSampleLaw M).toMeasure

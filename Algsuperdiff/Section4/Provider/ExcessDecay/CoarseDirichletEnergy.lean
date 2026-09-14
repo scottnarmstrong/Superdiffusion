@@ -84,7 +84,7 @@ theorem rpow_half_le_of_upper_cap {Lam sigma K : ℝ} (hLam : 0 ≤ Lam)
       _ = K * sigma := by ring
   have hKnn : 0 ≤ K := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have : K * sigma < 0 := mul_neg_of_neg_of_pos hcon hsigma
     linarith only [hLam, hle, this]
   rw [Real.rpow_eq_pow, ← Real.sqrt_eq_rpow, ← Real.sqrt_mul hKnn]

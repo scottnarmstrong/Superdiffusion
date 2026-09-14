@@ -76,7 +76,7 @@ theorem memVectorL2_coefficientSubIdentity_mul
   have hstrong : AEStronglyMeasurable
       (fun x ↦ HilbertVec.applyMat (a x - 1) (HilbertVec.ofVec (H x)))
       (volumeMeasureOn W) := by
-    simpa only [evalCLM] using
+    simpa only [evalCLM] using!
       ContinuousLinearMap.aestronglyMeasurable_comp₂ (L := evalCLM)
         hoperator.aestronglyMeasurable hHHilbert.aestronglyMeasurable
   have hbound : ∀ᵐ x ∂volumeMeasureOn W,
@@ -91,7 +91,7 @@ theorem memVectorL2_coefficientSubIdentity_mul
     MemLp.of_le_mul hHHilbert hstrong hbound
   let toVecCLM : HilbertVec d →L[ℝ] Vec d :=
     (HilbertVec.continuousLinearEquivVec d).toContinuousLinearMap
-  simpa only [HilbertVec.applyMat_apply, HilbertVec.toVec_ofVec] using
+  simpa only [HilbertVec.applyMat_apply, HilbertVec.toVec_ofVec] using!
     toVecCLM.comp_memLp' hPHilbert
 
 /-- The same hypotheses give `L²` integrability of the full coefficient

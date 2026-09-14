@@ -154,7 +154,7 @@ lemma Zj_mgf {X : ℤ → ℤ → Ω → ℝ} {s p lam : ℝ} (hs : 0 < s) (hs1 
             then B ^ (Zcount X s lam m j ω) else 0) := by simp
       _ ≤ ∑ n ∈ Finset.Icc 0 N, (if n ≤ Zcount X s lam m j ω then B ^ n else 0) :=
           Finset.single_le_sum (f := fun n => if n ≤ Zcount X s lam m j ω then B ^ n else 0)
-            (fun n _ => zero_le _) hZmem
+            (fun n _ => zero_le) hZmem
   -- integrate
   have hint_le : ∫⁻ ω, B ^ (Zcount X s lam m j ω) ∂P
       ≤ ∑ n ∈ Finset.Icc 0 N, B ^ n * P {ω | n ≤ Zcount X s lam m j ω} := by
@@ -162,7 +162,7 @@ lemma Zj_mgf {X : ℤ → ℤ → Ω → ℝ} {s p lam : ℝ} (hs : 0 < s) (hs1 
         ≤ ∫⁻ ω, ∑ n ∈ Finset.Icc 0 N, (if n ≤ Zcount X s lam m j ω then B ^ n else 0) ∂P :=
           lintegral_mono (fun ω => hpt ω)
       _ = ∑ n ∈ Finset.Icc 0 N, ∫⁻ ω, (if n ≤ Zcount X s lam m j ω then B ^ n else 0) ∂P := by
-          rw [lintegral_finset_sum]
+          rw [lintegral_finsetSum]
           exact fun n _ => Measurable.ite (hset n) measurable_const measurable_const
       _ = ∑ n ∈ Finset.Icc 0 N, B ^ n * P {ω | n ≤ Zcount X s lam m j ω} := by
           refine Finset.sum_congr rfl (fun n _ => ?_)
@@ -171,7 +171,7 @@ lemma Zj_mgf {X : ℤ → ℤ → Ω → ℝ} {s p lam : ℝ} (hs : 0 < s) (hs1 
             apply lintegral_congr
             intro ω
             rw [Set.indicator_apply]
-            by_cases h : n ≤ Zcount X s lam m j ω <;> simp [h, Set.mem_setOf_eq]
+            by_cases h : n ≤ Zcount X s lam m j ω <;> simp [h]
           rw [hcong, lintegral_const_mul _ (measurable_one.indicator (hset n)),
             lintegral_indicator_one (hset n)]
   -- split off n = 0

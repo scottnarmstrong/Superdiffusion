@@ -238,12 +238,12 @@ theorem integral_mul_fderiv_sub_eq_integral_weakGrad {w : Vec d → ℝ} {G : Ve
       have h := hc.sub hi
       rwa [zero_sub] at h
     have hΘat : HasFDerivAt Θ (fderiv ℝ Θ (x - y)) (x - y) :=
-      (hΘ.differentiable (by exact_mod_cast le_top)).differentiableAt.hasFDerivAt
+      (hΘ.differentiable (by simp)).differentiableAt.hasFDerivAt
     have hcomp : HasFDerivAt (fun z : Vec d => Θ (x - z))
         ((fderiv ℝ Θ (x - y)).comp (-ContinuousLinearMap.id ℝ (Vec d))) y := hΘat.comp y hmap
     rw [hcomp.fderiv]
-    simp only [ContinuousLinearMap.coe_comp', Function.comp_apply,
-      ContinuousLinearMap.neg_apply, ContinuousLinearMap.id_apply, map_neg]
+    simp only [ContinuousLinearMap.coe_comp, Function.comp_apply,
+      neg_apply, ContinuousLinearMap.id_apply, map_neg]
   have hweak := hw i (fun y : Vec d => Θ (x - y)) hφ hφc (Set.subset_univ _)
   rw [Measure.restrict_univ] at hweak
   have hleft : ∫ y, w y * (fderiv ℝ (fun z : Vec d => Θ (x - z)) y) (basisVec i)

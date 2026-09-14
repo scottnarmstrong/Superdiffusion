@@ -171,7 +171,7 @@ private theorem integral_descendantsAverage_eq_swap
       ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R :=
     fun _ => rfl
   simp only [hexp]
-  rw [integral_const_mul, integral_finset_sum _ hint]
+  rw [integral_const_mul, integral_finsetSum _ hint]
 
 /-- Per-cube measurability upgrades to measurability of the grid average.
 

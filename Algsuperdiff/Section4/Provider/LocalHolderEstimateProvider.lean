@@ -104,19 +104,19 @@ theorem ae_ne_top_of_tail {d : ℕ} {M : ABKModel d} {Cst a : ℝ} (hCst : 0 < C
         (fun N : ℕ => Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b)) Filter.atTop
         (nhds 0) := h0.congr fun N => (hrw N).symm
     have hcomp := (ENNReal.continuous_ofReal.tendsto (0 : ℝ)).comp hreal
-    simpa using hcomp
+    simpa using! hcomp
   rw [MeasureTheory.ae_iff]
   have hsub : ∀ N : ℕ,
       {omega : Cutoff.CutoffSample d | ¬ X omega ≠ ⊤} ⊆
         {omega : Cutoff.CutoffSample d | (N : ℕ∞) ≤ X omega} := by
     intro N omega homega
     have htop : X omega = ⊤ := not_not.mp homega
-    simp only [Set.mem_setOf_eq, htop, le_top]
+    simp only [Set.mem_ofPred_eq, htop, le_top]
   have hle : ∀ N : ℕ,
       (Cutoff.cutoffSampleLaw M).toMeasure {omega | ¬ X omega ≠ ⊤} ≤
         ENNReal.ofReal (Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b)) :=
     fun N => le_trans (measure_mono (hsub N)) (htail N)
-  exact le_antisymm (ge_of_tendsto' hlim hle) (zero_le _)
+  exact le_antisymm (ge_of_tendsto' hlim hle) zero_le
 
 /-- **The doubled minimal scale keeps an admissible tail.** -/
 theorem tail_exponent_le {A B C0 C N : ℝ} (hC0 : 0 < C0) (hC : 16 * C0 ≤ C)
@@ -187,7 +187,7 @@ theorem local_holder_estimate_provider
           ext omega
           simp [hN.ne']
         rw [hset, measure_empty]
-        exact zero_le _
+        exact zero_le
     · refine Filter.Eventually.of_forall ?_
       intro omega L _hmL g u _hsol
       have hsub : (cubeSetAt y m).Subsingleton := by
@@ -196,14 +196,14 @@ theorem local_holder_estimate_provider
       have hrep : IsCubeRepresentative y m u u.toFun :=
         ⟨Filter.EventuallyEq.rfl, hsub.continuousOn u.toFun⟩
       have hzero : holderSeminormOn (cubeSetAt y m) alpha u.toFun = 0 := by
-        refine le_antisymm ?_ (zero_le _)
+        refine le_antisymm ?_ zero_le
         simp only [holderSeminormOn, iSup_le_iff]
         intro x _hx z _hz hne
         exact absurd (funext fun i => i.elim0 : x = z) hne
       refine le_trans (iInf_le_of_le u.toFun (iInf_le_of_le hrep le_rfl)) ?_
       rw [hzero, mul_zero]
-      exact zero_le _
-  · haveI : NeZero d := ⟨hd0⟩
+      exact zero_le
+  · have : NeZero d := ⟨hd0⟩
     obtain ⟨g0, C0, Cosc, Cdata, hg0, hC0, hCosc, hCdata, hfeed⟩ :=
       Holder.hasClipGridOscillationDecay_zeroDatum d hd0 cstar hcstar
     have hP2nn : (0 : ℝ) ≤
@@ -291,10 +291,10 @@ theorem local_holder_estimate_provider
           Cutoff.translateCutoffSample y ⁻¹'
             {omega | (((N + 1) / 2 : ℕ) : ℕ∞) ≤ Xe omega} := by
         intro omega hom
-        simp only [Set.mem_setOf_eq, Set.mem_preimage] at hom ⊢
+        simp only [Set.mem_ofPred_eq, Set.mem_preimage] at hom ⊢
         by_cases htop : Xe (Cutoff.translateCutoffSample y omega) = ⊤
         · rw [htop]; exact le_top
-        · rw [← ENat.coe_toNat htop]
+        · rw [← ENat.natCast_toNat htop]
           exact_mod_cast (by omega : (N + 1) / 2 ≤
             (Xe (Cutoff.translateCutoffSample y omega)).toNat)
       have hmeasset : MeasurableSet {omega : Cutoff.CutoffSample d |
@@ -343,7 +343,7 @@ theorem local_holder_estimate_provider
       intro L hmL g u hsol
       set omega' : Cutoff.CutoffSample d := Cutoff.translateCutoffSample y omega with homega'
       set Xn : ℕ := (Xe omega').toNat with hXndef
-      have hXnle : Xe omega' ≤ (Xn : ℕ∞) := le_of_eq (ENat.coe_toNat hfin).symm
+      have hXnle : Xe omega' ≤ (Xn : ℕ∞) := le_of_eq (ENat.natCast_toNat hfin).symm
       have hsigpos : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ) := (Annealed.sigmaBar M m).2
       have hqrpos : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ)⁻¹ *
           Real.rpow 3 (3 * (m : ℝ) / 2) :=

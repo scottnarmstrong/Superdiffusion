@@ -220,6 +220,7 @@ theorem measurableSet_activeShellRegion {Lidx : iota → ℤ} {U : iota → Set 
   · exact hU i
   · exact MeasurableSet.empty
 
+set_option warn.classDefReducibility false in
 /-- **The `(index, shell)` sigma-field**: what index `i` can see of shell `l`. -/
 def activeShellSigma (Lidx : iota → ℤ) (U : iota → Set (Vec d)) (i : iota) (l : ℤ) :
     MeasurableSpace (ShellSeq d) :=

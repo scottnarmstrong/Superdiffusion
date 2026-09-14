@@ -142,9 +142,9 @@ theorem mul_operator_smul_operator_le (R : PositiveC0ContractiveResolvent Y)
   have hB : 0 ≤ R.toContractiveResolvent.operator nu g z := R.isPositive nu g hg z
   have hid := congrArg (fun w : C₀(Y, ℝ) ↦ w z)
     (DFunLike.congr_fun (R.toContractiveResolvent.resolvent_identity nu mu) g)
-  simp only [ContinuousLinearMap.sub_apply, ZeroAtInftyContinuousMap.sub_apply,
-    ContinuousLinearMap.smul_apply, ZeroAtInftyContinuousMap.smul_apply,
-    ContinuousLinearMap.coe_comp', Function.comp_apply, smul_eq_mul] at hid
+  simp only [sub_apply, ZeroAtInftyContinuousMap.sub_apply,
+    smul_apply, ZeroAtInftyContinuousMap.smul_apply,
+    ContinuousLinearMap.coe_comp, Function.comp_apply, smul_eq_mul] at hid
   rw [map_smul, ZeroAtInftyContinuousMap.smul_apply, ZeroAtInftyContinuousMap.smul_apply,
     smul_eq_mul, smul_eq_mul]
   set A := R.toContractiveResolvent.operator mu g z with hA
@@ -182,7 +182,7 @@ theorem mul_operator_le_of_hasResolventTail (R : PositiveC0ContractiveResolvent 
     intro z
     by_cases hz : z ∈ Metric.ball y rho
     · rw [hvanish z (Metric.mem_ball.mp hz), ENNReal.ofReal_zero]
-      exact zero_le _
+      exact zero_le
     · rw [Set.indicator_of_mem hz, Pi.one_apply]
       exact ENNReal.ofReal_le_one.mpr (hpsi1 z)
   have hpot : R.kernelSemigroup.kernelResolvent (mu : ℝ) ((Metric.ball y rho)ᶜ.indicator 1) y =
@@ -265,7 +265,7 @@ theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveReso
       _ ≤ 2 * Real.exp 1 * phi (Real.sqrt (mu : ℝ) * r) :=
         mul_le_mul (by linarith only [hexp]) hbig (by norm_num)
           (by linarith only [hexp])
-  push_neg at hbig
+  push Not at hbig
   -- the two radial cutoffs
   have hr2 : r < 2 * r := by linarith only [hr]
   have hr34 : 3 * r < 4 * r := by linarith only [hr]
@@ -335,7 +335,7 @@ theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveReso
     · rw [Set.indicator_of_mem hz, Pi.one_apply,
         hpsi_one z (Metric.mem_ball.mp hz).le, ENNReal.ofReal_one]
     · rw [Set.indicator_of_notMem hz]
-      exact zero_le _
+      exact zero_le
   have hpotball : ENNReal.ofReal (mu : ℝ) *
       R.kernelSemigroup.resolventPotential (mu : ℝ) x (Metric.ball x r) ≤
       ENNReal.ofReal ((mu : ℝ) * R.toContractiveResolvent.operator mu psi x) := by
@@ -392,7 +392,7 @@ theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveReso
         by_cases hy : dist y x ≤ 3 * r
         · rw [hchi_one y hy]
           linarith only [hnn]
-        · push_neg at hy
+        · push Not at hy
           have hb := hfar y hy.le
           linarith only [hchi0 y, hb, hbig]
   have hexcess : ∀ nu : PositiveShift, (mu : ℝ) < (nu : ℝ) → ∀ z : OnePoint X,
@@ -423,7 +423,7 @@ theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveReso
           mul_le_mul_of_nonneg_left hvx (Real.exp_pos 1).le
       _ = 2 * Real.exp 1 * phi (Real.sqrt (mu : ℝ) * r) := by ring
   -- transport the estimate back to the live space
-  letI : IsProbabilityMeasure (R.kernelSemigroup t x) := ⟨hcons t x⟩
+  let : IsProbabilityMeasure (R.kernelSemigroup t x) := ⟨hcons t x⟩
   have hlaw : R.onePointKernelSemigroup t (x : OnePoint X) =
       (R.kernelSemigroup t x).map ((↑) : X → OnePoint X) := by
     rw [R.onePointKernelSemigroup_apply_coe t x, hcons t x, tsub_self, zero_smul, add_zero]

@@ -162,7 +162,7 @@ theorem exists_responseJ_step3_recentered (d : ℕ) (dimension : 2 ≤ d) :
                   (Support.fluxIncrementAverage M L m (originCube d m) omega)
                   (matTranspose_fluxIncrementAverage M L m (originCube d m)
                     omega)).gradientW1Infinity) ^ 2 := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C, hC, hpre⟩ := exists_responseJ_ugly_pre d dimension
   refine ⟨C, hC, ?_⟩
   intro M m j L hle v omega s e hs0 hs1 hgam he

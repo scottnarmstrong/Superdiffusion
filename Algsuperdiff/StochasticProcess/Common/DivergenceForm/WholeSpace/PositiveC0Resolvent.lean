@@ -54,7 +54,7 @@ theorem measurable_analyticMinimalResolventReal (mu : PositiveShift)
       (abs_analyticPositivePart_le' hfD)).ennreal_toReal).sub
     ((A.measurable_analyticMinimalResolvent mu (measurable_analyticPositivePart hf.neg)
       (abs_analyticPositivePart_le'
-        (fun y ↦ by simpa only [abs_neg] using hfD y))).ennreal_toReal)
+        (fun y ↦ by simpa only [Pi.neg_apply, abs_neg] using! hfD y))).ennreal_toReal)
 
 /-- On nonnegative data the signed real form agrees with the real value of
 the positive minimal resolvent. -/
@@ -85,7 +85,7 @@ private theorem analyticMinimalResolventReal_sub_of_nonneg (mu : PositiveShift)
           hsum x := by
             apply A.analyticMinimalResolventReal_bound_irrel mu
               (hu.sub hv) huvB
-              (fun y ↦ by simpa only [sub_eq_add_neg] using hsum y)
+              (fun y ↦ by simpa only [sub_eq_add_neg] using! hsum y)
     _ = A.analyticMinimalResolventReal mu u hu huC x +
         A.analyticMinimalResolventReal mu (fun y ↦ -v y) hv.neg hneg x :=
       A.analyticMinimalResolventReal_add mu hu hv.neg huC hneg x
@@ -93,7 +93,7 @@ private theorem analyticMinimalResolventReal_sub_of_nonneg (mu : PositiveShift)
         A.analyticMinimalResolventReal mu v hv hvE x := by
           have hs : A.analyticMinimalResolventReal mu (fun y ↦ -v y) hv.neg hneg x =
               -A.analyticMinimalResolventReal mu v hv hvE x := by
-            simpa only [neg_mul, one_mul] using
+            simpa only [neg_mul, one_mul] using!
               A.analyticMinimalResolventReal_smul mu (-1) hv hvE x
           rw [hs, sub_eq_add_neg]
     _ = (A.analyticMinimalResolvent mu u hu huC x).toReal -

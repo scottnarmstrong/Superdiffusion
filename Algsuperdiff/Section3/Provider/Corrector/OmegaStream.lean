@@ -188,7 +188,7 @@ theorem memLp_two_vecPack {ψ : Fin d → (Ω → ℝ)} (hψm : ∀ i, StronglyM
   refine (memLp_two_iff_integrable_sq_norm
     (stronglyMeasurable_vecPack hψm).aestronglyMeasurable).2 ?_
   have hsum : Integrable (fun ω => ∑ i : Fin d, (ψ i ω) ^ 2) μ :=
-    integrable_finset_sum _ fun i _ =>
+    integrable_finsetSum _ fun i _ =>
       ((memLp_two_iff_integrable_sq_norm (hψm i).aestronglyMeasurable).1 (hψ i)).congr
         (Filter.Eventually.of_forall fun ω => by
           show ‖ψ i ω‖ ^ 2 = ψ i ω ^ 2
@@ -234,7 +234,7 @@ theorem stronglyMeasurable_mollifyDiv {κ : Vec d → ℝ} (hκ : ContDiff ℝ (
 theorem memLp_two_mollifyDiv {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
     (hκ : ContDiff ℝ (⊤ : ℕ∞) κ) {X : Ω → HilbertVec d} (hXm : StronglyMeasurable X)
     (hX : MemLp X 2 μ) : MemLp (mollifyDiv (Ω := Ω) κ X) 2 μ :=
-  memLp_finset_sum _ fun m _ =>
+  memLp_finsetSum _ fun m _ =>
     memLp_two_mollify (continuous_kernelDeriv hκ m) (integrable_kernelDeriv hκc hκ m)
       (stronglyMeasurable_coordField hXm m) (memLp_coordField hXm hX m)
 
@@ -297,7 +297,7 @@ theorem integral_mul_mollifyDiv_eq {κ : Vec d → ℝ} (hκc : HasCompactSuppor
       intro ω
       rw [mollifyDiv_apply, Finset.sum_mul]
     rw [integral_congr_ae (Filter.Eventually.of_forall hsplit)]
-    exact integral_finset_sum _ fun m _ => (hterm m).integrable_mul hφ
+    exact integral_finsetSum _ fun m _ => (hterm m).integrable_mul hφ
   have hright : ∫ ω, inner ℝ (X ω) (mollifyGrad (kernelReflect κ) φ ω) ∂μ
       = ∑ m : Fin d,
           ∫ ω, coordField X m ω * coordField (mollifyGrad (kernelReflect κ) φ) m ω ∂μ := by
@@ -308,7 +308,7 @@ theorem integral_mul_mollifyDiv_eq {κ : Vec d → ℝ} (hκc : HasCompactSuppor
       rw [HilbertVec.inner_def, vecDot]
       rfl
     rw [integral_congr_ae (Filter.Eventually.of_forall hsplit)]
-    exact integral_finset_sum _ fun m _ =>
+    exact integral_finsetSum _ fun m _ =>
       (memLp_coordField hXm hX m).integrable_mul (memLp_coordField hgm hg m)
   rw [hleft, hright, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
@@ -405,7 +405,7 @@ theorem realize_mollify_eq_sum {E : Type*} [NormedAddCommGroup E] [NormedSpace �
     intro y
     rw [hν y, Finset.sum_smul]
   rw [integral_congr_ae (Filter.Eventually.of_forall hsplit),
-    integral_finset_sum _ fun m _ => hint m]
+    integral_finsetSum _ fun m _ => hint m]
   exact Finset.sum_congr rfl fun m _ => (realize_mollify_apply (κ m) X ω x).symm
 
 /-- **The kernel stream** `S_{im} = A_{g_m} X_i − A_{g_i} X_m`, in the column
@@ -469,7 +469,7 @@ theorem coordDeriv_streamRealization_kernelStream {g : Fin d → (Vec d → ℝ)
       (hloc m)).differentiable (by simp)).differentiableAt)
   show fderiv ℝ (streamRealization (kernelStream g X) ω i m) x (basisVec m) = _
   rw [streamRealization_kernelStream_eq_fun, fderiv_fun_sub hA hB]
-  rw [ContinuousLinearMap.sub_apply]
+  rw [sub_apply]
   have hrw : (fderiv ℝ (realize (d := d) (mollify (g m) (coordField X i)) ω) x) (basisVec m)
       - (fderiv ℝ (realize (d := d) (mollify (g i) (coordField X m)) ω) x) (basisVec m)
       = coordDeriv (realize (d := d) (mollify (g m) (coordField X i)) ω) m x
@@ -561,7 +561,7 @@ theorem memLp_two_kernelStream {g : Fin d → (Vec d → ℝ)}
     MemLp (kernelStream (Ω := Ω) g X) 2 μ := by
   classical
   have hdom : MemLp (fun ω : Ω => ∑ m : Fin d, ‖kernelStream g X ω m‖) 2 μ :=
-    memLp_finset_sum _ fun m _ => (memLp_two_kernelStream_apply hgc hgi hXm hX m).norm
+    memLp_finsetSum _ fun m _ => (memLp_two_kernelStream_apply hgc hgi hXm hX m).norm
   refine MemLp.mono' hdom
     (stronglyMeasurable_kernelStream hgc hXm).aestronglyMeasurable ?_
   refine Filter.Eventually.of_forall fun ω => ?_

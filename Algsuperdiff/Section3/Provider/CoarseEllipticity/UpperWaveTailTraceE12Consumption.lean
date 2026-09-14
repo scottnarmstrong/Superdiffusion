@@ -388,7 +388,7 @@ theorem isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
     simpa only [AP] using hrawP
   have hPmeas : Measurable
       (slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma) := by
-    simpa only [slstarPowerTerm] using
+    simpa only [slstarPowerTerm] using!
       measurable_comp_hsep M R.scale (E : ℝ) bfaProfileB fun hs : ℕ =>
         (3 : ℝ) ^ ((M.gamma + 2 * bfaProfileB) * (hs : ℝ))
   have hP :=
@@ -473,7 +473,6 @@ theorem isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
           mul_le_mul_of_nonneg_left hlower hA0
     rw [Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 3)]
     apply Real.exp_le_exp.mpr
-    dsimp only [Z]
     calc
       Real.log 3 * (-((d : ℝ) / 4) * (k₀ : ℝ)) =
           -(((d : ℝ) / 4 * Real.log 3) * (k₀ : ℝ)) := by ring
@@ -586,7 +585,7 @@ theorem isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
     convert hproduct using 1
     funext omega
     simp only [X, ell, probeSharpFramedCollarWavePart,
-      probeSharpCollarBandMeanLayerCore, Function.comp_apply]
+      probeSharpCollarBandMeanLayerCore, Function.comp_apply, Pi.mul_apply]
     ring
   have hterm : ∀ n, IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma (upperProfileTargetSigma sigma)) (X n) (B n) := by
@@ -713,7 +712,7 @@ theorem isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
         (B₀ * (1 - whitneyDecayRatio)⁻¹)) := by
     simpa only [upperProfileTargetSigma] using hcoord
   have hXsumMeas : Measurable (fun omega => ∑' n, X n omega) := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
+    have hnn := (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       (hXmeas n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
     funext omega

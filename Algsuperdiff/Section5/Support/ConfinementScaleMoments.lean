@@ -162,7 +162,7 @@ private theorem le_widenedScale_of_not_mem {Stilde : ℤ → ℝ≥0∞} {L : �
     (hLn : L ≤ (3 : ℝ) ^ n) (hn : n ∉ confinementSet Stilde L) :
     ENNReal.ofReal ((3 : ℝ) ^ n / L - 1) ≤ Stilde n := by
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   have hnn : (0 : ℝ) ≤ (3 : ℝ) ^ n / L - 1 := by
     rw [sub_nonneg, le_div_iff₀ hL, one_mul]
     exact hLn

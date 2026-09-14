@@ -108,7 +108,7 @@ theorem integral_vecDot_const_h10_eq_zero {U : Set (Vec d)}
       = ∫ y in U, ∑ i : Fin d, c i * φ.toH1Function.grad y i ∂volume :=
         integral_congr_ae (Filter.Eventually.of_forall hrw)
     _ = ∑ i : Fin d, ∫ y in U, c i * φ.toH1Function.grad y i ∂volume :=
-        integral_finset_sum _ fun i _ => hint i
+        integral_finsetSum _ fun i _ => hint i
     _ = 0 := by
         refine Finset.sum_eq_zero fun i _ => ?_
         rw [integral_const_mul,
@@ -137,7 +137,7 @@ theorem exists_h10_isDivFormWeakSolutionOn_one [NeZero d] {U : Set (Vec d)}
     {F : Vec d → Vec d} (hF : MemVectorL2 U F) :
     ∃ w : H10Function U,
       IsDivFormWeakSolutionOn (fun _ => (1 : Mat d)) U w.toH1Function F := by
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   have hreal :=
     PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
       hU
@@ -222,7 +222,7 @@ theorem exists_frozenHarmonicReplacement [NeZero d] {U : Set (Vec d)}
         IsWeaklyHarmonicOn U (u - w.toH1Function) ∧
           ∫ x in U, vecNormSq (w.toH1Function.grad x) ∂volume ≤
             ∫ x in U, vecNormSq (G x - c) ∂volume := by
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   have hc : MemVectorL2 U (fun _ : Vec d => c) := memLp_const c
   have hGc : MemVectorL2 U (fun x => G x - c) := hG.sub hc
   obtain ⟨w, hw⟩ := exists_h10_isDivFormWeakSolutionOn_one hU hUne hGc

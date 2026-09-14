@@ -243,7 +243,7 @@ theorem homGammaGate_of_le_homGamma0 {Cst gamma : ℝ} (hCst : 1 ≤ Cst)
       linarith only [this]
     have hlt : Real.log gamma < 0 := lt_of_le_of_lt hexp hneg
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact absurd (Real.log_nonneg hcon) (not_le.mpr hlt)
   have habs : |Real.log gamma| = -Real.log gamma :=
     abs_of_neg (Real.log_neg hg hgamma_lt)

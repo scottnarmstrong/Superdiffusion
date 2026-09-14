@@ -99,7 +99,7 @@ private theorem coarseBMatrixNorm_originCube_coefficientCutoff_le
     Ch02.coarseBMatrixNorm (originCube d l)
         (coefficientCutoffTriadicCoeffFamily M m omega) ≤
       M.nu + M.nu⁻¹ * Stream.cutoffFrobeniusMass (originCube d l) m omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   let mass := Stream.cutoffFrobeniusMass (originCube d l) m omega
   let c := M.nu * (1 + (M.nu ^ 2)⁻¹ * mass)
   have hmass : 0 ≤ mass := Stream.cutoffFrobeniusMass_nonneg _ _ _
@@ -143,7 +143,7 @@ theorem coarseBMatrixNorm_coefficientCutoff_le
     Book.Ch02.coarseBMatrixNorm Q
       (coefficientCutoffTriadicCoeffFamily M m omega) ≤
       M.nu + M.nu⁻¹ * Stream.cutoffFrobeniusMass Q m omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   rw [coarseBMatrixNorm_cutoff_translateCutoffSample M m
     (triadicCubeShift Q)
     (cubeSet_eq_translateSet_originCube_of_triadicCube Q) omega,
@@ -155,7 +155,7 @@ private theorem coarseSigmaStarInvMatrixNorm_originCube_coefficientCutoff_le
     (M : ABKModel d) (l m : ℤ) (omega : CutoffSample d) :
     Ch02.coarseSigmaStarInvMatrixNorm (originCube d l)
         (coefficientCutoffTriadicCoeffFamily M m omega) ≤ M.nu⁻¹ := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   let U := Ch02.cubeDomain (originCube d l)
   let a := coefficientCutoffCoeffOn M m omega (originCube d l)
   have hnuPos : (M.nu • (1 : Mat d)).PosDef :=
@@ -195,7 +195,7 @@ theorem coarseSigmaStarInvMatrixNorm_coefficientCutoff_le
     (M : ABKModel d) (Q : TriadicCube d) (m : ℤ) (omega : CutoffSample d) :
     Book.Ch02.coarseSigmaStarInvMatrixNorm Q
       (coefficientCutoffTriadicCoeffFamily M m omega) ≤ M.nu⁻¹ := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   rw [BadEvents.coarseSigmaStarInvMatrixNorm_cutoff_translateCutoffSample M m
     (triadicCubeShift Q)
     (cubeSet_eq_translateSet_originCube_of_triadicCube Q) omega]
@@ -210,7 +210,7 @@ theorem maxDescendantBMatrixNormAtScale_coefficientCutoff_le
     Book.Ch02.maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ))
       (coefficientCutoffTriadicCoeffFamily M m omega) ≤
       M.nu + M.nu⁻¹ * Stream.cutoffFrobeniusMassMaximum Q m n omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   unfold Ch02.maxDescendantBMatrixNormAtScale
   refine Ch02.finsetSupReal_le _
     (descendantsAtScale_nonempty Q (sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n))) ?_
@@ -239,7 +239,7 @@ theorem maxDescendantSigmaStarInvMatrixNormAtScale_coefficientCutoff_le
     (omega : CutoffSample d) :
     Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ))
       (coefficientCutoffTriadicCoeffFamily M m omega) ≤ M.nu⁻¹ := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   unfold Ch02.maxDescendantSigmaStarInvMatrixNormAtScale
   refine Ch02.finsetSupReal_le _
     (descendantsAtScale_nonempty Q (sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n))) ?_

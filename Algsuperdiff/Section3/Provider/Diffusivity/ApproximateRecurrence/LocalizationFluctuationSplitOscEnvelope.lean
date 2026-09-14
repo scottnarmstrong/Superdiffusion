@@ -219,7 +219,7 @@ theorem cubeFamilyAverage_integral_meshOscillationCell_pow_eight_le_freshShellEi
     have hnn : (0 : ℝ) ≤ Chead + T omega := by linarith [hT0 omega]
     have hle : root omega ≤ Chead + T omega := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have hlt : (Chead + T omega) ^ (4 : ℕ) < (root omega) ^ (4 : ℕ) :=
         pow_lt_pow_left₀ hcon hnn (by norm_num)
       rw [hroot omega] at hlt
@@ -332,7 +332,7 @@ theorem exists_freshShellDirichlet_meshOscillation_memLp_and_eighthMoment_le
                         (fun R => ∫ omega : Cutoff.ShellSeq d,
                           meshOscillationCell n (wD omega).toH1Function.grad R ^ (8 : ℝ)
                             ∂M.P.toMeasure) ≤ E := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hleg⟩ :=
     exists_freshShell_cubeEuclideanL8_leg_bound d hd
   refine ⟨freshShellEighthEnergyConst Chead 1, freshShellEighthEnergyConst_nonneg _ _,

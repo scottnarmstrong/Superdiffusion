@@ -242,7 +242,7 @@ theorem lambda_sensitivity_unconditional {d : ℕ} (dimension : 2 ≤ d) :
           (2 * t / (1 - 2 * s)) *
           (unitCubeLambda t q a)⁻¹ := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   refine ⟨unconditionalConst d, unconditionalConst_pos d, ?_⟩
   intro a h s t q hs0 hs ht0 ht hq
   have hgnn : 0 ≤ h.gradientW1Infinity :=

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Scott Armstrong
 -/
 import Algsuperdiff.Section4.Provider.Schauder.CubeSchauderSlope
+import Mathlib.Data.Int.Log
 
 /-!
 # Cube Schauder: from the Campanato bound to a pointwise `C^{0,1/2}` slope field

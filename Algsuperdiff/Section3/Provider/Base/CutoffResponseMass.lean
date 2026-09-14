@@ -79,7 +79,7 @@ private theorem cutoffFrobeniusMass_le_root_control
     (m : ℤ) (omega : CutoffSample d) :
     Stream.cutoffFrobeniusMass R m omega ≤
       (d : ℝ) ^ 2 * cutoffLocalControl (cubeOriginCoverScale Q) m omega ^ 2 := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) := by
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) := by
     simpa only [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet R).isFiniteMeasure_restrict_volume
   have hintegrable : IntegrableOn
@@ -135,7 +135,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_coefficientCutoff_le
         (scalarMatrix (d := d) (Annealed.sigmaBar M m : ℝ)) ≤
       cutoffPlateauAmplitude M m +
         M.nu⁻¹ ^ 2 * Stream.cutoffFrobeniusMassMaximum Q m n omega := by
-  letI : NeZero d := neZero_of_model_response M
+  let : NeZero d := neZero_of_model_response M
   have hn : (0 : ℤ) ≤ (n : ℤ) := by exact_mod_cast Nat.zero_le n
   have hk : Q.scale - (n : ℤ) ≤ Q.scale := sub_le_self _ hn
   have hresponse :=
@@ -200,7 +200,7 @@ theorem homogenizationErrorOnCube_coefficientCutoff_sq_le
         (scalarMatrix (d := d) (Annealed.sigmaBar M m : ℝ))) ^ 2 ≤
       cutoffPlateauAmplitude M m +
         cutoffMassLinearWeightedSum M Q m s omega := by
-  letI : NeZero d := neZero_of_model_response M
+  let : NeZero d := neZero_of_model_response M
   have hs : 0 < (s : ℝ) := (Set.mem_Ioo.mp s.2).1
   have hsq : 0 < (s : ℝ) * (2 : ℝ) := mul_pos hs (by norm_num)
   have hresponseSummable :=

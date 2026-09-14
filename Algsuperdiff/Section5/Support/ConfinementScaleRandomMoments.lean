@@ -91,13 +91,13 @@ private theorem lintegral_eq_tsum_levelSet (mu : Measure Omega) {m : Omega → �
   have hd : Pairwise (Function.onFun Disjoint fun k : ℕ => {omega | m omega = m0 + (k : ℤ)}) := by
     intro i j hij
     refine Set.disjoint_left.mpr fun omega hi hj => ?_
-    simp only [Set.mem_setOf_eq] at hi hj
+    simp only [Set.mem_ofPred_eq] at hi hj
     exact hij (by omega)
   have hcover : (⋃ k : ℕ, {omega | m omega = m0 + (k : ℤ)}) =ᵐ[mu] (Set.univ : Set Omega) := by
     rw [MeasureTheory.ae_eq_univ]
     refine measure_mono_null (fun omega homega => ?_) (ae_iff.mp hm0)
-    simp only [Set.mem_compl_iff, Set.mem_iUnion, Set.mem_setOf_eq, not_exists] at homega
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_compl_iff, Set.mem_iUnion, Set.mem_ofPred_eq, not_exists] at homega
+    simp only [Set.mem_ofPred_eq]
     intro hle
     exact homega (m omega - m0).toNat (by omega)
   rw [← MeasureTheory.setLIntegral_univ g, ← MeasureTheory.setLIntegral_congr hcover,

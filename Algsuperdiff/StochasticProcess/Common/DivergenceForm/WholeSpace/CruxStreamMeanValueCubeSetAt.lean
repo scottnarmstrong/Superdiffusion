@@ -65,8 +65,8 @@ theorem killedResolvent_eq_cubeSetAtC0Resolvent_stream (y : Vec d) (n : ℤ) {la
       ENNReal.ofReal ((streamWholeSpaceAnalyticData M omega
         ).cubeSetAtC0Resolvent y n g lam x) := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   set P : WholeSpaceBarrierData A := A.cubeSetAtC0BarrierData y n ⟨lam, hlam⟩ g hg0
     with hPdef
   have hcrux := P.killedResolvent_eq_partResolvent_stream_general R hreg hcons hid hT hx
@@ -87,12 +87,13 @@ theorem killedResolvent_eq_cubeSetAtC0Resolvent_stream (y : Vec d) (n : ℤ) {la
     rw [PositiveC0ContractiveResolvent.onePointLiveExtension_coe,
       PositiveC0ContractiveResolvent.onePointLiveExtension_coe]
     exact congrArg ENNReal.ofReal (cubeSetAtC0Datum_of_mem g hw).symm
-  rw [killedResolvent_congr_of_eqOn _ _ _ _ lam hobs (x : OnePoint (Vec d)), hcrux',
-    A.cubeSetAtC0Resolvent_of_pos y n g hlam x]
+  refine ((killedResolvent_congr_of_eqOn _ _ _ _ lam hobs
+    (x : OnePoint (Vec d))).trans hcrux').trans ?_
   exact congrArg ENNReal.ofReal
-    (A.eq_partC0Resolvent_of_isRepresentative (isOpenBoundedConvexDomain_cubeSetAt y n)
+    ((A.eq_partC0Resolvent_of_isRepresentative (isOpenBoundedConvexDomain_cubeSetAt y n)
       ⟨lam, hlam⟩ (measurable_cubeSetAtC0Datum y n g) (abs_cubeSetAtC0Datum_le y n g)
-      P.hutildeCont P.hutildeRep hx)
+      P.hutildeCont P.hutildeRep hx).trans
+      (A.cubeSetAtC0Resolvent_of_pos y n g hlam x).symm)
 
 include hcons hid hT in
 /-- **The exit decomposition at a positive shift on a translated triadic cube for the stream
@@ -111,8 +112,8 @@ theorem operator_eq_cubeSetAtC0Resolvent_add_discountedExitAverage_stream
             (fun z => R.toContractiveResolvent.operator ⟨lam, hlam⟩ g z))
           (x : OnePoint (Vec d)) := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   set U : Set (OnePoint (Vec d)) :=
     ((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n with hUdef
   have hUopen : IsOpen U := OnePoint.isOpen_image_coe.mpr (isOpen_cubeSetAt y n)
@@ -184,8 +185,8 @@ theorem discountedExitAverage_eq_sub_add_cubeSetAt_stream
         ((mu : ℝ) - lam) * (streamWholeSpaceAnalyticData M omega
           ).cubeSetAtC0Resolvent y n (R.toContractiveResolvent.operator mu g) lam x := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   set U : Set (OnePoint (Vec d)) :=
     ((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n with hUdef
   have hUopen : IsOpen U := OnePoint.isOpen_image_coe.mpr (isOpen_cubeSetAt y n)
@@ -197,8 +198,8 @@ theorem discountedExitAverage_eq_sub_add_cubeSetAt_stream
     have h := DFunLike.congr_fun
       (R.toContractiveResolvent.resolvent_identity ⟨lam, hlam⟩ mu) g
     have hz := congrArg (fun f : C₀(Vec d, ℝ) => f z) h
-    simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
-      ContinuousLinearMap.coe_comp', Function.comp_apply,
+    simp only [sub_apply, smul_apply,
+      ContinuousLinearMap.coe_comp, Function.comp_apply,
       ZeroAtInftyContinuousMap.coe_sub, ZeroAtInftyContinuousMap.coe_smul,
       Pi.sub_apply, Pi.smul_apply, smul_eq_mul] at hz
     linarith only [hz]
@@ -282,8 +283,8 @@ theorem hasExitMeanValueOn_of_isCubeSetAtResolventHarmonicPart_stream
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
       (onePointRealExtension h) := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   set U : Set (OnePoint (Vec d)) :=
     ((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n with hUdef
   have hUopen : IsOpen U := OnePoint.isOpen_image_coe.mpr (isOpen_cubeSetAt y n)
@@ -327,8 +328,8 @@ theorem expectedExitTime_cubeSetAt_ne_top_stream (y : Vec d) (n : ℤ) {x : Vec 
     expectedExitTime R.onePointKernelSemigroup
         R.isConservative_onePointKernelSemigroup
         (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) (x : OnePoint (Vec d)) ≠ ⊤ := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   set v : ℕ := partCubeIndex (isOpenBoundedConvexDomain_cubeSetAt y n) with hvdef
   have hsub : cubeSetAt y n ⊆ wholeSpaceCube d v :=
     subset_wholeSpaceCube_partCubeIndex (isOpenBoundedConvexDomain_cubeSetAt y n)

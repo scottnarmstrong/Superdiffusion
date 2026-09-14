@@ -366,18 +366,18 @@ theorem cubeFrobeniusMassFiniteShellIncrement_centered_isBigO_allGap
       Book.Ch04.IsBigO M.P.toMeasure (Book.Ch04.gammaSigma 1) (X i) (a i) := by
     intro i
     fin_cases i
-    · simpa only [X, a, Matrix.cons_val_zero] using hD
-    · simpa only [X, a, Matrix.cons_val_one, Matrix.head_cons] using hP
+    · simpa only [X, a, Matrix.cons_val_zero] using! hD
+    · simpa only [X, a, Matrix.cons_val_one, Matrix.head_cons] using! hP
   have hXm : ∀ i : Fin 2, Measurable (X i) := by
     intro i
     fin_cases i
-    · simpa only [X, Matrix.cons_val_zero] using hDm
-    · simpa only [X, Matrix.cons_val_one, Matrix.head_cons] using hPm
+    · simpa only [X, Matrix.cons_val_zero] using! hDm
+    · simpa only [X, Matrix.cons_val_one, Matrix.head_cons] using! hPm
   have ha : ∀ i : Fin 2, 0 < a i := by
     intro i
     fin_cases i
-    · simpa only [a, AD] using mul_pos (layerL2DiagonalSumConst_pos d hd) hbase
-    · simpa only [a, AP, Matrix.cons_val_one, Matrix.head_cons] using
+    · simpa only [a, AD] using! mul_pos (layerL2DiagonalSumConst_pos d hd) hbase
+    · simpa only [a, AP, Matrix.cons_val_one, Matrix.head_cons] using!
         mul_pos (layerL2PairSumConst_pos d hd) hbase
   have htri := IndependentSums.isBigO_finset_sum_of_isBigO_gammaSigma
     (μ := M.P.toMeasure) (s := (Finset.univ : Finset (Fin 2)))

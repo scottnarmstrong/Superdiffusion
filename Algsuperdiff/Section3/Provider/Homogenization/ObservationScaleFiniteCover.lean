@@ -317,7 +317,7 @@ private theorem observationScaleErrorLayerRaw_coarse_le_parentAverage
           (Int.toNat (m - (ell : ℤ) - L))
           (fun R => cutoffCellErrorSq M L hu R omega)).bddAbove
       · refine ⟨P, ?_, ?_⟩
-        · simpa only [observationScaleCoarseParentAverage, Q] using hP
+        · simpa only [observationScaleCoarseParentAverage, Q] using! hP
         · rw [show j = Int.toNat (m - (ell : ℤ) - L) by rfl]
     exact hbound.trans hsup
   unfold observationScaleErrorLayerRaw
@@ -374,10 +374,10 @@ private theorem observationScaleErrorLayerRaw_fine_le_cellSup
       (fun S => Ch02.normalizedBlockResponseMax S a a0) ≤ _
     refine Ch02.finsetSupReal_le _
       (descendantsAtScale_nonempty Q
-        ((sub_le_self L (by exact_mod_cast Nat.zero_le n)).trans (by simpa [Q] using hLm))) ?_
+        ((sub_le_self L (by exact_mod_cast Nat.zero_le n)).trans (by simpa [Q] using! hLm))) ?_
     intro S hS
     obtain ⟨R, hR, hSR⟩ := exists_mem_descendantsAtScale_split
-      (Q := Q) (k := L) (l := L - (n : ℤ)) (by simpa [Q] using hLm)
+      (Q := Q) (k := L) (l := L - (n : ℤ)) (by simpa [Q] using! hLm)
       (sub_le_self L (by exact_mod_cast Nat.zero_le n)) hS
     have hSRle :=
       Ch02.normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScale
@@ -460,7 +460,7 @@ private theorem observationScaleFineTailRaw_le_cellErrorSup
     have htail := hfull.comp_injective (add_left_injective r)
     simpa only [g, observationScaleErrorLayerRaw, Q, a, a0, r,
       originCube, Function.comp_apply, Nat.add_comm]
-      using htail
+      using! htail
   have hpoint : ∀ n, g n ≤ Ch02.geometricWeight t 2 (r + n) *
       Real.rpow 3 (2 * u * (n : ℝ)) * B := by
     intro n
@@ -483,7 +483,7 @@ private theorem observationScaleFineTailRaw_le_cellErrorSup
           (Homogenization.geometricWeight_shift (s := t) (q := 2) r n).symm
   have hbase : Summable (fun n : ℕ => Ch02.geometricWeight t 2 n *
       Real.rpow 3 (2 * u * (n : ℝ))) := by
-    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using
+    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using!
       (summable_geometricWeight_rpow (s := u) (t := t) (q := 2) hut (by norm_num))
   have hmajor : Summable (fun n : ℕ => Ch02.geometricWeight t 2 (r + n) *
       Real.rpow 3 (2 * u * (n : ℝ)) * B) := by
@@ -495,7 +495,7 @@ private theorem observationScaleFineTailRaw_le_cellErrorSup
       Real.rpow 3 (2 * u * (n : ℝ))) =
       Ch02.geometricDiscount t 2 *
         (1 - (3 : ℝ) ^ (-((t - u) * 2)))⁻¹ := by
-    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using
+    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using!
       (tsum_geometricWeight_rpow (s := u) (t := t) (q := 2) hut (by norm_num))
   have hmajorEq :
       (∑' n : ℕ, Ch02.geometricWeight t 2 (r + n) *
@@ -684,7 +684,7 @@ private theorem descendantsAverage_isBigOWith_gammaQuarter
       cutoffCellErrorSq_nonneg M L (by norm_num : (0 : ℝ) < 1 / 16) R omega
   apply (Orlicz.isBigOWith_iff_isBigO_of_nonneg hnonneg).2
   simpa only [descendantsAverage, D, hscale,
-    twoTermSquareConst] using haverage
+    twoTermSquareConst] using! haverage
 
 private theorem coarseParentAverage_isBigOWith_gammaQuarter
     (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
@@ -1168,7 +1168,7 @@ theorem observationScaleFiniteCover_sq_isBigOWith_gammaQuarter
   refine ⟨observationScaleFiniteCoverConst d,
     one_le_observationScaleFiniteCoverConst d, ?_⟩
   intro M m E hLower hWindow L hL
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hLm : L ≤ m := hL.trans (by omega)
   let A : ℝ := (E : ℝ) * (1 / 16 : ℝ)⁻¹ * Real.sqrt M.gamma

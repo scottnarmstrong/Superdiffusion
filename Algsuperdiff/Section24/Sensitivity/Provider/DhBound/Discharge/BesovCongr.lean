@@ -61,7 +61,7 @@ theorem cubeAverage_congr_ae (Q : TriadicCube d) {f g : Vec d → ℝ}
       exact inv_pos.mpr (cubeVolume_pos Q)
     have h2 : ∀ᵐ x ∂(ENNReal.ofReal ((cubeVolume Q)⁻¹) •
         MeasureTheory.volume.restrict (cubeSet Q)), f x = g x := h
-    exact (MeasureTheory.Measure.ae_smul_measure_iff hc).mp h2
+    exact (MeasureTheory.Measure.ae_ennreal_smul_measure_iff hc).mp h2
   unfold cubeAverage
   rw [MeasureTheory.integral_congr_ae h']
 

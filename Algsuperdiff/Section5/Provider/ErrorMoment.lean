@@ -214,7 +214,7 @@ theorem localizedError_origin_le_of_renormalization {d : ℕ} (M : ABKModel d)
       ring
     rw [hfun]
     change eLpNorm ((t - 1) • v.toFun) ⊤ (volume.restrict (cubeSetAt 0 n)) = _
-    rw [eLpNorm_const_smul, ← ofReal_norm_eq_enorm, Real.norm_eq_abs]
+    rw [eLpNorm_const_smul, ← ofReal_norm, Real.norm_eq_abs]
   have hcanon := hcomp g hg v hv
   have hsigCanon : 0 < (Annealed.sigmaBar M n : ℝ) := (Annealed.sigmaBar M n).2
   have ht : 0 < t := div_pos hsigCanon hsigma

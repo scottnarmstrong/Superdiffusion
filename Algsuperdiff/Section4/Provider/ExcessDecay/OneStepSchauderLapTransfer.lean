@@ -41,6 +41,8 @@ variable {d : ℕ}
 
 local notation "𝔼" => EuclideanSpace ℝ (Fin d)
 
+open scoped Laplacian
+
 /-! ### Basis vectors and `fderiv` across the identification -/
 
 /-- **Chain rule for the pullback along `toEuc.symm`.**  No differentiability hypothesis is needed:
@@ -163,6 +165,8 @@ open Homogenization (Vec basisVec euclideanCoordDeriv euclideanCoordSecondDeriv
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
+open scoped Laplacian
+
 noncomputable section
 
 variable {d : ℕ}
@@ -254,7 +258,7 @@ theorem euclideanCoordLaplacian_convolution_left {K g : Vec d → ℝ}
     _ = ∑ i : Fin d, ∫ t : Vec d,
             ContinuousLinearMap.lsmul ℝ ℝ (euclideanCoordSecondDeriv i i K t) (g (x - t))
               ∂MeasureTheory.volume :=
-          MeasureTheory.integral_finset_sum Finset.univ fun i _ => hterm i
+          MeasureTheory.integral_finsetSum Finset.univ fun i _ => hterm i
 
 /-! ### Behaviour under the point reflection `y ↦ A - y` -/
 
@@ -270,7 +274,7 @@ theorem euclideanCoordDeriv_comp_const_sub {K : Vec d → ℝ} (hK : ContDiff �
       (fderiv ℝ K (A - x)).comp (-(1 : Vec d →L[ℝ] Vec d))
     rw [fderiv_comp]
     · have harg : fderiv ℝ (fun y : Vec d => A - y) x = -(1 : Vec d →L[ℝ] Vec d) := by
-        simpa using (fderiv_const_sub (𝕜 := ℝ) (f := fun y : Vec d => y) (x := x) A)
+        simpa using! (fderiv_const_sub (𝕜 := ℝ) (f := fun y : Vec d => y) (x := x) A)
       rw [harg]
     · exact (hK.differentiable (by simp)) (A - x)
     · fun_prop
@@ -331,7 +335,7 @@ theorem integral_mul_indicator_const_sub_eq_setIntegral {U : Set (Vec d)} (hU : 
           (MeasureTheory.volume : MeasureTheory.Measure (Vec d)) MeasureTheory.volume :=
       MeasureTheory.measurePreserving_add_right
         (MeasureTheory.volume : MeasureTheory.Measure (Vec d)) A
-    simpa [e] using hadd.comp hneg
+    simpa [e] using! hadd.comp hneg
   have hcv :
       ∫ y : Vec d, (fun t : Vec d => f t * Set.indicator U u (A - t)) (e y)
           ∂MeasureTheory.volume =

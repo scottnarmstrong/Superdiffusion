@@ -274,7 +274,7 @@ theorem norm_sq_localGradApprox_sub_le (Q : TriadicCube d) (L : ℕ)
     nlinarith [hle, norm_nonneg (HilbertVec.ofVec (localGradApprox Q L φ p ω x) - realize p ω x),
       mul_nonneg (norm_nonneg (realize φ ω x)) hgb0]
   · have hxmem : x ∈ cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L) :=
-      Set.mem_diff_of_mem hx hmem
+      Set.mem_sdiff_of_mem hx hmem
     have hind : (cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L)).indicator
         (fun y => ‖realize p ω y‖ ^ 2) x = ‖realize p ω x‖ ^ 2 :=
       Set.indicator_of_mem hxmem _
@@ -315,7 +315,7 @@ def boundaryStripSet (Q : TriadicCube d) (L : ℕ) : Set (Vec d) :=
   cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L)
 
 theorem boundaryStripSet_subset_cubeSet (Q : TriadicCube d) (L : ℕ) :
-    boundaryStripSet Q L ⊆ cubeSet Q := Set.diff_subset
+    boundaryStripSet Q L ⊆ cubeSet Q := Set.sdiff_subset
 
 theorem measurableSet_boundaryStripSet (Q : TriadicCube d) (L : ℕ) :
     MeasurableSet (boundaryStripSet Q L) :=
@@ -323,7 +323,7 @@ theorem measurableSet_boundaryStripSet (Q : TriadicCube d) (L : ℕ) :
 
 theorem volume_boundaryStripSet_ne_top (Q : TriadicCube d) (L : ℕ) :
     volume (boundaryStripSet Q L) ≠ ⊤ :=
-  measure_ne_top_of_subset Set.diff_subset (volume_cubeSet_lt_top Q).ne
+  measure_ne_top_of_subset Set.sdiff_subset (volume_cubeSet_lt_top Q).ne
 
 /-- **`e.boundary.strip.volume`.**  The strip volume is at most
 `d · 3^{−L} / 2` times the volume of the cube

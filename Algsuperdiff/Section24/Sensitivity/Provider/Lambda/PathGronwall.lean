@@ -108,11 +108,11 @@ theorem le_exp_mul_of_hasDerivAt_le {y y' : ℝ → ℝ} {K t₁ t₂ : ℝ}
     have hexp : HasDerivAt (fun σ : ℝ => Real.exp (-(K * σ)))
         (Real.exp (-(K * τ)) * (-K)) τ := by
       have h1 : HasDerivAt (fun σ : ℝ => -(K * σ)) (-K) τ := by
-        simpa using ((hasDerivAt_id τ).const_mul K).neg
+        simpa using! ((hasDerivAt_id τ).const_mul K).neg
       simpa using h1.exp
     have := hexp.mul (hderiv τ)
     convert this using 1
-    ring
+    all_goals first | rfl | ring
   have hanti : AntitoneOn z (Set.Icc t₁ t₂) := by
     refine antitoneOn_of_deriv_nonpos (convex_Icc t₁ t₂) ?_ ?_ ?_
     · exact fun τ _ => ((hzderiv τ).continuousAt).continuousWithinAt

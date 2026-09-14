@@ -228,7 +228,7 @@ theorem notGood_subset_union (M : ABKModel d) (m : ℤ) (E b : ℝ) (h : ℕ) :
     by_contra hdens
     exact homega ⟨hdiam, not_lt.1 hdens⟩
   · refine Or.inl ?_
-    push_neg at hdiam
+    push Not at hdiam
     exact hdiam
 
 /-! ## The minimal scale separation -/
@@ -319,14 +319,14 @@ theorem scaleSeparationFail_eq (M : ABKModel d) (m : ℤ) (E b : ℝ) {j : ℕ}
     scaleSeparationFail M m E b j =
       {omega | ¬ (1 ≤ hsep M m E b omega ∧ hsep M m E b omega ≤ j)} := by
   ext omega
-  simp only [scaleSeparationFail, Set.mem_setOf_eq]
+  simp only [scaleSeparationFail, Set.mem_ofPred_eq]
   rw [← mem_hsepSet_iff_hsep_le (M := M) (m := m) (E := E) (b := b) (omega := omega)]
   constructor
   · rintro ⟨h, hh, hbad⟩ hmem
     exact hbad (hmem.2 h hh)
   · intro hmem
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hmem ⟨hj, hcon⟩
 
 /-- The geometric constant of the union bound over `h >= j`.  It is **not**

@@ -79,7 +79,7 @@ theorem weakSubsolution_le_weakSupersolution_ae [NeZero d]
     calc
       shiftedBilin hEll α z p =
           shiftedBilin hEll α u p - shiftedBilin hEll α v p := by
-        simp only [z, map_sub, ContinuousLinearMap.sub_apply]
+        simp only [z, map_sub, sub_apply]
       _ ≤ inner ℝ f (ZeroTraceSobolev.toL2 p) -
           inner ℝ g (ZeroTraceSobolev.toL2 p) := by
         have hup : shiftedBilin hEll α u p ≤
@@ -164,7 +164,7 @@ theorem IsAlphaShiftedWeakSupersolution.nonneg_ae [NeZero d]
   have h0g : ∀ᵐ x ∂volumeMeasureOn U, (0 : ScalarL2 U) x ≤ g x := by
     filter_upwards [hg, MeasureTheory.Lp.coeFn_zero (E := ℝ)
       (p := (2 : ENNReal)) (volumeMeasureOn U)] with x hgx hzero
-    simpa only [hzero] using hgx
+    simpa only [hzero] using! hgx
   have hle := weakSubsolution_le_weakSupersolution_ae a hU hα hEll
     hzero.isSubsolution hv h0g
   have hzeroValue : ∀ᵐ x ∂volumeMeasureOn U,
@@ -211,8 +211,8 @@ theorem resolvent_le_of_weakSupersolution_ae [NeZero d]
       shiftedBilin hEll beta w φ =
           c * shiftedBilin hEll beta v φ -
             beta * shiftedBilin hEll beta r φ := by
-        simp only [w, map_sub, map_smul, ContinuousLinearMap.sub_apply,
-          ContinuousLinearMap.smul_apply, smul_eq_mul]
+        simp only [w, map_sub, map_smul, sub_apply,
+          smul_apply, smul_eq_mul]
       _ = c * shiftedBilin hEll alpha v φ := by
         rw [shiftedBilin_apply hEll beta, shiftedBilin_apply hEll alpha,
           shiftedBilin_apply hEll beta r φ, hrφ]

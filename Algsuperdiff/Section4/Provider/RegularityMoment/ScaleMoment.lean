@@ -207,7 +207,7 @@ theorem exists_minimalScaleFactor_moment_bound (Ctail : ℝ) (hCtail : 0 < Ctail
     have hset : {w : Cutoff.CutoffSample d | (N : ℕ∞) ≤ Xhat w} =
         {w : Cutoff.CutoffSample d | N ≤ X w} := by
       ext w
-      simp only [hXhat, Set.mem_setOf_eq, Nat.cast_le]
+      simp only [hXhat, Set.mem_ofPred_eq, Nat.cast_le]
     rw [hset]
     have hN := htail N
     rwa [homTailNormalForm hCtail.ne' hgne N] at hN

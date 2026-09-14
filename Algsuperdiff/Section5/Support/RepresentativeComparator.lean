@@ -109,7 +109,7 @@ private theorem exists_exterior_point (hd : 0 < d) {y : Vec d} {n : ℤ} {x : Ve
       have hj' := hx j
       constructor <;> linarith [hj'.1, hj'.2, h3]
   · rw [Metric.mem_closure_iff]
-    push_neg
+    push Not
     refine ⟨t, ht, fun q hq => ?_⟩
     rw [mem_cubeSetAt_iff_forall_coord] at hq
     have hqi := hq i0
@@ -133,7 +133,7 @@ private theorem exists_exterior_point (hd : 0 < d) {y : Vec d} {n : ℤ} {x : Ve
       simp [hz, Pi.sub_apply, basisVec, Pi.single_apply]
     rw [Real.norm_eq_abs, hxz, abs_neg, abs_mul]
     have hb : |basisVec i0 j| ≤ 1 := by
-      by_cases hj : j = i0 <;> simp [basisVec, Pi.single_apply, hj]
+      by_cases hj : j = i0 <;> simp [basisVec, hj]
     calc |s| * |basisVec i0 j| ≤ |s| * 1 :=
           mul_le_mul_of_nonneg_left hb (abs_nonneg _)
       _ = |s| := mul_one _
@@ -296,7 +296,7 @@ theorem exists_lipschitzRepresentative_comparator (d : ℕ) (hdim : 2 ≤ d) :
     simp
   have hzeroHol : HolderSeminormBoundOn (openCubeSet (originCube d n)) (1 / 2) 0
       (0 : H1Function (openCubeSet (originCube d n))).grad := by
-    simpa using
+    simpa using!
       holderSeminormBoundOn_zero (openCubeSet (originCube d n)) (1 / 2 : ℝ) (le_refl (0 : ℝ))
   obtain ⟨vO, hvO, Ksup, KHol, hKsup, hKHol, hsup, hhol, hest⟩ :=
     hmain n (Annealed.sigmaBar M n : ℝ) (Provider.Orlicz.sigmaBar_pos M n)

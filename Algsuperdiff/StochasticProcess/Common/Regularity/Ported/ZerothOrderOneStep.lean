@@ -46,7 +46,7 @@ theorem oneStep_normalizedGradient_half_zerothOrder [NeZero d]
           normalizedL2On (euclideanBall z r) g := by
   let W : Set (Vec d) := euclideanBall z r
   let V : Set (Vec d) := euclideanBall z (r / 2)
-  letI finiteVolumeW : IsFiniteMeasure (volumeMeasureOn W) :=
+  let finiteVolumeW : IsFiniteMeasure (volumeMeasureOn W) :=
     Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall z r
   have hW : 0 < (volume W).toReal := by
     exact lt_of_le_of_ne ENNReal.toReal_nonneg
@@ -116,7 +116,7 @@ theorem oneStep_normalizedGradient_half_zerothOrder [NeZero d]
           4 * (1 / 2 : ℝ) ^ (-(d : ℝ) / 2) * unitCubeDirichletPoincareExplicit d *
             (d : ℝ) * r * normalizedL2On W g)
       convert hadd using 1
-      all_goals ring
+      all_goals first | rfl | ring
 
 end
 

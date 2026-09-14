@@ -78,7 +78,7 @@ theorem continuous_kuhnInterp (T : KuhnCell d) (g : Vec d → ℝ) :
     Continuous (kuhnInterp T g) := by
   show Continuous fun x : Vec d =>
     g (T.vertex 0) + ∑ i, kuhnSlope T g i * (x - T.vertex 0) i
-  refine continuous_const.add (continuous_finset_sum _ fun i _ => ?_)
+  refine continuous_const.add (continuous_finsetSum _ fun i _ => ?_)
   exact continuous_const.mul ((continuous_apply i).comp (continuous_id.sub continuous_const))
 
 /-- Distinct Kuhn cells of one scale have disjoint open simplices: either they

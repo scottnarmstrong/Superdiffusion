@@ -117,7 +117,7 @@ theorem cubeLowerEllipticityInvLiteral_translateCutoffSample (M : ABKModel d)
     cubeLowerEllipticityInvLiteral M Q cutoffScale s q omega =
       Algsuperdiff.Section3.Observable.cutoffLowerEllipticityInvLiteral M Q.scale
         cutoffScale s q (translateCutoffSample (triadicCubeShift Q) omega) := by
-  letI : NeZero d := neZero_of_model_payoff M
+  let : NeZero d := neZero_of_model_payoff M
   rw [← cubeLowerEllipticityInvLiteral_originCube]
   rw [show cubeLowerEllipticityInvLiteral M Q cutoffScale s q omega =
       (Ch02.lambdaSq Q s q.1

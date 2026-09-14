@@ -91,7 +91,7 @@ theorem holderHalf_const_nonneg [NeZero d] {m : ℤ} {K : ℝ} {f : Vec d → Ve
       ‖(fun _ : Fin d => (3 : ℝ) ^ m / 4) - (0 : Vec d)‖ ^ (1 / 2 : ℝ) :=
     Real.rpow_pos_of_pos hnormpos _
   by_contra hK
-  push_neg at hK
+  push Not at hK
   have hneg : K * ‖(fun _ : Fin d => (3 : ℝ) ^ m / 4) - (0 : Vec d)‖ ^ (1 / 2 : ℝ) < 0 :=
     mul_neg_of_neg_of_pos hK hp
   have hnn : (0 : ℝ) ≤ ‖f (fun _ : Fin d => (3 : ℝ) ^ m / 4) - f 0‖ := norm_nonneg _

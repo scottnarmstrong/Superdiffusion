@@ -307,7 +307,7 @@ theorem KuhnCell.disjoint_carrier_of_supportCube_eq {T U : KuhnCell d}
       | mk QU piU =>
           simp only at hsupport
           subst QU
-          simp only [KuhnCell.carrier, Set.mem_setOf_eq] at hxT hxU
+          simp only [KuhnCell.carrier, Set.mem_ofPred_eq] at hxT hxU
           simp only [KuhnCell.mk.injEq, true_and]
           exact hxT.2.trans hxU.2.symm
 

@@ -518,7 +518,7 @@ theorem integral_gaugedEllipticitySum_pow_four_le (d : ℕ) [NeZero d] :
     rw [← hrpow]
     exact le_trans (hcs.trans (le_of_eq heq8)) hbound
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   exact absurd hsq (not_le.mpr (pow_lt_pow_left₀ hcon hAnn (by norm_num : (2 : ℕ) ≠ 0)))
 
 /-! ## The end-to-end closure -/

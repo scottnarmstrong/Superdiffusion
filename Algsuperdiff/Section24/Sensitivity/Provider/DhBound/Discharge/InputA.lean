@@ -47,7 +47,7 @@ def valueRep (h : UnitCubeSkewW2Infinity d) (x : Vec d) : Mat d :=
 
 theorem valueRep_lipschitz (h : UnitCubeSkewW2Infinity d) (i j : Fin d) (x y : Vec d) :
     |valueRep h x i j - valueRep h y i j| ≤ (d : ℝ) * h.w1Infinity * ‖x - y‖ := by
-  simpa [Real.norm_eq_abs] using
+  simpa [Real.norm_eq_abs] using!
     (exists_lipschitz_ae_eq_cubeSet_unitCubeSkewW2Infinity_value h i j).choose_spec.1 x y
 
 theorem valueRep_ae_eq (h : UnitCubeSkewW2Infinity d) (i j : Fin d) :
@@ -144,7 +144,7 @@ theorem memLp_termAField_component (h : UnitCubeSkewW2Infinity d) (p : Vec d)
   classical
   have : MemLp (fun x => ∑ j : Fin d, h.toLInfSkewMatrixFieldOn.1.1 x j i * p j) q
       (normalizedCubeMeasure (originCube d 0)) :=
-    memLp_finset_sum (s := Finset.univ)
+    memLp_finsetSum (s := Finset.univ)
       (f := fun j => fun x => h.toLInfSkewMatrixFieldOn.1.1 x j i * p j)
       fun j _ => (memLp_value_entry h j i q).mul_const (p j)
   simpa [termAField_apply] using this

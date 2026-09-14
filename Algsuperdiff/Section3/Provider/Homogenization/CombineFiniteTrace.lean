@@ -106,7 +106,7 @@ private theorem aemeasurable_starredBlockJTraceAverageSq_trace
   intro R _hR
   apply Finset.aemeasurable_fun_sum Finset.univ
   intro alpha _halpha
-  simpa only [Book.Ch04.blockJSetObservableBlockVec_cubeSet] using
+  simpa only [Book.Ch04.blockJSetObservableBlockVec_cubeSet] using!
     Book.Ch04.aemeasurable_blockJSetObservableBlockVec_cubeSet hP R
       (fullBlockMatrixProbe (CFC.sqrt (B⁻¹)) alpha)
       (fullBlockMatrixProbe (CFC.sqrt B) alpha)
@@ -514,7 +514,7 @@ theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
       simpa only [mu, tau] using
         Cutoff.map_translateCutoffSample_cutoffSampleLaw M (triadicCubeShift R)
     have htranslatedInt : Integrable (fun omega => X0 (tau omega) ^ (4 : ℕ)) mu := by
-      simpa only [Function.comp_apply] using htau.integrable_comp_of_integrable hXfour
+      simpa only [Function.comp_apply] using! htau.integrable_comp_of_integrable hXfour
     have horigin :=
       Observable.cutoffHomogenizationErrorAtComparatorScale_ae_eq_homogenizationErrorOnCube
         M L L ⟨1 / 16, by norm_num⟩
@@ -538,7 +538,7 @@ theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
   have havgInt : Integrable
       (fun omega => descendantsAverage Qphys j (fun R => cellErrorFour R omega)) mu := by
     unfold descendantsAverage
-    exact (integrable_finset_sum (descendantsAtDepth Qphys j) hcell).const_mul
+    exact (integrable_finsetSum (descendantsAtDepth Qphys j) hcell).const_mul
       (((descendantsAtDepth Qphys j).card : ℝ)⁻¹)
   have havgIntegral :
       (∫ omega, descendantsAverage Qphys j (fun R => cellErrorFour R omega) ∂mu) =
@@ -556,7 +556,7 @@ theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
           rw [integral_const_mul]
         _ = (descendants.card : ℝ)⁻¹ *
               (∑ R ∈ descendants, ∫ omega, cellErrorFour R omega ∂mu) := by
-          rw [integral_finset_sum descendants
+          rw [integral_finsetSum descendants
             (fun R hR => hcell R (by simpa only [descendants] using hR))]
         _ = descendantsAverage Qphys j
               (fun R => ∫ omega, cellErrorFour R omega ∂mu) := by
@@ -603,7 +603,7 @@ theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
     have hmapMeas : AEStronglyMeasurable (J2 ∘ dilateReg (-h))
         (Measure.map (Cutoff.coefficientCutoff M.nu L) mu) := by
       simpa only [← Cutoff.coefficientCutoffLaw_eq_map, mu] using hJ2coeffMeas
-    simpa only [Function.comp_apply] using hmapMeas.comp_quasiMeasurePreserving
+    simpa only [Function.comp_apply] using! hmapMeas.comp_quasiMeasurePreserving
       ((Cutoff.measurable_coefficientCutoff M.nu L).quasiMeasurePreserving mu)
   have hpoint : ∀ omega,
       J2 (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega)) ≤ G omega := by
@@ -622,7 +622,7 @@ theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
     rw [Cutoff.coefficientCutoffLaw_eq_map]
     exact (integrable_map_measure hJ2coeffMeas
       (Cutoff.measurable_coefficientCutoff M.nu L).aemeasurable).mpr
-        (by simpa only [Function.comp_apply] using hJ2sampleInt)
+        (by simpa only [Function.comp_apply] using! hJ2sampleInt)
   have hJ2Int : Integrable J2 P := by
     rw [hrelLaw]
     exact (integrable_map_measure hJ2MapMeas

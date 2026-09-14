@@ -341,7 +341,7 @@ theorem indicator_observableSup_le_of_sqSup (M : ABKModel d) (m : ℤ)
             (Support.fluxCorrectedErrorRepresentative_nonneg M L m s omega)).symm
       _ ≤ Real.sqrt B := Real.sqrt_le_sqrt hreal
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 /-! ## Part E -- the `In particular` bridge -/
 

@@ -209,7 +209,8 @@ theorem tendsto_streamFixedCollarTailProfile_atTop
       (C * 2 ^ n) *
         ((Real.sqrt s) ^ (2 * n) * Real.exp (-(c / 5) * Real.sqrt s)))
       atTop (nhds 0) := by
-    simpa only [Real.rpow_natCast, mul_zero] using hcomp.const_mul (C * 2 ^ n)
+    simpa only [Real.rpow_natCast, mul_zero, Function.comp_apply] using
+      hcomp.const_mul (C * 2 ^ n)
   refine squeeze_zero' ?_ ?_ hmajor
   · filter_upwards [eventually_ge_atTop (0 : ℝ)] with s hs
     exact logSubexponentialProfile_nonneg hC c n s
@@ -340,7 +341,8 @@ theorem analyticPenalizedCube_le_next_add_localizedTail_of_subset
     refine hzWres.withAeRepresentative
       (g' := fun y ↦ f y - ((mu : ℝ) + q y) * uRep y)
       uRep huRepAe ?_
-    simpa only [q, FW, u0, U, W, hU, hW] using hsourceW
+    simpa only [q, FW, u0, U, W, hU, hW, boundedMeasurableToScalarL2,
+      H1Function.restrict] using hsourceW
   have hzUsol := A.penalizedCubeResolventH10_isScalarForcedWeakSolution
     hV n mu hf hf1 m
   have hFUae := boundedMeasurableToScalarL2_wholeSpaceCube_ae_eq hf hf1 m

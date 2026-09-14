@@ -129,7 +129,7 @@ private theorem enorm_cubeEuclideanWspKernel_rpow_le {A : Set (Vec d)}
   · have hzero : cubeEuclideanWspKernel s' q phi z = 0 := by
       simp [cubeEuclideanWspKernel_apply, heq]
     rw [hzero, enorm_zero, ENNReal.zero_rpow_of_pos hrpos]
-    exact zero_le _
+    exact zero_le
   have ht : 0 < dist z.1 z.2 := dist_pos.mpr hne
   have hE : dist z.1 z.2 ≤ euclideanDist z.1 z.2 := dist_le_euclideanDist z.1 z.2
   have hdK : (0 : ℝ) ≤ (d : ℝ) * K := mul_nonneg (Nat.cast_nonneg d) hK
@@ -169,7 +169,7 @@ private theorem enorm_cubeEuclideanWspKernel_rpow_le {A : Set (Vec d)}
     exact mul_nonneg hdK hb
   have hbound : ‖cubeEuclideanWspKernel s' q phi z‖ₑ ≤ ENNReal.ofReal (((d : ℝ) * K) *
       dist z.1 z.2 ^ (-(s'.1 + (d : ℝ) / q.exponent.toReal) + alpha)) := by
-    rw [← ofReal_norm_eq_enorm, norm_cubeEuclideanWspKernel]
+    rw [← ofReal_norm, norm_cubeEuclideanWspKernel]
     refine ENNReal.ofReal_le_ofReal ?_
     have hnn : (0 : ℝ) ≤ euclideanNorm (phi z.1 - phi z.2) := euclideanNorm_nonneg _
     rw [← hMeq]
@@ -192,7 +192,7 @@ private theorem enorm_cubeEuclideanWspKernel_rpow_le {A : Set (Vec d)}
       dist z.1 z.2 ^ (-cgGagliardoBeta d alpha s'.1 q.exponent.toReal) := by
     rw [mul_rpow_rpow_eq hdK ht, hexp]
   have henorm : ‖z.1 - z.2‖ₑ = ENNReal.ofReal (dist z.1 z.2) := by
-    rw [dist_eq_norm, ← ofReal_norm_eq_enorm]
+    rw [dist_eq_norm, ← ofReal_norm]
   have hsquare : (ENNReal.ofReal (((d : ℝ) * K) *
         dist z.1 z.2 ^ (-(s'.1 + (d : ℝ) / q.exponent.toReal) + alpha))) ^
         q.exponent.toReal =

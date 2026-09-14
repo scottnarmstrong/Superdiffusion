@@ -103,7 +103,7 @@ theorem measurable_triadicScale_local (gamma : ℝ) (k : ℤ) (U : Set (Vec d)) 
     (ShellField.triadicScale gamma k)
   rw [measurable_comap_iff]
   have h := hscale.comp hforget
-  simpa only [Function.comp_apply, ShellField.forgetShell_triadicScale] using h
+  simpa only [Function.comp_apply, ShellField.forgetShell_triadicScale] using! h
 
 end
 

@@ -183,7 +183,7 @@ theorem potentialFieldOn_smul {U : Set (Vec d)} {f : Vec d → Vec d} (c : ℝ)
     (hf : Book.Ch01.PotentialFieldOn U f) :
     Book.Ch01.PotentialFieldOn U (fun x => c • f x) := by
   obtain ⟨hmem, u, hae⟩ := hf
-  refine ⟨by simpa using hmem.const_smul c, c • u, ?_⟩
+  refine ⟨by simpa using! hmem.const_smul c, c • u, ?_⟩
   filter_upwards [hae] with x hx
   show c • f x = (c • u).grad x
   rw [H1Function.smul_grad, hx]
@@ -229,7 +229,7 @@ the caller proposition `hg` (membership of `g` in `Lsol(U)`). -/
 theorem solenoidalFieldOn_smul {U : Set (Vec d)} {g : Vec d → Vec d} (c : ℝ)
     (hg : Book.Ch01.SolenoidalFieldOn U g) :
     Book.Ch01.SolenoidalFieldOn U (fun x => c • g x) := by
-  refine ⟨by simpa using hg.1.const_smul c, fun phi => ?_⟩
+  refine ⟨by simpa using! hg.1.const_smul c, fun phi => ?_⟩
   have hpt : ∀ x : Vec d,
       vecDot (c • g x) (phi.toH1Function.grad x)
         = c * vecDot (g x) (phi.toH1Function.grad x) :=
@@ -366,10 +366,10 @@ theorem localizationBackground_eq_constantDoubledField_principalPz_add_localizat
   refine Homogenization.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_ <;> funext x
   · have h := congrArg Prod.fst
       (principalPz_add_principalFz sigma omega lowScale highScale e e' R wD wN x)
-    simpa [localizationBackground_potential] using h
+    simpa [localizationBackground_potential] using! h
   · have h := congrArg Prod.snd
       (principalPz_add_principalFz sigma omega lowScale highScale e e' R wD wN x)
-    simpa [localizationBackground_flux] using h
+    simpa [localizationBackground_flux] using! h
 
 /-! ## The two membership clauses, derived -/
 
@@ -410,7 +410,7 @@ theorem solenoidalZeroNormalTraceFieldOn_neumannFluxField (sigma : PositiveScala
       (fun x => -Corrector.streamForcing ((sigma : ℝ))⁻¹ omega lowScale highScale e' x)) :
     Book.Ch01.SolenoidalZeroNormalTraceFieldOn (openCubeSet Q)
       (neumannFluxField sigma omega lowScale highScale e' wN) := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hforcing : MemVectorL2 (openCubeSet Q)
       (Corrector.streamForcing ((sigma : ℝ))⁻¹ omega lowScale highScale e') :=
@@ -524,7 +524,7 @@ theorem memVectorL2_localizationFz_potential (sigma : PositiveScalar)
     (wD : H10Function (openCubeSet Q)) (wN : H1MeanZeroFunction (openCubeSet Q)) :
     MemVectorL2 (openCubeSet S)
       (localizationFz sigma omega lowScale highScale e' R wD wN).potential := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet S)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet S)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet S
   rw [localizationFz_potential]
   have hgrad : MemVectorL2 (openCubeSet S) wD.toH1Function.grad :=
@@ -532,7 +532,7 @@ theorem memVectorL2_localizationFz_potential (sigma : PositiveScalar)
   have hconst : MemVectorL2 (openCubeSet S)
       (fun _ : Vec d => cubeAverageVec R (fun y => wD.toH1Function.grad y)) :=
     memVectorL2_const _
-  simpa [inverseSqrtLoad] using (hgrad.sub hconst).const_smul (Real.sqrt (sigma : ℝ))⁻¹
+  simpa [inverseSqrtLoad] using! (hgrad.sub hconst).const_smul (Real.sqrt (sigma : ℝ))⁻¹
 
 /-- **The caller proposition `hFflux`, derived.**  Same statement for the flux leg
 of `bfF_z`.: on the inclusion `hsub: openCubeSet S ⊆ openCubeSet Q` (discharged
@@ -544,7 +544,7 @@ theorem memVectorL2_localizationFz_flux (sigma : PositiveScalar)
     (wD : H10Function (openCubeSet Q)) (wN : H1MeanZeroFunction (openCubeSet Q)) :
     MemVectorL2 (openCubeSet S)
       (localizationFz sigma omega lowScale highScale e' R wD wN).flux := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet S)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet S)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet S
   rw [localizationFz_flux]
   have hgrad : MemVectorL2 (openCubeSet S) wN.toH1Function.grad :=
@@ -559,7 +559,7 @@ theorem memVectorL2_localizationFz_flux (sigma : PositiveScalar)
       (fun _ : Vec d =>
         cubeAverageVec R (neumannFluxField sigma omega lowScale highScale e' wN)) :=
     memVectorL2_const _
-  simpa [sqrtLoad] using (hflux.sub hconst).const_smul (Real.sqrt (sigma : ℝ))
+  simpa [sqrtLoad] using! (hflux.sub hconst).const_smul (Real.sqrt (sigma : ℝ))
 
 /-- **The caller proposition `hF` of
 `LocalizationSelectionVariation.isDoubledResponseField_of_isDoubledMuMinimizerField`,
@@ -586,7 +586,7 @@ theorem isDoubledAmbientField_localizationFz (sigma : PositiveScalar)
       (fun x => -Corrector.streamForcing ((sigma : ℝ))⁻¹ omega lowScale highScale e' x)) :
     IsDoubledAmbientField (cubeDomain R)
       (localizationFz sigma omega lowScale highScale e' R wD wN) := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet R
   constructor
   · rw [localizationFz_potential]

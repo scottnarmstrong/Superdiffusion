@@ -467,7 +467,9 @@ only `AEMeasurable`, while `IsTwoTermBigOWithWitnesses` and the witness upgrade 
 private theorem measurable_tsum_of_nonneg {Omega : Type*} [MeasurableSpace Omega]
     {X : ℕ → Omega → ℝ} (hXm : ∀ k, Measurable (X k)) (hX0 : ∀ k omega, 0 ≤ X k omega) :
     Measurable (fun omega => ∑' k : ℕ, X k omega) := by
-  have hnn := (Measurable.nnreal_tsum fun k => (hXm k).real_toNNReal).coe_nnreal_real
+  have hnn : Measurable (fun omega => ∑' k : ℕ, (X k omega).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun k => (hXm k).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]

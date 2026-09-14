@@ -194,15 +194,12 @@ theorem sum_Icc_eq_sum_range_offset (i m : ℤ) (w : ℤ → ℝ) :
     omega
   · intro a ha
     simp only [Finset.mem_Icc] at ha
-    dsimp only
     omega
   · intro r hr
     simp only [Finset.mem_range] at hr
-    dsimp only
     omega
   · intro a ha
     simp only [Finset.mem_Icc] at ha
-    dsimp only
     congr 1
     omega
 
@@ -277,15 +274,15 @@ theorem sum_threePow_neg_sqrt_le {α : ℝ} (hα : 0 < α) (s : Finset ℕ) :
   have hnn : (0 : ℝ) ≤ ∑ r ∈ s, (3 : ℝ) ^ (-(α * (r : ℝ))) * Real.sqrt ((r : ℝ) + 1) :=
     Finset.sum_nonneg fun r _ =>
       mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.sqrt_nonneg _)
-  have hcs := Finset.sum_sq_le_sum_mul_sum_of_sq_eq_mul s
+  have hcs := Finset.sum_sq_le_sum_mul_sum_of_sq_le_mul s
     (r := fun r : ℕ => (3 : ℝ) ^ (-(α * (r : ℝ))) * Real.sqrt ((r : ℝ) + 1))
     (f := fun r : ℕ => (3 : ℝ) ^ (-(α * (r : ℝ))) * ((r : ℝ) + 1))
     (g := fun r : ℕ => (3 : ℝ) ^ (-(α * (r : ℝ))))
     (fun r _ => mul_nonneg (Real.rpow_nonneg (by norm_num) _) (by positivity))
     (fun r _ => Real.rpow_nonneg (by norm_num) _)
-    (fun r _ => by
+    (fun r _ => le_of_eq (by
       have h1 : Real.sqrt ((r : ℝ) + 1) ^ 2 = (r : ℝ) + 1 := Real.sq_sqrt (by positivity)
-      rw [mul_pow, h1]; ring)
+      rw [mul_pow, h1]; ring))
   have hgnn : (0 : ℝ) ≤ ∑ r ∈ s, (3 : ℝ) ^ (-(α * (r : ℝ))) :=
     Finset.sum_nonneg fun r _ => Real.rpow_nonneg (by norm_num) _
   have hprod : (∑ r ∈ s, (3 : ℝ) ^ (-(α * (r : ℝ))) * ((r : ℝ) + 1))

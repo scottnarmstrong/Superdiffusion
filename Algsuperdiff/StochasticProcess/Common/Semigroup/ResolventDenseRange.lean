@@ -41,7 +41,7 @@ theorem denseRange_of_resolvent_identity_of_tendsto_scaled
   refine ⟨(α : ℝ) •
       (f - (((α : ℝ) - (μ : ℝ)) • R α f)), ?_⟩
   have h := DFunLike.congr_fun (hRI μ α) f
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
+  simp only [sub_apply, smul_apply,
     ContinuousLinearMap.comp_apply] at h
   rw [map_smul, map_sub, map_smul]
   calc

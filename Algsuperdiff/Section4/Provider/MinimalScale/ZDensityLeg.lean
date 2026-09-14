@@ -307,7 +307,7 @@ theorem center_density_gt_subset_anchor (M : ABKModel d) (s delta : ℝ) (hs : 0
                 (fun _ => (1 : ℝ)) omega ≤
           1 - delta} := by
   intro omega homega
-  simp only [Set.mem_setOf_eq, centerDensityScore, toNat_sub_sub] at homega
+  simp only [Set.mem_ofPred_eq, centerDensityScore, toNat_sub_sub] at homega
   rw [sum_Icc_sub_eq_sum_range] at homega
   exact avg_good_le_of_avg_bad_lt hdelta j
     (fun i => Algsuperdiff.Frozen.Section4.goodEventAt M (Support.cgEllipLowerConstant d)

@@ -196,7 +196,7 @@ theorem agmonMass_localizedSplit_interior_le {Om : Set (Vec d)}
       have hfour : 4 * nu * Kl ^ 2 ≤ 8 * nu * Kl ^ 2 := by
         have h := mul_le_mul_of_nonneg_right (by norm_num : (4 : ℝ) ≤ 8)
           (mul_nonneg hnu.le (sq_nonneg Kl))
-        convert h using 1 <;> ring
+        linarith only [h]
       exact mul_le_mul_of_nonneg_right hfour (inv_pos.2 hmass).le
     linarith only [hL1, hL2', hLsq0]
   have hLsqk : localizedAgmonUpper nu mass Ks Kl ^ 2 * kappa ^ 2 ≤
@@ -304,7 +304,7 @@ theorem agmonMass_localizedInterior_le {Om : Set (Vec d)}
       · have hynSq : y ∉ tsupport (fun w => zeta w ^ 2) :=
           fun hy => hyL (tsupport_sq_weight_subset hzetaL hy)
         rw [fderiv_of_notMem_tsupport ℝ hynSq]
-        simp only [ContinuousLinearMap.zero_apply, vecDot, mul_zero,
+        simp only [zero_apply, vecDot, mul_zero,
           Finset.sum_const_zero]
     have hsplitEnergy := weightedEnergy_split_interior_le hOm hnu hKs hM hEllS
       hsplit hksSkew hklSkew hklC1 hsol hMbound hzeta hzetaCompact hzetaOm

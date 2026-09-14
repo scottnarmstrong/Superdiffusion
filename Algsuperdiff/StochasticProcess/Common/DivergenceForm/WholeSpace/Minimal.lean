@@ -67,7 +67,7 @@ def cubeEllipticityUpper (m : ℕ) : ℝ :=
 
 /-- The `m`th cube is elliptic with lower constant `nu`; continuity on its
 compact closure supplies the upper constant. -/
-def cubeEllipticity (m : ℕ) :
+theorem cubeEllipticity (m : ℕ) :
     IsEllipticFieldOn A.nu (A.cubeEllipticityUpper m)
       (wholeSpaceCube d m) A.a :=
   Algsuperdiff.StochasticProcess.Common.Regularity.Freezing.isEllipticFieldOn_axisCubeEllipticUpper
@@ -332,7 +332,7 @@ theorem measurable_analyticCubeResolvent (mu : PositiveShift) {f : Vec d → ℝ
     ((continuousOn_continuousCoeffBoundedResolvent A.a hU A.hnu
       A.hnu (A.cubeEllipticity m) A.hsymm
       (A.skewContinuousOnCube m) A.hd mu
-      (hf.comp measurable_subtype_coe) (fun z => hfD z)).restrict).measurable
+      (hf.comp measurable_subtype_coe) (fun z => hfD z)).domRestrict).measurable
   have heq : A.analyticCubeResolvent mu f hf hfD m = domainExtension v := by
     funext x
     by_cases hx : x ∈ wholeSpaceCube d m
@@ -447,8 +447,8 @@ private theorem alphaShiftedResolvent_resolvent_identity_apply
   have hid := alphaShiftedResolvent_resolvent_identity A.a nu.property mu.property
     A.hnu hUell
   have happ := congrArg (fun T : ScalarL2 U →L[ℝ] ScalarL2 U => T F) hid
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
-    ContinuousLinearMap.coe_comp', Function.comp_apply] at happ
+  simp only [sub_apply, smul_apply,
+    ContinuousLinearMap.coe_comp, Function.comp_apply] at happ
   have hstep :
       alphaShiftedResolvent A.a nu.property A.hnu hUell F -
           alphaShiftedResolvent A.a mu.property A.hnu hUell F =

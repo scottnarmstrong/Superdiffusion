@@ -207,7 +207,7 @@ theorem exists_constantDatumCoreEnergy (d : ℕ) [NeZero d] :
   have hLv := hL2 rho ht ht4 hg
   -- the `L²` split
   have hmemU : MemLp (fun y => u.toFun y - c) 2 (normalizedCubeMeasure Q) := by
-    letI : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
+    let : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
       ⟨normalizedCubeMeasure_apply_univ Q⟩
     exact (memLp_two_normalizedCubeMeasure_of_h1 Q u).sub (memLp_const c)
   have hmemV : MemLp v.toFun 2 (normalizedCubeMeasure Q) :=

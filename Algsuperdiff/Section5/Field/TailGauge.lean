@@ -185,7 +185,7 @@ theorem measurableSet_sharpTailBounded (gamma : ℝ) (C : ℕ) :
           {omega | sharpGradientGauge ell n omega ≤
             (C : ℝ) * Real.rpow 3 ((gamma - 1) * (n : ℝ)) * sharpTailWeight n ell} := by
     ext omega
-    simp only [SharpTailBounded, Set.mem_setOf_eq, Set.mem_iInter,
+    simp only [SharpTailBounded, Set.mem_ofPred_eq, Set.mem_iInter,
       Set.mem_inter_iff]
   rw [hrw]
   exact MeasurableSet.iInter fun n => MeasurableSet.iInter fun ell =>
@@ -199,7 +199,7 @@ theorem measurableSet_sharpTailGood (gamma : ℝ) :
   have hrw : {omega : CutoffSample d | SharpTailGood gamma omega} =
       ⋃ C : ℕ, {omega : CutoffSample d | SharpTailBounded gamma C omega} := by
     ext omega
-    simp only [SharpTailGood, Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [SharpTailGood, Set.mem_ofPred_eq, Set.mem_iUnion]
   rw [hrw]
   exact MeasurableSet.iUnion fun C => measurableSet_sharpTailBounded gamma C
 

@@ -180,9 +180,9 @@ theorem eventually_integral_le_principalEnergyAverage_add [NeZero d]
   filter_upwards [hobl, eventually_closureMeshDepth_scale M n h, hbig]
     with K hobligations hscale hK
   obtain ⟨hprin, hbg, hfluct⟩ := hobligations
-  letI : MeasurableSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) :=
+  let : MeasurableSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) :=
     borel _
-  haveI : BorelSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) := ⟨rfl⟩
+  have : BorelSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) := ⟨rfl⟩
   set wD := closureDirichletAlong M n h K e with hwDdef
   set wN := closureNeumannAlong M n h K e' with hwNdef
   have hwD : ∀ omega : ShellSeq d, IsZeroTraceDirichletRhsWeakSolution
@@ -204,9 +204,9 @@ theorem eventually_integral_le_principalEnergyAverage_add [NeZero d]
         meshFluctuationCellIntegrand M n h (K : ℤ) e e' wD wN R omega)
         (cutoffSampleLaw M).toMeasure := by
     intro R hR
-    letI : MeasurableSpace (HilbertBlockL2
+    let : MeasurableSpace (HilbertBlockL2
         ((Ch02.cubeDomain R : Ch02.Domain d) : Set (Vec d))) := borel _
-    haveI : BorelSpace (HilbertBlockL2
+    have : BorelSpace (HilbertBlockL2
         ((Ch02.cubeDomain R : Ch02.Domain d) : Set (Vec d))) := ⟨rfl⟩
     exact integrable_meshFluctuationCellIntegrand' M n h (K : ℤ) e e' wD wN R
       (memVectorL2_meshCellBackground_potential M n h (K : ℤ) e e' wD wN hR)

@@ -72,7 +72,7 @@ theorem cutoffHomogenizationError_ae_antitone {d : ℕ} (M : ABKModel d) (m : �
     Observable.cutoffHomogenizationError M m ⟨s, ht.trans hts⟩ ≤ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
       Observable.cutoffHomogenizationError M m ⟨t, ht⟩ := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   filter_upwards
     [Observable.cutoffHomogenizationError_ae_eq_homogenizationErrorOnCube M m
         ⟨s, ht.trans hts⟩,

@@ -74,7 +74,7 @@ theorem annealedBlockMatrix_map_dilateReg_cube
       Ch04.annealedBlockMatrix P
         (cubeSet (Ch02.dilateCube (-k) Q)) := by
   unfold Ch04.annealedBlockMatrix
-  rw [BlockMat.mk.injEq]
+  refine Eq.mpr (BlockMat.mk.injEq _ _ _ _ _ _ _ _) ?_
   constructor
   · ext i j
     rw [MeasureTheory.integral_map (measurable_dilateReg (d := d) k).aemeasurable]
@@ -147,7 +147,7 @@ private theorem tendsto_natCast_add_int_shift
     have hs_eq : s = (k : ℤ) := by
       simpa [k] using (Int.toNat_of_nonneg hs).symm
     have htail := h.comp (tendsto_add_atTop_nat k)
-    simpa [hs_eq, add_comm] using htail
+    simpa [hs_eq, add_comm] using! htail
   · let k : ℕ := (-s).toNat
     have hneg : 0 ≤ -s := by omega
     have hs_eq : s = -(k : ℤ) := by

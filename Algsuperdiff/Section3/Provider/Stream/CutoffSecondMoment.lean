@@ -131,7 +131,7 @@ private theorem integrable_shell_entry_mul (M : ABKModel d) (x : Vec d) (k k' : 
 
 private theorem integrable_shellPairing (M : ABKModel d) (x : Vec d) (k k' : ℤ) :
     Integrable (shellPairing x k k') M.P.toMeasure := by
-  refine integrable_finset_sum _ fun i _ => integrable_finset_sum _ fun l _ => ?_
+  refine integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun l _ => ?_
   exact integrable_shell_entry_mul M x k k' i l
 
 /-- Distinct shells are independent and mean zero, so their Frobenius pairing
@@ -145,10 +145,10 @@ private theorem integral_shellPairing_of_ne (M : ABKModel d) (x : Vec d)
   show (∫ omega : ShellSeq d,
     ∑ i : Fin d, ∑ l : Fin d, (omega k) x i l * (omega k') x i l
     ∂M.P.toMeasure) = 0
-  rw [integral_finset_sum _ fun i _ =>
-    integrable_finset_sum _ fun l _ => integrable_shell_entry_mul M x k k' i l]
+  rw [integral_finsetSum _ fun i _ =>
+    integrable_finsetSum _ fun l _ => integrable_shell_entry_mul M x k k' i l]
   refine Finset.sum_eq_zero fun i _ => ?_
-  rw [integral_finset_sum _ fun l _ => integrable_shell_entry_mul M x k k' i l]
+  rw [integral_finsetSum _ fun l _ => integrable_shell_entry_mul M x k k' i l]
   refine Finset.sum_eq_zero fun l _ => ?_
   have hentry : ProbabilityTheory.IndepFun
       (fun omega : ShellSeq d => (omega k) x i l)
@@ -196,10 +196,10 @@ theorem integral_frobeniusMass_shellFinsetSum (M : ABKModel d) (s : Finset ℤ)
         exact integral_congr_ae (Filter.Eventually.of_forall hexpand)
     _ = ∑ k ∈ s, ∑ k' ∈ s,
           ∫ omega : ShellSeq d, shellPairing x k k' omega ∂M.P.toMeasure := by
-        rw [integral_finset_sum _ fun k _ =>
-          integrable_finset_sum _ fun k' _ => integrable_shellPairing M x k k']
+        rw [integral_finsetSum _ fun k _ =>
+          integrable_finsetSum _ fun k' _ => integrable_shellPairing M x k k']
         exact Finset.sum_congr rfl fun k _ =>
-          integral_finset_sum _ fun k' _ => integrable_shellPairing M x k k'
+          integral_finsetSum _ fun k' _ => integrable_shellPairing M x k k'
     _ = ∑ k ∈ s, (3 : ℝ) ^ (2 * M.gamma * (k : ℝ)) *
           (Disorder.cstarPlus M * Real.log 3) := by
         refine Finset.sum_congr rfl fun k hk => ?_
@@ -301,8 +301,8 @@ private theorem tendsto_frobeniusMass_finiteLowerCutoff (ell m : ℤ)
   show Tendsto (fun q : ℕ =>
     ∑ i : Fin d, ∑ l : Fin d, finiteLowerCutoff m q omega.1 x i l ^ 2) atTop
     (nhds (∑ i : Fin d, ∑ l : Fin d, cutoff m omega x i l ^ 2))
-  exact tendsto_finset_sum _ fun i _ =>
-    tendsto_finset_sum _ fun l _ => (hentry i l).pow 2
+  exact tendsto_finsetSum _ fun i _ =>
+    tendsto_finsetSum _ fun l _ => (hentry i l).pow 2
 
 /-- The exact geometric value of the finite lower truncation's second
 moment. -/

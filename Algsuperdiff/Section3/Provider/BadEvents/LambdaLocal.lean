@@ -89,7 +89,7 @@ theorem measurable_Mu_coefficientCutoff_cutoffSampleLocal (M : ABKModel d) (m : 
     @Measurable (CutoffSample d) ℝ (cutoffSampleLocalSigma M m U) _
       (fun omega => Mu (cubeSet R) P0 (coefficientCutoff M.nu m omega).toFun) := by
   classical
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   set cover : ℕ → Set (CutoffSample d) := fun k =>
     {omega : CutoffSample d |
       AEEQuantitativeEllipticSlice (cubeSet R) k
@@ -144,7 +144,7 @@ theorem measurable_coarseSigmaStarInv_apply_cutoffSampleLocal (M : ABKModel d) (
       (fun omega =>
         (coarseBlockMatrix (cubeSet R)
           (coefficientCutoff M.nu m omega).toFun).lowerRight i j) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   by_cases hij : i = j
   · subst hij
     have hEq : (fun omega : CutoffSample d =>
@@ -180,7 +180,7 @@ theorem measurable_coarseB_apply_cutoffSampleLocal (M : ABKModel d) (m : ℤ)
       (fun omega =>
         (coarseBlockMatrix (cubeSet R)
           (coefficientCutoff M.nu m omega).toFun).upperLeft i j) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   by_cases hij : i = j
   · subst hij
     have hEq : (fun omega : CutoffSample d =>
@@ -215,7 +215,7 @@ theorem measurable_coarseSigmaStarInvNorm_cutoffSampleLocal (M : ABKModel d) (m 
       (fun omega => Ch02.matrixNorm
         (coarseBlockMatrix (cubeSet R)
           (coefficientCutoff M.nu m omega).toFun).lowerRight) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   have hmat : @Measurable (CutoffSample d) (Mat d) _ _
       (fun omega => (coarseBlockMatrix (cubeSet R)
         (coefficientCutoff M.nu m omega).toFun).lowerRight) := by
@@ -230,7 +230,7 @@ theorem measurable_coarseBNorm_cutoffSampleLocal (M : ABKModel d) (m : ℤ)
       (fun omega => Ch02.matrixNorm
         (coarseBlockMatrix (cubeSet R)
           (coefficientCutoff M.nu m omega).toFun).upperLeft) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   have hmat : @Measurable (CutoffSample d) (Mat d) _ _
       (fun omega => (coarseBlockMatrix (cubeSet R)
         (coefficientCutoff M.nu m omega).toFun).upperLeft) := by
@@ -259,7 +259,7 @@ theorem measurable_maxDescendantSigmaStarInv_cutoffSampleLocal (M : ABKModel d) 
       (fun omega => Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
         R (R.scale - (n : ℤ)) (coefficientCutoff M.nu m omega)) := by
   classical
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   have hn : (0 : ℤ) ≤ (n : ℤ) := by exact_mod_cast Nat.zero_le n
   have hle : R.scale - (n : ℤ) ≤ R.scale := sub_le_self R.scale hn
   set S := descendantsAtScale R (R.scale - (n : ℤ)) with hSdef
@@ -299,7 +299,7 @@ theorem measurable_maxDescendantB_cutoffSampleLocal (M : ABKModel d) (m : ℤ)
       (fun omega => Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
         R (R.scale - (n : ℤ)) (coefficientCutoff M.nu m omega)) := by
   classical
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   have hn : (0 : ℤ) ≤ (n : ℤ) := by exact_mod_cast Nat.zero_le n
   have hle : R.scale - (n : ℤ) ≤ R.scale := sub_le_self R.scale hn
   set S := descendantsAtScale R (R.scale - (n : ℤ)) with hSdef
@@ -341,7 +341,7 @@ theorem measurable_weightedSigmaSeries_cutoffSampleLocal (M : ABKModel d) (m : �
       (fun omega => ∑' n : ℕ, Ch02.geometricWeight s q n *
         Real.rpow (Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
           R (R.scale - (n : ℤ)) (coefficientCutoff M.nu m omega)) (q / 2)) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   refine measurable_of_tendsto_metrizable
     (f := fun N (omega : CutoffSample d) => ∑ n ∈ Finset.range N,
       Ch02.geometricWeight s q n *
@@ -368,7 +368,7 @@ theorem measurable_weightedBSeries_cutoffSampleLocal (M : ABKModel d) (m : ℤ)
       (fun omega => ∑' n : ℕ, Ch02.geometricWeight s q n *
         Real.rpow (Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
           R (R.scale - (n : ℤ)) (coefficientCutoff M.nu m omega)) (q / 2)) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   refine measurable_of_tendsto_metrizable
     (f := fun N (omega : CutoffSample d) => ∑ n ∈ Finset.range N,
       Ch02.geometricWeight s q n *
@@ -452,9 +452,9 @@ theorem measurable_cubeLowerEllipticityInvLiteral_cutoffSampleLocal (M : ABKMode
     (hs : 0 < s) (q : CoarseEllipticityExponent) :
     @Measurable (CutoffSample d) ℝ (cutoffSampleLocalSigma M m U) _
       (cubeLowerEllipticityInvLiteral M R m s q) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega : 0 < 2) M.shellPrefix.dimension)⟩
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   have hfun : cubeLowerEllipticityInvLiteral M R m s q =
       fun omega : CutoffSample d =>
         (Ch04.lambdaSqCoeffField R s q.1 (coefficientCutoff M.nu m omega))⁻¹ := rfl
@@ -501,9 +501,9 @@ theorem measurable_cubeUpperEllipticityLiteral_cutoffSampleLocal (M : ABKModel d
     (hs : 0 < s) (q : CoarseEllipticityExponent) :
     @Measurable (CutoffSample d) ℝ (cutoffSampleLocalSigma M m U) _
       (cubeUpperEllipticityLiteral M R m s q) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega : 0 < 2) M.shellPrefix.dimension)⟩
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M m U
   have hfun : cubeUpperEllipticityLiteral M R m s q =
       fun omega : CutoffSample d =>
         Ch04.LambdaSqCoeffField R s q.1 (coefficientCutoff M.nu m omega) := rfl
@@ -660,12 +660,12 @@ theorem measurableSet_badLoc_cutoffSampleLocal (M : ABKModel d) (Q : TriadicCube
     {omega | 10 * ((Algsuperdiff.Section3.Annealed.sigmaBar M Q.scale : ℝ)) <
       cubeUpperEllipticityLiteral M Q Q.scale (1 / 4) exponentTwo omega}
   have hA : MeasurableSet[cutoffSampleLocalSigma M Q.scale U] A := by
-    letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M Q.scale U
+    let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M Q.scale U
     exact measurableSet_lt measurable_const
       (measurable_cubeLowerEllipticityInvLiteral_cutoffSampleLocal M Q.scale Q hQU hs
         exponentTwo)
   have hB : MeasurableSet[cutoffSampleLocalSigma M Q.scale U] B := by
-    letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M Q.scale U
+    let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M Q.scale U
     exact measurableSet_lt measurable_const
       (measurable_cubeUpperEllipticityLiteral_cutoffSampleLocal M Q.scale Q hQU hs
         exponentTwo)

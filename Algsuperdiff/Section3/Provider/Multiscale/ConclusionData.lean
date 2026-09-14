@@ -358,7 +358,7 @@ theorem measureReal_exists_cubeSupBound_gt_le (hd : 2 ≤ d) (M : ABKModel d) (m
           (whitneyWaveLayerPenalty d m hn k * whitneyWaveCubeScale M L *
             (Real.sqrt (1 + (k : ℝ)) * t)) := by
         ext omega
-        simp only [hEdef, Set.mem_setOf_eq, IndependentSums.mem_upperTailEvent,
+        simp only [hEdef, Set.mem_ofPred_eq, IndependentSums.mem_upperTailEvent,
           Finset.lt_sup'_iff, hprod]
         constructor
         · rintro ⟨Q, hQ, hlt⟩
@@ -369,7 +369,7 @@ theorem measureReal_exists_cubeSupBound_gt_le (hd : 2 ≤ d) (M : ABKModel d) (m
       exact hbase
     · have hempty : E k = (∅ : Set (CutoffSample d)) := by
         ext omega
-        simp only [hEdef, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+        simp only [hEdef, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
         rintro ⟨Q, hQ, -⟩
         exact hne ⟨Q, hQ⟩
       rw [hempty, measureReal_empty]
@@ -421,7 +421,7 @@ theorem measureReal_exists_cubeSupBound_gt_le (hd : 2 ≤ d) (M : ABKModel d) (m
   have hset : {omega : CutoffSample d | ∃ k : ℕ, ∃ Q ∈ whitneyLayer (d := d) m hn k,
       whitneyWaveLayerScale M m hn k L * t < cubeSupBound Q Q.scale L omega.1} = ⋃ k, E k := by
     ext omega
-    simp only [hEdef, Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [hEdef, Set.mem_ofPred_eq, Set.mem_iUnion]
   rw [hset, hqgamma]
   exact htoReal
 

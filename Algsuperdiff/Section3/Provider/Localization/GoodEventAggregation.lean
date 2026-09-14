@@ -244,7 +244,7 @@ theorem responseJ_perturb_le_three_mul_responseJ_cube_ae_forall_loads
                         underlineW2Gauge Q (shellIncrement omega.1 n L) ^ 2) *
                     (lambdaSq Q (1 / 8) (.finite 2)
                       (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ ^ 2) := by
-  letI : NeZero d := neZero_of_abkModel M
+  let : NeZero d := neZero_of_abkModel M
   have hCpos : (0 : ℝ) < responseSensitivityConst d :=
     responseSensitivityConst_pos M.shellPrefix.dimension
   filter_upwards
@@ -400,7 +400,7 @@ theorem responseJ_injection_priced_ae_forall_loads (d : ℕ) :
   obtain ⟨C, hC0, hcont⟩ := shom_continuity d
   refine ⟨C, hC0, ?_⟩
   intro M m0 E hm0 hstate hCE hgammaE Ccg hCcg Q hgap L hnL hnm0 hgh
-  letI : NeZero d := neZero_of_abkModel M
+  let : NeZero d := neZero_of_abkModel M
   set n : ℤ := Q.scale - (hgap : ℤ) with hndef
   have hnQ : n ≤ Q.scale := by rw [hndef]; omega
   have hE1 : (1 : ℝ) ≤ (E : ℝ) := E.2

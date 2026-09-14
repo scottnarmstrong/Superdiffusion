@@ -49,7 +49,7 @@ theorem eLpNorm_top_restrict_le_supNormOn {U : Set (Vec d)} (hU : MeasurableSet 
   refine essSup_le_of_ae_le _ ((ae_restrict_iff' hU).2 ?_)
   refine Filter.Eventually.of_forall fun x hx => ?_
   show ‖f x‖ₑ ≤ supNormOn U f
-  rw [← ofReal_norm_eq_enorm]
+  rw [← ofReal_norm]
   exact le_supNormOn hx
 
 /-- **On an open set a continuous function does not exceed its essential
@@ -61,7 +61,7 @@ theorem supNormOn_le_eLpNorm_top_restrict {U : Set (Vec d)} (hU : IsOpen U)
   rw [eLpNorm_exponent_top]
   refine supNormOn_le_iff.2 fun x hx => ?_
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hctop : eLpNormEssSup f (volume.restrict U) ≠ ⊤ := hcon.ne_top
   have ht0 : (0 : ℝ) ≤ (eLpNormEssSup f (volume.restrict U)).toReal := ENNReal.toReal_nonneg
   have hlt : (eLpNormEssSup f (volume.restrict U)).toReal < ‖f x‖ := by
@@ -98,7 +98,7 @@ theorem supNormOn_le_eLpNorm_top_restrict {U : Set (Vec d)} (hU : IsOpen U)
     rintro z ⟨hz1, hz2⟩
     refine ⟨?_, hz2⟩
     show ¬ ‖f z‖ₑ ≤ eLpNormEssSup f (volume.restrict U)
-    rw [not_le, ← ofReal_norm_eq_enorm, ← ENNReal.ofReal_toReal hctop]
+    rw [not_le, ← ofReal_norm, ← ENNReal.ofReal_toReal hctop]
     refine (ENNReal.ofReal_lt_ofReal_iff_of_nonneg ht0).2 ?_
     have hz1' : ((eLpNormEssSup f (volume.restrict U)).toReal + ‖f x‖) / 2 < ‖f z‖ := hz1
     linarith

@@ -1,3 +1,4 @@
+import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Algsuperdiff.Section3.Model
 import Algsuperdiff.Section3.Disorder.Cstar
 

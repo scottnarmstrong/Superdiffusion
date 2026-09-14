@@ -130,7 +130,7 @@ theorem isBigOWith_gammaSigma_one_cutoffMassLinearWeightedSum
       (μ := (cutoffSampleLaw M).toMeasure) (σ := 1)
       (X := X) (a := a) (B := cutoffMassLinearWeightedScale M m s)
       (by norm_num) hX_nonneg hX_meas ha_pos ha_summable hX_tail hscale
-  simpa only [cutoffMassLinearWeightedSum, X, w] using htail
+  simpa only [cutoffMassLinearWeightedSum, X, w] using! htail
 
 end
 

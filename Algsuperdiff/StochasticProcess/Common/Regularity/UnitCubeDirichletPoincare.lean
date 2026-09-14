@@ -46,7 +46,7 @@ private theorem smooth_unitCube_integral_sq_eq [NeZero d]
   have hqDiff : Differentiable ℝ q := hqSmooth.differentiable (by simp)
   have hφ2Diff : Differentiable ℝ φ2 := hφ2Smooth.differentiable (by simp)
   have hφ2c : HasCompactSupport φ2 := by
-    simpa only [φ2, pow_two] using hφc.mul_left (f := φ)
+    simpa only [φ2, pow_two] using! hφc.mul_left (f := φ)
   have hDφ2c : HasCompactSupport (fun x => (fderiv ℝ φ2 x) (basisVec i)) :=
     hφ2c.fderiv_apply (𝕜 := ℝ) (basisVec i)
   have hqφ2 : Integrable (fun x => q x * φ2 x) volume := by
@@ -64,7 +64,7 @@ private theorem smooth_unitCube_integral_sq_eq [NeZero d]
       |>.integrable_of_hasCompactSupport hDφ2c.mul_left
   have hibp := integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable
     (μ := volume) (f := q) (g := φ2) (v := basisVec i)
-    hDqφ2 hqDφ2 hqφ2 hqDiff hφ2Diff
+    hDqφ2 hqDφ2 hqφ2 (fun x _ => hqDiff x) (fun x _ => hφ2Diff x)
   have hDq : ∀ x : Vec d, (fderiv ℝ q x) (basisVec i) = 1 := by
     intro x
     have hderiv : HasFDerivAt q
@@ -84,7 +84,7 @@ private theorem smooth_unitCube_integral_sq_eq [NeZero d]
       simpa only [φ2, Nat.cast_ofNat, Nat.reduceSub, pow_one, nsmul_eq_mul, mul_one] using
         hφDiffAt.hasFDerivAt.pow 2
     rw [hderiv.fderiv]
-    simp only [ContinuousLinearMap.smul_apply, smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
   simp_rw [hDq, hDφ2, one_mul] at hibp
   dsimp only [q, φ2, i] at hibp ⊢
   have hfactor :
@@ -232,7 +232,7 @@ private theorem smooth_unitCube_dirichletPoincare [NeZero d]
         change fderiv ℝ φ x ≠ 0
         intro hzero
         apply hx
-        simp only [Dφ, hzero, ContinuousLinearMap.zero_apply]))
+        simp only [Dφ, hzero, zero_apply]))
     calc
       ‖DF‖ = (eLpNorm Dφ 2 volume).toReal := by
         simp only [DF, Lp.norm_toLp]
@@ -268,7 +268,7 @@ theorem unitCubeDirichletPoincareExplicit_bound [NeZero d]
   have hleft :
       Filter.Tendsto (fun n ↦ ‖(ψ n).toScalarL2‖) Filter.atTop
         (nhds ‖w.toH1Function.toScalarL2‖) := by
-    simpa only [ψ, Q] using
+    simpa only [ψ, Q] using!
       ((continuous_norm.tendsto _).comp
         (H10Function.tendsto_approxH1_toScalarL2
           (hU := isOpen_axisCube 0 1) (u := w)))

@@ -93,7 +93,7 @@ private theorem tendsto_analyticCubeResolvent_of_bounded_tendsto
         rw [hyf n, domainExtension_of_mem hyU]
         rfl
       rw [hyg, domainExtension_of_mem hyU]
-      simpa only [hyfn] using hpt y
+      simpa only [hyfn, Function.comp_apply] using hpt y
     have hFG_each : ∀ n, ∀ᵐ y ∂volumeMeasureOn (wholeSpaceCube d m),
         |F n y - G y| ≤ 2 * D := fun n ↦ hFG.mono fun _ hy ↦ hy n
     have hL2 : Tendsto (fun n ↦ ‖F n - G‖) atTop (nhds 0) :=
@@ -288,9 +288,14 @@ private theorem indicatorAgreement_empty (S : KernelIdentificationInput A)
   simp only [Set.indicator_empty]
   have hzero := A.kernelResolvent_eq_analyticMinimalResolvent_of_c0 S mu
     (0 : C₀(Vec d, ℝ)) (fun _ ↦ le_rfl) (fun _ ↦ by norm_num) x
-  convert hzero using 1
-  simp only [ZeroAtInftyContinuousMap.coe_zero,
-    Pi.zero_apply, ENNReal.ofReal_zero]
+  have hfun : (fun _ : Vec d ↦ (0 : ℝ≥0∞)) =
+      fun y ↦ ENNReal.ofReal ((0 : C₀(Vec d, ℝ)) y) := by
+    funext y
+    simp only [ZeroAtInftyContinuousMap.coe_zero, Pi.zero_apply, ENNReal.ofReal_zero]
+  rw [hfun, hzero]
+  exact A.analyticMinimalResolvent_congr_ae mu _ _ _ _
+    (Eventually.of_forall fun y ↦ by
+      simp only [Pi.zero_apply, ZeroAtInftyContinuousMap.coe_zero]) x
 
 private theorem indicatorAgreement_union (S : KernelIdentificationInput A)
     (mu : PositiveShift) (x : Vec d) {E F : Set (Vec d)}
@@ -522,7 +527,7 @@ private theorem indicatorAgreement_measurable (S : KernelIdentificationInput A)
               simp [f, hn]
       _ = ⨆ n, R.kernelSemigroup.kernelResolvent (mu : ℝ)
           (fun y ↦ ENNReal.ofReal (f n y)) x := by
-            simpa only [Function.comp_apply] using hkernel
+            simpa only [Function.comp_def] using hkernel
       _ = ⨆ n, A.analyticMinimalResolvent mu (f n) (hf n)
           (fun y ↦ abs_indicator_le_one (G n) y) x := iSup_congr heach
       _ = A.analyticMinimalResolvent mu g hg (abs_indicator_le_one _) x :=
@@ -553,9 +558,10 @@ private theorem analyticMinimalResolvent_smul_nonneg
     ENNReal.mul_ne_top ENNReal.ofReal_ne_top
     (A.analyticMinimalResolvent_ne_top mu hf hf0 hD hfD x)
   apply (ENNReal.toReal_eq_toReal_iff' hleft hright).mp
-  simpa only [Pi.smul_apply, smul_eq_mul, ENNReal.toReal_mul,
-    ENNReal.toReal_ofReal hc] using
-    A.toReal_analyticMinimalResolvent_smul mu hc hf hf0 hD hfD x
+  show (A.analyticMinimalResolvent mu (fun y ↦ c * f y) (hf.const_smul c) hcf x).toReal =
+    (ENNReal.ofReal c * A.analyticMinimalResolvent mu f hf hfD x).toReal
+  rw [A.toReal_analyticMinimalResolvent_smul mu hc hf hf0 hD hfD x,
+    ENNReal.toReal_mul, ENNReal.toReal_ofReal hc]
 
 omit [NeZero d] in
 private theorem ennreal_toReal_le_one {q : ℝ≥0∞} (hq : q ≤ 1) : q.toReal ≤ 1 := by
@@ -686,7 +692,8 @@ theorem kernelResolventIdentifiesAnalyticMinimal_of_input
         (hqm.ennreal_toReal.add hrm.ennreal_toReal)
         (hqm.add hrm).ennreal_toReal
         (fun y ↦ by
-          rw [abs_of_nonneg (add_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg)]
+          rw [Pi.add_apply,
+            abs_of_nonneg (add_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg)]
           exact add_le_add
             (ennreal_toReal_le_one (hq1 y))
             (ennreal_toReal_le_one (hr1 y)))

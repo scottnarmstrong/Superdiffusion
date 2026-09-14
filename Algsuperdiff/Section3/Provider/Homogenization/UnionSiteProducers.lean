@@ -100,7 +100,7 @@ theorem ae_forall_cutoffResponseJFromCommonCoarseBlock_eq_responseJ
         Observable.cutoffResponseJFromCommonCoarseBlock M coefficientScale Q p q omega =
           ResponseJ (cubeSet Q) p q
             (coefficientCutoff M.nu coefficientScale omega).toFun := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   filter_upwards
     [Observable.ae_forall_blockJObservableCubeSet_eq_cutoffCoarseRepresentative M
       coefficientScale Q] with omega hblock
@@ -196,7 +196,7 @@ private theorem measurable_cutoffCoarseFullBlockRaw_cutoffSampleLocal
     (hQU : cubeSet Q ⊆ U) :
     Measurable[cutoffSampleLocalSigma M L U]
       (Observable.cutoffCoarseFullBlockRaw M L Q) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M L U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M L U
   have hMu : ∀ P0 : BlockVec d, Measurable fun omega : CutoffSample d =>
       Mu (cubeSet Q) P0 (coefficientCutoff M.nu L omega).toFun :=
     fun P0 => measurable_Mu_coefficientCutoff_cutoffSampleLocal M L Q hQU P0
@@ -292,10 +292,8 @@ private theorem measurable_cutoffCoarseFullBlockRaw_cutoffSampleLocal
 
 private theorem continuous_fullBlockReflect_self :
     Continuous (Ch04.fullBlockReflect (d := d)) := by
-  rw [continuous_pi_iff]
-  intro alpha
-  rw [continuous_pi_iff]
-  intro beta
+  refine continuous_pi_iff.2 fun alpha => ?_
+  refine continuous_pi_iff.2 fun beta => ?_
   cases alpha <;> cases beta <;>
     simp [Ch04.fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect] <;>
     fun_prop
@@ -321,7 +319,7 @@ theorem measurable_cutoffResponseJFromCommonCoarseBlock_cutoffSampleLocal
     (hQU : cubeSet Q ⊆ U) (p q : Vec d) :
     Measurable[cutoffSampleLocalSigma M L U]
       (Observable.cutoffResponseJFromCommonCoarseBlock M L Q p q) := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M L U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M L U
   have hrep : Measurable (Observable.cutoffCoarseFullBlockRepresentative M L Q) :=
     measurable_cutoffSampleLocalSigma_of_ae_eq M L U
       (measurable_cutoffCoarseFullBlockRaw_cutoffSampleLocal M L Q hQU)
@@ -448,7 +446,7 @@ theorem integral_siteResponseJ_eq_integral_cutoffResponseJ (M : ABKModel d)
     ∫ omega, siteResponseJ M L n u e omega ∂(cutoffSampleLaw M).toMeasure =
       ∫ omega, Observable.cutoffResponseJ M n L e omega
         ∂(cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   rw [integral_congr_ae (ae_siteResponseJ_eq_comp_translate M L n u e)]
   calc
     ∫ omega, Observable.cutoffResponseJ M n L e
@@ -744,7 +742,7 @@ theorem integrable_siteResponseJ (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 0 
         (Observable.cutoffHomogenizationErrorRepresentative M L n hs
           (Annealed.sigmaBar M L)) A B →
       Integrable (siteResponseJ M L n u e) (cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   intro hErr
   obtain ⟨-, -, -, -, -, -, hint, -⟩ := exists_siteLanes M L n hs u he hErr
@@ -769,7 +767,7 @@ theorem isTwoTermBigOWith_abs_siteCenteredResponseJ (M : ABKModel d) (L n : ℤ)
         (gammaSigma 1) (gammaSigma (1 / 4))
         (fun omega => |siteCenteredResponseJ M L n u e omega|)
         (siteLaneConst 1 * A ^ 2) (siteLaneConst (1 / 4) * B ^ 2) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   intro hErr
   obtain ⟨hA, hB⟩ := pos_of_isTwoTermBigOWith hErr
@@ -796,7 +794,7 @@ theorem integral_siteCenteredResponseJ_eq_zero_of_twoTerm (M : ABKModel d)
           (Annealed.sigmaBar M L)) A B →
       ∫ omega, siteCenteredResponseJ M L n u e omega
         ∂(cutoffSampleLaw M).toMeasure = 0 := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   intro hErr
   exact integral_siteCenteredResponseJ_eq_zero M L n u e
@@ -866,7 +864,7 @@ theorem isTwoTermBigOWith_gridAverage_siteCenteredResponseJ (M : ABKModel d)
         (gridConcentrationConst d (1 / 4) *
           (Orlicz.mixedQuarticConst 2 * (siteLaneConst (1 / 4) * B ^ 2)) *
           gridDecay d k) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   intro hErr
   obtain ⟨hA, hB⟩ := pos_of_isTwoTermBigOWith hErr

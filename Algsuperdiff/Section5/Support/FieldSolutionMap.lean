@@ -98,6 +98,7 @@ theorem coefficientCutoffRestrict_mem_ellipticCube (M : ABKModel d) (m : ℤ) (y
 theorem exists_isEllipticFieldOn_extendCoeff {nu : ℝ} (hnu : 0 < nu) (y : Vec d) (n : ℤ)
     {A : C(closedCubeAt y n, Mat d)} (hA : A ∈ ellipticCube nu y n) :
     ∃ Lam : ℝ, IsEllipticFieldOn nu Lam (cubeSetAt y n) (extendCoeff y n A) := by
+  let _ : Norm C(closedCubeAt y n, Mat d) := ContinuousMap.instNorm
   refine ⟨((d : ℝ) * (d : ℝ) * ‖A‖ ^ 2 + nu ^ 2) / nu, ?_, ?_⟩
   · refine measurable_pi_iff.2 fun i => measurable_pi_iff.2 fun j => ?_
     refine Measurable.ite (measurableSet_cubeSetAt y n) ?_ measurable_const
@@ -120,7 +121,7 @@ theorem exists_isDirichletSolutionAt_extendCoeff (M : ABKModel d) (y : Vec d) (n
     (A : ellipticCube M.nu y n) :
     ∃ u : H1Function (cubeSetAt y n),
       IsDirichletSolutionAt (extendCoeff y n A.1) y n u g := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   obtain ⟨Lam, hEll⟩ := exists_isEllipticFieldOn_extendCoeff M.nu_pos y n A.2
   exact exists_isDirichletSolutionAt_of_isEllipticFieldOn hEll hKg hg
 

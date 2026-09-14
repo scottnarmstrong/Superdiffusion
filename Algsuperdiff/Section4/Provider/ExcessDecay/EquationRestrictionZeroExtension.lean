@@ -114,7 +114,7 @@ private theorem h10_fderiv_approx_eq_zero_of_not_mem {V : Set (Vec d)}
     (isClosed_tsupport (f := phi.approx n)).isOpen_compl.eventually_mem hxs |>.mono
       (fun y hy => image_eq_zero_of_notMem_tsupport hy)
   rw [hzero.fderiv_eq]
-  simp only [fderiv_zero, Pi.zero_apply, ContinuousLinearMap.zero_apply]
+  simp only [fderiv_zero, Pi.zero_apply, zero_apply]
 
 private theorem h10_approx_sub_zeroExtension {V : Set (Vec d)} (phi : H10Function V)
     (n : ℕ) :

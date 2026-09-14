@@ -346,7 +346,7 @@ theorem hessInnerE_ne_top (M : ABKModel d) {alpha : ℝ} (halpha : 0 < alpha) {n
   rw [← hAdef] at hle
   refine ne_top_of_le_ne_top hRne (le_trans ?_ hle)
   exact Finset.single_le_sum (f := fun k => hessInnerE M alpha k omega)
-    (fun j _ => zero_le _) hk
+    (fun j _ => (zero_le : (0 : ℝ≥0∞) ≤ hessInnerE M alpha j omega)) hk
 
 /-- `D₃(k)` is finite at every scale of the window wherever the Step-3
 below-window channel converges — almost surely (`ae_hessHeadSeries_finite`). -/

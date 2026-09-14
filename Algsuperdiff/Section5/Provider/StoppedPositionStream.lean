@@ -73,8 +73,8 @@ theorem ae_eval_exitTimeTrunc_mem_closure_streamProcess
     letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
     ∀ᵐ eta ∂streamProcess M omega x,
       eta (ContinuousPath.exitTimeTrunc U t eta) ∈ closure U := by
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   exact ae_eval_exitTimeTrunc_mem_closure
     (streamWholeSpaceResolvent M omega).onePointKernelSemigroup
     (streamWholeSpaceResolvent M omega).isConservative_onePointKernelSemigroup

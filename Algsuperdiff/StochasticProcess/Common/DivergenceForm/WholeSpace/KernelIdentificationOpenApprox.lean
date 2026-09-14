@@ -46,7 +46,7 @@ omit [NeZero d] in
 theorem continuous_wholeSpaceOpenApprox (G : Set (Vec d)) (n : ℕ) :
     Continuous (wholeSpaceOpenApprox G n) := by
   apply continuous_const.min
-  exact continuous_finset_sum _ fun k _ ↦ continuous_rawOpenApprox G k
+  exact continuous_finsetSum _ fun k _ ↦ continuous_rawOpenApprox G k
 
 omit [NeZero d] in
 private theorem hasCompactSupport_wholeSpaceOpenApprox (G : Set (Vec d)) (n : ℕ) :
@@ -56,10 +56,10 @@ private theorem hasCompactSupport_wholeSpaceOpenApprox (G : Set (Vec d)) (n : �
     classical
     induction Finset.range (n + 1) using Finset.induction_on with
     | empty =>
-        simpa only [Finset.sum_empty] using
+        simpa only [Finset.sum_empty] using!
           (HasCompactSupport.zero : HasCompactSupport (fun _ : Vec d ↦ (0 : ℝ)))
     | @insert k s hks ih =>
-        simpa only [Finset.sum_insert hks] using
+        simpa only [Finset.sum_insert hks] using!
           (hasCompactSupport_rawOpenApprox G k).add ih
   exact hsum.comp_left (by norm_num)
 

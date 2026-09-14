@@ -76,7 +76,7 @@ private theorem scale_le_of_translateSet_cubeSet_subset {w : Vec d} {P K : Triad
   rw [volume_translateSet_eq, volume_cubeSet_toReal, volume_cubeSet_toReal,
     cubeVolume_eq_pow_scale, cubeVolume_eq_pow_scale] at hvol
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hlt : (3 : ℝ) ^ K.scale < (3 : ℝ) ^ P.scale :=
     zpow_lt_zpow_right₀ (by norm_num) hcon
   have hKpos : (0 : ℝ) < (3 : ℝ) ^ K.scale := zpow_pos (by norm_num) K.scale

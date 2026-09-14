@@ -110,7 +110,7 @@ theorem memVectorL2_of_holderSeminormBoundOn_cubeSetAt {y : Vec d} {n : ℤ} {al
     {f : Vec d → Vec d} (hK : 0 ≤ K) (halpha : 0 < alpha)
     (hf : HolderSeminormBoundOn (cubeSetAt y n) alpha K f) :
     MemVectorL2 (cubeSetAt y n) f := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   have hmeas : AEStronglyMeasurable f (volumeMeasureOn (cubeSetAt y n)) :=
     (Section4.Provider.Schauder.continuousOn_of_holderSeminormBoundOn hK halpha
@@ -139,7 +139,7 @@ theorem exists_isDirichletSolutionAt_comparator (M : ABKModel d) (n : ℤ) (y : 
     (hg : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kg g) :
     ∃ v : H1Function (cubeSetAt y n),
       IsDirichletSolutionAt (fun _ => (Annealed.sigmaBar M n : ℝ) • (1 : Mat d)) y n v g := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   obtain ⟨vOrigin, hvOrigin⟩ :=
     Section4.Provider.Schauder.exists_isDirichletSolutionOn_smul_one_of_holder
       (m := n) (Provider.Orlicz.sigmaBar_pos M n) 0
@@ -176,10 +176,10 @@ theorem exists_isDirichletSolutionAt_cutoff (M : ABKModel d) (m n : ℤ) (y : Ve
     (hg : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kg g) :
     ∃ u : H1Function (cubeSetAt y n),
       IsDirichletSolutionAt ((Cutoff.coefficientCutoff M.nu m omega).toCoeffField) y n u g := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   have hd : 0 < d := Provider.Orlicz.dim_pos_of_model M
   have hKg : 0 ≤ Kg := holderSeminormBoundOn_nonneg_cubeSetAt hd hg
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
   have hEll := Cutoff.isEllipticFieldOn_coefficientCutoff_of_entry_bound M m omega
@@ -217,7 +217,7 @@ theorem isDirichletSolutionAt_ae_unique {a : CoeffField d} {lam Lam : ℝ}
     (hu : IsDirichletSolutionAt a y n u g) (hu' : IsDirichletSolutionAt a y n u' g) :
     u.grad =ᵐ[volume.restrict (cubeSetAt y n)] u'.grad ∧
       u.toFun =ᵐ[volume.restrict (cubeSetAt y n)] u'.toFun := by
-  haveI : NeZero d := ⟨hd.ne'⟩
+  have : NeZero d := ⟨hd.ne'⟩
   obtain ⟨w, hwf, hwg⟩ :
       ∃ w : H10Function (cubeSetAt y n),
         (∀ x, w.toH1Function.toFun x = u.toFun x - u'.toFun x) ∧

@@ -184,7 +184,7 @@ private theorem continuous_transposeMul_cutoff_entry (m : ℤ) (omega : CutoffSa
     funext x
     simp [Matrix.mul_apply, matTranspose]
   rw [h]
-  exact continuous_finset_sum _ fun r _ =>
+  exact continuous_finsetSum _ fun r _ =>
     (continuous_cutoff_entry m omega r i).mul (continuous_cutoff_entry m omega r j)
 
 private theorem continuous_vecNormSq_matVecMul_cutoff (m : ℤ) (omega : CutoffSample d)
@@ -193,8 +193,8 @@ private theorem continuous_vecNormSq_matVecMul_cutoff (m : ℤ) (omega : CutoffS
   show Continuous fun x : Vec d => ∑ i : Fin d,
     (∑ j : Fin d, cutoff m omega x i j * xi j) *
       (∑ j : Fin d, cutoff m omega x i j * xi j)
-  refine continuous_finset_sum _ fun i _ => Continuous.mul ?_ ?_ <;>
-    exact continuous_finset_sum _ fun j _ =>
+  refine continuous_finsetSum _ fun i _ => Continuous.mul ?_ ?_ <;>
+    exact continuous_finsetSum _ fun j _ =>
       (continuous_cutoff_entry m omega i j).mul continuous_const
 
 private theorem abs_transposeMul_cutoff_entry_le (ell m : ℤ) (omega : CutoffSample d)
@@ -327,7 +327,7 @@ theorem matLoewnerLE_averagedSymmPartPlusCorrection_coefficientCutoff
       ((M.nu * (1 + (M.nu ^ 2)⁻¹ *
         Ch02.average (Ch02.cubeDomain (originCube d l))
           (fun x => Ch02.matrixFrobeniusNormSq (cutoff m omega x)))) • (1 : Mat d)) := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d l))) := by
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d l))) := by
     simpa [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet
         (originCube d l)).isFiniteMeasure_restrict_volume

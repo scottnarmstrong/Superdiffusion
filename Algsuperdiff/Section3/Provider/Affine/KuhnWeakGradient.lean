@@ -40,7 +40,7 @@ def kuhnCellCoordSlice (T : KuhnCell (n + 1)) (i : Fin (n + 1))
 theorem isCompact_kuhnCell_closedCarrier (T : KuhnCell (n + 1)) :
     IsCompact T.closedCarrier := by
   rw [closedCarrier_eq_convexHull_vertexSet T]
-  exact (Set.finite_range T.vertex).isCompact_convexHull
+  exact (Set.finite_range T.vertex).isCompact_convexHull ℝ
 
 /-- Inserting the varying coordinate into a fixed coordinate line is an isometry. -/
 theorem isometry_finInsertNth_line (i : Fin (n + 1)) (z : Vec n) :
@@ -76,7 +76,7 @@ theorem convex_kuhnCellCoordSlice (T : KuhnCell (n + 1))
       simp [L, p0, p1, AffineMap.lineMap_apply, Fin.insertNth_apply_succAbove]
   have hslice : kuhnCellCoordSlice T i z = L ⁻¹' T.closedCarrier := by
     ext t
-    simp only [kuhnCellCoordSlice, Set.mem_setOf_eq, Set.mem_preimage, hL]
+    simp only [kuhnCellCoordSlice, Set.mem_ofPred_eq, Set.mem_preimage, hL]
   rw [hslice]
   exact hT.affine_preimage L
 
@@ -371,7 +371,7 @@ theorem measurable_zeroExtendedKuhnAffineCoordDeriv
     continuous_pi fun j => continuous_apply (i.succAbove j)
   have hparam : Measurable (fun x : Vec (n + 1) => (i.removeNth x, x i)) :=
     (hremove.prodMk (continuous_apply i)).measurable
-  simpa only [zeroExtendedKuhnAffineCoordDeriv, f] using hderiv.comp hparam
+  simpa only [zeroExtendedKuhnAffineCoordDeriv, f] using! hderiv.comp hparam
 
 /-- The ambient derivative representative obeys the finite coordinate bound. -/
 theorem norm_zeroExtendedKuhnAffineCoordDeriv_le

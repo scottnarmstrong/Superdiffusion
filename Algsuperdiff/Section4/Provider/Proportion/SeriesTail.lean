@@ -271,7 +271,7 @@ private theorem isBigOWith_wpartial {mu : Measure Omega} [IsFiniteMeasure mu]
         = (∅ : Set Omega) := by
       ext omega
       simp only [upperTailEvent, wpartial, Finset.range_zero, Finset.sum_empty,
-        Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_lt]
+        Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
       exact hlev
     rw [hempty, measureReal_empty]
     have hPsi : (0 : ℝ) < gammaSigma sigma t := Real.exp_pos _
@@ -375,7 +375,7 @@ nonnegative terms is measurable, and `.toReal` is measurable. -/
 theorem measurable_wsum {T : ℕ → Omega → ℝ} {c : ℕ → ℝ}
     (hTm : ∀ j, Measurable (T j)) : Measurable (wsum T c) := by
   have h : Measurable (wsumE T c) := by
-    refine Measurable.ennreal_tsum fun j => ?_
+    refine Measurable.tsum fun j => ?_
     exact ((hTm j).const_mul (c j)).ennreal_ofReal
   exact h.ennreal_toReal
 

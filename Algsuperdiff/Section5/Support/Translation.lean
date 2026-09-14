@@ -288,7 +288,7 @@ private theorem measurable_shellTailSum (M : ABKModel d) (n : ℤ) :
       ∑' k : {k : ℤ // n ≤ k},
         ENNReal.ofReal (Real.rpow (3 : ℝ) ((2 - M.gamma) * (n : ℝ)) *
           Section4.Support.shellW1InfGradNorm n (omega.1 k.1)) := by
-  refine Measurable.ennreal_tsum ?_
+  refine Measurable.tsum ?_
   intro k
   refine ENNReal.measurable_ofReal.comp ?_
   refine measurable_const.mul ?_

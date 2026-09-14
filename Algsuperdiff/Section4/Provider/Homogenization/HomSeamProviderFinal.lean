@@ -66,7 +66,7 @@ slots. -/
 theorem supClauseProducerAtBudgeted_holds (d : ℕ) (cstar : ℝ) :
     SupClauseProducerAtBudgeted d cstar := by
   refine ⟨1, one_pos, fun hd inst => ?_⟩
-  haveI : NeZero d := inst
+  have : NeZero d := inst
   have hd1 : 1 ≤ d := le_trans (by norm_num) hd
   obtain ⟨C, hCne, hprod⟩ :=
     exists_coarseGrainingSupMultiscale_of_depthConverseOn_at d hd (recutExponent d hd1)

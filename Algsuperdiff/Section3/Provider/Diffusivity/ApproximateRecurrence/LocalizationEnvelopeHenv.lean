@@ -178,7 +178,7 @@ theorem exists_freshShell_cubeEuclideanL8_leg_bound (d : ℕ) (hd : 2 ≤ d) :
                             (m - (hh : ℤ)) m e' x) →
                       Corrector.cubeEuclideanLpNorm (originCube d K) 8
                           wN.toH1Function.grad ^ (2 : ℕ) ≤ Chead + Tfluct omega) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hmain⟩ :=
     Corrector.exists_cubeEuclideanL8_gradient_sq_sum_le_const_add_gammaPow d hd
   refine ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, ?_⟩

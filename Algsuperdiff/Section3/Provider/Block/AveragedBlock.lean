@@ -147,7 +147,7 @@ private theorem average_finset_sum {iota : Type*} (U : Domain d) (s : Finset iot
     (hf : ∀ i ∈ s, MeasureTheory.Integrable (f i) (volumeMeasureOn (U : Set (Vec d)))) :
     average U (fun x => ∑ i ∈ s, f i x) = ∑ i ∈ s, average U (f i) := by
   unfold average
-  rw [MeasureTheory.integral_finset_sum s hf, Finset.mul_sum]
+  rw [MeasureTheory.integral_finsetSum s hf, Finset.mul_sum]
 
 /-- The normalized average is homogeneous. -/
 theorem average_const_mul (U : Domain d) (c : ℝ) (f : Vec d → ℝ) :
@@ -196,7 +196,7 @@ theorem average_blockVecDot_blockMatVecMul_blockMatrixField (U : Domain d) (a : 
   rw [hpointwise,
     average_finset_sum U Finset.univ (fun alpha x => ∑ beta : BlockCoord d, g alpha beta x)
       (fun alpha _ =>
-        MeasureTheory.integrable_finset_sum Finset.univ fun beta _ => hgint alpha beta),
+        MeasureTheory.integrable_finsetSum Finset.univ fun beta _ => hgint alpha beta),
     blockVecDot_blockMatVecMul_eq_sum]
   refine Finset.sum_congr rfl fun alpha _ => ?_
   rw [average_finset_sum U Finset.univ (fun beta => g alpha beta)
@@ -227,8 +227,8 @@ theorem integrable_blockVecDot_blockMatVecMul_blockMatrixField (U : Domain d) (a
     funext x
     exact blockVecDot_blockMatVecMul_eq_sum (blockMatrixField a x) X
   rw [hpointwise]
-  refine MeasureTheory.integrable_finset_sum Finset.univ fun alpha _ => ?_
-  refine MeasureTheory.integrable_finset_sum Finset.univ fun beta _ => ?_
+  refine MeasureTheory.integrable_finsetSum Finset.univ fun alpha _ => ?_
+  refine MeasureTheory.integrable_finsetSum Finset.univ fun beta _ => ?_
   exact
     ((integrable_toFullBlockMat_blockMatrixField U a alpha beta).const_mul
       (toFullBlockVec X alpha)).mul_const (toFullBlockVec X beta)

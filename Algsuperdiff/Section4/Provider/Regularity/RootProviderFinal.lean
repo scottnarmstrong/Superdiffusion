@@ -131,7 +131,7 @@ theorem anomalous_regularity_provider_final (d : ℕ) (cstar : ℝ) (hcstar : 0 
             ext omega
             simp [hN.ne']
           rw [hset, measure_empty]
-        exact le_trans (le_of_eq hnull) (zero_le _)
+        exact le_trans (le_of_eq hnull) zero_le
     · refine Filter.Eventually.of_forall ?_
       intro _omega _L _hL u _h _g Kg Kh _hdir _hKg _hKh _hsup _hgradh x _hx n _hn _hpay
       have hzero : ∀ mu : Measure (Vec 0),
@@ -139,11 +139,11 @@ theorem anomalous_regularity_provider_final (d : ℕ) (cstar : ℝ) (hcstar : 0 
         fun mu => eLpNorm_sqrt_vecNormSq_zeroDim u.grad mu
       refine ⟨?_, ?_⟩
       · simp only [hzero, mul_zero]
-        exact zero_le _
+        exact zero_le
       · intro _hxm
         simp only [hzero, mul_zero]
-        exact zero_le _
-  · haveI : NeZero d := ⟨hd0⟩
+        exact zero_le
+  · have : NeZero d := ⟨hd0⟩
     exact anomalous_regularity_provider_wellPlaced d hd0 cstar 1 hcstar one_pos
 
 end

@@ -343,7 +343,7 @@ theorem closedCarrier_eq_convexHull_vertexSet (T : KuhnCell d) :
 /-- Closed Kuhn cells are closed sets. -/
 theorem isClosed_closedCarrier (T : KuhnCell d) : IsClosed T.closedCarrier := by
   rw [closedCarrier_eq_convexHull_vertexSet T]
-  exact (Set.finite_range T.vertex).isClosed_convexHull
+  exact (Set.finite_range T.vertex).isClosed_convexHull (𝕜 := ℝ)
 
 /-! ## Strictness at a positive-weight corner -/
 

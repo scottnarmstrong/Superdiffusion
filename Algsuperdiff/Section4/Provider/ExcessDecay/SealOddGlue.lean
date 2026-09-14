@@ -91,10 +91,10 @@ theorem not_meetsFace_flushSubCentre_of_ne {n m : ℤ} (hnm : n + 2 ≤ m)
     zpow_lt_zpow_right₀ (by norm_num) (by linarith only [])
   constructor
   · rw [MeetsUpperFace, hcentre]
-    push_neg
+    push Not
     linarith only [habs.2, h32]
   · rw [MeetsLowerFace, hcentre]
-    push_neg
+    push Not
     linarith only [habs.1, h32]
 
 /-- **The met face, upper branch (`σ = 1`).** -/

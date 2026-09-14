@@ -210,11 +210,11 @@ theorem cubeFamilyAverage_integral_le_of_pointwise {Omega : Type*}
     unfold cubeFamilyAverage
     rw [integral_const_mul]
     refine congrArg (fun t : ℝ => ((I.card : ℝ))⁻¹ * t) ?_
-    exact (integral_finset_sum I fun R hR => hF R hR).symm
+    exact (integral_finsetSum I fun R hR => hF R hR).symm
   rw [hswap]
   have hint : Integrable (fun omega => cubeFamilyAverage I (fun R => F R omega)) mu := by
     unfold cubeFamilyAverage
-    exact (integrable_finset_sum I fun R hR => hF R hR).const_mul _
+    exact (integrable_finsetSum I fun R hR => hF R hR).const_mul _
   exact integral_mono hint hG hle
 
 /-- **The eighth-moment grid average of the oscillation cells.**  The spatial

@@ -239,7 +239,7 @@ lemma per_step_algebra {absval Tm Tn E γ δ R C₀ κ : ℝ}
     absval ≤ C₀ * R * (Tm - Tn) := by
   have hC₀pos : 0 < C₀ := by
     by_contra h
-    push_neg at h
+    push Not at h
     linarith only [mul_nonpos_of_nonpos_of_nonneg h hκ.le, hC₀κ]
   have hCR : 0 ≤ C₀ * R := mul_nonneg hC₀pos.le hRnn
   -- absval ≤ 6400·(δR)·Tm
@@ -496,7 +496,7 @@ theorem bound_by_descent_le {mc m₀ : ℤ} {Φ dd : ℤ → ℝ} (nn : ℤ → 
       intro m hmm₀ hm
       by_cases hle : m ≤ mc
       · exact hbase m hle
-      · push_neg at hle
+      · push Not at hle
         have hnn_lt : nn m < m := hlt m hle hmm₀
         have hdepth : (nn m - mc).toNat ≤ k := by omega
         have hlow : |dd (nn m)| ≤ Φ (nn m) := ih (nn m) (by omega) hdepth

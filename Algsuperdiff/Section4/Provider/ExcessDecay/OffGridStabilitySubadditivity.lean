@@ -96,7 +96,7 @@ theorem responseJ_le_tsum_of_countable_cover {ι : Type} [Countable ι]
     (hsummable : Summable fun i => (volume (cell i)).toReal * B i) :
     ResponseJ V p q a ≤ (volume V).toReal⁻¹ * ∑' i, (volume (cell i)).toReal * B i := by
   classical
-  haveI : Fact (volume V < ⊤) := ⟨hVtop⟩
+  have : Fact (volume V < ⊤) := ⟨hVtop⟩
   have hVinvpos : (0 : ℝ) ≤ (volume V).toReal⁻¹ := by positivity
   have hae : V =ᵐ[volume] ⋃ i, cell i := by
     refine MeasureTheory.ae_eq_set.2 ⟨hcover, ?_⟩
@@ -119,7 +119,7 @@ theorem responseJ_le_tsum_of_countable_cover {ι : Type} [Countable ι]
     MeasureTheory.hasSum_integral_iUnion hmeas hdisj hfintU
   have hcellLe : ∀ i, ∫ x in cell i, f x ∂volume ≤ (volume (cell i)).toReal * B i := by
     intro i
-    haveI : Fact (volume (cell i) < ⊤) := ⟨hcelltop i⟩
+    have : Fact (volume (cell i) < ⊤) := ⟨hcelltop i⟩
     have hEll_i : IsEllipticFieldOn lam Lam (cell i) a := hEll.mono (hmeas i) (hsub i)
     set ui : AHarmonicFunction a (cell i) :=
       u.restrictOfIsEllipticFieldOn hVopen (hopen i) (hsub i) hEll_i with hui

@@ -124,7 +124,7 @@ private theorem measurable_shellRowForcing_comap {U : Set (Vec d)} {x : Vec d}
     @Measurable (ShellSeq d) ℝ
       ((ShellField.lihLocalSigma U).comap (fun omega : ShellSeq d => omega k))
       inferInstance (shellRowForcing e x i k) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   have hrow : @Measurable (ShellField d) ℝ (ShellField.lihLocalSigma U) inferInstance
       (fun j : ShellField d => ∑ l : Fin d, j x i l * e l) :=
     Finset.univ.measurable_sum fun l _ =>
@@ -152,7 +152,7 @@ theorem memLp_two_shellRowForcing (M : ABKModel d) (e x : Vec d) (i : Fin d)
     MemLp (shellRowForcing e x i k) 2 M.P.toMeasure := by
   show MemLp (fun omega : ShellSeq d => ∑ l : Fin d, (omega k) x i l * e l) 2
     M.P.toMeasure
-  refine memLp_finset_sum (μ := M.P.toMeasure) Finset.univ fun l _ => ?_
+  refine memLp_finsetSum (μ := M.P.toMeasure) Finset.univ fun l _ => ?_
   exact (Stream.memLp_two_shell_entry M k x i l).mul_const (e l)
 
 theorem integrable_shellRowForcing (M : ABKModel d) (e x : Vec d) (i : Fin d)
@@ -168,7 +168,7 @@ theorem integral_shellRowForcing_eq_zero (M : ABKModel d) (e x : Vec d) (i : Fin
     ∫ omega : ShellSeq d, shellRowForcing e x i k omega ∂M.P.toMeasure = 0 := by
   rw [show shellRowForcing (d := d) e x i k
       = fun omega : ShellSeq d => ∑ l : Fin d, (omega k) x i l * e l from rfl,
-    integral_finset_sum _ fun l _ =>
+    integral_finsetSum _ fun l _ =>
       Integrable.mul_const
         ((Stream.memLp_two_shell_entry M k x i l).integrable (by norm_num)) (e l)]
   refine Finset.sum_eq_zero fun l _ => ?_
@@ -283,7 +283,7 @@ theorem memLp_two_hilbertForcing_shell (M : ABKModel d) (e x : Vec d) (k : ℤ) 
       hmeasV.stronglyMeasurable).aestronglyMeasurable
   have hsum : MemLp (fun omega : ShellSeq d =>
       ∑ i : Fin d, ‖shellRowForcing e x i k omega‖) 2 M.P.toMeasure :=
-    memLp_finset_sum (μ := M.P.toMeasure) Finset.univ
+    memLp_finsetSum (μ := M.P.toMeasure) Finset.univ
       fun i _ => (memLp_two_shellRowForcing M e x i k).norm
   have hg : MemLp (fun omega : ShellSeq d =>
       (d : ℝ) * ∑ i : Fin d, ‖shellRowForcing e x i k omega‖) 2 M.P.toMeasure :=
@@ -311,7 +311,7 @@ theorem memLp_two_hilbertForcing_finiteShellIncrement (M : ABKModel d) (e x : Ve
           HilbertVec.ofVec (matVecMul ((omega k) x) e) :=
     funext fun omega => hilbertForcing_finiteShellIncrement_eq_sum e x n m omega
   rw [hsplit]
-  exact memLp_finset_sum (μ := M.P.toMeasure) (Finset.Ioc n m)
+  exact memLp_finsetSum (μ := M.P.toMeasure) (Finset.Ioc n m)
     fun k _ => memLp_two_hilbertForcing_shell M e x k
 
 /-- **The shell-sum forcing has compactly supported covariance, at the range
@@ -352,16 +352,16 @@ theorem integral_vecDot_matVecMul_finiteShellIncrement_eq_zero_of_lt_norm
     exact (indepFun_shellRowForcing M e hw hk hk' i i).integrable_mul
       (integrable_shellRowForcing M e w i k) (integrable_shellRowForcing M e 0 i k')
   rw [integral_congr_ae (Filter.Eventually.of_forall hpt)]
-  rw [integral_finset_sum Finset.univ fun i _ =>
-    integrable_finset_sum _ fun k hk =>
-      integrable_finset_sum _ fun k' hk' =>
+  rw [integral_finsetSum Finset.univ fun i _ =>
+    integrable_finsetSum _ fun k hk =>
+      integrable_finsetSum _ fun k' hk' =>
         hprodint i k (hmemIoc k hk) k' (hmemIoc k' hk')]
   refine Finset.sum_eq_zero fun i _ => ?_
-  rw [integral_finset_sum _ fun k hk =>
-    integrable_finset_sum _ fun k' hk' =>
+  rw [integral_finsetSum _ fun k hk =>
+    integrable_finsetSum _ fun k' hk' =>
       hprodint i k (hmemIoc k hk) k' (hmemIoc k' hk')]
   refine Finset.sum_eq_zero fun k hk => ?_
-  rw [integral_finset_sum _ fun k' hk' =>
+  rw [integral_finsetSum _ fun k' hk' =>
     hprodint i k (hmemIoc k hk) k' (hmemIoc k' hk')]
   refine Finset.sum_eq_zero fun k' hk' => ?_
   exact integral_shellRowForcing_mul_eq_zero M e hw (hmemIoc k hk) (hmemIoc k' hk') i i

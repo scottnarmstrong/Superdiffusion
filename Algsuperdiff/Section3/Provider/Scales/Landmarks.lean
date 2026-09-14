@@ -88,7 +88,7 @@ private theorem landmark_sandwich {gamma A : ℝ} {k : ℤ}
     intro hc
     have hle := (hk (k + 1)).mpr hc
     omega
-  push_neg at hnot
+  push Not at hnot
   have hsplit : (3 : ℝ) ^ (2 * gamma * ((k + 1 : ℤ) : ℝ)) =
       (3 : ℝ) ^ (2 * gamma * (k : ℝ)) * (3 : ℝ) ^ (2 * gamma) := by
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),

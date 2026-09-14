@@ -68,7 +68,7 @@ theorem triadicLatticePoint_notMem_openCubeSet {n : ℤ} {v : Fin d → ℤ}
   rw [mem_openCubeSet_originCube_iff] at hmem
   obtain ⟨i, hi⟩ : ∃ i, v i ≠ 0 := by
     by_contra hc
-    push_neg at hc
+    push Not at hc
     exact hv (funext hc)
   have h3 : (0 : ℝ) < (3 : ℝ) ^ n := by positivity
   have hval : triadicLatticePoint n v i = (3 : ℝ) ^ n * (v i : ℝ) := rfl
@@ -121,7 +121,7 @@ theorem exists_mem_latticeAnnulusSet {n m : ℤ} {v : Fin d → ℤ} (hv : v ≠
     triadicLatticePoint_notMem_openCubeSet hv
   have hnm : n ≤ m := by
     by_contra hc
-    push_neg at hc
+    push Not at hc
     exact hout (openCubeSet_originCube_subset (le_of_lt hc) hin)
   obtain ⟨t, ht⟩ : ∃ t : ℕ, m = n + (t : ℤ) := ⟨(m - n).toNat, by omega⟩
   subst ht

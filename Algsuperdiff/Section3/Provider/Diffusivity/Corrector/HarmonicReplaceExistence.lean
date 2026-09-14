@@ -135,7 +135,7 @@ theorem exists_h10Function_isWeaklyHarmonicOn_sub [NeZero d] {U : Set (Vec d)}
       IsWeaklyHarmonicOn U (w - φ.toH1Function).toFun ∧
       ∫ x in U, vecNormSq (φ.toH1Function.grad x) ∂volume ≤
         ∫ x in U, vecNormSq (G x - c) ∂volume := by
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   have hGc : MemVectorL2 U (fun x => G x - c) := hG.sub (memVectorL2_const c)
   obtain ⟨φ, hφ⟩ := exists_h10Function_integral_vecDot_grad_eq hU hne hGc
   refine ⟨φ, ?_, ?_⟩
@@ -226,7 +226,7 @@ theorem exists_h10Function_isWeaklyHarmonicOn_sub_openCubeAtScale [NeZero d]
           φ.toH1Function.grad 0 ≤
         Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z m) G c := by
   have hU := isOpenBoundedConvexDomain_openCubeAtScale z m
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z m)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z m)) :=
     hU.isFiniteMeasure_restrict_volume
   have hne : (openCubeAtScale z m).Nonempty := by
     refine ⟨z, ?_⟩

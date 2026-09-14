@@ -134,7 +134,7 @@ theorem exists_h10Function_isWeaklyHarmonicOn_sub_sqrt_le_subcube [NeZero d]
             (openCubeAtScale_subset_of_le z hmm) - φ.toH1Function).toFun) ∧
         Real.sqrt (Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z m')
             φ.toH1Function.grad 0) ≤ Real.sqrt (d : ℝ) * M * (3 : ℝ) ^ m' := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z m')) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z m')) :=
     isFiniteMeasure_restrict.mpr (volume_openCubeAtScale_ne_top z m')
   have hsub : openCubeAtScale z m' ⊆ openCubeAtScale z m :=
     openCubeAtScale_subset_of_le z hmm

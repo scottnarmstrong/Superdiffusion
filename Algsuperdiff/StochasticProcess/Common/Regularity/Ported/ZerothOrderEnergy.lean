@@ -25,7 +25,7 @@ private theorem abs_integral_mul_le_sqrt_sq_mul_sqrt_sq
         Real.sqrt (∫ x in W, G x ^ 2 ∂volume) := by
   have hFG : IntegrableOn (fun x => |F x| * |G x|) W := by
     have hm := hF.norm.mul (r := 1) hG.norm
-    simpa only [Real.norm_eq_abs, Pi.mul_apply, mul_comm] using
+    simpa only [Real.norm_eq_abs, Pi.mul_apply, mul_comm] using!
       hm.integrable (by norm_num)
   have habs : |∫ x in W, F x * G x ∂volume| ≤
       ∫ x in W, |F x| * |G x| ∂volume := by
@@ -81,7 +81,7 @@ theorem harmonicComparison_normalizedEnergy_zerothOrder [NeZero d]
         4 * unitCubeDirichletPoincareExplicit d * (d : ℝ) * r *
           normalizedL2On (euclideanBall z r) g := by
   let W : Set (Vec d) := euclideanBall z r
-  letI finiteVolumeW : IsFiniteMeasure (volume.restrict W) :=
+  let finiteVolumeW : IsFiniteMeasure (volume.restrict W) :=
     Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall z r
   have hW : 0 < (volume W).toReal := lt_of_le_of_ne ENNReal.toReal_nonneg
     (Ne.symm (Homogenization.Book.Ch01.volume_euclideanBall_toReal_ne_zero z hr))
@@ -149,7 +149,7 @@ theorem harmonicComparison_normalizedEnergy_zerothOrder [NeZero d]
     exact Real.sqrt_pos.2 hW
   apply (mul_le_mul_iff_of_pos_left hspos).mp
   convert hraw using 1
-  all_goals ring
+  all_goals first | rfl | ring
 
 end
 

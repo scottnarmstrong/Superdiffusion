@@ -181,7 +181,7 @@ theorem exists_interiorClause_anchorShape (d : ℕ) :
   · refine ⟨1, one_pos, ?_⟩
     intro M
     exact absurd M.shellPrefix.dimension (by omega)
-  haveI : NeZero d := ⟨hd⟩
+  have : NeZero d := ⟨hd⟩
   obtain ⟨CI, Cfin, hCI, hCfin, hI⟩ := exists_interiorClause_honest d
   obtain ⟨CS, hCS, hS⟩ := exists_inv_sigmaBar_add_two_le d
   have hleI : CI ≤ max (max CI CS) (4 * Cfin) :=

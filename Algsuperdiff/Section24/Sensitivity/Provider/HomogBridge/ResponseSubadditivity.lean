@@ -65,7 +65,7 @@ theorem responseJOnCube_le_descendantsAverage_responseJ
             responseJ (Pcell.cell i) (F.coeffOn i.1) p q := hsub
     _ = descendantsAverage Q j
           (fun R => responseJ (cubeDomain R) (F.coeffOn R) p q) := by
-        simpa [Pcell] using
+        simpa [Pcell] using!
           descendantsDomainPartition_weightedAverage Q j
             (fun R => responseJ (cubeDomain R) (F.coeffOn R) p q)
 

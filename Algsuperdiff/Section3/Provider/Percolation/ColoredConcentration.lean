@@ -98,7 +98,7 @@ theorem isBigO_gammaSigma_sum_of_pairwise_separated [IsProbabilityMeasure μ]
       (Homogenization.Book.Ch04.gammaSigmaIndependentSumConst σ *
         Real.sqrt (S.card : ℝ) * K) := by
   classical
-  haveI hne : Nonempty {x : Fin d → ℤ // x ∈ S} := ⟨⟨hS.choose, hS.choose_spec⟩⟩
+  have hne : Nonempty {x : Fin d → ℤ // x ∈ S} := ⟨⟨hS.choose, hS.choose_spec⟩⟩
   have hindepFun :
       iIndepFun (fun i : {x : Fin d → ℤ // x ∈ S} => X i.val) μ :=
     iIndepFun_of_measurable_siteSigma (z := fun i : {x : Fin d → ℤ // x ∈ S} => i.val)

@@ -165,12 +165,15 @@ theorem measurable_euclideanDist_pair :
 theorem measurable_cubeEuclideanWspKernel (s : FractionalOrder) (q : FiniteLpExponent)
     {G : Vec d → Vec d} (hG : Measurable G) :
     Measurable (cubeEuclideanWspKernel s q G) := by
-  refine Measurable.smul ?_ ?_
-  · change Measurable (fun z : Vec d × Vec d =>
-      euclideanDist z.1 z.2 ^ (-(s.1 + (d : ℝ) / q.exponent.toReal)))
-    exact measurable_euclideanDist_pair.pow measurable_const
-  · exact (HilbertVec.ofVecL d).continuous.measurable.comp
-      ((hG.comp measurable_fst).sub (hG.comp measurable_snd))
+  have h₁ : Measurable (fun z : Vec d × Vec d =>
+      euclideanDist z.1 z.2 ^ (-(s.1 + (d : ℝ) / q.exponent.toReal))) :=
+    measurable_euclideanDist_pair.pow measurable_const
+  have h₂ : Measurable (fun z : Vec d × Vec d => G z.1 - G z.2) :=
+    (hG.comp measurable_fst).sub (hG.comp measurable_snd)
+  have h₃ : Measurable (fun z : Vec d × Vec d =>
+      HilbertVec.ofVec (G z.1 - G z.2)) :=
+    (HilbertVec.ofVecL d).continuous.measurable.comp h₂
+  exact h₁.smul h₃
 
 end
 

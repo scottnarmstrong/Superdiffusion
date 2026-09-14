@@ -289,14 +289,20 @@ theorem upperSaturatedProfile_aggregate_le_of_one_le_of_le_two
     have h96 :
         96 * A * s ^ 2 * rho⁻¹ ^ 3 ≤
           96 * A * s * gamma * rho⁻¹ ^ 3 := by
-      convert hsg using 1 <;> ring
+      calc 96 * A * s ^ 2 * rho⁻¹ ^ 3
+          = 96 * A * s * rho⁻¹ ^ 3 * s := by ring
+        _ ≤ 96 * A * s * rho⁻¹ ^ 3 * gamma := hsg
+        _ = 96 * A * s * gamma * rho⁻¹ ^ 3 := by ring
     have hnonneg : 0 ≤ A * s * gamma * rho⁻¹ ^ 3 := by positivity
     have hconst :
         96 * A * s * gamma * rho⁻¹ ^ 3 ≤
           3072 * A * s * gamma * rho⁻¹ ^ 3 := by
       have := mul_le_mul_of_nonneg_right
         (by norm_num : (96 : ℝ) ≤ 3072) hnonneg
-      convert this using 1 <;> ring
+      calc 96 * A * s * gamma * rho⁻¹ ^ 3
+          = 96 * (A * s * gamma * rho⁻¹ ^ 3) := by ring
+        _ ≤ 3072 * (A * s * gamma * rho⁻¹ ^ 3) := this
+        _ = 3072 * A * s * gamma * rho⁻¹ ^ 3 := by ring
     calc
       (∑' n : ℕ, Book.Ch02.geometricWeight s q n *
           upperSaturatedProfile A gamma n ^ (q / 2)) ^ (2 / q) ≤
@@ -345,7 +351,10 @@ theorem upperSaturatedProfile_aggregate_le_of_one_le_of_le_two
         1536 * A * gamma * rho⁻¹ ^ 2 ≤
           3072 * A * s * gamma * rho⁻¹ ^ 3 := by
       rw [hinvId]
-      convert hrhoStep using 1 <;> ring
+      calc 1536 * A * gamma * (rho * rho⁻¹ ^ 3)
+          = 1536 * A * gamma * rho⁻¹ ^ 3 * rho := by ring
+        _ ≤ 1536 * A * gamma * rho⁻¹ ^ 3 * (2 * s) := hrhoStep
+        _ = 3072 * A * s * gamma * rho⁻¹ ^ 3 := by ring
     calc
       (∑' n : ℕ, Book.Ch02.geometricWeight s q n *
           upperSaturatedProfile A gamma n ^ (q / 2)) ^ (2 / q) ≤

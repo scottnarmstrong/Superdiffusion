@@ -311,7 +311,7 @@ theorem probeSharpAfterBandHsep_split_of_profileAuxiliaryMaxGate
     simpa only [probeSharpAfterBandHsepFactor,
       probeSharpAfterBandHsepResidual] using hpoint omega
   · simpa only [probeSharpAfterBandHsepFactor,
-      probeSharpAfterBandHsepResidual, upperProfileBaseSigma] using hresidual
+      probeSharpAfterBandHsepResidual, upperProfileBaseSigma] using! hresidual
 
 /-! ## Explicit ordinary and rare lanes -/
 

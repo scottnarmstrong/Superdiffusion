@@ -194,7 +194,7 @@ theorem isBigOWith_gammaSigma_scaleTriangle [IsFiniteMeasure μ]
       have hempty : upperTailEvent (W 0) (A * t) = (∅ : Set Ω) := by
         ext ω
         simp only [hWdef, Finset.range_zero, Finset.sum_empty, upperTailEvent,
-          Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_lt]
+          Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
         exact hAt_nonneg
       rw [hempty, measureReal_empty, gammaSigma_inv]
       exact (Real.exp_pos _).le

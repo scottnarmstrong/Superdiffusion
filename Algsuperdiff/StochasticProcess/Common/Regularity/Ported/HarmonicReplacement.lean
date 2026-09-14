@@ -39,7 +39,7 @@ theorem exists_unitHarmonicReplacement_withGradient [NeZero d]
       IsUnitWeaklyHarmonicOn V h ∧
       (∀ x, h.toFun x = Phi.toFun x + rho.toH1Function.toFun x) ∧
       ∀ x, h.grad x = Phi.grad x + rho.toH1Function.grad x := by
-  letI : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
+  let : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
   have hgrad : MemVectorL2 V Phi.grad := Phi.grad_memVectorL2
   obtain ⟨rho, hrho⟩ := exists_h10_isDivFormWeakSolutionOn_one hV hne hgrad
   have hrhoL2 : MemVectorL2 V rho.toH1Function.grad :=

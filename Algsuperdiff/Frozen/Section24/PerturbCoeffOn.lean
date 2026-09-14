@@ -32,7 +32,7 @@ noncomputable def Algsuperdiff.Frozen.Section24.perturbCoeffOn
       have hxE : (↑‖h.1.1 x i j‖₊ : ℝ≥0∞) ≤ E := by
         simpa only [enorm_eq_nnnorm] using hx
       have htoReal := (ENNReal.toReal_le_toReal ENNReal.coe_ne_top hE).2 hxE
-      simpa only [ENNReal.coe_toReal, Real.norm_eq_abs] using htoReal
+      simpa only [ENNReal.coe_toReal, Real.norm_eq_abs] using! htoReal
     exact hx'.trans (by
       dsimp [lInfEntryBound]
       calc
@@ -138,8 +138,7 @@ noncomputable def Algsuperdiff.Frozen.Section24.perturbCoeffOn
       filter_upwards [a.aeElliptic, h.2,
         ae_all_iff.2 fun i => ae_all_iff.2 fun j => hentry i j] with x hax hs hxentry
       apply isEllipticMatrix_of_coercive_of_bound a.lam_pos
-      · dsimp
-        nlinarith [sq_nonneg a.lam,
+      · nlinarith [sq_nonneg a.lam,
           mul_nonneg (mul_nonneg (Nat.cast_nonneg (α := ℝ) d) (Nat.cast_nonneg (α := ℝ) d))
             (sq_nonneg (a.Lam + |t| * lInfEntryBound))]
       · intro ξ

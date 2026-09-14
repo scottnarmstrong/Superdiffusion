@@ -565,7 +565,7 @@ protected theorem pow_four_mul_sqrt_mul_abs_log_le {g Ev : ℝ} (hg0 : 0 < g) (h
       rw [hexp]
       linarith only [hfin, hquot]
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hgt : (1 : ℝ) < (Ev ^ 4 * v ^ 7) ^ 16 := one_lt_pow₀ hcon (by norm_num)
     linarith only [hpow, hgt]
   have hE4 : (0 : ℝ) ≤ Ev ^ 4 := by positivity

@@ -312,7 +312,7 @@ theorem volumeAverage_const_add {S : Set (Vec d)}
 theorem volumeAverage_const_mul' (S : Set (Vec d)) (c : ℝ) (f : Vec d → ℝ) :
     volumeAverage S (fun x => c * f x) = c * volumeAverage S f := by
   have hb := volumeAverage_smul S c f
-  simpa using hb
+  simpa using! hb
 
 /-- The regime's largeness gate is monotone in its threshold. -/
 theorem closureRegime_mono {C C' : ℝ} (hC : C' ≤ C) {M : ABKModel d} {n : ℤ} {h : ℕ}
@@ -367,7 +367,7 @@ theorem volumeAverage_vecNormSq_streamForcing_le [NeZero d] {l : ℤ}
   classical
   set Q : TriadicCube d := originCube d l with hQdef
   set sf : Vec d → Vec d := streamForcing sinv omega n m e' with hsf
-  haveI : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
+  have : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
     ⟨by simp [normalizedCubeMeasure_apply_univ Q]⟩
   have hmem8 : MemLp sf (8 : ℝ≥0∞) (normalizedCubeMeasure Q) :=
     memLp_normalizedCubeMeasure_of_continuous Q _
@@ -462,13 +462,13 @@ theorem integrable_meshCellBackgroundPotentialEnergy_sq_of_meshEnergyCell [NeZer
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M n : ℝ) := (Annealed.sigmaBar M n).2
   have hsinv0 : (0 : ℝ) < sinv := inv_pos.2 hsig
   have hsol := isZeroTraceDirichletRhsWeakSolution_closureDirichletAlong M n h K e
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hsub : openCubeSet R ⊆ openCubeSet Q :=
     openCubeSet_subset_of_mem_descendantsAtDepth hR
   have hwin : Book.Ch03.openCubeAtScale (triadicCubeShift R) R.scale = openCubeSet R :=
     openCubeAtScale_triadicCubeShift_eq_openCubeSet R
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet R
   have hvol : (MeasureTheory.volume (openCubeSet R)).toReal ≠ 0 := by
     rw [volume_openCubeSet_toReal]
@@ -608,13 +608,13 @@ theorem integrable_meshCellBackgroundFluxEnergy_of_legs [NeZero d]
   have hsig0 : (0 : ℝ) < (sig : ℝ) := sig.2
   have hsinv0 : (0 : ℝ) < sinv := inv_pos.2 hsig0
   have hsolN := isMeanZeroNeumannRhsWeakSolution_closureNeumannAlong M n h K e'
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hsub : openCubeSet R ⊆ openCubeSet Q :=
     openCubeSet_subset_of_mem_descendantsAtDepth hR
   have hwin : Book.Ch03.openCubeAtScale (triadicCubeShift R) R.scale = openCubeSet R :=
     openCubeAtScale_triadicCubeShift_eq_openCubeSet R
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet R
   have hvol : (MeasureTheory.volume (openCubeSet R)).toReal ≠ 0 := by
     rw [volume_openCubeSet_toReal]

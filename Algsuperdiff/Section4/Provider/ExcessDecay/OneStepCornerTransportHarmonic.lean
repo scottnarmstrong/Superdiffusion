@@ -40,6 +40,7 @@ Coordinate negation is such an `L`: it is `LinearIsometryEquiv.piLpCongrRight
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
 open InnerProductSpace
+open scoped Laplacian
 open Homogenization (Vec coordFaceReflection)
 
 noncomputable section

@@ -345,7 +345,7 @@ theorem measure_clusterEvent₂_le_exp [MeasurableSpace Ω]
         · refine measure_clusterEvent₂_base hmh ha0.le hb0 hT2 ?_ hB w
           have hmR : (m : ℝ) ≤ (h : ℝ) := by exact_mod_cast hmh
           linarith only [hmR, hhalf]
-        · push_neg at hmh
+        · push Not at hmh
           obtain ⟨j, rfl⟩ : ∃ j, m = j + h := ⟨m - h, by omega⟩
           have hjK : j ≤ K := by omega
           have hj0 : (0 : ℝ) ≤ (j : ℝ) := Nat.cast_nonneg j
@@ -465,7 +465,7 @@ theorem crossingEvent₂_subset (B : ℕ → (Fin d → ℤ) → Set Ω) (k : �
   · obtain ⟨i, hi, j, hj, hmem⟩ := hcase
     exact Or.inr (Set.mem_iUnion₂.mpr ⟨x i, hbig i hi,
       Set.mem_iUnion₂.mpr ⟨j, hj, hmem⟩⟩)
-  · push_neg at hcase
+  · push Not at hcase
     refine Or.inl (Set.mem_iUnion₂.mpr ⟨z, mem_locBox₂_iff.mpr (by omega), ?_⟩)
     refine ⟨M₀, x, h0, hpath.mono hM₀N, hM₀out, fun i hi => ?_⟩
     obtain ⟨L, hmem⟩ := Set.mem_iUnion.mp (hbad i (le_trans hi hM₀N))

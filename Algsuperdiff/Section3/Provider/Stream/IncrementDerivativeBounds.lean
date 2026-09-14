@@ -90,7 +90,7 @@ private theorem sum_Ioc_zpow_le {r : ℝ} (hr0 : 0 < r) (hr : r ≤ 1 / 2) {n m 
     ∑ k ∈ Finset.Ioc n m, r ^ k ≤ r ^ n := by
   have hrne : r ≠ 0 := ne_of_gt hr0
   have htel : (r⁻¹ - 1) * ∑ k ∈ Finset.Ioc n m, r ^ k = r ^ n - r ^ m := by
-    induction m, hnm using Int.le_induction with
+    induction m, hnm using Int.leInduction with
     | base => simp
     | succ p hp ih =>
         have hins : Finset.Ioc n (p + 1) = insert (p + 1) (Finset.Ioc n p) := by
@@ -202,7 +202,7 @@ private theorem matrixDerivativeNorm_zero :
   refine le_antisymm ?_ (ShellField.matrixDerivativeNorm_nonneg _)
   rw [matrixDerivativeNorm_le_iff]
   refine ⟨le_refl 0, fun v _ => ?_⟩
-  simp only [ContinuousLinearMap.zero_apply]
+  simp only [zero_apply]
   change ‖Matrix.toEuclideanCLM (n := Fin d) (𝕜 := ℝ) (0 : Mat d)‖ ≤ 0
   rw [map_zero, norm_zero]
 

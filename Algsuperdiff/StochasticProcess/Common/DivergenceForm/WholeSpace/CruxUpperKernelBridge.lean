@@ -44,7 +44,7 @@ private theorem abs_kernelIntegral_le (P : SubMarkovKernelSemigroup alpha)
     |kernelIntegral (P t) f x| ≤ D := by
   have hD0 : 0 ≤ D := (abs_nonneg (f x)).trans (hfD x)
   rw [← Real.norm_eq_abs]
-  letI : IsFiniteKernel (P t) := (P.isSubMarkovKernel t).isFiniteKernel
+  let : IsFiniteKernel (P t) := (P.isSubMarkovKernel t).isFiniteKernel
   calc
     ‖kernelIntegral (P t) f x‖ ≤ ∫ _y, D ∂(P t x) := by
       apply norm_integral_le_of_norm_le (integrable_const D)
@@ -98,7 +98,7 @@ theorem ofReal_kernelResolventReal_eq_kernelResolvent
   refine lintegral_congr fun t ↦ ?_
   rw [ENNReal.ofReal_mul (Real.exp_pos _).le]
   congr 1
-  letI : IsFiniteKernel (P (Real.toNNReal t)) :=
+  let : IsFiniteKernel (P (Real.toNNReal t)) :=
     (P.isSubMarkovKernel (Real.toNNReal t)).isFiniteKernel
   have hint : Integrable f (P (Real.toNNReal t) x) :=
     Integrable.of_bound hf.stronglyMeasurable.aestronglyMeasurable D

@@ -140,7 +140,7 @@ theorem abs_center_le_of_holder [NeZero d]
   set B : Set (Vec d) := euclideanBall x₀ rho with hBdef
   set mu : Measure (Vec d) := volume.restrict B with hmudef
   have hBmeas : MeasurableSet B := (isOpen_euclideanBall x₀ rho).measurableSet
-  haveI : IsFiniteMeasure mu :=
+  have : IsFiniteMeasure mu :=
     Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall x₀ rho
   have hVeq : (volume B).toReal =
       (volume (smallContrastUnitBall d)).toReal * rho ^ d :=

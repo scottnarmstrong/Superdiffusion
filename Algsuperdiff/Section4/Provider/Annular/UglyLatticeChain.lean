@@ -252,7 +252,7 @@ theorem exists_uglyJEstimate_lattice_cube (d : ℕ) (dimension : 2 ≤ d) :
           (Disorder.cstar M) M.gamma
           ((3 : ℝ) ^ (s * ((m : ℝ) - (n : ℝ))))
           ((3 : ℝ) ^ ((s + M.gamma) * ((m : ℝ) - (n : ℝ)))) C := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cs, hCs, hchain⟩ := exists_responseJ_ugly_estimate_of_grad_le d dimension
   refine ⟨Cs, hCs, ?_⟩
   intro M m n L v e omega s kap Cl Cr Ash C hnm hml hv hs0 hs14 hsgam he hAsh

@@ -227,7 +227,7 @@ theorem abs_integral_sum_eval_exitTimeTrunc_sub_le (hK : P.KolmogorovRegular hP)
       ∑ i, ∫ omega, Q i (omega (ContinuousPath.exitTimeTrunc U t omega))
         ∂(IsConservative.continuousProcess P hP x) := by
     rw [integral_eval_exitTimeTrunc_congr_of_eqOn_closure P hP hK hU hN t hx]
-    exact integral_finset_sum Finset.univ
+    exact integral_finsetSum Finset.univ
       fun i _ ↦ integrable_eval_exitTimeTrunc P hP hU t (hQmeas i) (hCQ i) x
   have hshape : (∫ omega, N (omega (ContinuousPath.exitTimeTrunc U t omega))
         ∂(IsConservative.continuousProcess P hP x)) - (n : ℝ) * (sigma * (t : ℝ)) =

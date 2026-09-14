@@ -82,7 +82,7 @@ theorem normalizedL2SqOnSet_sub_average_eq_eLpNorm_sq_of_memLp (Q : TriadicCube 
         (fun y => v y - volumeAverage (openCubeSet Q) v) =
       ((eLpNorm (fun y => v y - volumeAverage (openCubeSet Q) v) 2
         (Support.normalizedVolumeMeasureOn (openCubeSet Q))).toReal) ^ (2 : ℕ) := by
-  letI : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
+  let : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
     ⟨normalizedCubeMeasure_apply_univ Q⟩
   have hsub : MemLp (fun y => v y - volumeAverage (openCubeSet Q) v) 2
       (normalizedCubeMeasure Q) :=

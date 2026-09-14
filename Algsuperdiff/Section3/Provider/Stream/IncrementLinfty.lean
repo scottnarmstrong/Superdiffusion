@@ -320,9 +320,9 @@ theorem isBigO_gammaSigma_add_of_isBigO {Omega : Type*} [MeasurableSpace Omega]
     (Finset.range 2) (X := fun i : ℕ => if i = 0 then X else Y)
     (a := fun i : ℕ => if i = 0 then A else B) (σ := sigma) hsigma
     (Finset.nonempty_range_iff.2 (by norm_num))
-    (fun i _ => by dsimp only; split_ifs <;> assumption)
-    (fun i _ => by dsimp only; split_ifs <;> assumption)
-    (fun i _ => by dsimp only; split_ifs <;> assumption)
+    (fun i _ => by split_ifs <;> assumption)
+    (fun i _ => by split_ifs <;> assumption)
+    (fun i _ => by split_ifs <;> assumption)
   rw [hsum] at h
   have hfun : (fun omega => ∑ i ∈ Finset.range 2,
       (fun i : ℕ => if i = 0 then X else Y) i omega) =
@@ -339,6 +339,9 @@ theorem measurable_matrixOperatorNorm_finiteShellIncrement_origin (n m : ℤ) :
       matrixOperatorNorm (finiteShellIncrement omega n m 0)) := by
   have hvec : Measurable (fun omega : ShellSeq d =>
       finiteShellIncrement omega n m 0) := by
+    have hMAdd : MeasurableAdd₂ (Mat d) := by
+      show MeasurableAdd₂ (Fin d → Fin d → ℝ)
+      infer_instance
     have hrw : (fun omega : ShellSeq d => finiteShellIncrement omega n m 0) =
         fun omega : ShellSeq d => ∑ k ∈ Finset.Ioc n m, (omega k) 0 := by
       funext omega

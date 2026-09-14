@@ -106,7 +106,7 @@ theorem lambdaSq_inv_le_of_mem_goodLocalEvent_ae (hd : 2 ≤ d) (M : ABKModel d)
                 (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹) *
             (Ch02.lambdaSq Q s q
               (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ := by
-  letI : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
+  let : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
   filter_upwards [unitCubeLambda_inv_le_of_mem_goodLocalEvent_ae M Ccg Q hL s q hs
     hs2 hq] with omega hswitch hmem
   have h := hswitch hmem
@@ -246,7 +246,7 @@ theorem lambdaSq_inv_le_of_notMem_bad_ae (hd : 2 ≤ d) (M : ABKModel d) {m0 : �
                 (coefficientCutoffTriadicCoeffFamily M Q.scale omega))⁻¹) *
             (Ch02.lambdaSq Q s q
               (coefficientCutoffTriadicCoeffFamily M Q.scale omega))⁻¹ := by
-  letI : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
+  let : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
   filter_upwards [unitCubeLambda_inv_le_of_notMem_bad_ae hd M hS Q hm s q hs hs2 hq]
     with omega hswitch hosc hloc L hL
   have h := hswitch hosc hloc L hL

@@ -89,10 +89,10 @@ private theorem tendsto_vecDot_matVecMul {A : ℕ → Mat d} {B : Mat d}
     Tendsto (fun k => vecDot x (matVecMul (A k) y)) atTop
       (nhds (vecDot x (matVecMul B y))) := by
   simp only [vecDot, matVecMul]
-  refine tendsto_finset_sum _ ?_
+  refine tendsto_finsetSum _ ?_
   intro i _
   refine Tendsto.const_mul _ ?_
-  refine tendsto_finset_sum _ ?_
+  refine tendsto_finsetSum _ ?_
   intro j _
   exact (h i j).mul_const (y j)
 

@@ -141,8 +141,8 @@ theorem sum_volumeAverage_coord_sq_eq_volumeAverage_vecNormSq {V : Set (Vec d)}
   unfold volumeAverage vecNormSq vecDot
   rw [← Finset.mul_sum]
   congr 1
-  rw [MeasureTheory.integral_finset_sum Finset.univ
-    (fun k _ => by simpa [pow_two] using (hcoordsq k))]
+  rw [MeasureTheory.integral_finsetSum Finset.univ
+    (fun k _ => by simpa [pow_two] using! (hcoordsq k))]
   refine Finset.sum_congr rfl fun k _ => ?_
   exact integral_congr_ae (Filter.Eventually.of_forall fun x => by ring)
 
@@ -260,7 +260,7 @@ private theorem measurable_meanSquareOscillationVecOn_of_measurable {Omega : Typ
     Measurable fun omega =>
       Book.Ch01.meanSquareOscillationVecOn S ((w omega).grad) := by
   classical
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hcoordMeas : ∀ k : Fin d, Measurable fun omega =>
       volumeAverage S (fun x => (w omega).grad x k) := by
@@ -491,7 +491,7 @@ theorem memLp_two_meshOscillationCell_rpow_four_of_measurable
     have hnn : (0 : ℝ) ≤ Chead + T omega := by linarith [hT0 omega]
     have hle : root omega ≤ Chead + T omega := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have hlt : (Chead + T omega) ^ (4 : ℕ) < (root omega) ^ (4 : ℕ) :=
         pow_lt_pow_left₀ hcon hnn (by norm_num)
       rw [hroot omega] at hlt
@@ -620,7 +620,7 @@ theorem exists_gamma0_memLp_two_freshShellDirichlet_meshOscillationCell_rpow_fou
                   MemLp (fun omega : Cutoff.ShellSeq d =>
                     meshOscillationCell n (wD omega).toH1Function.grad R ^ (4 : ℝ))
                     2 M.P.toMeasure := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hleg⟩ :=
     exists_freshShell_cubeEuclideanL8_leg_bound d hd
   refine ⟨gamma0, hg0pos, hg0quarter, ?_⟩
@@ -686,7 +686,7 @@ theorem exists_gamma0_memLp_two_freshShellNeumann_meshOscillationCell_rpow_four
                   MemLp (fun omega : Cutoff.ShellSeq d =>
                     meshOscillationCell n (wN omega).toH1Function.grad R ^ (4 : ℝ))
                     2 M.P.toMeasure := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hleg⟩ :=
     exists_freshShell_cubeEuclideanL8_leg_bound d hd
   refine ⟨gamma0, hg0pos, hg0quarter, ?_⟩

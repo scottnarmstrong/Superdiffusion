@@ -96,7 +96,7 @@ theorem abs_le_slab_of_pointwise {i : Fin d} {w : ℝ} {S : Set (Vec d)}
     |beta| ≤ 2 * normalizedL2On S G
       + normalizedL2On ((fun z => z - w • (basisVec i : Vec d)) '' S) G + Mw := by
   classical
-  haveI : IsFiniteMeasure (volume.restrict S) := by
+  have : IsFiniteMeasure (volume.restrict S) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hStop
@@ -188,7 +188,7 @@ theorem exists_abs_le_normalizedL2On_of_faceOdd (d : ℕ) [NeZero d] :
   set osc : ℝ := normalizedL2On K G with hoscdef
   set nD : ℝ := normalizedL2On D G with hnDdef
   set q : ℝ := CH * r⁻¹ * r⁻¹ * RD * w ^ 2 with hqdef
-  haveI : IsFiniteMeasure (volume.restrict D) := by
+  have : IsFiniteMeasure (volume.restrict D) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hDtop

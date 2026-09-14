@@ -103,7 +103,7 @@ theorem exists_contDiff_eq_one_nhds {s : Set (Vec d)} {x : Vec d} (hs : s ∈ �
     ∃ (g : Vec d → ℝ) (W : Set (Vec d)),
       ContDiff ℝ (⊤ : ℕ∞) g ∧ HasCompactSupport g ∧ tsupport g ⊆ s ∧
         IsOpen W ∧ x ∈ W ∧ ∀ y ∈ W, g y = 1 := by
-  obtain ⟨f, hfs, hfc, hf, -, hfx⟩ := exists_smooth_tsupport_subset hs
+  obtain ⟨f, hfs, hfc, hf, -, hfx⟩ := exists_contDiff_tsupport_subset (n := ⊤) hs
   have hsupp : Function.support (fun y => oneNear (f y)) ⊆ Function.support f := by
     intro z hz
     simp only [Function.mem_support] at hz ⊢

@@ -275,7 +275,7 @@ theorem exists_unionGridAverageAllDirectionsCommonEnvelope (d : ℕ) :
     mul_pos hnet hC0pos, ?_⟩
   intro M m E hLower hWindow k1 k2 hsep
   have hd : 0 < d := lt_of_lt_of_le (by norm_num) M.shellPrefix.dimension
-  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   have hmerge := isCommonEventTwoTermBigOWith_prod_of_fintype
     (mu := (cutoffSampleLaw M).toMeasure) (I := ℕ) (J := Fin d)
     (by norm_num : (0 : ℝ) < 1) (by norm_num : (0 : ℝ) < 1 / 4)

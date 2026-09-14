@@ -342,7 +342,7 @@ theorem cubeStreamIncrementLpNorm_deepBand_groupSplit_probe
       hSne hpos hbigO (fun r _ =>
         measurable_cubeStreamIncrementLpTail_rpow_cutoff_probe M (by norm_num) Q _ _)
     exact (Orlicz.isBigOWith_iff_isBigO_of_nonneg
-      (probeDeepBandTail_nonneg M Q top k₀ N)).2 (by simpa [probeDeepBandTail] using htri)
+      (probeDeepBandTail_nonneg M Q top k₀ N)).2 (by simpa [probeDeepBandTail] using! htri)
 
 /- Pure arithmetic needed to compress the exact group sums.  These are probe
 lemmas, not proposed public declarations. -/
@@ -490,7 +490,7 @@ private theorem eight_mul_add_one_le_pow_three_probe (r : ℕ) :
 private theorem probeLeOfPowEightLe {q : ℝ} (h : q ^ 8 ≤ 1 / 9) :
     q ≤ 0.76 := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hb : (0.76 : ℝ) ^ 8 ≤ q ^ 8 :=
     pow_le_pow_left₀ (by norm_num) hcon.le 8
   norm_num at hb
@@ -1019,7 +1019,7 @@ theorem cubeStreamIncrementLpNorm_deepBand_waveGauge_probe
             probeDeepBandGaugedTail M Q ell k₀ N omega := by
         rw [mul_add, hmean]
         rfl
-  · simpa [probeDeepBandGaugedTail, probeDeepBandGaugedFluct, a] using
+  · simpa [probeDeepBandGaugedTail, probeDeepBandGaugedFluct, a] using!
       htail.const_mul ha
   · unfold probeDeepBandGaugedTail
     exact (measurable_const.mul measurable_const).mul hmeas

@@ -69,7 +69,7 @@ noncomputable section
 private theorem eLpNorm_two_eq_rpow {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {E : Type*} [NormedAddCommGroup E] (f : α → E) :
     eLpNorm f 2 μ = (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
   norm_num
 
 /-! ## 2. Jensen against a probability measure -/
@@ -184,7 +184,7 @@ theorem normalizedGagliardoMeasureOn_eq_smul_prod {W : Set (Vec d)}
     (hWpos : 0 < volume W) (hWtop : volume W ≠ ⊤) :
     normalizedGagliardoMeasureOn W
       = (volume W) • ((normalizedVolumeMeasureOn W).prod (normalizedVolumeMeasureOn W)) := by
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hWpos hWtop
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hWpos hWtop
   rw [normalizedGagliardoMeasureOn_def, restrict_eq_smul_normalizedVolumeMeasureOn hWpos hWtop,
     Measure.prod_smul_right]
 
@@ -213,7 +213,7 @@ theorem eLpNorm_sub_integral_le_normalizedGagliardoESeminormOn
       ≤ ENNReal.ofReal (D ^ (s + (d : ℝ) / 2) / Real.sqrt ((volume W).toReal))
           * normalizedGagliardoESeminormOn W s f := by
   classical
-  haveI hprob := isProbabilityMeasure_normalizedVolumeMeasureOn hWpos hWtop
+  have hprob := isProbabilityMeasure_normalizedVolumeMeasureOn hWpos hWtop
   set μ : Measure (Vec d) := normalizedVolumeMeasureOn W with hμ
   set e : ℝ := s + (d : ℝ) / 2 with he
   -- the data

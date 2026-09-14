@@ -1,5 +1,5 @@
 import Algsuperdiff.Section3.Provider.Diffusivity.RecurrenceIntegration.Bootstrap
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 
 /-!
 # Integration of the approximate recurrence

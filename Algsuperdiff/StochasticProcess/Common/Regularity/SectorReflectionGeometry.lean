@@ -70,7 +70,7 @@ theorem mem_partialReflectedBallSector_iff {x₀ : Vec d} {r : ℝ}
       y ∈ euclideanBall x₀ r ∧
         ∀ i ∈ S, i ∉ T → 0 < sigma i * (x₀ i - y i) := by
   simp only [partialReflectedBallSector, Set.mem_inter_iff, Set.mem_iInter,
-    Set.mem_setOf_eq, Finset.mem_sdiff]
+    Set.mem_ofPred_eq, Finset.mem_sdiff]
   aesop
 
 theorem mem_ballSector_iff {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
@@ -131,7 +131,7 @@ theorem convex_partialReflectedBallSector (x₀ : Vec d) (r : ℝ)
   have hset : {y : Vec d | 0 < sigma i * (x₀ i - y i)} =
       {y : Vec d | (fun z : Vec d => sigma i * z i) y < sigma i * x₀ i} := by
     ext y
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor <;> intro h
     · have heq : sigma i * (x₀ i - y i) = sigma i * x₀ i - sigma i * y i := by ring
       linarith only [h, heq.le, heq.symm.le]

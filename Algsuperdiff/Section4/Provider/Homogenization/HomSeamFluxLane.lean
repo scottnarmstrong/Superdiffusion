@@ -124,7 +124,7 @@ theorem exists_printedCoarseGraining_of_fluxPair (d : ℕ) (hd : 2 ≤ d)
             (by simpa [originCube] using hnm.le)
             (fluxCorrectedCoeffOn M L m (originCube d m) omega) sigma0 hsigma0 g u
             s1 s s2 p := by
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   obtain ⟨C, hCtop, hC⟩ := exists_printedCoarseGraining_of_dirichletPair d hd p hp
   refine ⟨C, hCtop, ?_⟩
   intro M L omega m n hnm s1 s s2 hs1s hss2 sigma0 hsigma0 g hg u v h hsol hcomp
@@ -242,7 +242,7 @@ theorem exists_weakNegDualBounds_of_fluxPair (d : ℕ) (hd : 2 ≤ d)
               (u.grad x) - sigma0 • v.grad x) ∧
           WeakNegDualBoundOn (originCube d m) s.1 (Real.rpow 3 (s.1 * (m : ℝ)) * Level)
             (fun x => u.grad x - v.grad x) := by
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   obtain ⟨C, hCtop, hC⟩ := exists_printedCoarseGraining_of_fluxPair d hd p hp
   refine ⟨C, hCtop, ?_⟩
   intro M L omega m n hnm jn s1' s' s2 s hs1s hss2 hlo hhi hjn sigma0 hsigma0 g u v h

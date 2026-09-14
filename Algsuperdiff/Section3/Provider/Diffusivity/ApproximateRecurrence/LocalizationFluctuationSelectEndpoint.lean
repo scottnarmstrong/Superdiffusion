@@ -173,7 +173,7 @@ theorem integrable_descendantsAverage {Omega : Type*} [MeasurableSpace Omega]
       fun omega => ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
         ∑ R ∈ descendantsAtDepth Q j, f omega R := rfl
   rw [hrw]
-  exact (integrable_finset_sum _ hint).const_mul _
+  exact (integrable_finsetSum _ hint).const_mul _
 
 /-- **The interchange `int_omega avsum_z = avsum_z int_omega`.**  The cell
 average is a normalized finite sum, so the sample integral passes through it as
@@ -187,7 +187,7 @@ theorem integral_descendantsAverage {Omega : Type*} [MeasurableSpace Omega]
       descendantsAverage Q j (fun R => ∫ omega, f omega R ∂mu) := by
   show ∫ omega, ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       ∑ R ∈ descendantsAtDepth Q j, f omega R ∂mu = _
-  rw [integral_const_mul, integral_finset_sum _ hint]
+  rw [integral_const_mul, integral_finsetSum _ hint]
   rfl
 
 /-! ## The de-existentialized split at the recurrence pair -/

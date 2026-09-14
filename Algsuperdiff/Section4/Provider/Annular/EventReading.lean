@@ -206,7 +206,7 @@ private theorem ofReal_shellQuarter_tsum_le (M : ABKModel d) (m : ℤ) (s : ℝ)
     refine mul_le_mul_right
       (le_trans (ofReal_shellBlockLatticeReal_sq_le M m omega (by omega)) ?_) _
     exact Finset.single_le_sum
-      (f := fun k => shellBlockLatticeAtom M m omega k ^ 2) (fun _i _hi => zero_le _)
+      (f := fun k => shellBlockLatticeAtom M m omega k ^ 2) (fun _i _hi => zero_le)
       (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
   calc (∑' v : ℕ, ENNReal.ofReal ((3 : ℝ) ^ (-(s / 4) * (v : ℝ))
           * shellBlockLatticeReal M m omega (m - (v : ℤ)) ^ 2))

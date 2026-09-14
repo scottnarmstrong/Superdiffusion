@@ -152,7 +152,7 @@ private theorem measurableSet_badSiteFinset_eq (M : ABKModel d) (m : ℤ) (h : �
         ⋂ u ∈ cubeFinset (d := d) h \ S,
           (BadEvents.badExtended M (siteCube (m - (h : ℤ)) u))ᶜ := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter, Set.mem_compl_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter, Set.mem_compl_iff]
     constructor
     · rintro rfl
       refine ⟨fun u hu => (mem_badSiteFinset_iff.mp hu).2, fun u hu hmem => ?_⟩
@@ -187,7 +187,7 @@ private theorem measurable_badClusterDiam (M : ABKModel d) (m : ℤ) (h : ℕ)
           (fun S => closedLatDiam (cluster₂ S u) = n),
         {omega : CutoffSample d | badSiteFinset M m h omega = S} := by
     ext omega
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_iUnion, Set.mem_setOf_eq,
+    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_iUnion, Set.mem_ofPred_eq,
       Finset.mem_filter, Finset.mem_powerset, exists_prop]
     constructor
     · intro hn
@@ -227,7 +227,7 @@ private theorem measurableSet_scaleSeparationGood (M : ABKModel d) (m : ℤ) (E 
             (badClusterDiam M m h omega u : ℝ) < (3 : ℝ) ^ (b * (h : ℝ))}) ∩
         badExtendedDensity M m h ⁻¹' Set.Iic (scaleSeparationDensityThreshold M E h) := by
     ext omega
-    simp only [scaleSeparationGood, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter,
+    simp only [scaleSeparationGood, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter,
       Set.mem_preimage, Set.mem_Iic]
   rw [hset]
   refine MeasurableSet.inter ?_ ?_
@@ -250,14 +250,14 @@ private theorem measurableSet_mem_hsepSet (M : ABKModel d) (m : ℤ) (E b : ℝ)
         ⋂ h : ℕ, ⋂ _ : j ≤ h,
           {omega : CutoffSample d | scaleSeparationGood M m E b h omega} := by
       ext omega
-      simp only [mem_hsepSet_iff, Set.mem_setOf_eq, Set.mem_iInter]
+      simp only [mem_hsepSet_iff, Set.mem_ofPred_eq, Set.mem_iInter]
       exact ⟨fun hmem h hh => hmem.2 h hh, fun hall => ⟨hj, fun h hh => hall h hh⟩⟩
     rw [hset]
     exact MeasurableSet.iInter fun h => MeasurableSet.iInter fun _ =>
       measurableSet_scaleSeparationGood M m E b h
   · have hset : {omega : CutoffSample d | j ∈ hsepSet M m E b omega} = (∅ : Set (CutoffSample d)) := by
       ext omega
-      simp only [mem_hsepSet_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [mem_hsepSet_iff, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       exact fun hmem => hj hmem.1
     rw [hset]
     exact MeasurableSet.empty
@@ -275,7 +275,7 @@ theorem measurableSet_lt_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) (i : ℕ) :
       (⋃ j : ℕ, {omega : CutoffSample d | j ∈ hsepSet M m E b omega}) ∩
         {omega : CutoffSample d | i ∈ hsepSet M m E b omega}ᶜ := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iUnion, Set.mem_compl_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iUnion, Set.mem_compl_iff]
     constructor
     · intro hlt
       have hne : (hsepSet M m E b omega).Nonempty := one_le_hsep_iff.1 (by omega)

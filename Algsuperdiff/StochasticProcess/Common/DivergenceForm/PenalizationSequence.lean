@@ -175,7 +175,7 @@ theorem penalized_exterior_integral_le
       ∫ x, (n : ℝ) *
           (penalizedResolvent a hU hV hα hlam hEll n f x) ^ 2
         ∂volume.restrict (U \ V)) = _
-    rw [← Measure.restrict_restrict_of_subset (Set.diff_subset)]
+    rw [← Measure.restrict_restrict_of_subset (Set.sdiff_subset)]
     rw [← MeasureTheory.integral_indicator
       (MeasurableSet.diff hU.measurableSet hV.measurableSet)]
     apply integral_congr_ae

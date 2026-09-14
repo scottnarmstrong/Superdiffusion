@@ -166,7 +166,7 @@ theorem exists_neighborOffset_of_adj {d : ℕ} {x y : Site d} (hxy : Adj x y) :
     omega
   have hex : ∀ i : Fin d, ∃ j : Fin 3, (j : ℤ) - 1 = y i - x i := by
     intro i
-    simpa only [show (3 / 2 : ℕ) = 1 by norm_num] using
+    simpa only [show (3 / 2 : ℕ) = 1 by norm_num] using!
       (exists_centered_index (show Odd 3 by norm_num) (hcoord i))
   choose j hj using hex
   let δ := offsetOfIndex j
@@ -190,7 +190,7 @@ theorem mem_walksFrom_of_isPath {d : ℕ} (x : Site d) :
   | [], _ => by
       exact Finset.mem_singleton.mpr rfl
   | y :: ys, hpath => by
-      obtain ⟨δ, hδ, hy⟩ := exists_neighborOffset_of_adj hpath.rel_head
+      obtain ⟨δ, hδ, hy⟩ := exists_neighborOffset_of_adj hpath.rel
       apply Finset.mem_biUnion.mpr
       refine ⟨δ, hδ, Finset.mem_image.mpr ⟨(x + δ) :: ys, ?_, ?_⟩⟩
       · rw [← hy]

@@ -68,7 +68,7 @@ private theorem holderTwoTwoOne : ENNReal.HolderTriple (2 : ℝ≥0∞) 2 1 :=
 private theorem integrable_mul_restrict {W : Set (Vec d)} {f g : Vec d → ℝ}
     (hf : MemLp f 2 (volume.restrict W)) (hg : MemLp g 2 (volume.restrict W)) :
     Integrable (fun y => f y * g y) (volume.restrict W) := by
-  haveI := holderTwoTwoOne
+  have := holderTwoTwoOne
   exact hf.integrable_mul hg
 
 /-! ## 2. The weak gradient of the odd extension -/
@@ -111,7 +111,7 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
     (hZG2 l).comp_measurePreserving (measurePreserving_coordFaceReflection a i)
   -- test data
   have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection a i z) := by
-    simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection a i)
+    simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection a i)
   have hφrc : HasCompactSupport fun z => φ (coordFaceReflection a i z) :=
     hasCompactSupport_comp_coordFaceReflection hφc a i
   have hφrU : tsupport (fun z => φ (coordFaceReflection a i z)) ⊆ U :=
@@ -167,7 +167,7 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
       (∀ y, y ∉ faceHalf U i a σ → g y = 0) →
       ∫ y in U, g y * T y ∂volume = ∫ y in faceHalf U i a σ, g y * T y ∂volume := by
     intro g T hg0
-    refine setIntegral_eq_of_subset_of_forall_diff_eq_zero hUmeas hHsub ?_
+    refine setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUmeas hHsub ?_
     intro y hy
     rw [hg0 y hy.2, zero_mul]
   have hZ0 : ∀ y, y ∉ faceHalf U i a σ → Z y = 0 := fun y hy =>
@@ -343,7 +343,7 @@ theorem exists_h1Function_oddFaceExtend {U : Set (Vec d)}
       (∀ y, w.toFun y = oddFaceExtend a i (zeroExtend (faceHalf U i a σ) v.toFun) y) ∧
       (∀ y, w.grad y = oddFaceExtendGrad a i
         (zeroExtendGrad (faceHalf U i a σ) v.grad) y) := by
-  haveI : IsFiniteMeasure (volume.restrict (faceHalf U i a σ)) :=
+  have : IsFiniteMeasure (volume.restrict (faceHalf U i a σ)) :=
     (isOpenBoundedConvexDomain_faceHalf hU i a σ).isFiniteMeasure_restrict_volume
   have hHmeas : MeasurableSet (faceHalf U i a σ) :=
     (isOpen_faceHalf hU.isOpen i a σ).measurableSet
@@ -406,7 +406,7 @@ theorem localizedZeroTraceFunctionOn_oddFaceExtend {H B V₀ : Set (Vec d)}
     LocalizedZeroTraceFunctionOn B V₀ (oddFaceExtend a i (zeroExtend H f)) := by
   intro η hηs hηc hηV
   have hηr : ContDiff ℝ (⊤ : ℕ∞) fun z => η (coordFaceReflection a i z) := by
-    simpa [Function.comp] using hηs.comp (contDiff_coordFaceReflection a i)
+    simpa [Function.comp] using! hηs.comp (contDiff_coordFaceReflection a i)
   have hηrc : HasCompactSupport fun z => η (coordFaceReflection a i z) :=
     hasCompactSupport_comp_coordFaceReflection hηc a i
   have hηrV : tsupport (fun z => η (coordFaceReflection a i z)) ⊆ V₀ :=

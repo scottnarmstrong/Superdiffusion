@@ -290,7 +290,7 @@ theorem exists_correctorParentL2_forceScale (d : ℕ) [NeZero d] :
       (fun x => rho.toH10.toH1Function.grad x) := by
     have h0 := hprod.trans hvalue
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hneg := mul_neg_of_pos_of_neg hCdpos hcon
     linarith only [h0, hneg]
   have hchain : (2 * negNormBaseConst d *

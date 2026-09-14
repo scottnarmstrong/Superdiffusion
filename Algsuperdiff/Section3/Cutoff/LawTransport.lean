@@ -29,7 +29,7 @@ theorem map_shellObservable_eq_zero_triadicScale (M : ABKModel d)
   calc
     Measure.map (fun omega : ShellSeq d => F (omega k)) M.P.toMeasure =
         Measure.map F (ShellField.shellMarginalLaw M.P k).toMeasure := by
-      simpa only [ShellField.shellMarginalLaw, Function.comp_apply] using
+      simpa only [ShellField.shellMarginalLaw, Function.comp_apply] using!
         (Measure.map_map hF (ShellField.measurable_shellCoordinate k)).symm
     _ = Measure.map F
         ((ShellField.zeroShellLaw M.P).map
@@ -37,7 +37,7 @@ theorem map_shellObservable_eq_zero_triadicScale (M : ABKModel d)
       rw [M.shellPrefix.marginal_scaling k]
     _ = Measure.map (fun j => F (ShellField.triadicScale M.gamma k j))
         (ShellField.zeroShellLaw M.P).toMeasure := by
-      simpa only [Function.comp_apply] using
+      simpa only [Function.comp_apply] using!
         Measure.map_map hF (ShellField.measurable_triadicScale M.gamma k)
 
 /-- Distributional form of the local-control transport.  This uses only the
@@ -66,7 +66,7 @@ theorem map_zeroObservable_translate_eq (M : ABKModel d)
         (ShellField.zeroShellLaw M.P).toMeasure =
         Measure.map F (Measure.map (ShellField.translate z)
           (ShellField.zeroShellLaw M.P).toMeasure) := by
-      simpa only [Function.comp_apply] using
+      simpa only [Function.comp_apply] using!
         (Measure.map_map hF (ShellField.measurable_translate z)).symm
     _ = Measure.map F (ShellField.zeroShellLaw M.P).toMeasure := by
       rw [M.J1.stationary z]
@@ -77,7 +77,7 @@ theorem map_translatedUnitCubeControl_zero_eq (M : ABKModel d)
     (z : Vec d) :
     Measure.map (translatedUnitCubeControl z) (ShellField.zeroShellLaw M.P).toMeasure =
       Measure.map ShellField.unitCubeValueNorm (ShellField.zeroShellLaw M.P).toMeasure := by
-  simpa only [translatedUnitCubeControl] using
+  simpa only [translatedUnitCubeControl] using!
     map_zeroObservable_translate_eq M z ShellField.unitCubeValueNorm
       ShellField.unitCubeValueNorm_measurable
 

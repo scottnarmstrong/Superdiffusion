@@ -211,7 +211,13 @@ theorem exists_blockVecDot_self_eq_one :
     ∃ E : BlockVec d, blockVecDot E E = 1 := by
   have hi : (0 : ℕ) < d := Nat.pos_of_ne_zero (NeZero.ne d)
   refine ⟨((fun j => if j = (⟨0, hi⟩ : Fin d) then (1 : ℝ) else 0), fun _ => (0 : ℝ)), ?_⟩
-  simp [blockVecDot, vecDot]
+  simp only [blockVecDot, vecDot, mul_zero, Finset.sum_const_zero, add_zero]
+  rw [Finset.sum_eq_single (⟨0, hi⟩ : Fin d)]
+  · simp
+  · intro b _ hb
+    simp only [if_neg hb, mul_zero]
+  · intro h
+    exact absurd (Finset.mem_univ _) h
 
 /-! ## The switch -/
 

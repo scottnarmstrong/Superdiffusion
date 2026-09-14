@@ -166,7 +166,7 @@ theorem measurableSet_annulusRegion (d : ℕ) (n : ℤ) :
     have hset : {x : Vec d | ∃ i, (1 / 2 : ℝ) * (3 : ℝ) ^ (n - 1) ≤ |x i|}
         = ⋃ i : Fin d, {x : Vec d | (1 / 2 : ℝ) * (3 : ℝ) ^ (n - 1) ≤ |x i|} := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+      simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
     rw [hset]
     exact MeasurableSet.iUnion fun i => measurableSet_le measurable_const (hinner i)
   have h2 : MeasurableSet
@@ -174,7 +174,7 @@ theorem measurableSet_annulusRegion (d : ℕ) (n : ℤ) :
     have hset : {x : Vec d | ∀ i, |x i| ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ n}
         = ⋂ i : Fin d, {x : Vec d | |x i| ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ n} := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iInter]
+      simp only [Set.mem_ofPred_eq, Set.mem_iInter]
     rw [hset]
     exact MeasurableSet.iInter fun i => measurableSet_le (hinner i) measurable_const
   exact h1.inter h2
@@ -333,7 +333,7 @@ theorem mem_annulusRegion_of_le_triadicLatticePoint {j n : ℤ} (hj : j ≤ n - 
   · obtain ⟨i, hi⟩ : ∃ i, (1 / 2 : ℝ) * (3 : ℝ) ^ (n - 1)
         ≤ |triadicLatticePoint j v i| := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       refine hv.2 ?_
       rw [mem_openCubeSet_originCube_iff]
       intro i

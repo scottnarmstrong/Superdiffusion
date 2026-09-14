@@ -64,9 +64,9 @@ theorem hasLocalKolmogorovMoments_of_variableResolventTail
     R.kernelSemigroup.HasLocalKolmogorovMoments 4 q
       (Real.toNNReal (256 * (A + 8 * Real.exp 1 * I))) B := by
   refine ⟨by norm_num, hq1, fun h hh1 y ↦ ?_, hB⟩
-  rcases eq_or_lt_of_le (zero_le h) with hh | hh
+  rcases eq_or_lt_of_le (zero_le : 0 ≤ h) with hh | hh
   · rw [← hh, lintegral_edist_pow_zero R y]
-    exact zero_le _
+    exact zero_le
   · have hpos : (0 : ℝ) < (h : ℝ) := hh
     have hcoe : (h : ℝ) ≤ 1 := by exact_mod_cast hh1
     have hinv : (0 : ℝ) < ((h : ℝ))⁻¹ := inv_pos.mpr hpos

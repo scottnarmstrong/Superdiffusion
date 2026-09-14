@@ -40,7 +40,7 @@ private theorem exists_weaklyConvergent_subsequence
   have hev := (WeakDual.eval_continuous v).tendsto b |>.comp hb
   simpa only [Function.comp_apply, ds, StrongDual.coe_toWeakDual,
     InnerProductSpace.toDual_apply_apply, z,
-    InnerProductSpace.toDual_symm_apply] using hev
+    InnerProductSpace.toDual_symm_apply] using! hev
 
 private noncomputable def exteriorRestriction
     (hU : MeasurableSet U) : ScalarL2 U →L[ℝ] ScalarL2 (U \ V) :=
@@ -267,7 +267,7 @@ private theorem weak_limit_toL2_eq_pointwiseLimit [NeZero d]
     a hU hV hα hlam hEll f hf
   have hstrong : Tendsto (fun n => ZeroTraceSobolev.toL2 (s n))
       atTop (nhds g) := by
-    simpa only [Function.comp_apply, s, penalizedResolvent_apply] using
+    simpa only [Function.comp_apply, s, penalizedResolvent_apply] using!
       hstrongAll.comp hindex
   exact toL2_eq_of_weak_and_strong hweak hstrong
 

@@ -221,7 +221,7 @@ private theorem descendantsAverage_integral_comm {Omega : Type*} [MeasurableSpac
   rw [show (fun w => descendantsAverage Q j (fun R => F R w))
       = fun w => ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
           ∑ R ∈ descendantsAtDepth Q j, F R w from rfl,
-    integral_const_mul, integral_finset_sum _ hF]
+    integral_const_mul, integral_finsetSum _ hF]
 
 /-! ## The endpoint -/
 
@@ -283,7 +283,7 @@ theorem step4GaugeEndpoint_of_correctors (M : ABKModel d) (n : ℤ) (h : ℕ)
       descendantsAverage (originCube d (K : ℤ)) j (fun R => vecNormSq (cubeAverageVec R
         (fun x => (alongIncrementPath n h wN omega.val).toH1Function.grad x))))
       (cutoffSampleLaw M).toMeasure :=
-    (integrable_finset_sum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampR).const_mul _
+    (integrable_finsetSum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampR).const_mul _
   show gaugeEnergyAverage M n h (K : ℤ) j 0 e'
       (alongIncrementPath n h wD) (alongIncrementPath n h wN) ≤
     1 + neumannCubeEnergy M n h K wN

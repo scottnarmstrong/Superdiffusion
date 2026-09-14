@@ -235,7 +235,7 @@ theorem exists_oneStepAnchorBound_errorWeighted (d : ℕ) :
       (anchorWindowInner_subset_anchorWindow (d := d) (n - 2) m z)
     rw [hzero, le_zero_iff] at hmono
     exact hW20 hmono
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hWtop
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hWtop
   -- the sign data of the four printed coefficients
   have hS4 : (0 : ℝ) ≤ Real.rpow s (-(4 : ℝ)) := Real.rpow_nonneg hs.le _
   have hS7 : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) := Real.rpow_nonneg hs.le _

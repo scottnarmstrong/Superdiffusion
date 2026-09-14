@@ -49,8 +49,8 @@ instance instIsFiniteMeasureSphereMeasure : IsFiniteMeasure (sphereMeasure d) :=
 
 /-- For `d ≥ 1` the ambient space is nontrivial, hence the surface measure is nonzero. -/
 instance instNeZeroSphereMeasure [NeZero d] : NeZero (sphereMeasure d) := by
-  haveI : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
-  haveI : Nontrivial (EuclideanSpace ℝ (Fin d)) := inferInstance
+  have : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
+  have : Nontrivial (EuclideanSpace ℝ (Fin d)) := inferInstance
   exact ⟨Measure.toSphere_ne_zero (μ := (volume : Measure (EuclideanSpace ℝ (Fin d))))⟩
 
 theorem sphereMeasure_univ_ne_zero [NeZero d] : (sphereMeasure d) Set.univ ≠ 0 :=
@@ -104,9 +104,10 @@ theorem continuousAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) �
       (F := fun r (ω : sphere (0 : EuclideanSpace ℝ (Fin d)) 1) =>
         u (x + r • ((ω : EuclideanSpace ℝ (Fin d)))))
       (bound := fun _ => M) ?_ ?_ (integrable_const M) ?_
-    · exact Filter.Eventually.of_forall fun r =>
-        (huc.comp (continuous_const.add
-          (continuous_const.smul continuous_subtype_val))).aestronglyMeasurable
+    · refine Filter.Eventually.of_forall fun r => ?_
+      have hc : Continuous (fun ω : sphere (0 : EuclideanSpace ℝ (Fin d)) 1 =>
+          u (x + r • (ω : EuclideanSpace ℝ (Fin d)))) := by fun_prop
+      exact hc.aestronglyMeasurable
     · filter_upwards [Metric.ball_mem_nhds r₀ one_pos] with r hr
       refine Filter.Eventually.of_forall fun ω => ?_
       have hω : ‖(ω : EuclideanSpace ℝ (Fin d))‖ = 1 := mem_sphere_zero_iff_norm.mp ω.2
@@ -121,14 +122,15 @@ theorem continuousAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) �
         exact hrle
       exact hM _ hmem
     · refine Filter.Eventually.of_forall fun ω => ?_
-      exact (huc.comp (continuous_const.add
-        (continuous_id.smul continuous_const))).continuousAt
+      have hc : Continuous (fun r : ℝ => u (x + r • (ω : EuclideanSpace ℝ (Fin d)))) := by
+        fun_prop
+      exact hc.continuousAt
   have heq : (fun r : ℝ => sphereAverage x r u)
       = fun r => ((sphereMeasure d).real Set.univ)⁻¹ • ∫ ω,
           u (x + r • (ω : EuclideanSpace ℝ (Fin d))) ∂(sphereMeasure d) := by
     funext r; rw [sphereAverage_def, average_eq]
   rw [heq]
-  exact continuousAt_const.smul hintCont
+  exact hintCont.const_smul (((sphereMeasure d).real Set.univ)⁻¹)
 
 /-- **Continuity in the radius.**  For continuous `u`, the spherical average is
 continuous in `r`. -/
@@ -173,7 +175,7 @@ theorem hasDerivAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → 
     fun r ω => fderiv ℝ u (x + r • (ω : EuclideanSpace ℝ (Fin d)))
       (ω : EuclideanSpace ℝ (Fin d)) with hF'
   have hderiv := hu.differentiable (by norm_num)
-  have hcont_fderiv : Continuous (fun y => fderiv ℝ u y) := hu.continuous_fderiv le_rfl
+  have hcont_fderiv : Continuous (fun y => fderiv ℝ u y) := hu.continuous_fderiv (by norm_num)
   -- Local gradient bound on the compact ball.
   obtain ⟨M, hM⟩ := (isCompact_closedBall x (|r₀| + 1)).exists_bound_of_continuousOn
     (hcont_fderiv.continuousOn)
@@ -192,8 +194,7 @@ theorem hasDerivAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → 
   -- Continuity of `ω ↦ x + r • ω` for fixed `r`.
   have hgcont : ∀ r : ℝ, Continuous
       (fun ω : sphere (0 : EuclideanSpace ℝ (Fin d)) 1 =>
-        x + r • (ω : EuclideanSpace ℝ (Fin d))) :=
-    fun r => continuous_const.add (continuous_const.smul continuous_subtype_val)
+        x + r • (ω : EuclideanSpace ℝ (Fin d))) := fun r => by fun_prop
   -- The five hypotheses of `hasDerivAt_integral_of_dominated_loc_of_deriv_le` (with `ε = 1`).
   have hF_meas : ∀ᶠ r in nhds r₀, AEStronglyMeasurable (F r) μ :=
     Filter.Eventually.of_forall fun r => (hu.continuous.comp (hgcont r)).aestronglyMeasurable
@@ -204,8 +205,11 @@ theorem hasDerivAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → 
       (hu.continuous.comp (hgcont r₀)).aestronglyMeasurable
       (Filter.Eventually.of_forall fun ω => ?_)
     exact hM₀ _ (hmem r₀ (mem_ball_self one_pos) ω)
-  have hF'_meas : AEStronglyMeasurable (F' r₀) μ :=
-    ((hcont_fderiv.comp (hgcont r₀)).clm_apply continuous_subtype_val).aestronglyMeasurable
+  have hF'_meas : AEStronglyMeasurable (F' r₀) μ := by
+    have hc : Continuous (fun ω : sphere (0 : EuclideanSpace ℝ (Fin d)) 1 =>
+        fderiv ℝ u (x + r₀ • (ω : EuclideanSpace ℝ (Fin d)))
+          (ω : EuclideanSpace ℝ (Fin d))) := by fun_prop
+    exact hc.aestronglyMeasurable
   have h_bound : ∀ᵐ ω ∂μ, ∀ r ∈ ball r₀ 1, ‖F' r ω‖ ≤ M := by
     refine Filter.Eventually.of_forall fun ω r hr => ?_
     have hω : ‖(ω : EuclideanSpace ℝ (Fin d))‖ = 1 := mem_sphere_zero_iff_norm.mp ω.2
@@ -223,8 +227,8 @@ theorem hasDerivAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → 
     exact (hderiv (x + r • (ω : EuclideanSpace ℝ (Fin d)))).hasFDerivAt.comp_hasDerivAt r hg
   -- Differentiation under the integral sign.
   have hkey := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := μ) (bound := fun _ => M)
-    (F := F) (F' := F') (x₀ := r₀) one_pos hF_meas hF_int hF'_meas h_bound
-    (integrable_const M) h_diff
+    (F := F) (F' := F') (x₀ := r₀) (Metric.ball_mem_nhds r₀ one_pos) hF_meas hF_int hF'_meas
+    h_bound (integrable_const M) h_diff
   -- Repackage as the derivative of the (constant-scaled) average.
   have heq : (fun r : ℝ => sphereAverage x r u)
       = fun r => ((sphereMeasure d).real Set.univ)⁻¹ • ∫ ω, F r ω ∂μ := by

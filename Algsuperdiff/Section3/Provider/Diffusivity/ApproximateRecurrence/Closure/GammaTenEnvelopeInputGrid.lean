@@ -255,7 +255,7 @@ theorem exists_grid_pathwise_envelope_of_monotone (mu : Measure Omega)
   have hVfin : ∀ R ∈ I, (∫⁻ w, V R w ∂mu) ≠ ⊤ := by
     intro R hR
     refine ne_top_of_le_ne_top ENNReal.ofReal_ne_top (le_trans ?_ hbig)
-    exact Finset.single_le_sum (f := fun S => ∫⁻ w, V S w ∂mu) (fun S _ => zero_le _) hR
+    exact Finset.single_le_sum (f := fun S => ∫⁻ w, V S w ∂mu) (fun S _ => zero_le) hR
   have hfin : ∀ R ∈ I, ∀ᵐ w ∂mu, V R w ≠ ⊤ := by
     intro R hR
     filter_upwards [ae_lt_top (hVmeas R hR) (hVfin R hR)] with w hw
@@ -432,7 +432,7 @@ theorem integrable_descendantsAverage (mu : Measure Omega) (R : TriadicCube d) (
       fun w => ((descendantsAtDepth R i).card : ℝ)⁻¹ *
         ∑ R' ∈ descendantsAtDepth R i, f R' w := rfl
   rw [hrw]
-  exact (integrable_finset_sum _ hf).const_mul _
+  exact (integrable_finsetSum _ hf).const_mul _
 
 theorem integral_descendantsAverage (mu : Measure Omega) (R : TriadicCube d) (i : ℕ)
     (f : TriadicCube d → Omega → ℝ)
@@ -443,7 +443,7 @@ theorem integral_descendantsAverage (mu : Measure Omega) (R : TriadicCube d) (i 
   have hrw : (fun w => descendantsAverage R i (fun R' => f R' w)) =
       fun w => ((descendantsAtDepth R i).card : ℝ)⁻¹ *
         ∑ R' ∈ descendantsAtDepth R i, f R' w := rfl
-  rw [hrw, integral_const_mul, integral_finset_sum _ hf]
+  rw [hrw, integral_const_mul, integral_finsetSum _ hf]
   rfl
 
 theorem cubeFamilyAverage_finsetSum (I : Finset (TriadicCube d)) {iota : Type*}

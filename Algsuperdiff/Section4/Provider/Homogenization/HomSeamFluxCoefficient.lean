@@ -110,7 +110,7 @@ theorem matTranspose_fluxIncrementAverage (M : ABKModel d) (L m : ℤ)
       -fluxIncrementAverage M L m Q omega := by
   ext i j
   have h := fluxIncrementAverage_skew M L m Q omega i j
-  simpa only [Matrix.transpose_apply, Matrix.neg_apply] using h
+  simpa only [Matrix.transpose_apply, Matrix.neg_apply] using! h
 
 /-! ## 2. The Dirichlet datum transports -/
 

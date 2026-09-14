@@ -46,7 +46,7 @@ private theorem probe_abs_apply_le_abs_volumeAverage_add_of_pointwise_oscillatio
     (hSpos : 0 < (volume S).toReal) (hf : IntegrableOn f S)
     (hOsc : ∀ y ∈ S, |f x - f y| ≤ B) :
     |f x| ≤ |volumeAverage S f| + B := by
-  letI : IsFiniteMeasure (volumeMeasureOn S) :=
+  let : IsFiniteMeasure (volumeMeasureOn S) :=
     ⟨by simpa [volumeMeasureOn] using hSfin.lt_top⟩
   have hvol : (volume S).toReal ≠ 0 := ne_of_gt hSpos
   have hconst : IntegrableOn (fun _ : Vec d => f x) S :=
@@ -76,7 +76,7 @@ private theorem probe_abs_apply_le_abs_volumeAverage_add_of_pointwise_oscillatio
     have hsub := volumeAverage_sub hconst hf
     have hsub' : volumeAverage S (fun y => f x - f y) =
         volumeAverage S (fun _ : Vec d => f x) - volumeAverage S f := by
-      simpa only [Pi.sub_apply] using hsub
+      simpa only [Pi.sub_apply] using! hsub
     linarith [hmean, hsub']
   rw [hsplit]
   exact (abs_add_le _ _).trans (add_le_add_right habs _)
@@ -496,7 +496,7 @@ theorem probeLayerSimplexMeanSq_le_sqrt_mass_mul_sqrt_fourth
     intro Q hQ
     exact sum_cellWeight_whitneySimplexCells_eq hstep hQ
   rw [hmass] at hcs
-  simpa only [simplexIncrementFourth] using hcs
+  simpa only [simplexIncrementFourth] using! hcs
 
 /-! ## Refined collar carrier with the same simplex mean -/
 

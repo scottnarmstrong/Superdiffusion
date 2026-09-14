@@ -337,8 +337,10 @@ private theorem exists_isDoubledMuMinimizerField_of_isEllipticFieldOn [NeZero d]
       memVectorL2_potential_of_isDoubledMuAdmissibleField hFpot hW
     have hWflux : MemVectorL2 (U : Set (Vec d)) W.flux :=
       memVectorL2_flux_of_isDoubledMuAdmissibleField hFflux hW
-    refine ⟨memBlockL2_blockField hWpot hWflux, ?_⟩
-    rw [hilbert_eq_add_of_components hFL2 (memBlockL2_blockField hWpot hWflux)
+    have hWL2 : MemBlockL2 (U : Set (Vec d)) (blockStateOfDoubled W).eval :=
+      memBlockL2_blockField hWpot hWflux
+    refine ⟨hWL2, ?_⟩
+    rw [hilbert_eq_add_of_components hFL2 hWL2
       hW.1.1 hW.2.1
       (fun x => by
         show W.potential x = F.potential x + (W.potential x - F.potential x)
@@ -413,7 +415,7 @@ theorem exists_isDoubledMuMinimizerField (U : Domain d) (a : CoeffOn U)
     · intro W _ _
       exact ⟨Filter.Eventually.of_forall fun _ => Subsingleton.elim _ _,
         Filter.Eventually.of_forall fun _ => Subsingleton.elim _ _⟩
-  · letI : NeZero d := ⟨hd⟩
+  · let : NeZero d := ⟨hd⟩
     set b : CoeffOn U := pointwiseCoeffOn U a with hbdef
     have hba : CoeffOn.AEEq b a := by
       simpa [hbdef] using pointwiseCoeffOn_ae_eq U a

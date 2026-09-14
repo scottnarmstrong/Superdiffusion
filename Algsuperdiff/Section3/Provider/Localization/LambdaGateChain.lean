@@ -202,7 +202,7 @@ theorem inv_lambdaSq_le_two_mul_inv_lambdaSq_of_mem_goodLocalEvent_ae
         (Ch02.lambdaSq Q s q (coefficientCutoffTriadicCoeffFamily M L omega))⁻¹ ≤
           2 * (Ch02.lambdaSq Q s q
             (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ := by
-  letI : NeZero d := neZero_of_model_lambdaGate M
+  let : NeZero d := neZero_of_model_lambdaGate M
   filter_upwards
     [Algsuperdiff.Section3.Provider.Multiscale.lambdaSq_inv_le_of_mem_goodLocalEvent_ae
       M.shellPrefix.dimension M Ccg Q hnL s q hs hs2 hq,
@@ -325,7 +325,7 @@ theorem lambda_gate_chain (d : ℕ) :
   obtain ⟨C, hC0, hcont⟩ := shom_continuity d
   refine ⟨C, hC0, ?_⟩
   intro M m0 E hm0 hstate hCE hgammaE Ccg hCcg Q n L hnL hnQ hnm0
-  letI : NeZero d := neZero_of_model_lambdaGate M
+  let : NeZero d := neZero_of_model_lambdaGate M
   have hE1 : (1 : ℝ) ≤ (E : ℝ) := E.2
   have hE0 : (0 : ℝ) < (E : ℝ) := lt_of_lt_of_le one_pos hE1
   have hgamma1 : M.gamma ≤ 1 := by

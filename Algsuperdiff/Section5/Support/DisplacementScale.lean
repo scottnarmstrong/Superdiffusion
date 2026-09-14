@@ -144,7 +144,7 @@ theorem lintegral_ofReal_three_pow_rpow_le_of_tail (mu : Measure Omega)
     · have hsub : Y ⁻¹' {N} ⊆ {omega | N ≤ Y omega} := by
         intro omega homega
         simp only [Set.mem_preimage, Set.mem_singleton_iff] at homega
-        simp only [Set.mem_setOf_eq, homega, le_refl]
+        simp only [Set.mem_ofPred_eq, homega, le_refl]
       calc ENNReal.ofReal ((3 : ℝ) ^ N) ^ p * mu (Y ⁻¹' {N})
           ≤ ENNReal.ofReal ((3 : ℝ) ^ N) ^ p *
               ENNReal.ofReal (Real.exp (-(a * (3 : ℝ) ^ N))) := by

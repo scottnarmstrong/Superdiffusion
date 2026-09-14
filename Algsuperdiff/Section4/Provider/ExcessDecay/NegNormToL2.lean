@@ -183,7 +183,7 @@ theorem cubeLpNorm_h10_le_negativeBesov_quarter [NeZero d] (Q : TriadicCube d)
   have hN : 0 ≤ cubeBesovNegativeVectorSeminormTwo Q (s / 2)
       (fun x => u.toH1Function.grad x) := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hneg : negNormBaseConst d * Real.sqrt
           ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - s / 4)))⁻¹) *
         cubeBesovNegativeVectorSeminormTwo Q (s / 2)

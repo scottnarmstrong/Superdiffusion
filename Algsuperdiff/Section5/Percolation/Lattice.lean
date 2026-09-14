@@ -107,7 +107,7 @@ private theorem siteDist_first_getLast_lt_length {d : ℕ} (x : Site d) :
       simp only [List.getLast_singleton, siteDist_self, List.length_singleton,
         Nat.zero_lt_one]
   | y :: ys, hpath => by
-      have hxy : siteDist x y = 1 := hpath.rel_head
+      have hxy : siteDist x y = 1 := hpath.rel
       have htail : IsPath (y :: ys) := hpath.tail
       have hlast := siteDist_first_getLast_lt_length y ys htail
       have htriangle := siteDist_triangle x y
@@ -132,7 +132,7 @@ theorem IsPathFrom.length_lower_bound {d : ℕ} {k : ℕ} {Γ : List (Site d)}
       obtain ⟨hpath, hx, hy⟩ := hΓ
       let y := (x :: xs).getLast (List.cons_ne_nil x xs)
       simp only [inCube] at hx hy
-      push_neg at hy
+      push Not at hy
       obtain ⟨i, hyi⟩ := hy
       have hxi := hx i
       have hcoord : (y i - x i).natAbs ≤ siteDist y x :=
@@ -212,7 +212,7 @@ private theorem isPath_destutter' {d : ℕ} :
         refine List.IsChain.cons (isPath_destutter' l b h.tail) ?_
         intro y hy
         rw [head?_destutter' l b, Option.mem_some_iff] at hy
-        have hle : siteDist a b ≤ 1 := h.rel_head
+        have hle : siteDist a b ≤ 1 := h.rel
         have hne : siteDist a b ≠ 0 := fun h0 => hab (siteDist_eq_zero_iff.mp h0)
         have : Adj a b := by
           unfold Adj

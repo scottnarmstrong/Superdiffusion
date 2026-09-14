@@ -126,7 +126,7 @@ lemma square_increment_lower_strong
   -- 1 − A yi² + D > 0
   have hposfac : 0 < 1 - A * yi ^ 2 + D := by
     by_contra h
-    push_neg at h
+    push Not at h
     have h1 : (1 - A * yi ^ 2 + D) * x ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h hx.le
     have h2 : 0 < (1 - ε) * y := by
       apply mul_pos (by linarith only [hε1]) hy

@@ -188,7 +188,9 @@ theorem tendsto_analyticCubeResolvent_real (mu : PositiveShift)
     (abs_analyticPositivePart_le' hfD) x
   have hn := A.tendsto_analyticCubeResolvent mu
     (measurable_analyticPositivePart hf.neg) (fun y ↦ le_max_right (-f y) 0) hD
-    (abs_analyticPositivePart_le' (fun y ↦ by simpa only [abs_neg] using hfD y)) x
+    (abs_analyticPositivePart_le' (fun y ↦ by
+      have h : abs (-f y) ≤ D := by simpa only [abs_neg] using hfD y
+      exact h)) x
   apply (hp.sub hn).congr'
   filter_upwards with m
   exact A.analyticCubeResolvent_eq_parts mu hf hfD m x |>.symm

@@ -114,7 +114,7 @@ theorem exists_clauseOne_final_one (d : ℕ) (dimension : 2 ≤ d) :
               + ENNReal.ofReal (clauseOneOutConstant C₁ C 2 Cshom
                   * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹ * M.gamma)
                 * clauseOneTermFour M m s omega := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cs, hCs, hugly⟩ := exists_uglyJEstimate_annulus_of_eventG1 d dimension
   obtain ⟨C₀, hC₀6, -, hstate⟩ :=
     Algsuperdiff.Section4.Provider.GoodEvents.exists_allScalesInductionState_ge d 0

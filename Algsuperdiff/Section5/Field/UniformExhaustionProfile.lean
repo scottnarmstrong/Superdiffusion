@@ -147,12 +147,12 @@ theorem one_le_streamUniformExhaustionProfile_of_le_cutoff
 private theorem rpow_one_third_cube {s : ℝ} (hs : 0 ≤ s) :
     (s ^ (1 / 3 : ℝ)) ^ 3 = s := by
   have hthree : (3 : ℕ) ≠ 0 := by norm_num
-  simpa only [one_div] using Real.rpow_inv_natCast_pow hs hthree
+  simpa only [one_div, Nat.cast_ofNat] using Real.rpow_inv_natCast_pow hs hthree
 
 private theorem rpow_one_sixth_pow_six {s : ℝ} (hs : 0 ≤ s) :
     (s ^ (1 / 6 : ℝ)) ^ 6 = s := by
   have hsix : (6 : ℕ) ≠ 0 := by norm_num
-  simpa only [one_div] using Real.rpow_inv_natCast_pow hs hsix
+  simpa only [one_div, Nat.cast_ofNat] using Real.rpow_inv_natCast_pow hs hsix
 
 private theorem one_le_rpow_one_third {s : ℝ} (hs : 1 ≤ s) :
     1 ≤ s ^ (1 / 3 : ℝ) :=

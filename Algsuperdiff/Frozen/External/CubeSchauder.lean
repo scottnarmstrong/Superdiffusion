@@ -49,7 +49,7 @@ theorem Algsuperdiff.Frozen.External.cube_schauder
                     (KhInf + Real.rpow 3 ((m : ℝ) / 2) * Kh))
 -- FROZEN-STATEMENT-END
     := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   exact Algsuperdiff.Section4.Provider.Schauder.cube_schauder_of_zeroDatumCubeSchauder
     (Algsuperdiff.Section4.Provider.Schauder.zeroDatumRouteConst_nonneg d
       (Algsuperdiff.Section4.Provider.Schauder.zeroDatumCampanatoConst_nonneg d))

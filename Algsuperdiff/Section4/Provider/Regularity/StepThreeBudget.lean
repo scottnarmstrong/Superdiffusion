@@ -102,7 +102,7 @@ theorem triadicLatticePoint_shift (n : ℤ) (v : Fin d → ℤ) :
 theorem mem_latticeCubeSet_shift {n m : ℤ} {v : Fin d → ℤ}
     (hv : v ∈ Support.latticeCubeSet d n m) :
     (fun i => 3 * v i) ∈ Support.latticeCubeSet d (n - 1) m := by
-  rw [Support.latticeCubeSet, Set.mem_setOf_eq, triadicLatticePoint_shift]
+  rw [Support.latticeCubeSet, Set.mem_ofPred_eq, triadicLatticePoint_shift]
   exact hv
 
 /-- A lattice centre of `3^n ℤ^d ∩ □_m` lies in `□_m` — the hypothesis the window

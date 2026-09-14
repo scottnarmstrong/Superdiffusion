@@ -105,7 +105,7 @@ theorem eLpNorm_grad_window_le_sup {m j : ℤ} {z : Vec d} {Kh : ℝ} (hKh : 0 �
       Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh := by
   have hC0 : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh :=
     mul_nonneg (Real.rpow_nonneg (by norm_num) _) hKh
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn
     (volume_truncatedWindow_pos j hz) (volume_truncatedWindow_lt_top z m j).ne
   have hae : ∀ᵐ y ∂(Support.normalizedVolumeMeasureOn (truncatedWindow z m j)),
       ‖hdat.grad y‖ ≤ Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh := by
@@ -128,7 +128,7 @@ theorem eLpNorm_grad_coord_window_le_sup {m j : ℤ} {z : Vec d} {Kh : ℝ}
       Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh := by
   have hC0 : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh :=
     mul_nonneg (Real.rpow_nonneg (by norm_num) _) hKh
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn
     (volume_truncatedWindow_pos j hz) (volume_truncatedWindow_lt_top z m j).ne
   have hae : ∀ᵐ y ∂(Support.normalizedVolumeMeasureOn (truncatedWindow z m j)),
       ‖hdat.grad y i‖ ≤ Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh := by
@@ -188,7 +188,7 @@ theorem oscE_toReal_eq_normalizedL2On {m j : ℤ} {z : Vec d}
       normalizedL2On (truncatedWindow z m j) (fun y => uglob.toFun y - c) := by
   have hmem : MemLp (fun y => uglob.toFun y - c) 2
       (volume.restrict (truncatedWindow z m j)) := by
-    haveI : Fact (volume (truncatedWindow z m j) < ⊤) :=
+    have : Fact (volume (truncatedWindow z m j) < ⊤) :=
       ⟨volume_truncatedWindow_lt_top z m j⟩
     have h := (memLp_toFun_of_subset uglob
       (truncatedWindow_subset_domain z m j)).sub (memLp_const (μ := volume.restrict

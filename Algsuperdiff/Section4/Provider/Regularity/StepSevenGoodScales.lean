@@ -62,7 +62,7 @@ variable {d : ℕ}
 /-! ## 1. The candidate index set -/
 
 /-- **The Step-7a candidate range** `[n+3, m-3] ∩ ℤ`. -/
-def stepSevenCandidates (n m : ℤ) : Finset ℤ := Finset.Icc (n + 3) (m - 3)
+noncomputable def stepSevenCandidates (n m : ℤ) : Finset ℤ := Finset.Icc (n + 3) (m - 3)
 
 /-- The candidate range has `m - n - 5` elements. -/
 theorem card_stepSevenCandidates (n m : ℤ) :
@@ -72,7 +72,7 @@ theorem card_stepSevenCandidates (n m : ℤ) :
   ring
 
 /-- **The good scales of the Step-7a range**: the candidates outside the bad set. -/
-def stepSevenGoodScales (B : Finset ℤ) (n m : ℤ) : Finset ℤ :=
+noncomputable def stepSevenGoodScales (B : Finset ℤ) (n m : ℤ) : Finset ℤ :=
   stepSevenCandidates n m \ B
 
 theorem mem_stepSevenGoodScales_iff {B : Finset ℤ} {n m j : ℤ} :

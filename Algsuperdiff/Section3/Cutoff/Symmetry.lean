@@ -86,7 +86,7 @@ theorem sequenceLaw_stationary (M : ABKModel d) (z : Vec d) :
         Measure.map (fun F (k : ℤ) => ShellField.translate z (F k)) M.P.toMeasure := rfl
     _ = Measure.infinitePi (fun k : ℤ =>
         Measure.map (fun F : ShellSeq d => ShellField.translate z (F k)) M.P.toMeasure) :=
-      by simpa only [Function.comp_apply] using htransProd
+      by simpa only [Function.comp_apply] using! htransProd
     _ = Measure.infinitePi (fun k : ℤ =>
         Measure.map (fun F : ShellSeq d => F k) M.P.toMeasure) := by
       apply congrArg Measure.infinitePi
@@ -190,7 +190,7 @@ private theorem exists_openOriginCube_of_isCompact {K : Set (Vec d)}
   let g : Vec d → ℝ := fun x => 2 * ∑ i : Fin d, |x i|
   have hg : Continuous g := by
     exact continuous_const.mul
-      (continuous_finset_sum Finset.univ (fun i _ => (continuous_apply i).abs))
+      (continuous_finsetSum Finset.univ (fun i _ => (continuous_apply i).abs))
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg.continuousOn
   obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt C (by norm_num : (1 : ℝ) < 3)
   refine ⟨(n : ℤ), ?_⟩
@@ -335,7 +335,7 @@ theorem map_translateCutoffSample_cutoffSampleLaw (M : ABKModel d) (z : Vec d) :
   have hcomap (u : Set (CutoffSample d)) :
       (Measure.comap (Subtype.val : CutoffSample d → ShellSeq d) M.P.toMeasure) u =
         M.P.toMeasure ((Subtype.val : CutoffSample d → ShellSeq d) '' u) := by
-    simpa only [CutoffSample, lowerTailGoodSet] using
+    simpa only [CutoffSample, lowerTailGoodSet] using!
       (comap_subtype_coe_apply (s := lowerTailGoodSet d)
         (measurableSet_lowerTailGoodSet d) M.P.toMeasure u)
   rw [hcomap]
@@ -427,7 +427,7 @@ theorem map_negateCutoffSample_cutoffSampleLaw (M : ABKModel d) :
   have hcomap (u : Set (CutoffSample d)) :
       (Measure.comap (Subtype.val : CutoffSample d → ShellSeq d) M.P.toMeasure) u =
         M.P.toMeasure ((Subtype.val : CutoffSample d → ShellSeq d) '' u) := by
-    simpa only [CutoffSample, lowerTailGoodSet] using
+    simpa only [CutoffSample, lowerTailGoodSet] using!
       (comap_subtype_coe_apply (s := lowerTailGoodSet d)
         (measurableSet_lowerTailGoodSet d) M.P.toMeasure u)
   rw [hcomap]
@@ -482,7 +482,7 @@ theorem coefficientCutoff_translateCutoffSample (nu : ℝ) (m : ℤ) (z : Vec d)
     (cutoff_translateCutoffSample m z omega)
   change nu • (1 : Mat d) + cutoff m (translateCutoffSample z omega) x =
     nu • (1 : Mat d) + cutoff m omega (x + z)
-  simpa only using congrArg (fun A : Mat d => nu • (1 : Mat d) + A) hcutoff
+  simpa only using! congrArg (fun A : Mat d => nu • (1 : Mat d) + A) hcutoff
 
 /-- The coefficient-cutoff law is invariant under every real translation.
 CoarseGraining's stationary-law interface is its integer-translation
@@ -767,7 +767,7 @@ theorem map_rotateCutoffSample_cutoffSampleLaw (M : ABKModel d)
   have hcomap (u : Set (CutoffSample d)) :
       (Measure.comap (Subtype.val : CutoffSample d → ShellSeq d) M.P.toMeasure) u =
         M.P.toMeasure ((Subtype.val : CutoffSample d → ShellSeq d) '' u) := by
-    simpa only [CutoffSample, lowerTailGoodSet] using
+    simpa only [CutoffSample, lowerTailGoodSet] using!
       (comap_subtype_coe_apply (s := lowerTailGoodSet d)
         (measurableSet_lowerTailGoodSet d) M.P.toMeasure u)
   rw [hcomap]

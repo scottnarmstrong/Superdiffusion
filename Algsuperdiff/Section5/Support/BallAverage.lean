@@ -53,12 +53,12 @@ variable {d : ℕ}
 theorem ball_ae_eq_closedBall [NeZero d] (x : Vec d) (r : ℝ) :
     Metric.ball x r =ᵐ[volume] Metric.closedBall x r := by
   have hd : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
-  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   rw [MeasureTheory.ae_eq_set]
   constructor
-  · rw [Set.diff_eq_empty.2 Metric.ball_subset_closedBall]
+  · rw [Set.sdiff_eq_empty.2 Metric.ball_subset_closedBall]
     exact measure_empty
-  · rw [Metric.closedBall_diff_ball]
+  · rw [Metric.closedBall_sdiff_ball]
     exact MeasureTheory.Measure.addHaar_sphere volume x r
 
 theorem setIntegral_ball_eq_closedBall [NeZero d] (f : Vec d → ℝ) (x : Vec d) (r : ℝ) :
@@ -97,7 +97,7 @@ theorem ae_tendsto_setAverage_ball [NeZero d] {f : Vec d → ℝ}
 theorem continuous_setIntegral_ball [NeZero d] {f : Vec d → ℝ} (hf : Integrable f volume)
     (r : ℝ) : Continuous fun x : Vec d => ∫ z in Metric.ball x r, f z ∂volume := by
   have hd : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
-  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   have hrw : (fun x : Vec d => ∫ z in Metric.ball x r, f z ∂volume) =
       fun x : Vec d => ∫ z, (Metric.ball x r).indicator f z ∂volume := by
     funext x
@@ -116,9 +116,9 @@ theorem continuous_setIntegral_ball [NeZero d] {f : Vec d → ℝ} (hf : Integra
       MeasureTheory.Measure.addHaar_sphere volume x r
     have hae : ∀ᵐ z ∂(volume : Measure (Vec d)), z ∉ Metric.sphere x r := by
       rw [MeasureTheory.ae_iff]
-      simpa using hsphere
+      simpa using! hsphere
     filter_upwards [hae] with z hz
-    rcases lt_or_gt_of_ne (fun hcon => hz (by simpa [Metric.mem_sphere] using hcon) :
+    rcases lt_or_gt_of_ne (fun hcon => hz (by simpa [Metric.mem_sphere] using! hcon) :
         dist z x ≠ r) with hlt | hgt
     · have hmem : z ∈ Metric.ball x r := Metric.mem_ball.2 hlt
       rw [Set.indicator_of_mem hmem]
@@ -220,7 +220,7 @@ theorem eLpNorm_top_restrict_eq_ballAverageSupNormOn [NeZero d] {U D : Set (Vec 
     refine essSup_le_of_ae_le _ ((ae_restrict_iff' hUmeas).2 ?_)
     filter_upwards [ae_tendsto_setAverage_ball hFint] with z hz hzU
     show ‖f z‖ₑ ≤ ballAverageSupNormOn U D f
-    rw [← ofReal_norm_eq_enorm, ← ENNReal.ofReal_toReal hS.ne]
+    rw [← ofReal_norm, ← ENNReal.ofReal_toReal hS.ne]
     refine ENNReal.ofReal_le_ofReal ?_
     rw [Real.norm_eq_abs]
     refine le_of_forall_pos_le_add fun eps heps => ?_
@@ -308,7 +308,7 @@ theorem eLpNorm_top_restrict_eq_ballAverageSupNormOn [NeZero d] {U D : Set (Vec 
       rw [← ae_restrict_iff' hUmeas]
       filter_upwards [hle] with z hz
       have h := ENNReal.toReal_mono hctop.ne hz
-      rwa [← ofReal_norm_eq_enorm, ENNReal.toReal_ofReal (norm_nonneg _),
+      rwa [← ofReal_norm, ENNReal.toReal_ofReal (norm_nonneg _),
         Real.norm_eq_abs] at h
     have hrpos : (0 : ℝ) < 1 / (k + 1 : ℝ) := by positivity
     have hbd := abs_setAverage_ball_le_of_ae (U := U) (f := f) hae hrpos hball

@@ -455,7 +455,7 @@ theorem exists_relativeCutoff_finiteCorridor_fluctuationVariance_bound
     exact le_max_left _ _
   refine ⟨Chom, Cvar, hChom64, hChomShift, hCvarOne, ?_⟩
   intro M m E hLower epsilon hepsilon hgamma L hseparation n hn
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hepsilonPos : 0 < epsilon := hepsilon.1
   have hepsilonHalf : epsilon ≤ 1 / 2 := hepsilon.2

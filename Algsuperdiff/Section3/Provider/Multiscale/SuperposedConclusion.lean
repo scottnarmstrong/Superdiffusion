@@ -73,7 +73,7 @@ theorem ofReal_abs_blockVecDot_le_tsum_superposedDivergence
               (superposedCompetitorCellDivergence m (whitneyScale M m E b k₀ omega)
                 (badFamily M m (whitneyScale M m E b k₀ omega) omega) q)
               (T : KuhnCell d))) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hmono : Monotone (whitneyScale M m E b k₀ omega) :=
     whitneyScaleSeq_mono hb0.le (by linarith) _ k₀
   have hwin := badComponents_window_badFamily hb0 hb hk₀ hne
@@ -173,7 +173,7 @@ theorem abs_blockVecDot_coarseBlockMatrix_originCube_le_payload_superposedDiverg
                 ((Percolation.hsep M m (E : ℝ) b omega + k₀ : ℕ) : ℝ)) *
               Real.exp (-((kp : ℝ) / 36)))) := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hCgrad : (1 : ℝ) ≤ superposedDivConst d :=
     one_le_superposedDivConst (by omega)
   have hK : (0 : ℝ) ≤ ktotConst M m i 3 (ktotEnvelopeSup M m L eps t) p q :=

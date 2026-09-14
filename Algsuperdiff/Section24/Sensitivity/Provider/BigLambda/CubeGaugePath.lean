@@ -128,7 +128,7 @@ theorem cubeScaleFactor_le_one_of_mem_descendantsAtScale {k : ℤ}
     (hR : R ∈ descendantsAtScale (originCube d 0) k) :
     cubeScaleFactor R ≤ 1 := by
   have hscale : R.scale = k := scale_eq_of_mem_descendantsAtScale hR
-  have hk0 : k ≤ 0 := by simpa using hk
+  have hk0 : k ≤ 0 := by simpa using! hk
   have hrp : Real.rpow (3 : ℝ) ((k : ℝ)) = (3 : ℝ) ^ k := Real.rpow_intCast 3 k
   have hfac : cubeScaleFactor R = Real.rpow (3 : ℝ) ((k : ℝ)) := by
     rw [cubeScaleFactor, hscale]

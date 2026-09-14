@@ -65,7 +65,7 @@ theorem exhaustionMetricSpace_edist_pow_le (rho : X → ℝ) (hrho_cont : Contin
     (hrho_le : ∀ x, rho x ≤ 1) :
     letI := exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
     ∀ z w : OnePoint X, edist w z ^ (4 : ℝ) ≤ ((16 : ℝ≥0) : ℝ≥0∞) := by
-  letI := exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
+  let := exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
   intro z w
   have hd : dist w z ≤ 2 := exhaustionDist_le_two hrho_le w z
   calc edist w z ^ (4 : ℝ) ≤ (2 : ℝ≥0∞) ^ (4 : ℝ) := by
@@ -137,7 +137,7 @@ theorem lintegral_edist_pow_le_of_hasResolventTail
     have hsub : {z | s < dist z x / c} ⊆ (Metric.ball x (4 * (Real.sqrt (t : ℝ) * s)))ᶜ := by
       intro z hz
       have hz' : c * s < dist z x := by
-        rw [Set.mem_setOf_eq, lt_div_iff₀ hc] at hz
+        rw [Set.mem_ofPred_eq, lt_div_iff₀ hc] at hz
         linarith only [hz]
       simp only [Set.mem_compl_iff, Metric.mem_ball, not_lt]
       rw [hc_def] at hz'
@@ -270,8 +270,8 @@ def OnePointRegular.of_hasLocalKolmogorovMoments (R : PositiveC0ContractiveResol
   lipschitz_rho := hrho_lipschitz
   isCompact_superlevel := hrho_compact
   kolmogorovRegular := by
-    letI := OnePoint.exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
-    letI : CompleteSpace (OnePoint X) :=
+    let := OnePoint.exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
+    let : CompleteSpace (OnePoint X) :=
       completeSpace_of_isComplete_univ isCompact_univ.isComplete
     exact SubMarkovKernelSemigroup.KolmogorovRegular.of_hasKolmogorovMoments _
       R.isConservative_onePointKernelSemigroup

@@ -90,7 +90,7 @@ theorem integral_grad_sub_slope_mul_cutoff {m j : ℤ} {z : Vec d}
             * (fderiv ℝ (campanatoCutoff z j) y) (basisVec i) ∂volume := by
   have hUdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
-  haveI : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
+  have : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact hUdom.volume_lt_top
@@ -195,7 +195,7 @@ theorem abs_integral_grad_sub_slope_mul_cutoff_le {m j : ℤ} {z : Vec d}
     ne_of_lt (volume_truncatedWindow_lt_top z m j)
   have hWpos : 0 < (volume (truncatedWindow z m j)).toReal :=
     volume_toReal_truncatedWindow_pos z hz hjm
-  haveI : IsFiniteMeasure (volume.restrict (truncatedWindow z m j)) := by
+  have : IsFiniteMeasure (volume.restrict (truncatedWindow z m j)) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hWfin
@@ -240,7 +240,7 @@ theorem abs_integral_grad_sub_slope_mul_cutoff_le {m j : ℤ} {z : Vec d}
         * (fderiv ℝ (campanatoCutoff z j) y) (basisVec i)| ∂volume
       = ∫ y in truncatedWindow z m j, |(u.toFun y - affineEval c g y)
         * (fderiv ℝ (campanatoCutoff z j) y) (basisVec i)| ∂volume :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hUmeas hWU hzero
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUmeas hWU hzero
   have hptw : ∀ y, |(u.toFun y - affineEval c g y)
         * (fderiv ℝ (campanatoCutoff z j) y) (basisVec i)|
       ≤ cutoffIbpConst d * (3 : ℝ) ^ (-j) * |u.toFun y - affineEval c g y| := by

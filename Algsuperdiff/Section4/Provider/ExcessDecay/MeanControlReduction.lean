@@ -113,7 +113,7 @@ theorem volumeAverage_sub_const_eq {V : Set (Vec d)}
     (hVpos : 0 < (volume V).toReal) (hVtop : volume V ≠ ⊤) {f : Vec d → ℝ}
     (hf : IntegrableOn f V volume) (c : ℝ) :
     volumeAverage V (fun x => f x - c) = volumeAverage V f - c := by
-  haveI : IsFiniteMeasure (volume.restrict V) := by
+  have : IsFiniteMeasure (volume.restrict V) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hVtop
@@ -137,7 +137,7 @@ theorem abs_volumeAverage_sub_windowAverage_le {W V : Set (Vec d)}
     |volumeAverage V f - volumeAverage W f| ≤
       Real.sqrt ((volume W).toReal / (volume V).toReal) *
         normalizedL2On W (fun x => f x - volumeAverage W f) := by
-  haveI : IsFiniteMeasure (volume.restrict V) := by
+  have : IsFiniteMeasure (volume.restrict V) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hVtop
@@ -204,7 +204,7 @@ theorem oscillation_comparator_le {V : Set (Vec d)}
     normalizedL2On V (fun x => vbar x - volumeAverage V vbar) ≤
       2 * normalizedL2On V (fun x => u x - vbar x) +
         normalizedL2On V (fun x => u x - volumeAverage V u) := by
-  haveI : IsFiniteMeasure (volume.restrict V) := by
+  have : IsFiniteMeasure (volume.restrict V) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hVtop

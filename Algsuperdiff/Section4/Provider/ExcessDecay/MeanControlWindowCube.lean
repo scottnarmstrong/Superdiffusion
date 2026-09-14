@@ -109,15 +109,15 @@ theorem overhang_of_boundaryBranch {j m : ℤ} {z : Vec d}
   have hp : ∃ i, ¬((-(1 / 2 : ℝ)) * (3 : ℝ) ^ m < p i ∧
       p i < (1 / 2 : ℝ) * (3 : ℝ) ^ m) := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hpout (mem_openCubeSet_originCube_iff.mpr fun i => hcon i)
   obtain ⟨i, hi⟩ := hp
   obtain ⟨hlo, hhi⟩ := mem_image_add_openCubeSet_coord_iff.mp hpcube i
   rw [wellPlacedHalfGap]
   rcases not_and_or.mp hi with hcase | hcase
-  · push_neg at hcase
+  · push Not at hcase
     exact ⟨i, -1, Or.inr rfl, by simp only [neg_mul, one_mul]; linarith only [hcase, hlo]⟩
-  · push_neg at hcase
+  · push Not at hcase
     exact ⟨i, 1, Or.inl rfl, by simp only [one_mul]; linarith only [hcase, hhi]⟩
 
 /-! ## 3. The clamp saturates: the cube is flush against the frontier -/

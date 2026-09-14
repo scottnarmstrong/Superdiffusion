@@ -1,6 +1,6 @@
 import Algsuperdiff.Section3.Provider.Percolation.Lattice
 import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 /-!
 # Triadic lattice cubes and the separation colouring
@@ -70,7 +70,7 @@ theorem two_mul_cubeRadius_add_one (m : ℕ) : 2 * cubeRadius m + 1 = 3 ^ m := b
   omega
 
 /-- The lattice points of the triadic cube `□_m`, as a `Finset`. -/
-def cubeFinset (m : ℕ) : Finset (Fin d → ℤ) :=
+noncomputable def cubeFinset (m : ℕ) : Finset (Fin d → ℤ) :=
   Fintype.piFinset fun _ => Finset.Icc (-(cubeRadius m : ℤ)) (cubeRadius m : ℤ)
 
 theorem mem_cubeFinset_iff {m : ℕ} {x : Fin d → ℤ} :
@@ -122,7 +122,7 @@ theorem three_pow_lt_latDist_of_siteColor_eq {L : ℕ} {x y : Fin d → ℤ}
     (hc : siteColor L x = siteColor L y) (hxy : x ≠ y) : 3 ^ L < latDist x y := by
   obtain ⟨j, hj⟩ : ∃ j, x j ≠ y j := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hxy (funext hcon)
   have hzero : (((x j - y j : ℤ)) : ZMod (3 ^ L + 1)) = 0 := by
     have hcj : ((x j : ZMod (3 ^ L + 1))) = ((y j : ZMod (3 ^ L + 1))) := congrFun hc j

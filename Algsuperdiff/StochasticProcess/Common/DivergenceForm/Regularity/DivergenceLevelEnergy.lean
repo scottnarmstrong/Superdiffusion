@@ -55,7 +55,7 @@ theorem levelEnergy_sumCoordNorm_le
     (measurableSet_of_isEllipticFieldOn hEll).inter
       (measurableSet_lt measurable_const huMeas)
   have hAU : A ⊆ U := fun _ hx => hx.1
-  haveI : IsFiniteMeasure (volumeMeasureOn U) :=
+  have : IsFiniteMeasure (volumeMeasureOn U) :=
     hU.isBoundedDomain.isFiniteMeasure_restrict_volume
   have hUtop : volume U ≠ ⊤ := by
     have h := (measure_lt_top (volumeMeasureOn U) Set.univ).ne
@@ -96,7 +96,7 @@ theorem levelEnergy_sumCoordNorm_le
       (measurableSet_of_isEllipticFieldOn hEll)] with x hwx hvx hxU
     rw [hwx, hvx]
     by_cases hx : k < u.toH1Function.toFun x <;>
-      simp only [Set.indicator_apply, Set.mem_setOf_eq, A, hx, hxU,
+      simp only [Set.indicator_apply, Set.mem_ofPred_eq, A, hx, hxU,
         and_self, and_false, if_true, if_false]
   have hfluxInt : IntegrableOn
       (fun x => vecDot (matVecMul (a x) (u.toH1Function.grad x))
@@ -155,7 +155,7 @@ theorem levelEnergy_sumCoordNorm_le
     have husqInt : IntegrableOn
         (fun x => vecNormSq (u.toH1Function.grad x)) A :=
       (integrableOn_vecNormSq_zeroTraceGrad u).mono_set hAU
-    letI : IsFiniteMeasure (volume.restrict A) := ⟨by
+    let : IsFiniteMeasure (volume.restrict A) := ⟨by
       rw [Measure.restrict_apply_univ]
       exact hAtop.lt_top⟩
     have sqrtMemL2 (f : Vec d → ℝ) (hf : IntegrableOn f A)
@@ -198,7 +198,7 @@ theorem levelEnergy_sumCoordNorm_le
           (Filter.Eventually.of_forall fun _ => zero_le_one)
           (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
         rw [setIntegral_one_eq_measureReal] at hcs
-        simpa only [Real.sqrt_one, one_mul, E] using hcs
+        simpa only [Real.sqrt_one, one_mul, E] using! hcs
       _ = M * Real.sqrt (volume A).toReal * Real.sqrt E := by ring
   have hEle : lam * E ≤ M * Real.sqrt (volume A).toReal * Real.sqrt E :=
     hEllLe.trans (hcoeffEq ▸ hpairLe)
@@ -232,12 +232,12 @@ theorem levelEnergy_sumCoordNorm_le
   have hsumSq : (∑ i : Fin d,
       ((eLpNorm (A.indicator (fun x => u.toH1Function.grad x i))
         2 (volumeMeasureOn U)).toReal) ^ 2) = E := by
-    rw [Finset.sum_congr rfl (fun i _ => hnormSq i), ← integral_finset_sum]
+    rw [Finset.sum_congr rfl (fun i _ => hnormSq i), ← integral_finsetSum]
     · apply setIntegral_congr_fun hAm
       intro x _
       simp only [vecNormSq, vecDot, pow_two]
     · intro i _
-      simpa only [pow_two] using
+      simpa only [pow_two] using!
         ((u.toH1Function.gradMemL2 i).integrable_mul
           (u.toH1Function.gradMemL2 i)).mono_measure
             (Measure.restrict_mono hAU le_rfl)

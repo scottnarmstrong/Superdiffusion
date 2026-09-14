@@ -88,7 +88,7 @@ theorem measurable_tsum_of_nonneg {f : ℕ → Omega → ℝ}
     rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => hnonneg k omega) (hsum omega),
       ENNReal.toReal_ofReal (tsum_nonneg fun k => hnonneg k omega)]
   rw [hrepr]
-  exact (Measurable.ennreal_tsum fun k => (hmeas k).ennreal_ofReal).ennreal_toReal
+  exact (Measurable.tsum fun k => (hmeas k).ennreal_ofReal).ennreal_toReal
 
 /-! ## 2. The weighted countable `Gamma_sigma` triangle inequality -/
 

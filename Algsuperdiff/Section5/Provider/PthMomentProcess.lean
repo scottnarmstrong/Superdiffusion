@@ -66,11 +66,11 @@ theorem integral_norm_onePointRetract_streamProcess_rpow_le_of_triadic_sq_tail
           ‖onePointRetract (0 : Vec d) (eta t)‖ ^ p ∂Q ≤
         (6 * p * (A * R)) ^ p := by
   dsimp only
-  letI streamMetricSpace :=
+  let streamMetricSpace :=
     (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI streamCompleteSpace :=
+  let streamCompleteSpace :=
     (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-  letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+  let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
     (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
   let Q := streamProcess M omega ((0 : Vec d) : OnePoint (Vec d))
   let Z : ContinuousPath (OnePoint (Vec d)) → ℝ := fun eta =>
@@ -110,11 +110,11 @@ theorem vecNormSq_integral_onePointRetract_sub_exitTimeTrunc_le
           Q.real (survivalEvent U t)ᶜ ^ (1 / 2 : ℝ) +
         B * Q.real (survivalEvent U t)ᶜ) ^ (2 : ℕ) := by
   dsimp only
-  letI streamMetricSpace :=
+  let streamMetricSpace :=
     (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI streamCompleteSpace :=
+  let streamCompleteSpace :=
     (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-  letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+  let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
     (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
   let Q := streamProcess M omega ((0 : Vec d) : OnePoint (Vec d))
   let X : ContinuousPath (OnePoint (Vec d)) → Vec d := fun eta =>
@@ -167,7 +167,7 @@ theorem vecNormSq_integral_onePointRetract_sub_exitTimeTrunc_le
     have hprob : 0 ≤ Q.real (survivalEvent U t)ᶜ ^ (1 / 2 : ℝ) :=
       Real.rpow_nonneg measureReal_nonneg _
     have hmul := mul_le_mul_of_nonneg_right hroot hprob
-    simpa only [Q, add_comm, Real.rpow_two] using
+    simpa only [Q, add_comm, Real.rpow_two] using!
       add_le_add_right hmul (B * Q.real (survivalEvent U t)ᶜ))
   apply (vecNormSq_le_dim_mul_sq_norm_process ((∫ eta, X eta ∂Q) -
     ∫ eta, Y eta ∂Q)).trans
@@ -204,11 +204,11 @@ theorem abs_integral_vecNormSq_sub_exitTimeTrunc_cutoff_le
           Q.real (survivalEvent U t)ᶜ ^ (1 / 2 : ℝ) +
         B * Q.real (survivalEvent U t)ᶜ := by
   dsimp only
-  letI streamMetricSpace :=
+  let streamMetricSpace :=
     (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI streamCompleteSpace :=
+  let streamCompleteSpace :=
     (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-  letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+  let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
     (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
   let Q := streamProcess M omega ((0 : Vec d) : OnePoint (Vec d))
   let V : ContinuousPath (OnePoint (Vec d)) → Vec d := fun eta =>
@@ -301,7 +301,7 @@ theorem abs_integral_vecNormSq_sub_exitTimeTrunc_cutoff_le
   have hprob : 0 ≤ Q.real (survivalEvent U t)ᶜ ^ (1 / 2 : ℝ) :=
     Real.rpow_nonneg measureReal_nonneg _
   have hmul := mul_le_mul_of_nonneg_right hroot hprob
-  simpa only [Q, X, Y, V, Real.norm_eq_abs, add_comm, Real.rpow_two] using
+  simpa only [Q, X, Y, V, Real.norm_eq_abs, add_comm, Real.rpow_two] using!
     add_le_add_right hmul (B * Q.real (survivalEvent U t)ᶜ)
 
 end

@@ -55,7 +55,7 @@ private theorem exponentialDecay_tendsto_zero {alpha : ℝ} (halpha : 0 < alpha)
   have hpow :
       Tendsto (fun x : ℝ => Real.rpow (3 : ℝ) x) atBot (nhds (0 : ℝ)) :=
     tendsto_rpow_atBot_of_base_gt_one (3 : ℝ) (by norm_num : (1 : ℝ) < 3)
-  simpa [mul_comm] using hpow.comp hlinear
+  simpa [mul_comm] using! hpow.comp hlinear
 
 private theorem barSigma_range_bddBelow_of_P4
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -97,7 +97,7 @@ theorem barSigmaAtScale_tendsto_barSigmaLimit_of_P4
     (hP4 : Ch05.QuantitativeCoarseGrainedEllipticity P) :
     Tendsto (fun n : ℕ => hP.barSigmaAtScale hStruct (n : ℤ)) atTop
       (nhds (Ch05.Section57.barSigmaLimit hP hStruct)) := by
-  simpa [Ch05.Section57.barSigmaLimit] using
+  simpa [Ch05.Section57.barSigmaLimit] using!
     tendsto_atTop_ciInf
       (fun _ _ hnm =>
         (Ch05.Section54.Pigeonhole.scalarChain_of_P4
@@ -113,7 +113,7 @@ theorem barSigmaStarAtScale_tendsto_barSigmaStarLimit_of_P4
     (hP4 : Ch05.QuantitativeCoarseGrainedEllipticity P) :
     Tendsto (fun n : ℕ => hP.barSigmaStarAtScale hStruct (n : ℤ)) atTop
       (nhds (Ch05.Section57.barSigmaStarLimit hP hStruct)) := by
-  simpa [Ch05.Section57.barSigmaStarLimit] using
+  simpa [Ch05.Section57.barSigmaStarLimit] using!
     tendsto_atTop_ciSup
       (fun _ _ hnm =>
         (Ch05.Section54.Pigeonhole.scalarChain_of_P4
@@ -297,10 +297,8 @@ theorem annealedFullBlockMatrixAtScale_tendsto_barSigmaLimit_of_P4
         Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct (n : ℤ) :=
     Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
       hP hStruct (n : ℤ)
-  rw [tendsto_pi_nhds]
-  intro alpha
-  rw [tendsto_pi_nhds]
-  intro beta
+  refine tendsto_pi_nhds.2 fun alpha => ?_
+  refine tendsto_pi_nhds.2 fun beta => ?_
   cases alpha with
   | inl i =>
       cases beta with

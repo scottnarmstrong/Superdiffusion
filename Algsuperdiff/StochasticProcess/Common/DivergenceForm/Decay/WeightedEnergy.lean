@@ -57,7 +57,7 @@ theorem sq_weight_smooth (hzeta : ContDiff ℝ (⊤ : ℕ∞) zeta)
     ContDiff ℝ (⊤ : ℕ∞) (fun x => zeta x ^ 2) ∧
       HasCompactSupport (fun x => zeta x ^ 2) :=
   ⟨by simpa only [pow_two] using hzeta.mul hzeta,
-    by simpa only [pow_two] using hzetaCompact.mul_left (f := zeta)⟩
+    by simpa only [pow_two] using! hzetaCompact.mul_left (f := zeta)⟩
 
 /-- Squaring does not enlarge the topological support. -/
 theorem tsupport_sq_weight_subset {V : Set (Vec d)} (hzetaU : tsupport zeta ⊆ V) :
@@ -97,8 +97,7 @@ private theorem fderiv_sq_weight (hzeta : ContDiff ℝ (⊤ : ℕ∞) zeta)
   rw [show (fun y => zeta y ^ 2) = zeta * zeta by
     funext y; simp only [pow_two, Pi.mul_apply]]
   rw [fderiv_mul hdiff hdiff]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
-    smul_eq_mul]
+  simp only [add_apply, smul_apply, smul_eq_mul]
   ring
 
 /-- Testing `-div (a grad u) = g` with `zeta ^ 2 * u` gives the exact energy

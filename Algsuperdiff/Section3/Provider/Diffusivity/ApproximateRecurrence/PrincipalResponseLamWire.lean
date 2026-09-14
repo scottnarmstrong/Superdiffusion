@@ -372,7 +372,7 @@ private theorem ccg_pos_of_gate [NeZero d] {Ccg : ℝ}
     exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne d)
   have hd6 : (1 : ℝ) ≤ (d : ℝ) ^ 6 := one_le_pow₀ hd1
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   nlinarith [mul_nonneg (neg_nonneg.2 hcon) hCsq.le]
 
 /-- **The threshold comparison of
@@ -571,7 +571,7 @@ theorem exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_ann
                                 ∂(Cutoff.cutoffSampleLaw M).toMeasure) +
                           M.gamma ^ (6 : ℕ) / 2 := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cell, hCellpos, gamma0, hg0pos, hg0quarter, hprod⟩ :=
     exists_const_descendantsAverage_integral_switchEllipLoad_principalPz_le d hd
   refine ⟨Cell, hCellpos, gamma0, hg0pos, hg0quarter, ?_⟩

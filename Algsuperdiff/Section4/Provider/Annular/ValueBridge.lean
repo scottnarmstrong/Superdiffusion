@@ -100,7 +100,7 @@ theorem valueL2_le_of_ae_bound (h : UnitCubeSkewW2Infinity d) {B : ℝ} (hB : 0 
         ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))),
       matrixNorm (h.toLInfSkewMatrixFieldOn.1.1 x) ≤ B) :
     h.valueL2 ≤ B := by
-  letI := isFiniteMeasure_unitCubeCarrier d
+  let := isFiniteMeasure_unitCubeCarrier d
   have hsq : h.valueL2 ^ 2 ≤ B ^ 2 := by
     rw [valueL2_sq_eq_integral]
     have hle : ∫ x, matrixNormField h x ^ 2
@@ -117,7 +117,7 @@ theorem valueL2_le_of_ae_bound (h : UnitCubeSkewW2Infinity d) {B : ℝ} (hB : 0 
       measureReal_univ_unitCubeCarrier d, one_mul] at hle
     exact hle
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hlt : B ^ 2 < h.valueL2 ^ 2 := by
     have := pow_lt_pow_left₀ hcon hB (n := 2) (by norm_num)
     exact this

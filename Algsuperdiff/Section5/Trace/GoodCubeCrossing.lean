@@ -88,11 +88,11 @@ theorem le_card_filter_of_isPathFrom (M : ABKModel d) (Creg Cinj : ℝ) (m n : �
     (Xi : List (Section5.Percolation.Site d))
     (hXi : Section5.Percolation.IsPathFrom (m - n).toNat Xi) :
     (3 / 4 : ℝ) * (3 : ℝ) ^ (m - n).toNat ≤ ((Xi.toFinset.filter Good).card : ℝ) := by
-  letI hqdec : DecidablePred fun z : Section5.Percolation.Site d =>
+  let hqdec : DecidablePred fun z : Section5.Percolation.Site d =>
       omega ∈ Support.qEvent M Creg Cinj n (Support.rescaledLatticePoint n z) ep :=
     fun z => decidable_of_iff (Good z) (hGood z)
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   have hfilter : Xi.toFinset.filter (fun z => omega ∈ Support.qEvent M Creg Cinj n
       (Support.rescaledLatticePoint n z) ep) = Xi.toFinset.filter Good :=
     Finset.filter_congr fun z _ => (hGood z).symm

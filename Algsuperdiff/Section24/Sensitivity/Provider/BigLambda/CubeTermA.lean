@@ -47,7 +47,7 @@ theorem potValueRep_lipschitz (h : UnitCubeSkewW2Infinity d) (i j : Fin d)
     (x y : Vec d) :
     |potValueRep h i j x - potValueRep h i j y| ≤
       (d : ℝ) * h.w1Infinity * ‖x - y‖ := by
-  simpa [Real.norm_eq_abs] using
+  simpa [Real.norm_eq_abs] using!
     (exists_lipschitz_ae_eq_unitCubeSkewW2Infinity_value h i j).choose_spec.1 x y
 
 theorem potValueRep_ae_eq_carrier (h : UnitCubeSkewW2Infinity d) (i j : Fin d) :
@@ -147,7 +147,7 @@ theorem memLp_termAField_component_cube (h : UnitCubeSkewW2Infinity d)
   classical
   have : MemLp (fun x => ∑ j : Fin d, h.toLInfSkewMatrixFieldOn.1.1 x j i * p j) r
       (normalizedCubeMeasure R) :=
-    memLp_finset_sum (s := Finset.univ)
+    memLp_finsetSum (s := Finset.univ)
       (f := fun j => fun x => h.toLInfSkewMatrixFieldOn.1.1 x j i * p j)
       fun j _ => (memLp_value_entry_cube h R hsub j i r).mul_const (p j)
   simpa [termAField_apply] using this

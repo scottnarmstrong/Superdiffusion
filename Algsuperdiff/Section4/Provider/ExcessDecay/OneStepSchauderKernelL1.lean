@@ -46,9 +46,9 @@ theorem hasFDerivAt_radialKernelScaled {ε : ℝ} (z : 𝔼) :
       (((ε ^ d)⁻¹ * ε⁻¹) • fderiv ℝ (radialKernel d) (ε⁻¹ • z)) z := by
   have hlin : HasFDerivAt (fun w : 𝔼 => ε⁻¹ • w)
       (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼) z := by
-    simpa using (hasFDerivAt_id z).const_smul (ε⁻¹ : ℝ)
+    simpa using! (hasFDerivAt_id z).const_smul (ε⁻¹ : ℝ)
   have hK : HasFDerivAt (radialKernel d) (fderiv ℝ (radialKernel d) (ε⁻¹ • z)) (ε⁻¹ • z) :=
-    ((radialKernel_contDiff (d := d) (n := 1)).differentiable le_rfl).differentiableAt.hasFDerivAt
+    ((radialKernel_contDiff (d := d) (n := 1)).differentiable (by simp)).differentiableAt.hasFDerivAt
   have hcomp : HasFDerivAt (fun w : 𝔼 => radialKernel d (ε⁻¹ • w))
       ((fderiv ℝ (radialKernel d) (ε⁻¹ • z)).comp (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼)) z :=
     hK.comp z hlin
@@ -60,7 +60,7 @@ theorem hasFDerivAt_radialKernelScaled {ε : ℝ} (z : 𝔼) :
         (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼))
       = ((ε ^ d)⁻¹ * ε⁻¹) • fderiv ℝ (radialKernel d) (ε⁻¹ • z) := by
     ext v
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
+    simp only [smul_apply, ContinuousLinearMap.comp_apply,
       ContinuousLinearMap.id_apply, map_smul, smul_smul]
   rw [heqCLM] at hmul
   exact hmul
@@ -103,10 +103,10 @@ theorem hasFDerivAt_fderiv_radialKernelScaled {ε : ℝ} (z : 𝔼) :
   -- differentiate `fun w => c • G(ε⁻¹•w)` with `G = ∇radialKernel`.
   have hlin : HasFDerivAt (fun w : 𝔼 => ε⁻¹ • w)
       (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼) z := by
-    simpa using (hasFDerivAt_id z).const_smul (ε⁻¹ : ℝ)
+    simpa using! (hasFDerivAt_id z).const_smul (ε⁻¹ : ℝ)
   have hGdiff : DifferentiableAt ℝ (fderiv ℝ (radialKernel d)) (ε⁻¹ • z) :=
     (((radialKernel_contDiff (d := d) (n := 2)).fderiv_right (m := 1) (by norm_num)).differentiable
-      le_rfl).differentiableAt
+      (by simp)).differentiableAt
   have hcomp : HasFDerivAt (fun w : 𝔼 => fderiv ℝ (radialKernel d) (ε⁻¹ • w))
       ((fderiv ℝ (fderiv ℝ (radialKernel d)) (ε⁻¹ • z)).comp
         (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼)) z :=
@@ -116,7 +116,7 @@ theorem hasFDerivAt_fderiv_radialKernelScaled {ε : ℝ} (z : 𝔼) :
         (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼))
       = ((ε ^ d)⁻¹ * ε⁻¹ * ε⁻¹) • fderiv ℝ (fderiv ℝ (radialKernel d)) (ε⁻¹ • z) := by
     ext v w
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
+    simp only [smul_apply, ContinuousLinearMap.comp_apply,
       ContinuousLinearMap.id_apply, map_smul, smul_eq_mul]
     ring
   rw [heqCLM] at hΨ
@@ -127,7 +127,7 @@ theorem hasFDerivAt_fderiv_radialKernelScaled {ε : ℝ} (z : 𝔼) :
 theorem norm_fderiv_fderiv_radialKernelScaled {ε : ℝ} (hε : 0 < ε) (z : 𝔼) :
     ‖fderiv ℝ (fderiv ℝ (radialKernelScaled d ε)) z‖ =
       (ε ^ d)⁻¹ * ε⁻¹ * ε⁻¹ * ‖fderiv ℝ (fderiv ℝ (radialKernel d)) (ε⁻¹ • z)‖ := by
-  letI : NormSMulClass ℝ (𝔼 →L[ℝ] 𝔼 →L[ℝ] ℝ) :=
+  let : NormSMulClass ℝ (𝔼 →L[ℝ] 𝔼 →L[ℝ] ℝ) :=
     NormedSpace.toNormSMulClass (𝕜 := ℝ) (E := 𝔼 →L[ℝ] 𝔼 →L[ℝ] ℝ)
   rw [(hasFDerivAt_fderiv_radialKernelScaled d z).fderiv, norm_smul, Real.norm_eq_abs,
     abs_of_pos (by positivity)]

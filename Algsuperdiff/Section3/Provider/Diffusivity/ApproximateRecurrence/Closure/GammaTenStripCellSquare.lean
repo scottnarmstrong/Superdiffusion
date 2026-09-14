@@ -229,7 +229,7 @@ theorem integrable_stripCellPotentialDatum_sq_closure (d : ℕ) [NeZero d] (hd :
     with hwDdef
   set wN : ShellSeq d → H1MeanZeroFunction (openCubeSet Q) := closureNeumannAlong M n h K e'
     with hwNdef
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hsub : openCubeSet R ⊆ openCubeSet Q :=
     openCubeSet_subset_of_mem_descendantsAtDepth hR
@@ -363,7 +363,7 @@ theorem integrable_stripCellFluxDatum_sq_closure (d : ℕ) [NeZero d] (hd : 2 �
     with hwDdef
   set wN : ShellSeq d → H1MeanZeroFunction (openCubeSet Q) := closureNeumannAlong M n h K e'
     with hwNdef
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hsub : openCubeSet R ⊆ openCubeSet Q :=
     openCubeSet_subset_of_mem_descendantsAtDepth hR

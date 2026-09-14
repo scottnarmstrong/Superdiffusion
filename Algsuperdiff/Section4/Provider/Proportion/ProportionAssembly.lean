@@ -134,7 +134,7 @@ theorem measure_scalePropFrom_le_of_lanes (M : ABKModel d) (Ccg : ℝ)
           scaleProp (fun k => Support.goodEventBase M Ccg (m0 + k) s ep) Mw omega
             ≤ 1 - thetaL} := by
       intro omega homega
-      simp only [Set.mem_setOf_eq] at homega ⊢
+      simp only [Set.mem_ofPred_eq] at homega ⊢
       simp only [scalePropFrom_eq_scaleProp] at homega
       linarith only [homega, hLle]
     refine le_trans (measure_mono hsub) ?_

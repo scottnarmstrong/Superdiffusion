@@ -87,7 +87,7 @@ theorem gradValueRep_lipschitz (h : UnitCubeSkewW2Infinity d) (i j : Fin d)
     (x y : Vec d) :
     |gradValueRep h i j x - gradValueRep h i j y| ≤
       (d : ℝ) * h.gradientW1Infinity * ‖x - y‖ := by
-  simpa [Real.norm_eq_abs] using
+  simpa [Real.norm_eq_abs] using!
     (exists_lipschitz_ae_eq_value_gradientW1Infinity h i j).choose_spec.1 x y
 
 theorem gradValueRep_ae_eq_carrier (h : UnitCubeSkewW2Infinity d) (i j : Fin d) :
@@ -260,7 +260,7 @@ theorem aestronglyMeasurable_matrixNormField_sq (h : UnitCubeSkewW2Infinity d) :
 theorem memLp_matrixNormField_sq_one (h : UnitCubeSkewW2Infinity d) :
     MemLp (fun x => matrixNormField h x ^ 2) 1
       (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) := by
-  letI := isFiniteMeasure_carrier d
+  let := isFiniteMeasure_carrier d
   refine MemLp.of_bound (aestronglyMeasurable_matrixNormField_sq h)
     (((d : ℝ) ^ 2 * h.w1Infinity) ^ 2) ?_
   filter_upwards [ae_matrixNormField_le_carrier h] with x hx

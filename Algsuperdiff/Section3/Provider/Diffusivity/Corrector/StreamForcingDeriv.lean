@@ -97,7 +97,7 @@ private def streamForcingCoordCLM (sigmaInv : ℝ) (e : Vec d) (i : Fin d) :
     (|sigmaInv| * ∑ j, |e j|) (by
       intro A
       have hentry : ∀ j : Fin d, |A i j| ≤ ‖A‖ := fun j => by
-        simpa [Real.norm_eq_abs] using
+        simpa [Real.norm_eq_abs] using!
           (norm_le_pi_norm (A i) j).trans (norm_le_pi_norm A i)
       have hstep : |∑ j, A i j * e j| ≤ ∑ j, ‖A‖ * |e j| := by
         refine (Finset.abs_sum_le_sum_abs _ _).trans ?_

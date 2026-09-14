@@ -412,7 +412,7 @@ theorem oddExtend_affineLift {x : Vec d} {m k : ℤ} {c : ℝ} {A : Vec d}
               min_eq_right (by linarith only [ht])]
             ring
           · rw [foldSignCoord_of_meetsUpperFace hu, if_pos ht]
-        · push_neg at ht
+        · push Not at ht
           refine Or.inl ⟨?_, ?_⟩
           · rw [foldCoord_of_meetsUpperFace hu,
               min_eq_left (by linarith only [ht])]
@@ -426,7 +426,7 @@ theorem oddExtend_affineLift {x : Vec d} {m k : ℤ} {c : ℝ} {A : Vec d}
               max_eq_right (by linarith only [ht])]
             ring
           · rw [foldSignCoord_of_meetsLowerFace hu hl, if_pos ht]
-        · push_neg at ht
+        · push Not at ht
           refine Or.inl ⟨?_, ?_⟩
           · rw [foldCoord_of_meetsLowerFace hu hl,
               max_eq_left (by linarith only [ht])]

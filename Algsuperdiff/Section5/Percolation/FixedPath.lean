@@ -488,7 +488,7 @@ theorem isBigO_gammaTwo_centeredWeightedCubeMassOn_small
   have hs : s.Nonempty := by
     refine ⟨0, ?_⟩
     rw [mem_smallScales_iff]
-    simpa only [pow_zero] using hΓpos
+    simpa only [pow_zero] using! hΓpos
   have hTpos : 0 < T := by
     have : (0 : ℝ) < 2 * (d + 1) := by positivity
     exact this.trans_le hT

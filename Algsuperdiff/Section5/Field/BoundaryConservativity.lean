@@ -242,7 +242,7 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
       congr 1
       rw [← pow_mul, Nat.mul_comm m d, pow_mul]
     have hLm : Lm ≤ U * t := by
-      simpa only [Lm, U, t, A, L] using
+      simpa only [Lm, U, t, A, L, streamLocalizedSplitData] using
         localizedInteriorUpper_streamBoundary_le M omega mu m
     have hLm0 : 0 < Lm := localizedInteriorUpper_pos M.nu_pos
       (L.roughBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
@@ -344,11 +344,12 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
           _ = _ := by ring
       convert mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_left hmain hleft0) hrpow3 using 1
-      ring
+      all_goals first | rfl | ring
     have hPquad : P m ≤ C * t ^ 2 * B := by
       calc
         P m ≤ ((Q + 1) / den) * t ^ 2 * B + C2 * t ^ 2 * B := by
           convert add_le_add hfirst hsecond using 1
+          all_goals try rfl
           dsimp only [P, localizedInteriorDecayConstant, X, e, V, Lm, Ceta]
           simp only [one_mul, mul_one]
         _ = ((Q + 1) / den + C2) * t ^ 2 * B := by ring
@@ -433,8 +434,9 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
           (L.roughBound 0 ((3 : ℝ) ^ m))
           (L.smoothDivBound 0 ((3 : ℝ) ^ m)) ≤
         (2 * Real.sqrt 2 * U) * ((m : ℝ) + 1) := by
-      simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hLupper
-        (mul_nonneg (by norm_num) (Real.sqrt_nonneg 2))
+      simpa only [mul_assoc, streamLocalizedSplitData] using!
+        mul_le_mul_of_nonneg_left hLupper
+          (mul_nonneg (by norm_num) (Real.sqrt_nonneg 2))
     have hnum : 0 ≤ Real.sqrt (M.nu * (mu : ℝ)) := Real.sqrt_nonneg _
     have hdiv := div_le_div_of_nonneg_left hnum hden hdenU
     have hq0 : 0 ≤ q := hq.le

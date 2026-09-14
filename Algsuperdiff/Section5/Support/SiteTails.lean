@@ -56,7 +56,7 @@ theorem compl_goodCubeEvent_eq (M : ABKModel d) (Creg : ℝ) (n : ℤ) (y : Vec 
         {omega | ENNReal.ofReal (2 * Creg) < localizedRegularity M n y omega} := by
   ext omega
   simp only [goodCubeEvent, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_union,
-    Set.mem_setOf_eq, not_and_or, not_le]
+    Set.mem_ofPred_eq, not_and_or, not_le]
 
 /-! ## 3. The shell estimate -/
 
@@ -116,7 +116,7 @@ theorem measureReal_shellExcessEvent_le (M : ABKModel d) {C0 ep : ℝ}
     Real.rpow_pos_of_pos (by norm_num) _
   have hset : shellExcessEvent M C0 ep n L z = upperTailEvent Xf (A * t) := by
     ext omega
-    rw [shellExcessEvent, Set.mem_setOf_eq, largeScaleShellTerm, ← hpow]
+    rw [shellExcessEvent, Set.mem_ofPred_eq, largeScaleShellTerm, ← hpow]
     constructor
     · intro h
       exact lt_of_mul_lt_mul_left h hpospow.le

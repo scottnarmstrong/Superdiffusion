@@ -327,7 +327,8 @@ theorem exists_radius_integral_normSq_mollify_sub_le
   refine integral_normSq_mollify_sub_le (μ := μ) (Mollifier.ofRadius d hr) hXm hX ?_
   intro y hy
   have hy' : dist y (0 : Vec d) < r := by
-    simpa [dist_eq_norm] using (by simpa using hy : ‖y‖ < r)
+    rw [dist_eq_norm, sub_zero]
+    exact hy
   have := hball hy'
   rw [Real.dist_eq, sub_zero] at this
   exact (le_abs_self _).trans this.le

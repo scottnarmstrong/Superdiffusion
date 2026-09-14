@@ -53,12 +53,12 @@ theorem eqOn_of_ae_eq_of_continuousOn {U : Set (Vec d)} (hU : IsOpen U)
     Set.EqOn f g U := by
   by_contra hne
   rw [Set.EqOn] at hne
-  push_neg at hne
+  push Not at hne
   obtain ⟨x, hxU, hxne⟩ := hne
-  have hdiff : U ∩ {z | f z ≠ g z} = ((fun z => f z - g z) ⁻¹' ({0} : Set ℝ)ᶜ) ∩ U := by
+  have hdiff : U ∩ {z | f z ≠ g z} = ((f - g) ⁻¹' ({0} : Set ℝ)ᶜ) ∩ U := by
     ext z
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_preimage, Set.mem_compl_iff,
-      Set.mem_singleton_iff, sub_eq_zero]
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_compl_iff,
+      Set.mem_singleton_iff, Pi.sub_apply, sub_eq_zero]
     exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
   have hVopen : IsOpen (U ∩ {z | f z ≠ g z}) := by
     obtain ⟨W, hWopen, hW⟩ :=

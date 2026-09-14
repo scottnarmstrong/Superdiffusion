@@ -33,7 +33,7 @@ private theorem measurableSet_aeLocallyUniformlyEllipticField :
           {a : RegCoeffField d |
             AEEQuantitativeEllipticSlice (cubeSet Q) k a.toFun} := by
     ext a
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_iUnion]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_iUnion]
     constructor
     · intro ha Q
       exact ha.exists_aeeQuantitativeEllipticSlice_cubeSet Q

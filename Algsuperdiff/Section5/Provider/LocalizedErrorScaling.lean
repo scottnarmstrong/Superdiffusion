@@ -57,7 +57,7 @@ theorem toFun_ae_zero_of_holderSeminormOn_eq_zero {y : Vec d} {n : ℤ} {a : Coe
     {g : Vec d → Vec d} (hg0 : holderSeminormOn (cubeSetAt y n) (1 / 2) g = 0)
     {u : H1Function (cubeSetAt y n)} (hu : IsDirichletSolutionAt a y n u g) :
     u.toFun =ᵐ[volume.restrict (cubeSetAt y n)] 0 := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   have hbound : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) 0 g := by
     refine (holderSeminormOn_le_ofReal_iff le_rfl).1 ?_
@@ -139,7 +139,7 @@ theorem eLpNorm_top_sub_le_localizedError (M : ABKModel d) (n : ℤ) (y : Vec d)
       rw [hx, hx']
       simp
     rw [hzero, mul_zero]
-    exact zero_le _
+    exact zero_le
   · have hApos : 0 < A.toReal := ENNReal.toReal_pos h0 hg
     set t : ℝ := Real.rpow 3 (-(n : ℝ) / 2) / A.toReal with htdef
     have htpos : 0 < t := div_pos (rpow_three_pos _) hApos

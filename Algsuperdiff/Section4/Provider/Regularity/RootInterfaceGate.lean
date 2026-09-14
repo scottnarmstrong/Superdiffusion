@@ -45,7 +45,7 @@ private theorem coord_le_of_image_add_subset {m q : ℤ} {z : Vec d}
     z i + (1 / 2 : ℝ) * (3 : ℝ) ^ q ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
   classical
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hQ : (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ q := by
     have := zpow_pos (by norm_num : (0 : ℝ) < 3) q
     linarith only [this]
@@ -131,7 +131,7 @@ theorem gate_or_exists_meetsFace (z : Vec d) (m q : ℤ) :
   by_cases h : ∀ i : Fin d,
       |z i| + (1 / 2 : ℝ) * (3 : ℝ) ^ q ≤ (1 / 2 : ℝ) * (3 : ℝ) ^ m
   · exact Or.inl (image_add_subset_openCubeSet_of_forall_abs_le h)
-  · push_neg at h
+  · push Not at h
     obtain ⟨i, hi⟩ := h
     refine Or.inr ⟨i, ?_⟩
     rcases le_or_gt 0 (z i) with hz | hz

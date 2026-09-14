@@ -157,7 +157,7 @@ theorem exists_superposedFluxFiniteQPresplit_lt_two [NeZero d]
         dsimp [C]
         exact mul_le_mul hcoeff (hUcap n omega) (hUnonneg n omega)
           (Real.rpow_nonneg ha0pos.le _)
-      simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hnormalized
+      simpa only [mul_assoc] using! mul_le_mul_of_nonneg_left hnormalized
         (Homogenization.geometricWeight_nonneg n (mul_pos hs hr0).le)
   have hVO : ∀ n, IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma ((1 - sigma) / 2)) (V n) 1 := by

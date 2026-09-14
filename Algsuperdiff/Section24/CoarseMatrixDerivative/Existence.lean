@@ -43,7 +43,7 @@ theorem existsUnique_coarseMatrixDerivative
                   ((canonicalMaximizer
                     (responseExistenceTheory U a) p (-q)).toSolution.toH1.grad x))) := by
               unfold D quadraticForm
-              simpa [pairing, adjointResponseGradient, primalResponseGradient] using
+              simpa [pairing, adjointResponseGradient, primalResponseGradient] using!
                 (blockVecDot_blockMatVecMul_blockMatOfQuadForm_of_bilin (pairing U a h)
                   (pairing_add_left U a h)
                   (pairing_smul_left U a h)
@@ -64,7 +64,7 @@ theorem existsUnique_coarseMatrixDerivative
         (canonicalMaximizer_isMaximizer (responseExistenceTheory U a.transpose) p q)
         (canonicalMaximizer_isMaximizer (responseExistenceTheory U a) p (-q))
       simpa [vAdj, v, quadraticForm, pairing, adjointResponseGradient,
-        primalResponseGradient] using hcanonical
+        primalResponseGradient] using! hcanonical
     have hDquad : ∀ P : BlockVec d,
         blockVecDot P (blockMatVecMul D P) = quadraticForm U a h P := by
       intro P

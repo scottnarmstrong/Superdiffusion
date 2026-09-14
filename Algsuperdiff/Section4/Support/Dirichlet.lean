@@ -233,7 +233,7 @@ theorem HolderSeminormBoundOn.nonneg {U : Set (Vec d)} {alpha K : ℝ} {f : Vec 
     exact sub_ne_zero_of_ne hxy
   have hrpos : (0 : ℝ) < ‖x - y‖ ^ alpha := Real.rpow_pos_of_pos hpos alpha
   by_contra hK
-  push_neg at hK
+  push Not at hK
   have hneg : K * ‖x - y‖ ^ alpha < 0 := mul_neg_of_neg_of_pos hK hrpos
   have hle := hf x hx y hy
   have h0 : (0 : ℝ) ≤ ‖f x - f y‖ := norm_nonneg _

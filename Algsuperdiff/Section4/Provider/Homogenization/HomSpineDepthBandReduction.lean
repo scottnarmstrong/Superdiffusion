@@ -128,7 +128,7 @@ theorem enorm_cubeEuclideanWspKernel_rpow_le_tsum (Q : TriadicCube d) (s : Fract
       rw [hsub]
       simp
     rw [hzero, enorm_zero, ENNReal.zero_rpow_of_pos hr]
-    exact zero_le _
+    exact zero_le
   · have hne : x ≠ y := fun hxy => hgxy (by rw [hxy])
     have hdpos : 0 < dist x y := dist_pos.mpr hne
     have hdlt : dist x y < cubeScaleFactor Q := dist_lt_cubeScaleFactor hx hy
@@ -176,7 +176,7 @@ theorem enorm_cubeEuclideanWspKernel_rpow_le_tsum (Q : TriadicCube d) (s : Fract
       rw [Real.enorm_eq_ofReal (euclideanNorm_nonneg _)]
     calc ‖cubeEuclideanWspKernel s q g (x, y)‖ₑ ^ r
         = ENNReal.ofReal ‖cubeEuclideanWspKernel s q g (x, y)‖ ^ r := by
-          rw [ofReal_norm_eq_enorm]
+          rw [ofReal_norm]
       _ ≤ ENNReal.ofReal (c ^ (-e) * (euclideanNorm (g x) + euclideanNorm (g y))) ^ r :=
           ENNReal.rpow_le_rpow (ENNReal.ofReal_le_ofReal hkerbd) hr.le
       _ = ENNReal.ofReal (c ^ (-e)) ^ r *
@@ -277,9 +277,9 @@ theorem lintegral_lintegral_enorm_cubeEuclideanWspKernel_rpow_le (Q : TriadicCub
         ∫⁻ x, ‖euclideanNorm (gridDualDepthTest Q j v x)‖ₑ ^ q.exponent.toReal
           ∂(cubeMeasure Q) := by
   classical
-  haveI : IsFiniteMeasure (cubeMeasure Q) :=
+  have : IsFiniteMeasure (cubeMeasure Q) :=
     ⟨lt_top_iff_ne_top.2 (cubeMeasure_apply_univ_ne_top Q)⟩
-  haveI : SFinite (cubeMeasure Q) := by
+  have : SFinite (cubeMeasure Q) := by
     unfold cubeMeasure
     infer_instance
   have hr : 0 < q.exponent.toReal := finiteLpExponent_toReal_pos q
@@ -352,9 +352,9 @@ theorem cubeEuclideanWspESeminorm_gridDualDepthTest_rpow_le (Q : TriadicCube d)
         ∫⁻ x, ‖euclideanNorm (gridDualDepthTest Q j v x)‖ₑ ^ q.exponent.toReal
           ∂(normalizedCubeMeasure Q) := by
   classical
-  haveI : IsFiniteMeasure (cubeMeasure Q) :=
+  have : IsFiniteMeasure (cubeMeasure Q) :=
     ⟨lt_top_iff_ne_top.2 (cubeMeasure_apply_univ_ne_top Q)⟩
-  haveI : SFinite (cubeMeasure Q) := by
+  have : SFinite (cubeMeasure Q) := by
     unfold cubeMeasure
     infer_instance
   have hr : 0 < q.exponent.toReal := finiteLpExponent_toReal_pos q

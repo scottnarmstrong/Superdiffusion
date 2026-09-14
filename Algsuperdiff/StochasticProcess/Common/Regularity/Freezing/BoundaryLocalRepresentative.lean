@@ -106,7 +106,7 @@ theorem exists_boundary_local_representative [NeZero d] (hd : 2 ≤ d)
     intro y hy
     have hmem : y ∈ euclideanBall x₀ R ∩ axisCube z L := hWeq.symm ▸ hy
     exact hmem.1
-  haveI hWfinite : IsFiniteMeasure (volume.restrict W) :=
+  have hWfinite : IsFiniteMeasure (volume.restrict W) :=
     (isOpenBoundedConvexDomain_partialReflectedBallSector x₀ hR S sig
       ∅).isFiniteMeasure_restrict_volume
   -- the frozen normalized coefficient and its data
@@ -212,7 +212,7 @@ theorem exists_boundary_local_representative [NeZero d] (hd : 2 ≤ d)
   · intro y hy hyC hyQ
     have hex : ∃ i : Fin d, y i = z i ∨ y i = z i + L := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       refine hyQ (mem_axisCube_iff.2 fun i => ⟨?_, ?_⟩)
       · exact lt_of_le_of_ne (hyC i).1 (Ne.symm (hcon i).1)
       · exact lt_of_le_of_ne (hyC i).2 (hcon i).2

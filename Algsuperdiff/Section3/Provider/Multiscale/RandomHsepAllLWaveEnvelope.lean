@@ -175,7 +175,7 @@ theorem measureReal_lt_hsep_le_of_gates (M : ABKModel d) {m : ℤ}
       hb0 hb hEexp hE4 hunit hgamma20 hinvSq hEb hgamma hH)
   rw [scaleSeparationFail_eq M m E b hH]
   intro omega homega
-  simp only [Set.mem_setOf_eq] at homega ⊢
+  simp only [Set.mem_ofPred_eq] at homega ⊢
   omega
 
 /-- The random-profile all-cutoff failure price.  The wave failures are first
@@ -234,8 +234,8 @@ theorem measureReal_not_randomHsepAllLWaveEnvelope_le
         {omega | omega ∈ B (hsep M n E b omega)} := by
     ext omega
     simp only [randomHsepAllLWaveEnvelope, B, whitneyScale,
-      Set.mem_setOf_eq]
-    push_neg
+      Set.mem_ofPred_eq]
+    push Not
     rfl
   rw [hset]
   exact hdiag.trans (by
@@ -255,7 +255,7 @@ private theorem measurable_hsep_for_allLWave
           {omega : CutoffSample d | 0 < hsep M n E b omega}ᶜ := by
         ext omega
         simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff,
-          Set.mem_setOf_eq]
+          Set.mem_ofPred_eq]
         omega
       rw [hset]
       exact (measurableSet_lt_hsep M n E b 0).compl
@@ -265,7 +265,7 @@ private theorem measurable_hsep_for_allLWave
             {omega : CutoffSample d | j + 1 < hsep M n E b omega}ᶜ := by
         ext omega
         simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff,
-          Set.mem_compl_iff, Set.mem_setOf_eq]
+          Set.mem_compl_iff, Set.mem_ofPred_eq]
         omega
       rw [hset]
       exact (measurableSet_lt_hsep M n E b j).inter
@@ -310,21 +310,21 @@ theorem measurableSet_randomHsepAllLWaveEnvelope
         randomHsepAllLWaveEnvelope M n E b k₀ L₀ t omega} =
         ⋂ h : ℕ, ({omega : CutoffSample d | hsep M n E b omega ≠ h} ∪ D h) := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_union]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_union]
     constructor
     · intro hgood h
       by_cases heq : hsep M n E b omega = h
       · right
         subst h
         simpa only [D, randomHsepAllLWaveEnvelope, whitneyScale]
-          using hgood
+          using! hgood
       · exact Or.inl heq
     · intro hall
       have hh := hall (hsep M n E b omega)
       rcases hh with hne | hgood
       · exact (hne rfl).elim
       · simpa only [D, randomHsepAllLWaveEnvelope, whitneyScale]
-          using hgood
+          using! hgood
   rw [hset]
   refine MeasurableSet.iInter fun h => MeasurableSet.union ?_ (hD h)
   exact ((measurable_hsep_for_allLWave M n E b)

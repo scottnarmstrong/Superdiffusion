@@ -51,7 +51,7 @@ theorem cutoff_energy_absorbed_plain
   have hphi : ContDiff ℝ (⊤ : ℕ∞) phi := by
     simpa only [phi, pow_two] using heta.mul heta
   have hphiCompact : HasCompactSupport phi := by
-    simpa only [phi, pow_two] using hetaCompact.mul_left (f := eta)
+    simpa only [phi, pow_two] using! hetaCompact.mul_left (f := eta)
   have hphiU : tsupport phi ⊆ U := by
     rw [show phi = eta * eta by funext x; simp only [phi, pow_two, Pi.mul_apply]]
     exact (tsupport_mul_subset_left (f := eta) (g := eta)).trans hetaU
@@ -60,11 +60,11 @@ theorem cutoff_energy_absorbed_plain
   have hphiTop : MemLp phi ∞ mu :=
     (hphi.continuous.memLp_of_hasCompactSupport hphiCompact).restrict U
   have hetaZ : MemVectorL2 U (fun x ↦ eta x • u.grad x) := by
-    simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using
+    simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using!
       (MemLp.of_eval fun i : Fin d ↦
         (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hetaTop)
   have hq : MemVectorL2 U q := by
-    simpa only [MemVectorL2, volumeMeasureOn, q, Pi.smul_apply, smul_eq_mul, mul_comm] using
+    simpa only [MemVectorL2, volumeMeasureOn, q, Pi.smul_apply, smul_eq_mul, mul_comm] using!
       (MemLp.of_eval fun i : Fin d ↦
         (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
   -- the localized product with the linear cutoff produces the `L²` control of `u • grad eta`
@@ -82,7 +82,7 @@ theorem cutoff_energy_absorbed_plain
     ring
   have hr : MemVectorL2 U r := by
     have hetaPde : MemVectorL2 U (fun x ↦ eta x • (u.toFun x • de x)) := by
-      simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using
+      simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using!
         (MemLp.of_eval fun i : Fin d ↦
           (memScalarL2_coord_of_memVectorL2 hpde i).mul' hetaTop)
     have htwo : MemVectorL2 U (fun x ↦ (2 : ℝ) • (eta x • (u.toFun x • de x))) :=
@@ -126,7 +126,7 @@ theorem cutoff_energy_absorbed_plain
       rw [show phi = eta * eta by funext y; simp only [phi, pow_two, Pi.mul_apply]]
       rw [fderiv_mul hetadiff hetadiff]
       simp only [q, r, de, phi, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.mul_apply,
-        ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply]
+        add_apply, smul_apply]
       ring
     rw [← integral_add henergyInt hcrossInt]
     have hleft : (∫ x, (vecDot (matVecMul (a x) (u.grad x)) (q x) +

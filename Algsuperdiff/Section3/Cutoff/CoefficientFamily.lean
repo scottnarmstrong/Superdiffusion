@@ -27,7 +27,7 @@ private theorem exists_nat_openOriginCube_of_isCompact {K : Set (Vec d)}
   let g : Vec d → ℝ := fun x => 2 * ∑ i : Fin d, |x i|
   have hg : Continuous g := by
     exact continuous_const.mul
-      (continuous_finset_sum Finset.univ (fun i _ => (continuous_apply i).abs))
+      (continuous_finsetSum Finset.univ (fun i _ => (continuous_apply i).abs))
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg.continuousOn
   obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt C (by norm_num : (1 : ℝ) < 3)
   refine ⟨n, ?_⟩

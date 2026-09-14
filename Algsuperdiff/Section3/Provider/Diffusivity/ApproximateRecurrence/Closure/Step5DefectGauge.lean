@@ -139,7 +139,7 @@ theorem meshOscillationCell_eq_sqrt_cubeAverage (R : TriadicCube d) (u : Vec d �
     meshOscillationCell R.scale u R =
       Real.sqrt (cubeAverage R (fun x => vecNormSq (u x - cubeAverageVec R u))) := by
   classical
-  letI : IsProbabilityMeasure (normalizedCubeMeasure R) :=
+  let : IsProbabilityMeasure (normalizedCubeMeasure R) :=
     ⟨by simp [normalizedCubeMeasure_apply_univ R]⟩
   have hwin : openCubeAtScale (triadicCubeShift R) R.scale = openCubeSet R :=
     openCubeAtScale_triadicCubeShift_eq_openCubeSet R
@@ -261,7 +261,7 @@ theorem continuous_finiteShellIncrement_entry (omega : ShellSeq d) (n m : ℤ)
     funext x
     rw [finiteShellIncrement_apply_entry]
   rw [hfun]
-  exact continuous_finset_sum _ fun k _ =>
+  exact continuous_finsetSum _ fun k _ =>
     ((continuous_apply j).comp ((continuous_apply i).comp (omega k).1.1.continuous))
 
 /-! ## The per-cube cross defect -/
@@ -286,10 +286,10 @@ private theorem integral_vecDot_matVecMul (nu : Measure (Vec d)) (e : Vec d)
     funext x
     show (∑ i, e i * (∑ j, A x i j * v x j)) = _
     exact Finset.sum_congr rfl fun i _ => Finset.mul_sum _ _ _
-  rw [hpt, integral_finset_sum _ (fun i _ =>
-    integrable_finset_sum _ (fun j _ => (h i j).const_mul (e i)))]
+  rw [hpt, integral_finsetSum _ (fun i _ =>
+    integrable_finsetSum _ (fun j _ => (h i j).const_mul (e i)))]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [integral_finset_sum _ (fun j _ => (h i j).const_mul (e i))]
+  rw [integral_finsetSum _ (fun j _ => (h i j).const_mul (e i))]
   exact Finset.sum_congr rfl fun j _ => integral_const_mul _ _
 
 /-- **The per-cube step of `e.nablaw.oscillations`, proved.**
@@ -316,7 +316,7 @@ theorem step5CrossDefect_le_meshOscillationCell (R : TriadicCube d) (omega : She
           ((3 : ℝ) ^ ((R.scale : ℤ) : ℝ) *
             shellDerivNormSum n m (triadicCubeShift R) omega)) := by
   classical
-  letI : IsProbabilityMeasure (normalizedCubeMeasure R) :=
+  let : IsProbabilityMeasure (normalizedCubeMeasure R) :=
     ⟨by simp [normalizedCubeMeasure_apply_univ R]⟩
   set nu : Measure (Vec d) := normalizedCubeMeasure R with hnu
   set z : Vec d := triadicCubeShift R with hzdef
@@ -419,8 +419,8 @@ theorem step5CrossDefect_le_meshOscillationCell (R : TriadicCube d) (omega : She
       show (∑ i, e i * (∑ j, (A x - C) i j * (u x - ubar) j)) = _
       exact Finset.sum_congr rfl fun i _ => Finset.mul_sum _ _ _
     rw [hfun]
-    exact integrable_finset_sum _ fun i _ =>
-      integrable_finset_sum _ fun j _ => (hsubint i j).const_mul _
+    exact integrable_finsetSum _ fun i _ =>
+      integrable_finsetSum _ fun j _ => (hsubint i j).const_mul _
   have hptbd : ∀ᵐ x ∂nu, vecDot e (matVecMul (A x - C) (u x - ubar)) ≤
       Bpre * vecNorm (u x - ubar) := by
     filter_upwards [ae_mem_openCubeSet_normalizedCubeMeasure R] with x hx

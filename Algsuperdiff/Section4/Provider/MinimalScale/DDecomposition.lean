@@ -115,7 +115,7 @@ theorem sum_sq_le_sq_sum {iota : Type*} (S : Finset iota) (f : iota → ℝ≥0�
   have hterm : ∀ i ∈ S, f i ^ 2 ≤ (∑ j ∈ S, f j) * f i := by
     intro i hi
     rw [pow_two]
-    exact mul_le_mul_left (Finset.single_le_sum (fun j _ => zero_le (f j)) hi) (f i)
+    exact mul_le_mul_left (Finset.single_le_sum (fun j _ => zero_le) hi) (f i)
   calc ∑ i ∈ S, f i ^ 2 ≤ ∑ i ∈ S, (∑ j ∈ S, f j) * f i := Finset.sum_le_sum hterm
     _ = (∑ j ∈ S, f j) * ∑ i ∈ S, f i := (Finset.mul_sum _ _ _).symm
     _ = (∑ i ∈ S, f i) ^ 2 := (pow_two _).symm
@@ -537,7 +537,7 @@ theorem exists_dDecomposition (d : ℕ) :
       exact hle.trans hanchsq
     exact ((ENNReal.pow_le_pow_left_iff (two_ne_zero)).1 hterm).trans hbig
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 /-! ## 8. The remainder absorption -/
 

@@ -65,8 +65,8 @@ theorem coordinatePrimitiveH1_grad_selected
   have htarget := coordinatePrimitive_hasDerivAt_update q hq.continuous i z x
   have heq := congrArg (fun L : ℝ →L[ℝ] ℝ ↦ L 1) (hline.unique htarget)
   simpa only [ContinuousLinearMap.comp_apply,
-    ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.one_apply,
-    one_smul, basisVec] using heq
+    ContinuousLinearMap.toSpanSingleton_apply,
+    one_smul, basisVec] using! heq
 
 /-- The smooth scalar-to-divergence field belongs to vector `L²` on the
 bounded domain. -/
@@ -79,7 +79,7 @@ theorem scalarToDivergenceField_memVectorL2
   intro j
   by_cases hji : j = i
   · subst j
-    simpa only [scalarToDivergenceField, if_pos] using
+    simpa only [scalarToDivergenceField, if_pos] using!
       (coordinatePrimitiveH1 hU q hq i z).memL2.neg
   · rw [show (fun x : Vec d ↦ scalarToDivergenceField q i z x j) =
         fun _ : Vec d ↦ (0 : ℝ) by

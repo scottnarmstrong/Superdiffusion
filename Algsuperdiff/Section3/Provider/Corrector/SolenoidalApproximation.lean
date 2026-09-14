@@ -245,7 +245,7 @@ theorem norm_sq_localStreamApprox_sub_le (Q : TriadicCube d) (L : ℕ)
     nlinarith [hle, norm_nonneg (HilbertVec.ofVec (localStreamApprox Q L S j ω x)
       - realize j ω x), mul_nonneg hgb0 (norm_nonneg (realize S ω x))]
   · have hxmem : x ∈ cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L) :=
-      Set.mem_diff_of_mem hx hmem
+      Set.mem_sdiff_of_mem hx hmem
     have hind : (cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L)).indicator
         (fun y => ‖realize j ω y‖ ^ 2) x = ‖realize j ω x‖ ^ 2 :=
       Set.indicator_of_mem hxmem _
@@ -286,10 +286,9 @@ theorem stronglyMeasurable_streamRemainder (Q : TriadicCube d) (L : ℕ)
   show StronglyMeasurable fun x : Vec d => ∑ m : Fin d,
     fderiv ℝ (approxCutoff Q L).toFun x (basisVec m) • realize S ω x m
   refine Finset.stronglyMeasurable_fun_sum _ fun m _ => ?_
-  refine StronglyMeasurable.smul ?_ ?_
-  · exact (((approxCutoff Q L).smooth.continuous_fderiv (by simp)).clm_apply
-      continuous_const).stronglyMeasurable
-  · exact (continuous_apply m).comp_stronglyMeasurable (stronglyMeasurable_realize hSm ω)
+  exact ((((approxCutoff Q L).smooth.continuous_fderiv (by simp)).clm_apply
+      continuous_const).stronglyMeasurable).smul
+    ((continuous_apply m).comp_stronglyMeasurable (stronglyMeasurable_realize hSm ω))
 
 /-- The paper's remainder is jointly strongly measurable in the sample and in
 space. -/
@@ -300,11 +299,10 @@ theorem stronglyMeasurable_uncurry_streamRemainder (Q : TriadicCube d) (L : ℕ)
   show StronglyMeasurable fun z : Ω × Vec d => ∑ m : Fin d,
     fderiv ℝ (approxCutoff Q L).toFun z.2 (basisVec m) • realize S z.1 z.2 m
   refine Finset.stronglyMeasurable_fun_sum _ fun m _ => ?_
-  refine StronglyMeasurable.smul ?_ ?_
-  · exact ((((approxCutoff Q L).smooth.continuous_fderiv (by simp)).clm_apply
-      continuous_const).stronglyMeasurable).comp_measurable measurable_snd
-  · exact (continuous_apply m).comp_stronglyMeasurable
-      (stronglyMeasurable_uncurry_realize hSm)
+  exact (((((approxCutoff Q L).smooth.continuous_fderiv (by simp)).clm_apply
+      continuous_const).stronglyMeasurable).comp_measurable measurable_snd).smul
+    ((continuous_apply m).comp_stronglyMeasurable
+      (stronglyMeasurable_uncurry_realize hSm))
 
 /-- The approximation error is a strongly measurable field for every sample. -/
 theorem stronglyMeasurable_localStreamApprox_sub (Q : TriadicCube d) (L : ℕ)

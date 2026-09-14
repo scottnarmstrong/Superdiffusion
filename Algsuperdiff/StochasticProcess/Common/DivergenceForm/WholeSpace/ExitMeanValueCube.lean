@@ -73,8 +73,8 @@ theorem lintegral_pathResolvent_c0 (R : PositiveC0ContractiveResolvent (Vec d))
           R.isConservative_onePointKernelSemigroup z)) =
       PositiveC0ContractiveResolvent.onePointLiveExtension
         (fun y ↦ ENNReal.ofReal (R.toContractiveResolvent.operator lam g y)) z := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hmeas : Measurable fun y : Vec d ↦ ENNReal.ofReal (g y) :=
     ENNReal.measurable_ofReal.comp g.continuous.measurable
   have hlive : Measurable (PositiveC0ContractiveResolvent.onePointLiveExtension

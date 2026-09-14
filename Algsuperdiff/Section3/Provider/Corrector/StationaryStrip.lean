@@ -44,7 +44,7 @@ set-indexed stationary transfer. -/
 theorem integrable_prod_comp_vadd {S : Set (Vec d)} (hSfin : volume S ≠ ⊤)
     {g : Ω → ℝ} (hgm : StronglyMeasurable g) (hg : Integrable g μ) :
     Integrable (fun q : Ω × Vec d => g (q.2 +ᵥ q.1)) (μ.prod (volume.restrict S)) := by
-  haveI : IsFiniteMeasure (volume.restrict S) := by
+  have : IsFiniteMeasure (volume.restrict S) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hSfin
@@ -63,7 +63,7 @@ the paper's cutoff is what produces `e.boundary.strip.volume`. -/
 theorem integral_setIntegral_comp_vadd {S : Set (Vec d)} (hSfin : volume S ≠ ⊤)
     {g : Ω → ℝ} (hgm : StronglyMeasurable g) (hg : Integrable g μ) :
     ∫ ω, (∫ x in S, g (x +ᵥ ω)) ∂μ = (volume S).toReal * ∫ ω, g ω ∂μ := by
-  haveI : IsFiniteMeasure (volume.restrict S) := by
+  have : IsFiniteMeasure (volume.restrict S) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hSfin

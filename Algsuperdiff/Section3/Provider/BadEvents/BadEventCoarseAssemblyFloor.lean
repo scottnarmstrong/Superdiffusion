@@ -224,7 +224,7 @@ private theorem cubeLowerEllipticityInv_originCube_eighth_le_floor
       (3 : ℝ) ^ ((1 / 4 : ℝ) * scaleGapPos m n) *
         Algsuperdiff.Section3.Observable.cutoffLowerEllipticityInv
           M n n (1 / 8) (by norm_num) exponentTwo omega := by
-  letI : NeZero d := neZeroOfModel M
+  let : NeZero d := neZeroOfModel M
   let F : Ch02.TriadicCoeffFamily d :=
     coefficientCutoffTriadicCoeffFamily M n omega
   have hlambda :=

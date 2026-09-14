@@ -71,7 +71,7 @@ theorem euclideanNorm_pos {x : Vec d} (hx : x ≠ 0) : 0 < euclideanNorm x :=
 
 theorem continuous_vecNormSq : Continuous (vecNormSq : Vec d → ℝ) := by
   unfold vecNormSq vecDot
-  exact continuous_finset_sum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
+  exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
 
 theorem continuous_euclideanNorm : Continuous (euclideanNorm : Vec d → ℝ) :=
   Real.continuous_sqrt.comp continuous_vecNormSq
@@ -147,7 +147,7 @@ theorem hasFDerivAt_euclideanNorm_sub {z x : Vec d} (hx : x ≠ z) :
   refine hcomp.congr_fderiv ?_
   ext v
   have hN : Real.sqrt (vecNormSq (x - z)) = euclideanNorm (x - z) := rfl
-  simp only [ContinuousLinearMap.smul_apply, coordFDeriv_apply, smul_eq_mul, hN,
+  simp only [smul_apply, coordFDeriv_apply, smul_eq_mul, hN,
     Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have hNne : euclideanNorm (x - z) ≠ 0 := ne_of_gt hNpos

@@ -160,7 +160,7 @@ theorem expectedExitTime_eq_zero_of_notMem (hK : P.KolmogorovRegular hP)
     {U : Set alpha} {y : alpha} (hy : y ∉ U) : expectedExitTime P hP U y = 0 := by
   refine (lintegral_congr_ae ?_).trans lintegral_zero
   filter_upwards [IsConservative.ae_eval_zero_eq hP hK y] with omega h0
-  refine le_antisymm ?_ (zero_le _)
+  refine le_antisymm ?_ zero_le
   simpa using ContinuousPath.exitTime_le_of_notMem U omega 0 (h0 ▸ hy)
 
 /-- Almost surely from a starting point of `U`, the expected exit time read at the stopped

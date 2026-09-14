@@ -32,6 +32,32 @@ open scoped BigOperators Matrix.Norms.Elementwise
 
 variable {d : ℕ}
 
+/-- Migration cache (mathlib v4.33.1): typeclass search no longer finds the
+`ContinuousLinearMap` normed-group/space instances on the `Vec`/`Mat`
+abbreviations without a hint; force it once here so the rest of the file's
+`inferInstance`-driven elaboration (implicit in `‖D‖`, `.opNorm_le_bound`,
+`.le_opNorm`, etc.) succeeds. -/
+private noncomputable instance instNormedAddCommGroupVecMatCLM :
+    NormedAddCommGroup (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.toNormedAddCommGroup
+
+private noncomputable instance instNormedSpaceVecMatCLM :
+    NormedSpace ℝ (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.toNormedSpace
+
+private noncomputable instance instNormedAddCommGroupVecVecMatCLM :
+    NormedAddCommGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.toNormedAddCommGroup
+
+/-- The generic `ContinuousLinearMap.toNormedSpace` leaves `𝕜₂` as a metavariable
+until after its `SMulCommClass` argument is resolved, so ordinary instance search
+never reaches a concrete `SMulCommClass ℝ ℝ (Vec d →L[ℝ] Mat d)` goal; supply every
+argument explicitly (with the commuting-scalar witness spelled out) to sidestep it. -/
+private noncomputable instance instNormedSpaceVecVecMatCLM :
+    NormedSpace ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  @ContinuousLinearMap.toNormedSpace ℝ ℝ (Vec d) (Vec d →L[ℝ] Mat d)
+    _ _ _ _ _ _ (RingHom.id ℝ) _ ℝ _ _ (smulCommClass_self ℝ _)
+
 /-! ## Elementary comparisons between the ambient and Euclidean norms -/
 
 /-- The ambient supremum norm on `Vec d` is bounded by the Euclidean norm. -/

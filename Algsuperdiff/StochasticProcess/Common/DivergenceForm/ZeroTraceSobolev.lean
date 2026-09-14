@@ -73,13 +73,13 @@ noncomputable instance : InnerProductSpace ℝ (ZeroTraceSobolev U) := by
     (InnerProductSpace ℝ (zeroTraceClosedSubmodule (U := U)).toSubmodule)
 
 noncomputable instance : CompleteSpace (ZeroTraceSobolev U) := by
-  simpa only [ZeroTraceSobolev] using
+  simpa only [ZeroTraceSobolev] using!
     (zeroTraceClosedSubmodule (U := U)).isClosed.completeSpace_coe
 
 noncomputable instance instSecondCountableTopology :
     SecondCountableTopology (ZeroTraceSobolev U) := by
-  dsimp only [ZeroTraceSobolev]
-  infer_instance
+  exact inferInstanceAs
+    (SecondCountableTopology (zeroTraceClosedSubmodule (U := U)).toSubmodule)
 
 /-- The scalar `L²` component of a zero-trace Sobolev element. -/
 noncomputable def toL2 : ZeroTraceSobolev U →L[ℝ] ScalarL2 U :=

@@ -137,7 +137,7 @@ theorem exists_isDirichletSolutionOn_smul_one [NeZero d] {m : ℤ} {sigma : ℝ}
     ∃ v : H1Function (openCubeSet (originCube d m)),
       IsDirichletSolutionOn (fun _ => sigma • (1 : Mat d)) (originCube d m) v h g := by
   have hdom := isOpenBoundedConvexDomain_openCubeSet (originCube d m)
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
     hdom.isFiniteMeasure_restrict_volume
   have hUmeas : MeasurableSet (openCubeSet (originCube d m)) :=
     measurableSet_openCubeSet (originCube d m)

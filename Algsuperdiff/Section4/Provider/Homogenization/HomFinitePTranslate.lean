@@ -403,15 +403,15 @@ theorem offGridCube_originCube_eq_ball (n : ℤ) (x : Vec d) :
 
 private theorem setIntegral_boxSet_eq_offGridCube (n : ℤ) (x : Vec d) (f : Vec d → ℝ) :
     ∫ y in boxSet n x, f y = ∫ y in offGridCube x (originCube d n), f y := by
-  haveI : Nontrivial (Vec d) := by
-    haveI : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
+  have : Nontrivial (Vec d) := by
+    have : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
     infer_instance
   have hae : boxSet n x =ᵐ[volume] offGridCube x (originCube d n) := by
     rw [offGridCube_originCube_eq_ball, boxSet_def]
     refine MeasureTheory.ae_eq_set.2 ⟨?_, ?_⟩
-    · rw [Metric.closedBall_diff_ball]
+    · rw [Metric.closedBall_sdiff_ball]
       exact MeasureTheory.Measure.addHaar_sphere volume x (boxRadius n)
-    · rw [Set.diff_eq_empty.2 Metric.ball_subset_closedBall]
+    · rw [Set.sdiff_eq_empty.2 Metric.ball_subset_closedBall]
       simp
   exact MeasureTheory.setIntegral_congr_set hae
 
@@ -516,7 +516,7 @@ theorem gridGauge_of_descendantBound (m : ℤ) {s' A : ℝ} (hA : 0 ≤ A) {F : 
         (n := (m - Q.scale).toNat) hxm
     have hRscale : R.scale = m - (((m - Q.scale).toNat : ℤ)) := by
       have := scale_eq_sub_of_mem_descendantsAtDepth hR
-      simpa using this
+      simpa using! this
     have hQscale : Q.scale = m - (((m - Q.scale).toNat : ℤ)) := by
       rw [Int.toNat_of_nonneg (by omega)]
       omega

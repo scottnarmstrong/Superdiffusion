@@ -266,7 +266,7 @@ theorem LambdaSq_le_of_gate (hd : 2 ≤ d) (M : ABKModel d) (Q : TriadicCube d)
           (incrementUnitCube₂ Q n L omega).w1Infinity ^ 2 *
           (Ch02.lambdaSq Q s (.finite 2)
             (coefficientCutoffTriadicCoeffFamily M n omega))⁻¹ := by
-  letI : NeZero d := neZero_of_two_le_bigLambda hd
+  let : NeZero d := neZero_of_two_le_bigLambda hd
   have hgate' : (incrementUnitCube₂ Q n L omega).gradientW1Infinity ≤
       (bigLambdaSensitivityConst d)⁻¹ *
         unitCubeLambda (3 / 8) (.finite 2)
@@ -395,7 +395,7 @@ theorem LambdaSq_le_of_notMem_bad_ae (hd : 2 ≤ d) (M : ABKModel d) {m0 : ℤ}
               (incrementUnitCube₂ Q Q.scale L omega).w1Infinity ^ 2 *
               (Ch02.lambdaSq Q s (.finite 2)
                 (coefficientCutoffTriadicCoeffFamily M Q.scale omega))⁻¹ := by
-  letI : NeZero d := neZero_of_two_le_bigLambda hd
+  let : NeZero d := neZero_of_two_le_bigLambda hd
   filter_upwards [gradientW1Infinity_incrementUnitCube_le_bigLambdaGate_notMem_bad_ae
     hd M hS Q hm] with omega hgate hosc hloc L hL
   refine LambdaSq_le_of_gate hd M Q hL omega ?_ hs hs38

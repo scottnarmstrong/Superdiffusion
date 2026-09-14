@@ -45,7 +45,7 @@ theorem abs_volumeAverage_sub_windowAverage_le {W V : Set (Vec d)}
     |volumeAverage V f - volumeAverage W f| ≤
       Real.sqrt ((volume W).toReal / (volume V).toReal) *
         normalizedL2On W (fun x => f x - volumeAverage W f) := by
-  letI : IsFiniteMeasure (volume.restrict V) := by
+  let : IsFiniteMeasure (volume.restrict V) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hVtop
@@ -176,10 +176,10 @@ theorem dist_smallContrastCampanatoAverage_succ_le [NeZero d]
     dsimp only [V]
     rw [Real.volume_pi_ball x hV]
     exact ENNReal.ofReal_ne_top
-  letI : IsFiniteMeasure (volume.restrict W) := ⟨by
+  let : IsFiniteMeasure (volume.restrict W) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hWtop⟩
-  letI : IsFiniteMeasure (volume.restrict V) := ⟨by
+  let : IsFiniteMeasure (volume.restrict V) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hVtop⟩
   have hdiffW : MemLp (fun y => u.toFun y - volumeAverage W u.toFun) 2

@@ -415,7 +415,8 @@ theorem norm_streamFieldLargeDeriv_le (M : ABKModel d)
           (streamLargeSeries_nonneg M)
       unfold streamFieldLargeGradientConst
       have := mul_le_mul_of_nonneg_left hscale hcoef
-      convert this using 1 <;> ring
+      convert this using 1
+      all_goals first | rfl | ring
 
 end
 

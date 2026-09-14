@@ -92,7 +92,7 @@ theorem survivalProbabilityConstant_le_measure_le_exitTime_on
       rw [survivalProbabilityConstant, hCup]
       simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero, div_zero]
     rw [hzero, ENNReal.coe_zero]
-    exact zero_le _
+    exact zero_le
   · have hden : (1152 * Cup ^ 2 : ℝ≥0) ≠ 0 :=
       mul_ne_zero (by norm_num) (pow_ne_zero 2 hCup)
     rw [survivalProbabilityConstant, ENNReal.coe_div hden]

@@ -172,9 +172,9 @@ theorem exists_flushResidue_le_displayLegs_of_epsPin (d : ℕ) [NeZero d] :
   have hK'volpos : 0 < volume ((fun y => flushSubCentre z m n i sigma + y) ''
       openCubeSet (originCube d n)) := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have h0 : volume ((fun y => flushSubCentre z m n i sigma + y) ''
-        openCubeSet (originCube d n)) = 0 := le_antisymm hcon (zero_le _)
+        openCubeSet (originCube d n)) = 0 := le_antisymm hcon (zero_le)
     rw [h0] at hK'pos
     simp only [ENNReal.toReal_zero] at hK'pos
     exact lt_irrefl _ hK'pos

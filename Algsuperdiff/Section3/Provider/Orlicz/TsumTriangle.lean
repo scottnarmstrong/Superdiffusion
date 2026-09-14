@@ -81,7 +81,7 @@ theorem isBigOWith_tsum_of_isBigOWith_sum_range_succ [IsFiniteMeasure μ]
     simp only [mem_upperTailEvent] at hω
     obtain ⟨N, hN⟩ : ∃ N : ℕ, A * t < ∑ k ∈ Finset.range N, X k ω := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact absurd hω
         (not_lt.2 (Real.tsum_le_of_sum_range_le (fun k => hX_nonneg k ω) hcon))
     refine Set.mem_iUnion.2 ⟨N, ?_⟩
@@ -165,9 +165,10 @@ theorem aemeasurable_tsum_of_nonneg {X : ℕ → Ω → ℝ}
     (hX_meas : ∀ k, AEMeasurable (X k) μ)
     (hX_nonneg : ∀ k ω, 0 ≤ X k ω) :
     AEMeasurable (fun ω => ∑' k, X k ω) μ := by
-  have hnn :=
-    (AEMeasurable.nnreal_tsum fun k =>
-      (hX_meas k).real_toNNReal).coe_nnreal_real
+  have hnn : AEMeasurable (fun ω => ∑' k, (X k ω).toNNReal) μ :=
+    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) fun k =>
+      (hX_meas k).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]

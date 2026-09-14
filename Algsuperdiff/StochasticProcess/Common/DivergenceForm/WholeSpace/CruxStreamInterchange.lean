@@ -181,7 +181,7 @@ theorem iInf_toReal_streamAnalyticPenalizedResolvent_le_cube
   have hsqrtTop : Tendsto (fun n : ℕ ↦ Real.sqrt ((mu : ℝ) + n))
       atTop atTop := by
     have h := (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 2)).comp hmassTop
-    simpa only [← Real.sqrt_eq_rpow] using h
+    simpa only [← Real.sqrt_eq_rpow] using! h
   have htail : Tendsto (fun n : ℕ ↦
       streamFixedCollarTailProfile M omega v (Real.sqrt ((mu : ℝ) + n)))
       atTop (nhds 0) :=
@@ -270,7 +270,7 @@ theorem iInf_toReal_streamAnalyticPenalizedResolvent_le_cube_of_bound
     _ = D * (⨅ n : ℕ,
           (A.analyticPenalizedResolvent hV.isOpen n mu g hg hg1 x).toReal) :=
       (by
-        simpa only [smul_eq_mul] using
+        simpa only [smul_eq_mul] using!
           ((OrderIso.smulRight hD).map_ciInf hbdd).symm)
     _ ≤ D * A.analyticCubeResolvent mu g hg hg1 v x :=
       mul_le_mul_of_nonneg_left hnormalized hD.le

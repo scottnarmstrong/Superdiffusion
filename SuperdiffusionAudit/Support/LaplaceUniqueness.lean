@@ -81,7 +81,7 @@ theorem continuous_momentFun {g : ℝ → ℝ} (hc : Continuous g) {B : ℝ}
   intro sigma
   rcases eq_or_ne sigma 0 with rfl | hne
   · have hlim : Filter.Tendsto (fun tau : ℝ => B * |tau|) (nhds (0 : ℝ)) (nhds 0) := by
-      simpa using (continuous_const.mul continuous_abs).tendsto (0 : ℝ)
+      simpa using! (continuous_const.mul continuous_abs).tendsto (0 : ℝ)
     have := squeeze_zero_norm (fun tau => norm_momentFun_le hb tau) hlim
     simpa [ContinuousAt] using this
   · exact ContinuousAt.mul continuousAt_id

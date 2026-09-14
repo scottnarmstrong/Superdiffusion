@@ -45,7 +45,7 @@ theorem reproducing_of_radial [NeZero d] {u : 𝔼 → ℝ} (hu : ContDiff ℝ 2
   -- a fixed unit vector `e`, for evaluating the radial profile of `K`
   set i0 : Fin d := ⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩ with hi0
   set e : 𝔼 := EuclideanSpace.single i0 (1 : ℝ) with he_def
-  have he : ‖e‖ = 1 := by rw [he_def, EuclideanSpace.norm_single]; norm_num
+  have he : ‖e‖ = 1 := by rw [he_def, PiLp.norm_single]; norm_num
   -- integrability facts
   have hucomp : Continuous (fun z : 𝔼 => u (x + z)) :=
     hu.continuous.comp (continuous_const.add continuous_id)

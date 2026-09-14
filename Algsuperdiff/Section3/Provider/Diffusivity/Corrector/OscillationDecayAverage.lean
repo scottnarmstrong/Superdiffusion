@@ -246,7 +246,7 @@ theorem meanSquareDeviationVecOn_le_of_forall_vecNormSq_le {V : Set (Vec d)}
       funext x
       simp [vecNormSq, vecDot, sq]
     rw [hfun]
-    exact integrable_finset_sum Finset.univ fun i _ => hint i
+    exact integrable_finsetSum Finset.univ fun i _ => hint i
   have hmono : ∫ x in V, vecNormSq (h x - c) ∂volume ≤ ∫ x in V, B ∂volume := by
     refine integral_mono_ae hvecint (integrableOn_const hfin) ?_
     exact (ae_restrict_iff' hV).2 (Filter.Eventually.of_forall hbound)

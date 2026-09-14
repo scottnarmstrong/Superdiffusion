@@ -32,7 +32,7 @@ This module removes both gaps, and nothing else.
 
 `descendantsAverage Q j` is by definition `(card)^{-1}` times a **finite**
 `Finset` sum, so the swap is the linearity of the Bochner integral over a
-finite index set (`integral_const_mul` and `integral_finset_sum`).  What
+finite index set (`integral_const_mul` and `integral_finsetSum`).  What
 linearity costs is exactly one side condition: each individual expectation must
 exist.  That is `hintR` below, a per-cube integrability binder.  It is a
 well-definedness condition on the manuscript's own `E[ ... ]`, of the same
@@ -135,7 +135,7 @@ theorem integral_descendantsAverage_eq_descendantsAverage_integral_real
       ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R :=
     fun _ => rfl
   simp only [hexp]
-  rw [integral_const_mul, integral_finset_sum _ hint]
+  rw [integral_const_mul, integral_finsetSum _ hint]
 
 /-- Per-cube measurability upgrades to measurability of the grid average.
 

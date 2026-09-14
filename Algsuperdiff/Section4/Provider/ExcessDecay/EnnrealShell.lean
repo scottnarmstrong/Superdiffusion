@@ -59,7 +59,7 @@ theorem ofReal_mul_toReal_le {c : ℝ} (hc : 0 ≤ c) (X : ℝ≥0∞) :
     ENNReal.ofReal (c * X.toReal) ≤ ENNReal.ofReal c * X := by
   rcases eq_or_ne X ⊤ with hX | hX
   · rw [hX, ENNReal.toReal_top, mul_zero, ENNReal.ofReal_zero]
-    exact zero_le _
+    exact zero_le
   · exact le_of_eq (by rw [ENNReal.ofReal_mul hc, ENNReal.ofReal_toReal hX])
 
 /-- **The two-summand shell.**
@@ -144,7 +144,7 @@ theorem indicator_le_of_mem {α : Type*} {G : Set α} {f : α → ℝ≥0∞} {R
   · rw [Set.indicator_of_mem hmem]
     exact h hmem
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le R
+    exact zero_le
 
 /-! ## 3. The one finiteness fact the shell needs -/
 

@@ -245,7 +245,7 @@ theorem exists_generalClauseReal_frontierEmpty_half_errorWeighted (d : ℕ) :
   · refine ⟨1, one_pos, ?_⟩
     intro M
     exact absurd M.shellPrefix.dimension (by omega)
-  haveI : NeZero d := ⟨hd⟩
+  have : NeZero d := ⟨hd⟩
   obtain ⟨CI, Cfin, hCI, hCfin, hI⟩ := exists_generalClauseInterior_honest_addThree d
   obtain ⟨CS, hCS, hS⟩ := exists_inv_sigmaBar_add_three_le d
   have hKpos : (0 : ℝ) < 2 * windowMoveConst d := by
@@ -294,7 +294,7 @@ theorem exists_generalClauseReal_frontierEmpty_half_errorWeighted (d : ℕ) :
       (anchorWindowInner_subset_anchorWindow (d := d) n m z)
     rw [hzero, le_zero_iff] at hmono
     exact hW20 hmono
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
   -- the anchor's own `L²` datum for `u`, read on the two windows
   have hum : MemLp u.toFun 2
       (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))) :=

@@ -36,7 +36,7 @@ def domainExtension (f : U → ℝ) : Vec d → ℝ :=
 @[simp] theorem domainExtension_of_mem {f : U → ℝ} {x : Vec d} (hx : x ∈ U) :
     domainExtension f x = f ⟨x, hx⟩ := by
   have := Subtype.val_injective (p := fun y : Vec d => y ∈ U)
-  simpa using this.extend_apply f 0 ⟨x, hx⟩
+  simpa using! this.extend_apply f 0 ⟨x, hx⟩
 
 theorem measurable_domainExtension (hU : MeasurableSet U) {f : U → ℝ}
     (hf : Measurable f) : Measurable (domainExtension f) :=
@@ -60,7 +60,7 @@ theorem abs_domainExtension_le {f : U → ℝ} {D : ℝ} (hfD : ∀ y, |f y| ≤
 theorem memScalarL2_domainExtension (hU : IsOpenBoundedConvexDomain U)
     {f : U → ℝ} (hfmeas : Measurable f) {D : ℝ} (hfD : ∀ y, |f y| ≤ D) :
     MemScalarL2 U (domainExtension f) := by
-  letI := hU.isFiniteMeasure_restrict_volume
+  let := hU.isFiniteMeasure_restrict_volume
   have hmeas : AEStronglyMeasurable (domainExtension f) (volumeMeasureOn U) :=
     (measurable_domainExtension hU.isOpen.measurableSet hfmeas).aestronglyMeasurable
   have htop : MemLp (domainExtension f) ⊤ (volumeMeasureOn U) := by

@@ -100,7 +100,7 @@ theorem setOf_scalePropFrom_zero_eq_compl (Ev : ℤ → Set Ω) (m0 : ℤ) {thet
     simp only [scalePropFrom, Nat.cast_zero, zero_add, Finset.range_one,
       Finset.sum_singleton, Nat.cast_zero, add_zero, Set.indicator_apply, div_one, one_mul]
   ext omega
-  simp only [Set.mem_setOf_eq, Set.mem_compl_iff, hval omega]
+  simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, hval omega]
   constructor
   · intro h hmem
     rw [if_pos hmem] at h

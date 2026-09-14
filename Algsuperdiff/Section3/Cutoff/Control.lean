@@ -210,7 +210,7 @@ theorem measurableSet_lowerTailGoodSet (d : ℕ) :
     MeasurableSet (lowerTailGoodSet d) := by
   change MeasurableSet {omega : ShellSeq d |
     ∀ ell m : ℤ, LowerTailBounded ell m omega}
-  simpa only [Set.setOf_forall] using
+  simpa only [Set.ofPred_forall] using
     (MeasurableSet.iInter fun ell : ℤ =>
       MeasurableSet.iInter fun m : ℤ => measurableSet_lowerTailBounded (d := d) ell m)
 

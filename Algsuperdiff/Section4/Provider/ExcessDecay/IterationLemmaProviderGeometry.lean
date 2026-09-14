@@ -119,7 +119,7 @@ theorem cappedWindows_of_le {U : ℤ → Set (Vec d)} {m k : ℤ} (hk : k ≤ m)
 theorem subset_of_le_of_nest {U : ℤ → Set (Vec d)} {m : ℤ}
     (hnest : ∀ j : ℤ, j ≤ m → U (j - 1) ⊆ U j) {a b : ℤ} (hab : a ≤ b) (hbm : b ≤ m) :
     U a ⊆ U b := by
-  induction b, hab using Int.le_induction with
+  induction b, hab using Int.leInduction with
   | base => exact subset_rfl
   | succ c hac ih =>
       have hstep : U c ⊆ U (c + 1) := by

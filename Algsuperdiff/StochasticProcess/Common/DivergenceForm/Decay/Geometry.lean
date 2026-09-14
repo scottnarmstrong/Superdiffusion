@@ -197,7 +197,7 @@ theorem vecNormSq_fderiv_radialPhase_le_one (hdelta : 0 < delta) (x : Vec d) :
         (x i - z i) / Real.sqrt (radialSq z delta x) := by
     intro i
     rw [hphase.fderiv]
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.coe_sum',
+    simp only [smul_apply, FunLike.coe_sum,
       Finset.sum_apply, ContinuousLinearMap.proj_apply, smul_eq_mul,
       basisVec_apply]
     rw [Finset.sum_eq_single i]
@@ -282,7 +282,7 @@ theorem le_euclideanNorm_sub_of_notMem_euclideanBall {x y : Vec d} {rho : ℝ}
     (hy : y ∉ euclideanBall x rho) :
     rho ≤ euclideanNorm (y - x) := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   refine hy ?_
   show euclideanSqDist y x < rho ^ 2
   rw [euclideanSqDist, ← euclideanNorm_sq]
@@ -305,14 +305,14 @@ theorem vecNormSq_fderiv_inwardPhase_le_one (hdelta : 0 < delta) (x : Vec d) :
         (fderiv ℝ (inwardPhase z delta) x) (basisVec i)) ≤ 1 := by
   have hfd : fderiv ℝ (inwardPhase z delta) x =
       -fderiv ℝ (radialPhase z delta) x := by
-    simpa only [inwardPhase] using
+    simpa only [inwardPhase] using!
       fderiv_neg (f := radialPhase z delta) (x := x)
   have hval : vecNormSq (fun i =>
         (fderiv ℝ (inwardPhase z delta) x) (basisVec i)) =
       vecNormSq (fun i =>
         (fderiv ℝ (radialPhase z delta) x) (basisVec i)) := by
     rw [hfd]
-    simp only [vecNormSq, vecDot, ContinuousLinearMap.neg_apply, neg_mul_neg]
+    simp only [vecNormSq, vecDot, neg_apply, neg_mul_neg]
   rw [hval]
   exact vecNormSq_fderiv_radialPhase_le_one hdelta x
 

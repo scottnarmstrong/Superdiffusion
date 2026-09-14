@@ -58,7 +58,7 @@ theorem ae_abs_apply_le_lInfEntryBound {U : Domain d} (h : LInfMatrixFieldOn U)
     have hxE : (↑‖h.1 x i j‖₊ : ℝ≥0∞) ≤ E := by
       simpa only [enorm_eq_nnnorm] using hx
     have htoReal := (ENNReal.toReal_le_toReal ENNReal.coe_ne_top hE).2 hxE
-    simpa only [ENNReal.coe_toReal, Real.norm_eq_abs] using htoReal
+    simpa only [ENNReal.coe_toReal, Real.norm_eq_abs] using! htoReal
   refine hx'.trans ?_
   calc
     E.toReal ≤ ∑ j : Fin d,

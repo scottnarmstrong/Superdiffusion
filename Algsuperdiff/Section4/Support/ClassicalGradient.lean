@@ -28,7 +28,7 @@ def slopeCLM (A : Vec d) : Vec d →L[ℝ] ℝ :=
   ∑ i : Fin d, A i • ContinuousLinearMap.proj i
 
 @[simp] theorem slopeCLM_apply (A v : Vec d) : slopeCLM A v = vecDot A v := by
-  simp only [slopeCLM, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply,
+  simp only [slopeCLM, sum_apply, smul_apply,
     ContinuousLinearMap.proj_apply, smul_eq_mul, vecDot]
 
 /-- **`f` is differentiable on `W` with gradient field `G`.**  This is the

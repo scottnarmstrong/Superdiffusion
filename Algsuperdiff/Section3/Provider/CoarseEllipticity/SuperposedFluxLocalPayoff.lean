@@ -95,7 +95,7 @@ theorem cutoffSigmaStarInvBlockFamily_le_sum_superposedConclusionPayload_flux_ba
             superposedConclusionPayload M R.scale (m - 1) L (E : ℝ) b eps t beta
               k₀ kp (translateCutoffSample (triadicCubeShift R) omega)
               0 (basisVec j) := by
-  letI : NeZero d := neZeroOfModel M
+  let : NeZero d := neZeroOfModel M
   have hscale : R.scale = m - 1 - (k : ℤ) :=
     scale_eq_of_mem_descendantsAtScale hR
   have hmi : R.scale - 1 ≤ m - 1 := by
@@ -128,7 +128,7 @@ theorem cutoffSigmaStarInvBlockFamily_le_sum_superposedConclusionPayload_flux_ba
       simpa [cutoffSigmaStarInvBlockFamily, coarseSigmaStarInvNormCoeffField,
         coefficientCutoff_aelocallyUniformlyElliptic,
         Ch02.coarseSigmaStarInvMatrixNorm,
-        coefficientCutoffTriadicCoeffFamily] using hmain hne henv
+        coefficientCutoffTriadicCoeffFamily] using! hmain hne henv
     · filter_upwards [] with omega
       intro hfalse
       exact (hmL hfalse).elim

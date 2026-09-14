@@ -56,7 +56,7 @@ theorem measurable_partC0Resolvent {V : Set (Vec d)} (hV : IsOpenBoundedConvexDo
     continuousOn_continuousCoeffBoundedResolvent A.a hV A.hnu A.hnu (partEllipticity A hV)
       A.hsymm (A.hskewContinuous.mono (Set.subset_univ V)) A.hd mu
       (hf.comp measurable_subtype_coe) (fun z ↦ hfD z)
-  have hmeas : Measurable fun y : V ↦ h y := hcont.restrict.measurable
+  have hmeas : Measurable fun y : V ↦ h y := hcont.domRestrict.measurable
   have heq : A.partC0Resolvent hV mu f hf hfD = domainExtension fun y : V ↦ h y := by
     funext x
     by_cases hx : x ∈ V
@@ -222,8 +222,8 @@ private theorem partAlphaShiftedResolvent_identity {V : Set (Vec d)} {Lam : ℝ}
           (alphaShiftedResolvent A.a mu.property A.hnu hEll F) := by
   have hid := alphaShiftedResolvent_resolvent_identity A.a nu.property mu.property A.hnu hEll
   have happ := congrArg (fun T : ScalarL2 V →L[ℝ] ScalarL2 V ↦ T F) hid
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
-    ContinuousLinearMap.coe_comp', Function.comp_apply] at happ
+  simp only [sub_apply, smul_apply,
+    ContinuousLinearMap.coe_comp, Function.comp_apply] at happ
   have hstep : alphaShiftedResolvent A.a nu.property A.hnu hEll F -
         alphaShiftedResolvent A.a mu.property A.hnu hEll F =
       ((mu : ℝ) - (nu : ℝ)) • alphaShiftedResolvent A.a nu.property A.hnu hEll

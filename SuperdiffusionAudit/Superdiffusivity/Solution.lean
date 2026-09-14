@@ -73,7 +73,7 @@ theorem superdiffusivity
     refine ⟨1, 1, one_pos, one_pos, ?_⟩
     intro M
     exact absurd M.dimension (by omega)
-  haveI : NeZero d := ⟨hd.ne'⟩
+  have : NeZero d := ⟨hd.ne'⟩
   obtain ⟨gamma0, C, hgamma0, hC, hmain⟩ :=
     _root_.Algsuperdiff.superdiffusivity d cstar _hcstar
   refine ⟨gamma0, C, hgamma0, hC, ?_⟩

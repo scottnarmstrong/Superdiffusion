@@ -147,7 +147,7 @@ theorem memLp_two_mollifyGrad {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
   refine (memLp_two_iff_integrable_sq_norm hmeas.aestronglyMeasurable).2 ?_
   have hsum : Integrable
       (fun ω => ∑ i : Fin d, (mollify (Ω := Ω) (kernelDeriv κ i) φ ω) ^ 2) μ :=
-    integrable_finset_sum _ fun i _ =>
+    integrable_finsetSum _ fun i _ =>
       (memLp_two_iff_integrable_sq_norm
         (stronglyMeasurable_mollify (continuous_kernelDeriv hκ i) hφm).aestronglyMeasurable).1
         (hcomp i) |>.congr (Filter.Eventually.of_forall fun ω => by

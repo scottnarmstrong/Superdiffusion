@@ -81,7 +81,7 @@ def badFirst (B : ℕ → (Fin d → ℤ) → Set Ω) (L : ℕ) (z : Fin d → �
   B L z \ ⋃ L' ∈ Set.Iio L, B L' z
 
 theorem badFirst_subset (B : ℕ → (Fin d → ℤ) → Set Ω) (L : ℕ) (z : Fin d → ℤ) :
-    badFirst B L z ⊆ B L z := Set.diff_subset
+    badFirst B L z ⊆ B L z := Set.sdiff_subset
 
 theorem mem_badFirst_iff {B : ℕ → (Fin d → ℤ) → Set Ω} {L : ℕ} {z : Fin d → ℤ} {ω : Ω} :
     ω ∈ badFirst B L z ↔ ω ∈ B L z ∧ ∀ L' < L, ω ∉ B L' z := by

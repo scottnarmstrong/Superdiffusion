@@ -145,8 +145,8 @@ theorem expectedExitTime_cubeSetAt_eq_streamExitFunction (y : Vec d) (n : ℤ) {
     expectedExitTime R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
         (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) (x : OnePoint (Vec d)) =
       ENNReal.ofReal (streamExitFunction M omega y n x) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   have hchain := WholeSpaceAnalyticData.lintegral_exitTime_eq_cubeSetAtExitFunction_stream
     (M := M) (omega := omega) R hreg hcons hid hT y n hx
   have hpde := (streamWholeSpaceAnalyticData M omega
@@ -171,12 +171,16 @@ theorem toReal_expectedExitTime_cubeSetAt_eq_stream (y : Vec d) (n : ℤ) (z : O
     (expectedExitTime R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
         (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) z).toReal =
       onePointRealExtension (streamExitFunction M omega y n) z := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   induction z using OnePoint.rec with
   | infty =>
-    rw [expectedExitTime_eq_zero_of_notMem _ _ hreg.kolmogorovRegular
-      OnePoint.infty_notMem_image_coe]
+    have hzero : expectedExitTime R.onePointKernelSemigroup
+        R.isConservative_onePointKernelSemigroup
+        (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) OnePoint.infty = 0 :=
+      expectedExitTime_eq_zero_of_notMem _ _ hreg.kolmogorovRegular
+        OnePoint.infty_notMem_image_coe
+    refine (congrArg ENNReal.toReal hzero).trans ?_
     simp
   | coe x =>
     by_cases hx : x ∈ cubeSetAt y n
@@ -186,8 +190,12 @@ theorem toReal_expectedExitTime_cubeSetAt_eq_stream (y : Vec d) (n : ℤ) (z : O
     · have hx' : (x : OnePoint (Vec d)) ∉ ((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n := by
         rintro ⟨w, hw, hwx⟩
         exact hx (OnePoint.coe_injective hwx ▸ hw)
-      rw [expectedExitTime_eq_zero_of_notMem _ _ hreg.kolmogorovRegular hx',
-        onePointRealExtension_coe, streamExitFunction_of_notMem M omega y n hx]
+      have hzero : expectedExitTime R.onePointKernelSemigroup
+          R.isConservative_onePointKernelSemigroup
+          (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) (x : OnePoint (Vec d)) = 0 :=
+        expectedExitTime_eq_zero_of_notMem _ _ hreg.kolmogorovRegular hx'
+      refine (congrArg ENNReal.toReal hzero).trans ?_
+      rw [onePointRealExtension_coe, streamExitFunction_of_notMem M omega y n hx]
       simp
 
 end Process

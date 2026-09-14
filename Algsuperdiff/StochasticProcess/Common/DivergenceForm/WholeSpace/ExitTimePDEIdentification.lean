@@ -175,7 +175,7 @@ theorem exists_measurable_cubeTorsionSolution (v : ℕ) :
   classical
   have hU : IsOpenBoundedConvexDomain (wholeSpaceCube d v) :=
     isOpenBoundedConvexDomain_wholeSpaceCube d v
-  haveI : IsFiniteMeasure (volumeMeasureOn (wholeSpaceCube d v)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (wholeSpaceCube d v)) :=
     hU.isFiniteMeasure_restrict_volume
   obtain ⟨w0, hw0⟩ :=
     exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization
@@ -206,7 +206,7 @@ forcing.** -/
 theorem cubeTorsionFunction_isScalarForcedWeakSolution (v : ℕ) :
     IsScalarForcedWeakSolution A.a (wholeSpaceCube d v) (fun _ => (1 : ℝ))
       (A.cubeTorsionFunction v).toH1Function := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (wholeSpaceCube d v)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (wholeSpaceCube d v)) :=
     (isOpenBoundedConvexDomain_wholeSpaceCube d v).isFiniteMeasure_restrict_volume
   refine ⟨memLp_const (1 : ℝ), fun φ => ?_⟩
   rw [A.cubeTorsionFunction_isZeroTraceDirichletRhsWeakSolution v φ]

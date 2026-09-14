@@ -121,7 +121,7 @@ theorem integrableOn_gradField_coord {v : Vec d → ℝ} {W : Set (Vec d)} {K D 
     (hhol : HolderSeminormBoundOn W (1 / 2 : ℝ) K (gradField v))
     (hdiam : ∀ p ∈ W, ∀ q ∈ W, ‖p - q‖ ≤ D) {p₀ : Vec d} (hp₀ : p₀ ∈ W) (i : Fin d) :
     IntegrableOn (fun p => gradField v p i) W volume := by
-  haveI : IsFiniteMeasure (volume.restrict W) :=
+  have : IsFiniteMeasure (volume.restrict W) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact lt_top_iff_ne_top.2 hWfin⟩
   have hD : (0 : ℝ) ≤ D := le_trans (norm_nonneg _) (hdiam p₀ hp₀ p₀ hp₀)
   set C : ℝ := ‖gradField v p₀‖ + K * D ^ (1 / 2 : ℝ) with hCdef

@@ -63,7 +63,7 @@ theorem deGiorgi_levelRecursion_two :
   have hUdom : IsOpenBoundedConvexDomain (axisCube z L) :=
     isOpenBoundedConvexDomain_axisCube z L
   have hUmeas : MeasurableSet (axisCube z L) := (isOpen_axisCube z L).measurableSet
-  haveI : IsFiniteMeasure (volumeMeasureOn (axisCube z L)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (axisCube z L)) :=
     hUdom.isBoundedDomain.isFiniteMeasure_restrict_volume
   have hVolU_top : volume (axisCube z L) ≠ ⊤ := by
     rw [axisCube, Real.volume_pi_Ioo]
@@ -135,12 +135,12 @@ theorem deGiorgi_levelRecursion_two :
     have hset1 : {x | x ∈ axisCube z L ∧ fk.toFun x ≠ 0} =
         {x | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x} := by
       ext x
-      simp only [Set.mem_setOf_eq, hfk]
+      simp only [Set.mem_ofPred_eq, hfk]
       exact and_congr_right fun _ => hmaxne (w₁.toFun x)
     have hset2 : {x | x ∈ axisCube z L ∧ gk.toFun x ≠ 0} =
         {x | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x} := by
       ext x
-      simp only [Set.mem_setOf_eq, hgk]
+      simp only [Set.mem_ofPred_eq, hgk]
       exact and_congr_right fun _ => hmaxne (w₂.toFun x)
     have hzero : volume {x | x ∈ axisCube z L ∧ fk.toFun x ≠ 0} +
         volume {x | x ∈ axisCube z L ∧ gk.toFun x ≠ 0} ≤

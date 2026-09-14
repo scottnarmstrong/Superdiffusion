@@ -79,7 +79,7 @@ theorem tendsto_streamUniformExhaustionEnvelope_sqrt_mul
         (Real.sqrt (mu : ℝ) * r)) atTop (nhds 0) := by
   have hsqrt : Tendsto (fun mu : PositiveShift ↦ Real.sqrt (mu : ℝ))
       atTop atTop := by
-    simpa only [Real.sqrt_eq_rpow] using
+    simpa only [Real.sqrt_eq_rpow, Function.comp_def] using
       (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 2)).comp
         tendsto_positiveShift_coe_atTop
   exact (tendsto_streamUniformExhaustionEnvelope_atTop M omega).comp

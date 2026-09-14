@@ -453,7 +453,7 @@ private theorem descendantsAverage_integral_comm' {Omega : Type*} [MeasurableSpa
   rw [show (fun w => descendantsAverage Q j (fun R => F R w))
       = fun w => ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
           ∑ R ∈ descendantsAtDepth Q j, F R w from rfl,
-    integral_const_mul, integral_finset_sum _ hF]
+    integral_const_mul, integral_finsetSum _ hF]
 
 /-- **The grid form of the cross term**: the descendant average of the products of
 the averages is the cube average of the product, minus the grid average of the
@@ -632,7 +632,7 @@ private theorem step5_jensen_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
   have hLint : Integrable (fun omega : CutoffSample d =>
       descendantsAverage (originCube d (K : ℤ)) j (fun R => vecNormSq (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))) (cutoffSampleLaw M).toMeasure :=
-    (integrable_finset_sum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampN).const_mul _
+    (integrable_finsetSum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampN).const_mul _
   exact integral_mono hLint hsampG fun omega =>
     descendantsAverage_vecNormSq_cubeAverageVec_le_cubeAverage (originCube d (K : ℤ)) j _
       (fun R hR => hmemD omega.val R hR) (hintD omega.val)
@@ -715,7 +715,7 @@ private theorem step5_cross_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ)
       descendantsAverage (originCube d (K : ℤ)) j (fun R =>
             step5CrossDefect R omega.val n (n + (h : ℤ)) e
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))) (cutoffSampleLaw M).toMeasure :=
-    (integrable_finset_sum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampDef).const_mul _
+    (integrable_finsetSum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampDef).const_mul _
   rw [descendantsAverage_integral_comm' _ _ _ _ hsampX,
     descendantsAverage_integral_comm' _ _ _ _ hsampDef,
     show (fun omega : CutoffSample d =>

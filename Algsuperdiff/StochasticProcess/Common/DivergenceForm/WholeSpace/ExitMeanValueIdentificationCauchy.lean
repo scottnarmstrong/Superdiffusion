@@ -90,7 +90,7 @@ private theorem integrable_mul_vecNormSq_grad {U : Set (Vec d)} (u : H1Function 
   have hphiTop : MemLp phi ∞ (volumeMeasureOn U) :=
     (hphi.continuous.memLp_of_hasCompactSupport hphiCompact).restrict U
   have hq : MemVectorL2 U (fun x ↦ phi x • u.grad x) := by
-    simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using
+    simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using!
       (MemLp.of_eval fun i : Fin d ↦
         (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
   refine (integrableOn_vecDot_of_memVectorL2 u.grad_memVectorL2 hq).congr ?_
@@ -135,7 +135,7 @@ theorem tendsto_setIntegral_analyticCubeResolvent_sub_sq (v : ℕ) (mu : Positiv
     Tendsto (fun n : ℕ ↦ ∫ x in wholeSpaceCube d v,
         (A.analyticCubeResolvent mu f hf hfD n x -
           A.analyticMinimalResolventReal mu f hf hfD x) ^ 2 ∂volume) atTop (𝓝 0) := by
-  letI := isFiniteMeasure_cube (d := d) v
+  let := isFiniteMeasure_cube (d := d) v
   have hmu : (0 : ℝ) < (mu : ℝ) := mu.property
   set B : ℝ := 2 * (D / (mu : ℝ)) with hB
   have hlimit : ∫ _x in wholeSpaceCube d v, (0 : ℝ) ∂volume = 0 := integral_zero _ _
@@ -253,7 +253,7 @@ theorem exists_cubeCauchyConstant (v : ℕ) (mu : PositiveShift) {f : Vec d → 
     have hsq : ContDiff ℝ (⊤ : ℕ∞) fun x ↦ eta x ^ 2 := by
       simpa only [pow_two] using heta.mul heta
     have hsqCompact : HasCompactSupport fun x ↦ eta x ^ 2 := by
-      simpa only [pow_two] using hetaCompact.mul_left (f := eta)
+      simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
     exact integrable_mul_vecNormSq_grad Z hsq hsqCompact
   have hinner : (∫ x in V, vecNormSq (Z.grad x) ∂volume) ≤
       ∫ x in W, eta x ^ 2 * vecNormSq (Z.grad x) ∂volume := by

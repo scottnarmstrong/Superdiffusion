@@ -145,7 +145,7 @@ theorem memH10_mul_of_tsupport_subset {B V : Set (Vec d)} (hB : IsOpen B)
     have hbase := W.tendsto_approx
     rw [hWfun] at hbase
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbase
-      (fun n => zero_le _) (fun n => ?_)
+      (fun n => zero_le) (fun n => ?_)
     exact eLpNorm_mono_measure _ hmono
   have htendg : ∀ i : Fin d, Tendsto
       (fun n => eLpNorm
@@ -153,7 +153,7 @@ theorem memH10_mul_of_tsupport_subset {B V : Set (Vec d)} (hB : IsOpen B)
         (volume.restrict (V ∩ B))) atTop (nhds 0) := by
     intro i
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
-      (W.tendsto_approx_grad i) (fun n => zero_le _) (fun n => ?_)
+      (W.tendsto_approx_grad i) (fun n => zero_le) (fun n => ?_)
     exact eLpNorm_mono_measure _ hmono
   refine ⟨⟨⟨fun y => η y * f y, W.toH1Function.grad, hmemL2, hgradL2, hweak⟩,
     W.approx, W.approx_smooth, W.approx_hasCompactSupport, hsupp, htend, htendg⟩,

@@ -100,10 +100,10 @@ theorem ae_eq_of_tendsto_of_tendsto_integral_normSq {A : ℕ → Ω → E} {B C 
     have hlim : Filter.Tendsto
         (fun n => ∫⁻ ω, ENNReal.ofReal (‖A n ω - C ω‖ ^ 2) ∂μ) Filter.atTop (nhds 0) := by
       simp only [heq]
-      simpa using (ENNReal.continuous_ofReal.tendsto (0 : ℝ)).comp htend
+      simpa using! (ENNReal.continuous_ofReal.tendsto (0 : ℝ)).comp htend
     exact hlim.liminf_eq
   have hle : ∫⁻ ω, ENNReal.ofReal (‖B ω - C ω‖ ^ 2) ∂μ = 0 := by
-    refine le_antisymm ?_ (zero_le _)
+    refine le_antisymm ?_ zero_le
     calc ∫⁻ ω, ENNReal.ofReal (‖B ω - C ω‖ ^ 2) ∂μ
         = ∫⁻ ω, Filter.liminf
             (fun n => ENNReal.ofReal (‖A n ω - C ω‖ ^ 2)) Filter.atTop ∂μ :=

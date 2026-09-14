@@ -104,7 +104,7 @@ theorem exists_memBlockL2_toHilbertBlockL2OfBlockField_eq {U : Set (Vec d)}
   have hF : MemBlockL2 U F := by
     have := ((HilbertBlockVec.continuousLinearEquivBlockVec d).toContinuousLinearMap).comp_memLp'
       (Lp.memLp xi)
-    simpa [hFdef] using this
+    simpa [hFdef] using! this
   refine ⟨F, hF, ?_, ?_, ?_⟩
   · exact (measurable_fst.comp
       (((HilbertBlockVec.continuousLinearEquivBlockVec d).continuous).measurable.comp hmeas))
@@ -137,8 +137,8 @@ theorem exists_continuous_doubledMuValue_of_class [NeZero d] (U : Domain d) (a :
       ∀ (W : DoubledField d) (hW : MemBlockL2 (U : Set (Vec d)) (blockStateOfDoubled W).eval),
         g (toHilbertBlockL2OfBlockField hW) = doubledMuValue U a W := by
   classical
-  letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
-  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+  let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
   set b : CoeffOn U := pointwiseCoeffOn U a with hbdef
   have hba : CoeffOn.AEEq b a := by
     simpa [hbdef] using pointwiseCoeffOn_ae_eq U a
@@ -187,9 +187,9 @@ theorem measurable_doubledMuValue_of_measurable_class [NeZero d] {Omega : Type*}
       Measurable fun omega => doubledMuValue U (a omega) W) :
     Measurable fun omega => doubledMuValue U (a omega) (X omega) := by
   classical
-  letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
-  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
-  haveI : SecondCountableTopology (HilbertBlockL2 (U : Set (Vec d))) := inferInstance
+  let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+  let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  have : SecondCountableTopology (HilbertBlockL2 (U : Set (Vec d))) := inferInstance
   choose g hgcont hgval using fun omega : Omega =>
     exists_continuous_doubledMuValue_of_class U (a omega)
   have hmeasAt : ∀ xi : HilbertBlockL2 (U : Set (Vec d)),
@@ -205,6 +205,7 @@ theorem measurable_doubledMuValue_of_measurable_class [NeZero d] {Omega : Type*}
       rw [hWeval]; exact hF
     have hclassW : toHilbertBlockL2OfBlockField hWmem = xi := by
       rw [← hFeq]
+      rfl
     have hrw : (fun omega : Omega => g omega xi)
         = fun omega : Omega => doubledMuValue U (a omega) W := by
       funext omega

@@ -222,12 +222,16 @@ def ballTransfer (x₀ : Vec d) {r : ℝ} (hr : 0 < r)
 @[simp] theorem ballTransfer_toFun (x₀ : Vec d) {r : ℝ} (hr : 0 < r)
     (u : H1Function (euclideanBall x₀ r)) (x : Vec d) :
     (ballTransfer x₀ hr u).toFun x = r⁻¹ * u.toFun (r • x + x₀) := by
-  simp [ballTransfer]
+  simp only [ballTransfer, H1Function.undilateSet_toFun, H1Function.untranslate_toFun]
+  exact congrArg (fun f => r⁻¹ * f (r • x + x₀))
+    (h1OfSetEq_toFun (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr) u)
 
 @[simp] theorem ballTransfer_grad (x₀ : Vec d) {r : ℝ} (hr : 0 < r)
     (u : H1Function (euclideanBall x₀ r)) (x : Vec d) :
     (ballTransfer x₀ hr u).grad x = u.grad (r • x + x₀) := by
-  simp [ballTransfer]
+  simp only [ballTransfer, H1Function.undilateSet_grad, H1Function.untranslate_grad]
+  exact congrFun
+    (h1OfSetEq_grad (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr) u) (r • x + x₀)
 
 /-- The test-function direction of the chart: an `H¹₀` witness on the unit ball
 becomes an `H¹₀` witness on `euclideanBall x₀ r`. -/
@@ -244,13 +248,58 @@ def ballTestTransfer (x₀ : Vec d) {r : ℝ} (hr : 0 < r)
     (psi : H10Function (smallContrastUnitBall d)) (y : Vec d) :
     (ballTestTransfer x₀ hr psi).toH1Function.toFun y =
       psi.toH1Function.toFun (r⁻¹ • (y - x₀)) := by
-  simp [ballTestTransfer]
+  have hproof2 : smallContrastUnitBall d = r⁻¹ • (r • smallContrastUnitBall d) := by
+    rw [smul_smul, inv_mul_cancel₀ hr.ne', one_smul]
+  have step1 :
+      (h10OfSetEq (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
+          ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+            x₀)).toH1Function.toFun y
+        = ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+            x₀).toH1Function.toFun y :=
+    (congrArg (fun v => v.toFun y)
+        (h10OfSetEq_toH1Function (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
+          ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate x₀))).trans
+      (congrFun
+        (h1OfSetEq_toFun (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
+          ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+            x₀).toH1Function)
+        y)
+  have step2 :
+      ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+          x₀).toH1Function.toFun y
+        = psi.toH1Function.toFun (r⁻¹ • (y - x₀)) :=
+    (congrArg (fun v => v.toFun (r⁻¹ • (y - x₀))) (h10OfSetEq_toH1Function hproof2 psi)).trans
+      (congrFun (h1OfSetEq_toFun hproof2 psi.toH1Function) (r⁻¹ • (y - x₀)))
+  exact step1.trans step2
 
 @[simp] theorem ballTestTransfer_grad (x₀ : Vec d) {r : ℝ} (hr : 0 < r)
     (psi : H10Function (smallContrastUnitBall d)) (y : Vec d) :
     (ballTestTransfer x₀ hr psi).toH1Function.grad y =
       r⁻¹ • psi.toH1Function.grad (r⁻¹ • (y - x₀)) := by
-  simp [ballTestTransfer]
+  have hproof2 : smallContrastUnitBall d = r⁻¹ • (r • smallContrastUnitBall d) := by
+    rw [smul_smul, inv_mul_cancel₀ hr.ne', one_smul]
+  have step1 :
+      (h10OfSetEq (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
+          ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+            x₀)).toH1Function.grad y
+        = ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+            x₀).toH1Function.grad y :=
+    (congrArg (fun v => v.grad y)
+        (h10OfSetEq_toH1Function (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
+          ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate x₀))).trans
+      (congrFun
+        (h1OfSetEq_grad (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
+          ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+            x₀).toH1Function)
+        y)
+  have step2 :
+      ((H10Function.unscale (inv_pos.mpr hr) (h10OfSetEq hproof2 psi)).translate
+          x₀).toH1Function.grad y
+        = r⁻¹ • psi.toH1Function.grad (r⁻¹ • (y - x₀)) :=
+    congrArg (r⁻¹ • ·)
+      ((congrArg (fun v => v.grad (r⁻¹ • (y - x₀))) (h10OfSetEq_toH1Function hproof2 psi)).trans
+        (congrFun (h1OfSetEq_grad hproof2 psi.toH1Function) (r⁻¹ • (y - x₀))))
+  exact step1.trans step2
 
 /-! ## The transported data and its scalings -/
 

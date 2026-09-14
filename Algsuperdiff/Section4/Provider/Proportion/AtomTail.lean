@@ -106,7 +106,7 @@ theorem isBigOWith_max_zero {mu : Measure Omega} {Psi : ℝ → ℝ} {X : Omega 
   have hset : upperTailEvent (fun omega => max (X omega) 0) (A * t)
       = upperTailEvent X (A * t) := by
     ext omega
-    simp only [upperTailEvent, Set.mem_setOf_eq, lt_max_iff]
+    simp only [upperTailEvent, Set.mem_ofPred_eq, lt_max_iff]
     constructor
     · rintro (h1 | h2)
       · exact h1

@@ -131,7 +131,7 @@ private theorem unitOpenCubeSup_eq_eLpNorm_top
                 hylt
           exact (not_lt_of_ge hy) hbad
         have hV_restrict_zero : (volume.restrict U) V = 0 := by
-          simpa only [not_not, Set.setOf_mem_eq] using
+          simpa only [not_not, Set.ofPred_mem_eq] using
             (ae_iff.mp hae_not_mem)
         exact (ne_of_gt hV_restrict_pos) hV_restrict_zero
   change S = E.toReal

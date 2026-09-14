@@ -142,13 +142,13 @@ theorem integral_blockQuadratic_eq_of_indepFun {Omega : Type*}
         (toFullBlockVec (W omega) a * toFullBlockVec (W omega) b)) mu :=
     fun a b => (hW a b).const_mul _
   simp_rw [blockQuadratic_eq_sum_entry]
-  rw [integral_finset_sum _
-      (fun a _ => integrable_finset_sum _ fun b _ => hprod a b),
-    integral_finset_sum _
-      (fun a _ => integrable_finset_sum _ fun b _ => hprodBar a b)]
+  rw [integral_finsetSum _
+      (fun a _ => integrable_finsetSum _ fun b _ => hprod a b),
+    integral_finsetSum _
+      (fun a _ => integrable_finsetSum _ fun b _ => hprodBar a b)]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [integral_finset_sum _ (fun b _ => hprod a b),
-    integral_finset_sum _ (fun b _ => hprodBar a b)]
+  rw [integral_finsetSum _ (fun b _ => hprod a b),
+    integral_finsetSum _ (fun b _ => hprodBar a b)]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [(hindep a b).integral_fun_mul_eq_mul_integral (hB a b).1 (hW a b).1,
     integral_const_mul, hBbar a b]

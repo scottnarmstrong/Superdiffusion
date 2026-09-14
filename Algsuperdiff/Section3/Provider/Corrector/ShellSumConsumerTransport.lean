@@ -272,7 +272,7 @@ theorem tendsto_integral_cutoffSample_cubeAverage_of_weakSolutions
   · exact isSolenoidalOn_grad_add_of_isZeroTraceDirichletRhsWeakSolution_one
       (hmem K f) (hD K f)
   · exact (wN K f).toH1Function.isPotentialOn
-  · haveI :=
+  · have :=
       Algsuperdiff.Section3.Provider.Diffusivity.Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet
         (originCube d (K : ℤ))
     exact isSolenoidalZeroNormalTraceOn_grad_add_of_isMeanZeroNeumannRhsWeakSolution_one

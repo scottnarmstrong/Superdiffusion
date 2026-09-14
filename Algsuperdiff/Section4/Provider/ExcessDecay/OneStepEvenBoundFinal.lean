@@ -193,7 +193,7 @@ theorem normalizedL2On_evenAffinePart_le_of_hessian_bound [NeZero d] {m n : ℤ}
     rw [hedef, evenAffinePart]
     exact (memLp_affineEval_truncatedWindow x m (n - 2) _ _).mono_measure
       (Measure.restrict_mono hPU le_rfl)
-  haveI : IsFiniteMeasure (volume.restrict P) := by
+  have : IsFiniteMeasure (volume.restrict P) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_of_le_of_ne le_top (volume_coordBox_ne_top _ _)

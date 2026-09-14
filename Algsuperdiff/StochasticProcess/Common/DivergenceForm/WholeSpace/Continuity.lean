@@ -194,13 +194,17 @@ theorem abs_analyticMinimalResolventReal_sub_le (mu : PositiveShift)
           (hf.sub hg) hclose x := by
     symm
     apply A.analyticMinimalResolventReal_bound_irrel mu (hf.sub hg) hclose
+  have hstep : A.analyticMinimalResolventReal mu f hf hfD x -
+      A.analyticMinimalResolventReal mu g hg hgE x =
+      A.analyticMinimalResolventReal mu (fun y ↦ f y + -g y)
+          (hf.add hg.neg) hsum x := by
+    rw [sub_eq_add_neg, ← hsmul']
+    exact hadd.symm
   calc
     |A.analyticMinimalResolventReal mu f hf hfD x -
         A.analyticMinimalResolventReal mu g hg hgE x| =
       |A.analyticMinimalResolventReal mu (fun y ↦ f y + -g y)
-          (hf.add hg.neg) hsum x| := by
-        rw [hadd]
-        rw [hsmul', sub_eq_add_neg]
+          (hf.add hg.neg) hsum x| := congrArg abs hstep
     _ = |A.analyticMinimalResolventReal mu (fun y ↦ f y - g y)
           (hf.sub hg) hclose x| := congrArg abs hsumEq
     _ ≤ eps / (mu : ℝ) :=
@@ -295,17 +299,17 @@ theorem exists_holderBound_cubeResolvent_tail (mu : PositiveShift)
   have hnormalized : IsMatrixDivFormWeakSolutionZerothOrderOn
       (normalizedFrozenCoeff A.nu A.a x) (euclideanBall x R) z
       (fun y ↦ A.nu⁻¹ * g y) 0 := by
-    simpa only [normalizedFrozenCoeff] using
+    simpa only [normalizedFrozenCoeff] using!
       matrixWeak_const_smul (c := A.nu⁻¹) hfrozen
   have hgscaled : MemScalarLInfOn (euclideanBall x R)
       (fun y ↦ A.nu⁻¹ * g y) := by
     have := hgmem.const_smul A.nu⁻¹
-    simpa only [Pi.smul_apply, smul_eq_mul] using this
+    simpa only [Pi.smul_apply, smul_eq_mul] using! this
   classical
   let aLocal : CoeffField d := fun y i j ↦
     if y ∈ euclideanBall x R then normalizedFrozenCoeff A.nu A.a x y i j else 0
   have hmeas : Measurable aLocal := by
-    simpa only [aLocal] using hEllFrozen.1
+    simpa only [aLocal] using! hEllFrozen.1
   have hsmallLocal : CoefficientIdentityDistanceLE
       (euclideanBall x R) aLocal delta := by
     filter_upwards [hsmall,

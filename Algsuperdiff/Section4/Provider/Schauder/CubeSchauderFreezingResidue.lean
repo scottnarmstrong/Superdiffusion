@@ -85,7 +85,7 @@ theorem sum_toReal_eLpNorm_coord_le {U : Set (Vec d)} {F : Vec d → Vec d}
     calc ∑ i : Fin d, a i * a i = ∑ i : Fin d, ∫ x in U, F x i * F x i ∂volume :=
           Finset.sum_congr rfl fun i _ => hsq i
       _ = ∫ x in U, ∑ i : Fin d, F x i * F x i ∂volume :=
-          (integral_finset_sum _ fun i _ => hint i).symm
+          (integral_finsetSum _ fun i _ => hint i).symm
       _ = ∫ x in U, vecNormSq (F x) ∂volume :=
           integral_congr_ae (Filter.Eventually.of_forall fun x => (hpt x).symm)
   have hcs := sq_vecDot_le_vecNormSq_mul_vecNormSq (fun _ : Fin d => (1 : ℝ)) a

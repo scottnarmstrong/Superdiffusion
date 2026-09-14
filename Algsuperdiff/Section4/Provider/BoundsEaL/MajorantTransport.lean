@@ -92,7 +92,7 @@ theorem exists_normalizedBlockResponseMax_le_lFreeStep3Majorant_of_tail (d : ℕ
                   (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
                 lFreeStep3Majorant C M m s (lFreeGradSlot m T) (lFreeValueSlot m T) R
                   omega := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C, hC, hsplit⟩ := exists_normalizedBlockResponseMax_step3_split d dimension
   refine ⟨C, hC, ?_⟩
   intro M m n hnm s hs0 hs1 hgam T omega hT hTneg L hmL l R hR

@@ -89,7 +89,7 @@ private theorem exists_holder_of_frozenContrast [NeZero d] (hd : 2 ≤ d)
   let aLocal : CoeffField d := fun x i j ↦
     if x ∈ euclideanBall z s then normalizedFrozenCoeff nu a z x i j else 0
   have hmeas : Measurable aLocal := by
-    simpa only [aLocal] using hameas
+    simpa only [aLocal] using! hameas
   have hsmallLocal : CoefficientIdentityDistanceLE (euclideanBall z s) aLocal
       (smallContrastThreshold d (1 / 2 : ℝ)) := by
     filter_upwards [hsmall, ae_restrict_mem (isOpen_euclideanBall z s).measurableSet]

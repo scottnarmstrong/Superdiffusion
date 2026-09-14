@@ -356,7 +356,7 @@ theorem measurable_volumeAverage_vecNormSq_pow_four_freshShellDirichletGrad [NeZ
     Measurable fun omega =>
       volumeAverage S
         (fun x => vecNormSq ((wD omega).toH1Function.grad x) ^ 4) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   exact measurable_volumeAverage_normPowEight hS hSU
     (measurable_freshShellDirichletGradL2 Q sigmaInv n m e wD hwD)
@@ -375,7 +375,7 @@ theorem measurable_volumeAverage_vecNormSq_pow_four_freshShellNeumannGrad
     Measurable fun omega =>
       volumeAverage S
         (fun x => vecNormSq ((wN omega).toH1Function.grad x) ^ 4) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   exact measurable_volumeAverage_normPowEight hS hSU
     (measurable_freshShellNeumannGradL2 Q sigmaInv n m e wN hwN)

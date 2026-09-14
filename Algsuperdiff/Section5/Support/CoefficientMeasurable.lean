@@ -51,6 +51,30 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-! ## Instance caches for `Mat d`
+
+Mathlib v4.33 assembles the scoped elementwise matrix norm with
+`fast_instance%`, so the topology reachable from `Matrix.normedAddCommGroup`
+is a flattened copy of the product topology and no longer *syntactically*
+the one bare `Mat d` carries by default (the plain, unconditional
+`TopologicalSpace (Matrix m n R) := inferInstanceAs (TopologicalSpace (m → n
+→ R))` bridging instance). `SecondCountableTopology`/`PseudoMetrizableSpace`
+have no dedicated `Matrix`-level bridging instance at all, so blind search
+for them on `Mat d` fails outright. Both are supplied here, pinned to the
+same `Fin d → Fin d → ℝ` spelling the bridging `TopologicalSpace` instance
+already uses, so `inferInstanceAs` closes by unfolding the `Matrix` type
+synonym rather than by a fresh (and now-failing) search. -/
+
+private instance instSecondCountableTopologyMat : SecondCountableTopology (Mat d) :=
+  inferInstanceAs (SecondCountableTopology (Fin d → Fin d → ℝ))
+
+private instance instPseudoMetrizableSpaceMat :
+    TopologicalSpace.PseudoMetrizableSpace (Mat d) :=
+  inferInstanceAs (TopologicalSpace.PseudoMetrizableSpace (Fin d → Fin d → ℝ))
+
+private instance instPseudoMetricSpaceMat : PseudoMetricSpace (Mat d) :=
+  inferInstanceAs (PseudoMetricSpace (Fin d → Fin d → ℝ))
+
 /-- The Borel structure on the continuous matrix fields over a compact carrier. -/
 noncomputable instance continuousMatrixFieldMeasurableSpace (K : Set (Vec d))
     [CompactSpace K] : MeasurableSpace C(K, Mat d) := borel _
@@ -106,7 +130,7 @@ def shellPartialRestrict (K : Set (Vec d)) (m : ℤ) (q : ℕ)
 
 theorem measurable_shellPartialRestrict (K : Set (Vec d)) [CompactSpace K] (m : ℤ) (q : ℕ) :
     Measurable (shellPartialRestrict (d := d) K m q) := by
-  haveI : SecondCountableTopology C(K, Mat d) := inferInstance
+  have : SecondCountableTopology C(K, Mat d) := inferInstance
   refine Finset.measurable_sum _ fun r _ => ?_
   exact (measurable_shellRestrict K).comp
     ((measurable_pi_apply (m - (r : ℤ))).comp measurable_subtype_coe)
@@ -133,7 +157,7 @@ theorem tendsto_shellPartialRestrict (K : Set (Vec d)) [CompactSpace K] (m ell :
     (hK : K ⊆ openCubeSet (originCube d ell)) (omega : Cutoff.CutoffSample d) :
     Tendsto (fun q => shellPartialRestrict K m q omega) atTop
       (𝓝 (cutoffRestrict K m omega)) := by
-  rw [Metric.tendsto_atTop]
+  refine (Metric.tendsto_atTop (α := C(K, Mat d)) (β := ℕ)).2 ?_
   intro eps heps
   have hhalf : (0 : ℝ) < eps / 2 := by linarith
   have hent : ∀ p : Fin d × Fin d, ∃ N : ℕ, ∀ q, N ≤ q → ∀ x ∈ K,
@@ -179,7 +203,7 @@ compact carrier.** -/
 theorem measurable_coefficientCutoffRestrict (nu : ℝ) (K : Set (Vec d)) [CompactSpace K]
     (m ell : ℤ) (hK : K ⊆ openCubeSet (originCube d ell)) :
     Measurable (coefficientCutoffRestrict (d := d) nu m K) := by
-  haveI : SecondCountableTopology C(K, Mat d) := inferInstance
+  have : SecondCountableTopology C(K, Mat d) := inferInstance
   have hconst : coefficientCutoffRestrict (d := d) nu m K = fun omega =>
       ((ContinuousMap.const (Vec d) (nu • (1 : Mat d))).restrict K) +
         cutoffRestrict K m omega := by

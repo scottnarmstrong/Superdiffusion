@@ -51,12 +51,12 @@ theorem le_of_ae_le_of_continuousOn {U : Set (Vec d)} (hU : IsOpen U)
     (hf : ContinuousOn f U) (hg : ContinuousOn g U) :
     ∀ x ∈ U, f x ≤ g x := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   obtain ⟨x, hxU, hxlt⟩ := hcon
-  have hbad : U ∩ {z | g z < f z} = ((fun z => g z - f z) ⁻¹' Set.Iio (0 : ℝ)) ∩ U := by
+  have hbad : U ∩ {z | g z < f z} = (g - f) ⁻¹' Set.Iio (0 : ℝ) ∩ U := by
     ext z
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_preimage, Set.mem_Iio,
-      sub_neg]
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_Iio,
+      Pi.sub_apply, sub_neg]
     exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
   have hopen : IsOpen (U ∩ {z | g z < f z}) := by
     obtain ⟨W, hWopen, hW⟩ := (continuousOn_iff'.1 (hg.sub hf)) (Set.Iio (0 : ℝ)) isOpen_Iio
@@ -70,7 +70,7 @@ theorem le_of_ae_le_of_continuousOn {U : Set (Vec d)} (hU : IsOpen U)
     rw [Measure.restrict_apply₀' hU.measurableSet.nullMeasurableSet] at hres
     have hsets : {z | ¬ f z ≤ g z} ∩ U = U ∩ {z | g z < f z} := by
       ext z
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, not_le]
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, not_le]
       exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
     rwa [hsets] at hres
   exact hpos.ne' hzero
@@ -102,7 +102,7 @@ theorem ae_le_of_constantForcingSubsolution {y : Vec d} {n : ℤ} (hd : 0 < d)
           ∫ x in cubeSetAt y n, phi.toH1Function.toFun x ∂volume) :
     ∀ᵐ x ∂(volume.restrict (cubeSetAt y n)), v.toH1Function.toFun x ≤ w.toFun x := by
   classical
-  haveI : NeZero d := ⟨hd.ne'⟩
+  have : NeZero d := ⟨hd.ne'⟩
   have hU : IsOpenBoundedConvexDomain (cubeSetAt y n) := isOpenBoundedConvexDomain_cubeSetAt y n
   have hQmeas : MeasurableSet (cubeSetAt y n) := measurableSet_cubeSetAt y n
   obtain ⟨w0, hw0f, hw0g⟩ := hw0

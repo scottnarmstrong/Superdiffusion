@@ -82,7 +82,7 @@ theorem exists_h10_isDivFormWeakSolutionOn_add (hU : IsOpenBoundedConvexDomain U
     (hne : U.Nonempty) {a : CoeffField d} {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (h : H1Function U) {g : Vec d → Vec d} (hg : MemVectorL2 U g) :
     ∃ w : H10Function U, IsDivFormWeakSolutionOn a U (h + w.toH1Function) g := by
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   have hAh : MemVectorL2 U fun x => matVecMul (a x) (h.grad x) :=
     memVectorL2_matVecMul_of_isEllipticFieldOn hEll h.grad_memVectorL2
   have hnAh : MemVectorL2 U fun x => -(matVecMul (a x) (h.grad x)) := hAh.neg

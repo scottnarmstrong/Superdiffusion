@@ -299,7 +299,7 @@ theorem superposedCompetitorDivergence_eq_cellDivergence (hd : 2 ≤ d) {m : ℤ
         superposedCompetitorCellDivergence m hn I q T = 0) ∧
       (Multiscale.whitneyCubeOf m hn T ∉ whitneyNeighborhood m hn I →
         superposedCompetitorCellDivergence m hn I q T = q) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hcl : ∀ i : Fin d, _ := fun i =>
     superposedCompetitorSlope_eq_cellSlope hmono hI hwin (basisVec i) hT
   refine ⟨?_, ?_, ?_⟩
@@ -418,7 +418,7 @@ theorem vecNormSq_superposedCompetitorCellDivergence_sub_le_layerEnvelope
       superposedDivConst d ^ 2 *
         (3 : ℝ) ^ (2 * (b * ((k : ℝ) + (whitneyScaleSeq b hs k₀ k : ℝ)))) *
         vecNormSq q := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   set r : ℝ := (3 : ℝ) ^ (b * ((k : ℝ) + (whitneyScaleSeq b hs k₀ k : ℝ))) with hr
   have hr0 : (0 : ℝ) ≤ r := Real.rpow_nonneg (by norm_num) _
   have hrsq : r ^ 2 =

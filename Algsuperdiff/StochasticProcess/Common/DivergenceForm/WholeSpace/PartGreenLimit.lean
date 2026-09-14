@@ -147,7 +147,7 @@ theorem nu_mul_norm_gradient_partShiftSolution_sub_sq_le {V : Set (Vec d)}
     rw [coefficientPairing_gradient_eq_shiftedBilin hEll,
       coefficientPairing_gradient_eq_shiftedBilin hEll,
       coefficientPairing_gradient_eq_shiftedBilin hEll, hlin,
-      ContinuousLinearMap.sub_apply]
+      sub_apply]
   have hWB : ‖toL2 (A.partShiftSolution hV hf hfD s - A.partShiftSolution hV hf hfD t)‖ ≤
       2 * A.partGreenL2Bound hV D := by
     rw [show toL2 (A.partShiftSolution hV hf hfD s - A.partShiftSolution hV hf hfD t) =

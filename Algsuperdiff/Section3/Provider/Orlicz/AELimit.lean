@@ -53,7 +53,7 @@ theorem isBigOWith_gammaSigma_of_ae_tendsto_uniform
     intro n
     have htail := (isBigOWith_gammaSigma_iff.mp (hW n)) ht
     rw [← ENNReal.ofReal_toReal (measure_ne_top μ (E n))]
-    exact ENNReal.ofReal_le_ofReal (by simpa [E, c] using htail)
+    exact ENNReal.ofReal_le_ofReal (by simpa [E, c] using! htail)
   have hU_bound :
       ∀ N, μ (U N) ≤ ENNReal.ofReal (Real.exp (-(t ^ σ))) := by
     intro N

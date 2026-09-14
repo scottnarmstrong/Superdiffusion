@@ -334,7 +334,7 @@ private theorem measurable_probeSharpFramedCollarBaseLayer
       assemblyBad M E (hsep M root E bfaProfileB omega) k₀ n :=
     measurable_comp_hsep M root E bfaProfileB fun hs : ℕ =>
       assemblyBad M E hs k₀ n
-  simpa only [probeSharpFramedCollarBaseTerm] using
+  simpa only [probeSharpFramedCollarBaseTerm] using!
     hfactor.mul (measurable_const.mul hbad)
 
 theorem summable_probeSharpCollarBaseLayerScale
@@ -383,16 +383,19 @@ theorem measurable_probeSharpFramedCollarBaseCoordinateLane
     (M : ABKModel d) (R : TriadicCube d) (E : ℝ) (k₀ : ℕ)
     (j : Fin d) :
     Measurable (probeSharpFramedCollarBaseCoordinateLane M R E k₀ j) := by
-  have hnn :=
-    (Measurable.nnreal_tsum fun n =>
+  have hnn : Measurable (fun omega : CutoffSample d => ∑' n : ℕ,
+      (probeSharpFramedCollarBaseTerm M R.scale E bfaProfileB k₀ n
+        (basisVec j) (superposedGradConst d)
+        (translateCutoffSample (triadicCubeShift R) omega)).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       ((measurable_probeSharpFramedCollarBaseLayer M R.scale E k₀ n j).comp
-        (measurable_translateCutoffSample (triadicCubeShift R))).real_toNNReal).coe_nnreal_real
+        (measurable_translateCutoffSample (triadicCubeShift R))).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [probeSharpFramedCollarBaseCoordinateLane, NNReal.coe_tsum]
   apply tsum_congr
   intro n
-  simp only [Function.comp_apply]
   rw [Real.toNNReal_of_nonneg
     (probeSharpFramedCollarBaseTerm_nonneg M.shellPrefix.dimension M
       R.scale E bfaProfileB k₀ n (basisVec j) (superposedGradConst d)
@@ -441,7 +444,7 @@ theorem probeSharpFramedCollarBaseCoordinateENNRealLane_eq
 private theorem measurable_slstarPowerTerm_collarBase
     (M : ABKModel d) (root : ℤ) (E b gam : ℝ) :
     Measurable (slstarPowerTerm M root E b gam) := by
-  simpa only [slstarPowerTerm] using
+  simpa only [slstarPowerTerm] using!
     measurable_comp_hsep M root E b fun hs : ℕ =>
       (3 : ℝ) ^ ((gam + 2 * b) * (hs : ℝ))
 
@@ -474,7 +477,7 @@ theorem isBigOWith_upperProfileTarget_probeSharpCollarBaseCoordinateMajorant
       probeSharpCollarBaseLayerScale_nonneg hd M (E : ℝ) k₀ n
   have hscaled := htranslated.const_mul hsum0
   simpa only [probeSharpCollarBaseCoordinateMajorant,
-    probeSharpCollarBaseCoordinateScale] using hscaled
+    probeSharpCollarBaseCoordinateScale] using! hscaled
 
 /-- The actual translated literal collar-base coordinate has the target rare
 exponent, with no supplied estimate premise. -/

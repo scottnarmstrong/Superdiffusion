@@ -94,7 +94,7 @@ theorem continuous_analyticMinimalResolventReal (mu : PositiveShift)
             (abs_le_norm_c0 f) y -
           A.analyticMinimalResolventReal mu g0 g0.continuous.measurable
           (abs_le_norm_c0 g0) y| ≤ eps / 16 := by
-      simpa only using hstable
+      simpa only using! hstable
     exact hstable'.trans_lt (by linarith only [heps])
   obtain ⟨eta, heta, hlocal⟩ := Metric.continuousAt_iff.1 hgcont.continuousAt
     (eps / 2) (by linarith only [heps])

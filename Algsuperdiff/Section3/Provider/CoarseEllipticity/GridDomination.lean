@@ -141,7 +141,7 @@ theorem top_add_gridSum_le_gridSum {rho mass ctop T : ℝ} {u G : ℕ → ℝ}
     tsum_nonneg fun k => gridWeight_nonneg rho k
   have hctop0 : 0 ≤ ctop := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have hle : ctop * ∑' k : ℕ, gridWeight rho k ≤ 0 * ∑' k : ℕ, gridWeight rho k :=
       mul_le_mul_of_nonneg_right hneg.le htsumw
     rw [zero_mul] at hle

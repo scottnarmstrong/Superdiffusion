@@ -58,7 +58,7 @@ theorem integral_sq_mul_gradSq_product_le {u : H1Function U}
   have hzeta : ContDiff ℝ (⊤ : ℕ∞) zeta := heta.mul hchi
   have hzetaCompact : HasCompactSupport zeta := hetaCompact.mul_right
   have hetaSq : HasCompactSupport (fun x => eta x ^ 2) := by
-    simpa only [pow_two] using hetaCompact.mul_left (f := eta)
+    simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
   have hmassTop : MemLp (fun x => eta x ^ 2 * chi x ^ 2) ∞ mu := by
     refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict U
     · exact (heta.continuous.pow 2).mul (hchi.continuous.pow 2)
@@ -92,7 +92,7 @@ theorem integral_sq_mul_gradSq_product_le {u : H1Function U}
       rw [show (fun y => eta y * chi y) = eta * chi by
         funext y; simp only [Pi.mul_apply]]
       rw [fderiv_mul hfd hhd]
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       ring
     rw [hsplitG]
@@ -138,7 +138,7 @@ theorem fderiv_sq_apply {zeta : Vec d → ℝ} (hzeta : ContDiff ℝ (⊤ : ℕ�
   rw [show (fun y => zeta y ^ 2) = zeta * zeta by
     funext y; simp only [pow_two, Pi.mul_apply]]
   rw [fderiv_mul hdiff hdiff]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     smul_eq_mul]
   ring
 
@@ -194,13 +194,13 @@ theorem integral_sq_mul_vecDot_skewFieldDiv_le {Om : Set (Vec d)}
       (fun i => (fderiv ℝ (fun w => zeta w ^ 2) y) (basisVec i))) ∞
         (volumeMeasureOn Om) := by
     refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict Om
-    · exact continuous_finset_sum _ fun i _ =>
+    · exact continuous_finsetSum _ fun i _ =>
         (continuous_skewFieldDiv_apply hklC1 i).mul (hDwCont i)
     · refine HasCompactSupport.intro hWcompact.isCompact ?_
       intro y hy
       have hzero : fderiv ℝ (fun w => zeta w ^ 2) y = 0 :=
         fderiv_of_notMem_tsupport ℝ hy
-      simp only [hzero, ContinuousLinearMap.zero_apply, vecDot, mul_zero,
+      simp only [hzero, zero_apply, vecDot, mul_zero,
         Finset.sum_const_zero]
   have hmassTop : MemLp (fun x => zeta x ^ 2) ∞ (volumeMeasureOn Om) :=
     (hWsmooth.continuous.memLp_of_hasCompactSupport hWcompact).restrict Om
@@ -260,7 +260,7 @@ theorem integral_sq_mul_vecDot_skewFieldDiv_le {Om : Set (Vec d)}
       funext i
       rw [hDz_def]
       simp only [fderiv_of_notMem_tsupport ℝ hnotsupp,
-        ContinuousLinearMap.zero_apply]
+        zero_apply]
     have hnormZero : vecNormSq (fun _ : Fin d => (0 : ℝ)) = 0 := by
       simp only [vecNormSq, vecDot, mul_zero, Finset.sum_const_zero]
     show -(1 / 2) * (u.toFun y ^ 2 *
@@ -577,7 +577,7 @@ theorem setIntegral_gradSq_split_le {Om : Set (Vec d)} (hOmOpen : IsOpen Om)
       (fun x => z.toH1Function.toFun x ^ 2 * eta x ^ 2)
       (volumeMeasureOn Om) := by
     have hetaSq : HasCompactSupport (fun x => eta x ^ 2) := by
-      simpa only [pow_two] using hetaCompact.mul_left (f := eta)
+      simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
     have htop : MemLp (fun x => eta x ^ 2) ∞ (volumeMeasureOn Om) :=
       ((heta.continuous.pow 2).memLp_of_hasCompactSupport hetaSq).restrict Om
     exact integrable_sq_mul_memLpTop (u := z.toH1Function) htop

@@ -158,7 +158,7 @@ theorem iIndep_iSup_of_iIndep_rows [IsProbabilityMeasure mu] {iota L : Type*}
           ≤ ⨆ p ∈ ({p : iota × L | p.1 ∈ (s : Set iota)}), A p.1 p.2 := by
         intro j hj
         exact iSup_le fun l =>
-          le_iSup₂_of_le (j, l) (by simpa only [Finset.mem_coe] using hj) le_rfl
+          le_iSup₂_of_le (j, l) (by simpa only [Finset.mem_coe] using! hj) le_rfl
       have hs_meas : @MeasurableSet Omega
           (⨆ p ∈ ({p : iota × L | p.1 ∈ (s : Set iota)}), A p.1 p.2) (⋂ j ∈ s, f j) := by
         refine @Finset.measurableSet_biInter _ _

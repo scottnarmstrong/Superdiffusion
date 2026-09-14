@@ -225,7 +225,7 @@ private theorem cutoffUpperEllipticity_eq_LambdaSq (M : ABKModel d) (m L : ℤ) 
     Observable.cutoffUpperEllipticity M m L s hs q omega =
       Ch02.LambdaSq (originCube d m) s q'
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   subst hq
   rw [Observable.cutoffUpperEllipticity_eq_literal]
@@ -245,7 +245,7 @@ private theorem cutoffLowerEllipticityInv_eq_lambdaSq_inv (M : ABKModel d) (m L 
     Observable.cutoffLowerEllipticityInv M m L s hs q omega =
       (Ch02.lambdaSq (originCube d m) s q'
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega))⁻¹ := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   subst hq
   rw [Observable.cutoffLowerEllipticityInv_eq_literal]
@@ -352,7 +352,7 @@ theorem ae_error_ge_of_mem_observationScaleBadEvent [NeZero d] (M : ABKModel d)
     eighth_pos (Annealed.sigmaBar M L)] with omega hraw
   intro hbad
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   have hsigma : (0 : ℝ) < (Annealed.sigmaBar M L : ℝ) := (Annealed.sigmaBar M L).2
   have hX0 : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L m
       eighth_pos (Annealed.sigmaBar M L) omega :=
@@ -555,7 +555,7 @@ theorem exists_relativeCutoff_observationScale_badEvent_bound (d : ℕ) :
   obtain ⟨Cobs, hCobs1, hCobs⟩ := observationScaleFiniteCover_sq_isBigOWith_gammaQuarter d
   refine ⟨64, max 1 (badEventMomentConst * Cobs ^ 2), le_refl _, le_max_left _ _, ?_⟩
   intro M m E _hEfloor hregime hLower epsilon hepsilon hgate L hsep delta1
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hd1 : delta1 = 10 ^ 9 * (E : ℝ) ^ 2 * M.gamma := rfl
   -- Standing parameter facts.

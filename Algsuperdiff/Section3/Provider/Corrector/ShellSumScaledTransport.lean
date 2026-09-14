@@ -98,7 +98,7 @@ theorem hasHorizontalGradient_of_intertwine_smul {c : ℝ}
   rw [hcomp]
   have hfd := (Sscal.hasFDerivAt (x := koopman (μ := μ) (d := d)
     ((c * (0 : ℝ)) • (Pi.single i 1 : Vec d)) φ)).comp_hasDerivAt 0 hscomp
-  simpa only [map_smul] using hfd
+  simpa only [map_smul] using! hfd
 
 theorem mem_stationaryPotentialSubspace_of_intertwine_smul {c : ℝ} (hc : c ≠ 0)
     {Sscal : ScalarL2 μ →L[ℝ] ScalarL2 ν} {Svec : VectorL2 d μ →L[ℝ] VectorL2 d ν}

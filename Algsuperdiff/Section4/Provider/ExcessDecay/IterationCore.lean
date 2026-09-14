@@ -281,7 +281,7 @@ theorem reabsorbSum (hθpos : 0 < θ) (hθh : θ ^ h < 3 / 5) (hE : ∀ k, 0 ≤
     have hprod : 2 / 5 * U ≤ (1 - θ ^ h) * U :=
       mul_le_mul_of_nonneg_right (by linarith only [hθh]) hU0
     linarith only [hkey, hprod]
-  · push_neg at hlong
+  · push Not at hlong
     have hUsub : U ≤ iterM h κ * E b := by
       rw [hUdef]
       calc ∑ k ∈ Icc a b, E k ≤ ∑ k ∈ Icc (b - (h : ℤ) + 1) b, E k := by

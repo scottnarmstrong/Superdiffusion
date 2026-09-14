@@ -139,7 +139,7 @@ theorem exists_gradientHolder_boundary_metSet (d : ℕ) [NeZero d] (hd : d ≠ 0
       refine le_trans hmain (mul_le_mul_of_nonneg_right ?_
         (affineExcessRaw_nonneg _ _))
       linarith only [hC20, hC30]
-    · push_neg at hcorner
+    · push Not at hcorner
       have hother : ∀ j, j ≠ i →
           ¬ MeetsUpperFace x m (n - 2) j ∧ ¬ MeetsLowerFace x m (n - 2) j := hcorner
       rcases hmet with hup | hlow

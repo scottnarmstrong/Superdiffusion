@@ -617,11 +617,20 @@ theorem exists_good_band_mean_tuned_finite_trace_split
         M (E : ℝ) k).mul_left
           (probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
             probeSharpAfterBandHsepFactor M R.scale (E : ℝ) eta)
-      convert hbase using 1
-      funext n
-      rw [probeSharpFramedGoodWavePart_bandMean_tuned_eq
-        M hR (E : ℝ) n (basisVec j) eta]
-      ring
+      have hfun : (fun n : ℕ =>
+          probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+            (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+            (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+              (collarBandMeanDepth M (E : ℝ)) ^ 2) eta) =
+          fun n : ℕ => (probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
+            probeSharpAfterBandHsepFactor M R.scale (E : ℝ) eta) *
+            probeSharpBandMeanTunedBaseTerm M (E : ℝ) k n := by
+        funext n
+        rw [probeSharpFramedGoodWavePart_bandMean_tuned_eq
+          M hR (E : ℝ) n (basisVec j) eta]
+        ring
+      rw [hfun]
+      exact hbase
     simp only [probeSharpFramedBandMeanTunedCoordinateWhitneySum]
     rw [ENNReal.ofReal_sum_of_nonneg (fun j _ => tsum_nonneg fun n => by
       simpa only [eta] using hterm0 j n)]

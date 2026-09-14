@@ -68,11 +68,46 @@ continuous addition, needed for finite sums. -/
 
 private theorem secondCountableTopology_shellField (d : ℕ) :
     SecondCountableTopology (ShellField d) := by
-  have _ : SecondCountableTopology C(Vec d, Mat d) := inferInstance
-  have _ : SecondCountableTopology C(Vec d, Vec d →L[ℝ] Mat d) := inferInstance
-  have _ : SecondCountableTopology
-      C(Vec d, Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
-  have _ : SecondCountableTopology (ShellAmbient d) := inferInstance
+  have hMat : SecondCountableTopology (Mat d) := by
+    show SecondCountableTopology (Fin d → Fin d → ℝ)
+    infer_instance
+  have hDeriv : SecondCountableTopology (Vec d →L[ℝ] Mat d) :=
+    @secondCountable_of_proper (Vec d →L[ℝ] Mat d)
+      (@SeminormedAddCommGroup.toPseudoMetricSpace (Vec d →L[ℝ] Mat d)
+        (@NormedAddCommGroup.toSeminormedAddCommGroup (Vec d →L[ℝ] Mat d) inferInstance))
+      (@FiniteDimensional.proper ℝ inferInstance (Vec d →L[ℝ] Mat d)
+        inferInstance inferInstance inferInstance ContinuousLinearMap.finiteDimensional)
+  have hFinDim1 : FiniteDimensional ℝ (Vec d →L[ℝ] Mat d) :=
+    ContinuousLinearMap.finiteDimensional
+  have hCSMul1 : ContinuousConstSMul ℝ (Vec d →L[ℝ] Mat d) := inferInstance
+  have hFinDim2 : FiniteDimensional ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+    @ContinuousLinearMap.finiteDimensional ℝ (Vec d) (Vec d →L[ℝ] Mat d)
+      _ _ _ _ _ _ _ _ _ hFinDim1 hCSMul1
+  have hSecondDeriv : SecondCountableTopology (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+    @secondCountable_of_proper (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))
+      (@SeminormedAddCommGroup.toPseudoMetricSpace (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))
+        (@NormedAddCommGroup.toSeminormedAddCommGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))
+          inferInstance))
+      (@FiniteDimensional.proper ℝ inferInstance (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))
+        inferInstance inferInstance inferInstance hFinDim2)
+  have hC1 : SecondCountableTopology C(Vec d, Mat d) := by
+    have := hMat
+    infer_instance
+  have hC2 : SecondCountableTopology C(Vec d, Vec d →L[ℝ] Mat d) := by
+    have := hDeriv
+    infer_instance
+  have hC3 : SecondCountableTopology
+      C(Vec d, Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := by
+    have := hSecondDeriv
+    infer_instance
+  have hAmbient : SecondCountableTopology (ShellAmbient d) := by
+    show SecondCountableTopology
+      (C(Vec d, Mat d) ×
+        (C(Vec d, Vec d →L[ℝ] Mat d) × C(Vec d, Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))))
+    have := hC1
+    have := hC2
+    have := hC3
+    infer_instance
   exact TopologicalSpace.secondCountableTopology_induced
     (ShellField d) (ShellAmbient d) Subtype.val
 
@@ -137,17 +172,18 @@ private theorem continuous_coord_eval_secondDeriv (i : ℤ) :
 
 private theorem continuous_uncurry_value (s : Finset ℤ) :
     Continuous fun p : ShellSeq d × Vec d => ∑ i ∈ s, p.1 i p.2 :=
-  continuous_finset_sum s fun i _ => continuous_coord_eval i
+  continuous_finsetSum s fun i _ => continuous_coord_eval i
 
 private theorem continuous_uncurry_deriv (s : Finset ℤ) :
     Continuous fun p : ShellSeq d × Vec d =>
       ∑ i ∈ s, ShellField.deriv (p.1 i) p.2 :=
-  continuous_finset_sum s fun i _ => continuous_coord_eval_deriv i
+  continuous_finsetSum s fun i _ => continuous_coord_eval_deriv i
 
 private theorem continuous_uncurry_secondDeriv (s : Finset ℤ) :
     Continuous fun p : ShellSeq d × Vec d =>
       ∑ i ∈ s, ShellField.secondDeriv (p.1 i) p.2 :=
-  continuous_finset_sum s fun i _ => continuous_coord_eval_secondDeriv i
+  @continuous_finsetSum ℤ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) (ShellSeq d × Vec d) _ _ _
+    (continuousAdd_matrixSecondDerivative d) _ s fun i _ => continuous_coord_eval_secondDeriv i
 
 private theorem continuous_sum_value (s : Finset ℤ) :
     Continuous fun omega : ShellSeq d =>

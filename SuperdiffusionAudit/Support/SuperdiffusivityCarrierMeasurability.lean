@@ -137,10 +137,15 @@ theorem HasHorizontalGradient.add
     (hψ : HasHorizontalGradient hstat ψ G) :
     HasHorizontalGradient hstat (φ + ψ) (F + G) := by
   intro i
-  convert (hφ i).add (hψ i) using 1
-  · funext t
-    exact map_add (koopman hstat (t • (Pi.single i 1 : Vec d))) φ ψ
-  · exact (vectorL2Coord (μ := μ) i).map_add F G
+  have hfun : (fun t : ℝ => koopman hstat (t • (Pi.single i 1 : Vec d)) (φ + ψ))
+      = fun t : ℝ => koopman hstat (t • (Pi.single i 1 : Vec d)) φ
+          + koopman hstat (t • (Pi.single i 1 : Vec d)) ψ :=
+    funext fun t => map_add (koopman hstat (t • (Pi.single i 1 : Vec d))) φ ψ
+  have hval : vectorL2Coord (μ := μ) i (F + G)
+      = vectorL2Coord (μ := μ) i F + vectorL2Coord (μ := μ) i G :=
+    (vectorL2Coord (μ := μ) i).map_add F G
+  rw [hfun, hval]
+  exact (hφ i).add (hψ i)
 
 theorem HasHorizontalGradient.smul
     {hstat : ∀ z : Vec d, MeasurePreserving (translateReg (d := d) z) μ μ}
@@ -148,10 +153,13 @@ theorem HasHorizontalGradient.smul
     (hφ : HasHorizontalGradient hstat φ F) :
     HasHorizontalGradient hstat (c • φ) (c • F) := by
   intro i
-  convert (hφ i).const_smul c using 1
-  · funext t
-    exact map_smul (koopman hstat (t • (Pi.single i 1 : Vec d))) c φ
-  · exact (vectorL2Coord (μ := μ) i).map_smul c F
+  have hfun : (fun t : ℝ => koopman hstat (t • (Pi.single i 1 : Vec d)) (c • φ))
+      = fun t : ℝ => c • koopman hstat (t • (Pi.single i 1 : Vec d)) φ :=
+    funext fun t => map_smul (koopman hstat (t • (Pi.single i 1 : Vec d))) c φ
+  have hval : vectorL2Coord (μ := μ) i (c • F) = c • vectorL2Coord (μ := μ) i F :=
+    (vectorL2Coord (μ := μ) i).map_smul c F
+  rw [hfun, hval]
+  exact (hφ i).const_smul c
 
 def horizontalGradientRange (hstat : ∀ z : Vec d, MeasurePreserving (translateReg (d := d) z) μ μ) : Submodule ℝ
     (Lp (HilbertVec d) 2 μ) where
@@ -191,7 +199,7 @@ variable {d : ℕ} {P : ProbabilityMeasure (ShellSeq d)}
 
 instance potentialHasOrthogonalProjection :
     (stationaryPotentialSubspace (μ := zeroShellRegMeasure P) hstat).HasOrthogonalProjection := by
-  haveI : CompleteSpace (stationaryPotentialSubspace (μ := zeroShellRegMeasure P) hstat) := by
+  have : CompleteSpace (stationaryPotentialSubspace (μ := zeroShellRegMeasure P) hstat) := by
     change CompleteSpace
       (horizontalGradientRange (μ := zeroShellRegMeasure P) hstat).topologicalClosure
     infer_instance

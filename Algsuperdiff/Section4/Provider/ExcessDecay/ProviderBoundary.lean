@@ -211,7 +211,7 @@ theorem exists_boundaryClauseReal (d : ℕ) :
   · refine ⟨1, one_pos, ?_⟩
     intro M
     exact absurd M.shellPrefix.dimension (by omega)
-  haveI : NeZero d := ⟨hd⟩
+  have : NeZero d := ⟨hd⟩
   obtain ⟨CA, hCA, hasm⟩ := hbdryOfScalarCoarse d
   obtain ⟨CD, A, Cout, hCD, hA, hCout, hdisp⟩ :=
     exists_scalarLeg_le_displayLegs_of_epsPin d

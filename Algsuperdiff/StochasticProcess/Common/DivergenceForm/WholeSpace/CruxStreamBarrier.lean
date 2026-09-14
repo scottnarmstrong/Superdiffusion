@@ -105,6 +105,7 @@ def barrierC0OfData (B : WholeSpaceC0BarrierData A) : C₀(Vec d, ℝ) where
           P.abs_indicator_f_le P.hfD P.hfV.symm x)
     have h2 : Tendsto P.utilde (cocompact (Vec d)) (nhds 0) :=
       P.hasCompactSupport_utilde.is_zero_at_infty
+    unfold barrier
     simpa only [sub_zero] using (h1.congr hcongr).sub h2
 
 @[simp] theorem barrierC0OfData_apply (B : WholeSpaceC0BarrierData A)
@@ -289,7 +290,7 @@ private theorem zero_at_infty_toReal_streamAnalyticMinimalResolvent_of_compact_a
 
 /-- The stream field supplies the coefficient-generic barrier data entirely
 from the localized split-skew vanishing and dense-range theorems. -/
-def streamWholeSpaceC0BarrierData
+theorem streamWholeSpaceC0BarrierData
     (M : ABKModel d) (omega : FullSample d M.gamma) :
     WholeSpaceC0BarrierData (streamWholeSpaceAnalyticData M omega) where
   vanishing := hasVanishing_streamAnalyticMinimalResolvent M omega

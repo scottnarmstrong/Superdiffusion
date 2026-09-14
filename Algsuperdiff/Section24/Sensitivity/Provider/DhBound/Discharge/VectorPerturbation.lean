@@ -34,7 +34,7 @@ theorem cubeLpNorm_two_le_cubeLpNorm_infty_of_memLp_infty_vec
     (Q : TriadicCube d) (u : Vec d → Vec d)
     (hu : MemLp u ∞ (normalizedCubeMeasure Q)) :
     cubeLpNorm Q (2 : ℝ≥0∞) u ≤ cubeLpNorm Q ∞ u := by
-  letI : MeasureTheory.IsProbabilityMeasure (normalizedCubeMeasure Q) := by
+  let : MeasureTheory.IsProbabilityMeasure (normalizedCubeMeasure Q) := by
     refine ⟨?_⟩
     simp [normalizedCubeMeasure_apply_univ Q]
   have hle :

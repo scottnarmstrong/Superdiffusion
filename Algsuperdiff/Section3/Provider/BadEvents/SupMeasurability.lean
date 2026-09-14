@@ -60,6 +60,67 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-! ## Instance caches for the matrix and derivative carriers
+
+Mathlib v4.33 assembles the scoped elementwise matrix norm with
+`fast_instance%`, so the topology carried by `Matrix.normedAddCommGroup` is a
+flattened copy of the product topology and not the syntactic
+`instTopologicalSpaceMatrix` of the ambient `Matrix` instances; the two agree
+only once `Matrix` is unfolded, which instance search will not do.  The same
+splitting happens one level up, where the derivative carrier
+`Vec d →L[ℝ] Mat d` is reached both through its operator-norm topology and
+through the cached one of `ShellField.Actions`.  The declarations below name,
+once, the `MeasurableSpace`, `BorelSpace` and `SecondCountableTopology`
+instances that the `Measurable` API asks for along those paths, in the same
+spirit as the algebraic caches of `ShellField.Actions`.  Each one is literally
+the instance Lean would otherwise rediscover. -/
+
+private instance instBorelSpaceMatElementwise (d : ℕ) :
+    @BorelSpace (Mat d)
+      (@UniformSpace.toTopologicalSpace (Mat d)
+        (@PseudoMetricSpace.toUniformSpace (Mat d)
+          (@SeminormedAddCommGroup.toPseudoMetricSpace (Mat d)
+            (@NormedAddCommGroup.toSeminormedAddCommGroup (Mat d)
+              Matrix.normedAddCommGroup))))
+      inferInstance :=
+  ⟨BorelSpace.measurable_eq (α := Fin d → Fin d → ℝ)⟩
+
+private noncomputable instance instMeasurableSpaceDerivCarrier (d : ℕ) :
+    MeasurableSpace (ShellField.MatrixDerivative d) := borel _
+
+private instance instBorelSpaceDerivCarrier (d : ℕ) :
+    BorelSpace (ShellField.MatrixDerivative d) := ⟨rfl⟩
+
+private instance instBorelSpaceDerivCarrierNorm (d : ℕ) :
+    @BorelSpace (ShellField.MatrixDerivative d)
+      (@UniformSpace.toTopologicalSpace (ShellField.MatrixDerivative d)
+        (@PseudoMetricSpace.toUniformSpace (ShellField.MatrixDerivative d)
+          (@SeminormedAddCommGroup.toPseudoMetricSpace (ShellField.MatrixDerivative d)
+            (@NormedAddCommGroup.toSeminormedAddCommGroup (ShellField.MatrixDerivative d)
+              inferInstance))))
+      inferInstance :=
+  ⟨rfl⟩
+
+private instance instSecondCountableDerivCarrier (d : ℕ) :
+    @SecondCountableTopology (ShellField.MatrixDerivative d)
+      (@UniformSpace.toTopologicalSpace (ShellField.MatrixDerivative d)
+        (@PseudoMetricSpace.toUniformSpace (ShellField.MatrixDerivative d)
+          (@SeminormedAddCommGroup.toPseudoMetricSpace (ShellField.MatrixDerivative d)
+            (@NormedAddCommGroup.toSeminormedAddCommGroup (ShellField.MatrixDerivative d)
+              inferInstance)))) :=
+  @secondCountable_of_proper (ShellField.MatrixDerivative d)
+    (@SeminormedAddCommGroup.toPseudoMetricSpace (ShellField.MatrixDerivative d)
+      (@NormedAddCommGroup.toSeminormedAddCommGroup (ShellField.MatrixDerivative d)
+        inferInstance))
+    (@FiniteDimensional.proper ℝ inferInstance (ShellField.MatrixDerivative d)
+      inferInstance inferInstance inferInstance ContinuousLinearMap.finiteDimensional)
+
+private noncomputable instance instMeasurableSpaceHessianCarrier (d : ℕ) :
+    MeasurableSpace (ShellField.MatrixSecondDerivative d) := borel _
+
+private instance instBorelSpaceHessianCarrier (d : ℕ) :
+    BorelSpace (ShellField.MatrixSecondDerivative d) := ⟨rfl⟩
+
 /-! ## Recovering a continuous linear map from its basis values -/
 
 /-- A family of continuous linear maps out of `Vec d = Fin d → ℝ` is measurable
@@ -106,7 +167,7 @@ theorem measurable_eval_deriv_lihLocalSigma {U : Set (Vec d)} {x : Vec d} {r : �
     (hr : 0 < r) (hrU : Metric.closedBall x r ⊆ U) :
     @Measurable (ShellField d) (ShellField.MatrixDerivative d)
       (ShellField.lihLocalSigma U) inferInstance (fun j => ShellField.deriv j x) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   exact measurable_clm_of_measurable_apply_single fun i =>
     measurable_eval_deriv_apply_lihLocalSigma hr hrU (Pi.single i (1 : ℝ))
 
@@ -140,16 +201,14 @@ theorem tendsto_diffQuotient_secondDeriv (j : ShellField d) (x u : Vec d)
       (ShellField.secondDeriv j x) ((fun t : ℝ => x + t • u) 0) := by
     rw [show (fun t : ℝ => x + t • u) 0 = x by simp]
     exact ShellField.deriv_hasFDerivAt j x
-  have hd : HasDerivAt
-      (fun t : ℝ => (ShellField.deriv j : Vec d → ShellField.MatrixDerivative d) (x + t • u))
-      (ShellField.secondDeriv j x u) 0 := by
-    simpa only [Function.comp_def] using houter.comp_hasDerivAt 0 hinner
+  have hd := houter.comp_hasDerivAt 0 hinner
   rw [hasDerivAt_iff_tendsto_slope] at hd
   have hin : Tendsto rho atTop (𝓝[≠] (0 : ℝ)) :=
     tendsto_nhdsWithin_iff.2 ⟨hrho, Eventually.of_forall fun n => hne n⟩
   have hcomp := hd.comp hin
   refine hcomp.congr fun n => ?_
-  simp [slope, sub_zero]
+  simp [slope, sub_zero, Function.comp_def]
+  rfl
 
 /-- **The stored second derivative is integral-local, entrywise.**  If some
 closed ball around `x` lies in `U`, then `j ↦ (∇²j)(x)uv` has
@@ -159,7 +218,7 @@ theorem measurable_entry_eval_secondDeriv_lihLocalSigma {U : Set (Vec d)} {x : V
     (i k : Fin d) :
     @Measurable (ShellField d) ℝ (ShellField.lihLocalSigma U) inferInstance
       (fun j => ShellField.secondDeriv j x u v i k) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   set nu : ℝ := ‖u‖ with hnudef
   have hnu : 0 ≤ nu := norm_nonneg u
   set rho : ℕ → ℝ := fun n => r / (((n : ℝ) + 1) * (nu + 1)) with hrhodef
@@ -207,7 +266,7 @@ theorem measurable_eval_secondDeriv_apply_apply_lihLocalSigma {U : Set (Vec d)}
     {x : Vec d} {r : ℝ} (hr : 0 < r) (hrU : Metric.closedBall x r ⊆ U) (u v : Vec d) :
     @Measurable (ShellField d) (Mat d) (ShellField.lihLocalSigma U) inferInstance
       (fun j => ShellField.secondDeriv j x u v) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   exact measurable_matrix_of_entries fun i k =>
     measurable_entry_eval_secondDeriv_lihLocalSigma hr hrU u v i k
 
@@ -217,7 +276,7 @@ theorem measurable_eval_secondDeriv_apply_lihLocalSigma {U : Set (Vec d)}
     @Measurable (ShellField d) (ShellField.MatrixDerivative d)
       (ShellField.lihLocalSigma U) inferInstance
       (fun j => ShellField.secondDeriv j x u) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   exact measurable_clm_of_measurable_apply_single fun i =>
     measurable_eval_secondDeriv_apply_apply_lihLocalSigma hr hrU u (Pi.single i (1 : ℝ))
 
@@ -227,7 +286,7 @@ theorem measurable_eval_secondDeriv_lihLocalSigma {U : Set (Vec d)} {x : Vec d}
     @Measurable (ShellField d) (ShellField.MatrixSecondDerivative d)
       (ShellField.lihLocalSigma U) inferInstance
       (fun j => ShellField.secondDeriv j x) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   exact measurable_clm_of_measurable_apply_single fun i =>
     measurable_eval_secondDeriv_apply_lihLocalSigma hr hrU (Pi.single i (1 : ℝ))
 
@@ -268,7 +327,7 @@ private theorem eq_iSup_of_dense_openCube {D : Set (Vec d)}
   have hDne : D.Nonempty := by
     obtain ⟨w, hw, -⟩ := Metric.mem_closure_iff.1 (hDdense hzero) 1 one_pos
     exact ⟨w, hw⟩
-  haveI : Nonempty D := hDne.to_subtype
+  have : Nonempty D := hDne.to_subtype
   have hbdd : BddAbove (Set.range fun w : D => g w.1) := by
     refine ⟨S, ?_⟩
     rintro t ⟨w, rfl⟩
@@ -279,7 +338,7 @@ private theorem eq_iSup_of_dense_openCube {D : Set (Vec d)}
     exact le_trans (hgnn w) (le_ciSup hbdd (⟨w, hw⟩ : D))
   refine le_antisymm (hleast _ hnn fun y hy => ?_) hupper
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   set eps : ℝ := g y - ⨆ w : D, g w.1 with hepsdef
   have heps : 0 < eps := by rw [hepsdef]; linarith
   obtain ⟨delta, hdelta, hball⟩ := Metric.continuousAt_iff.1 hg.continuousAt eps heps
@@ -368,9 +427,9 @@ theorem measurable_localCubeDerivNorm_translate_lihLocalSigma {U : Set (Vec d)}
     (hU : Metric.closedBall z ((1 / 2 : ℝ) * (3 : ℝ) ^ ell) ⊆ U) :
     @Measurable (ShellField d) ℝ (ShellField.lihLocalSigma U) inferInstance
       (fun j => localCubeDerivNorm ell (ShellField.translate z j)) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   obtain ⟨D, hDc, hDsub, hDdense⟩ := exists_countable_dense_openCube d
-  haveI : Countable D := hDc.to_subtype
+  have : Countable D := hDc.to_subtype
   have hrw : (fun j : ShellField d => localCubeDerivNorm ell (ShellField.translate z j)) =
       fun j : ShellField d => ((3 : ℝ) ^ ell)⁻¹ *
         ⨆ w : D, ShellField.matrixDerivativeNorm
@@ -392,9 +451,9 @@ theorem measurable_localCubeSecondDerivNorm_translate_lihLocalSigma {U : Set (Ve
     (hU : Metric.closedBall z ((1 / 2 : ℝ) * (3 : ℝ) ^ ell) ⊆ U) :
     @Measurable (ShellField d) ℝ (ShellField.lihLocalSigma U) inferInstance
       (fun j => localCubeSecondDerivNorm ell (ShellField.translate z j)) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   obtain ⟨D, hDc, hDsub, hDdense⟩ := exists_countable_dense_openCube d
-  haveI : Countable D := hDc.to_subtype
+  have : Countable D := hDc.to_subtype
   have hrw : (fun j : ShellField d =>
         localCubeSecondDerivNorm ell (ShellField.translate z j)) =
       fun j : ShellField d => (((3 : ℝ) ^ ell)⁻¹) ^ 2 *
@@ -414,6 +473,7 @@ theorem measurable_localCubeSecondDerivNorm_translate_lihLocalSigma {U : Set (Ve
 
 /-! ## The `e.BoscL.def` gauge at a single shell -/
 
+set_option warn.classDefReducibility false in
 /-- The sigma-field on the cutoff sample space generated by the integral-local
 information of the shell of index `L` in the region `U`. -/
 def shellCoordinateLocalSigma (L : ℤ) (U : Set (Vec d)) :
@@ -444,7 +504,7 @@ theorem measurableSet_badOscAt_shellLocal {U : Set (Vec d)} (M : ABKModel d)
     (Q : TriadicCube d) (L : ℤ)
     (hU : Metric.closedBall (cubeBasePoint Q) ((1 / 2 : ℝ) * (3 : ℝ) ^ Q.scale) ⊆ U) :
     MeasurableSet[shellCoordinateLocalSigma L U] (badOscAt M Q L) := by
-  letI : MeasurableSpace (Algsuperdiff.Section3.Cutoff.CutoffSample d) :=
+  let : MeasurableSpace (Algsuperdiff.Section3.Cutoff.CutoffSample d) :=
     shellCoordinateLocalSigma L U
   exact measurableSet_lt measurable_const (measurable_shellOscGauge_shellLocal Q L hU)
 

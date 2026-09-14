@@ -108,7 +108,7 @@ theorem norm_scalarL2_le_of_ae_bound {U : Set (Vec d)} (hU : IsOpenBoundedConvex
     (F : ScalarL2 U) {C : ℝ} (hC : 0 ≤ C)
     (hF : ∀ᵐ x ∂volumeMeasureOn U, |F x| ≤ C) :
     ‖F‖ ≤ scalarL2Factor U * C := by
-  letI := hU.isFiniteMeasure_restrict_volume
+  let := hU.isFiniteMeasure_restrict_volume
   have hbound : ∀ᵐ x ∂volumeMeasureOn U, ‖F x‖ ≤ C := by
     filter_upwards [hF] with x hx
     simpa only [Real.norm_eq_abs] using hx

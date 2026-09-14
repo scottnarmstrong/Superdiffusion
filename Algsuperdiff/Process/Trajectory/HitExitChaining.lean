@@ -183,7 +183,7 @@ theorem isStoppingTime_hitExitTime
   let idx : ContinuousPath alpha → ℕ :=
     fun omega ↦ familyIndex V (omega ((T omega).untopD 0))
   have hT : IsStoppingTime (canonicalFiltration (alpha := alpha)) T := by
-    simpa only [T, hitTime] using isStoppingTime_exitTime Dᶜ hDclosed.isOpen_compl
+    simpa only [T, hitTime] using! isStoppingTime_exitTime Dᶜ hDclosed.isOpen_compl
   have hIdx : Measurable[hT.measurableSpace] idx :=
     (measurable_familyIndex V hVmeasurable).comp
       (measurable_eval_untopD_stoppingTime_stopped T hT)
@@ -192,7 +192,7 @@ theorem isStoppingTime_hitExitTime
       ⋃ i : ℕ, ({omega | idx omega = i} ∩ {omega | T omega ≤ (t : ℝ≥0∞)}) ∩
         hitsSetBetween T t (V' i)ᶜ := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     change
       T omega + exitTime (V' (idx omega)) (shift ((T omega).untopD 0) omega) ≤
           (t : ℝ≥0∞) ↔ _
@@ -403,7 +403,7 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
   let W : ℕ → ContinuousPath alpha → ℝ≥0∞ := fun i ↦
     {omega | idx omega = i}.indicator (fun _ ↦ 1)
   have hT : IsStoppingTime (ContinuousPath.canonicalFiltration (alpha := alpha)) T := by
-    simpa only [T, ContinuousPath.hitTime] using
+    simpa only [T, ContinuousPath.hitTime] using!
       ContinuousPath.isStoppingTime_exitTime Dᶜ hDclosed.isOpen_compl
   have hS : MeasurableSet[hT.measurableSpace] S :=
     StoppingTime.measurableSet_stoppingTime_lt_top hT
@@ -453,10 +453,10 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
     by_cases hi : idx omega = i
     swap
     · have hiNotMem : omega ∉ {eta | idx eta = i} := by
-        simpa only [Set.mem_setOf_eq] using hi
+        simpa only [Set.mem_ofPred_eq] using hi
       dsimp only [W]
       rw [Set.indicator_of_notMem hiNotMem, zero_mul]
-      exact zero_le _
+      exact zero_le
     have hiMem : omega ∈ {eta | idx eta = i} := hi
     dsimp only [W]
     rw [Set.indicator_of_mem hiMem, one_mul]
@@ -487,7 +487,7 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
           rw [Set.indicator_of_mem hmem, one_mul]
         · intro i hi
           have hnot : omega ∉ {eta | idx eta = i} := by
-            simpa only [Set.mem_setOf_eq] using Ne.symm hi
+            simpa only [Set.mem_ofPred_eq] using Ne.symm hi
           dsimp only [W]
           rw [Set.indicator_of_notMem hnot, zero_mul]
       · simp only [Set.indicator_of_notMem hs, mul_zero, tsum_zero]
@@ -496,7 +496,7 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
     swap
     · rw [Set.indicator_of_notMem hTfinite]
       have hnot : ¬T omega < ⊤ := by
-        simpa only [S, Set.mem_setOf_eq] using hTfinite
+        simpa only [S, Set.mem_ofPred_eq] using hTfinite
       have hTtop : T omega = ⊤ := top_unique (not_lt.mp hnot)
       have hsumTop : ContinuousPath.hitExitTime V V' omega = ⊤ := by
         change T omega +
@@ -505,7 +505,7 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
       rw [ContinuousPath.discountedStoppingWeight]
       have hnotMem : omega ∉
           {eta | ContinuousPath.hitExitTime V V' eta < ⊤} := by
-        simp only [Set.mem_setOf_eq, hsumTop, lt_self_iff_false, not_false_eq_true]
+        simp only [Set.mem_ofPred_eq, hsumTop, lt_self_iff_false, not_false_eq_true]
       rw [Set.indicator_of_notMem hnotMem]
     rw [Set.indicator_of_mem hTfinite]
     let R : ℝ≥0∞ := ContinuousPath.exitTime (V' (idx omega)) (Y omega)
@@ -516,9 +516,9 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
       rw [ContinuousPath.discountedStoppingWeight]
       have hnotMem : omega ∉
           {eta | ContinuousPath.hitExitTime V V' eta < ⊤} := by
-        simp only [Set.mem_setOf_eq, hsumTop, lt_self_iff_false, not_false_eq_true]
+        simp only [Set.mem_ofPred_eq, hsumTop, lt_self_iff_false, not_false_eq_true]
       rw [Set.indicator_of_notMem hnotMem]
-      exact zero_le _
+      exact zero_le
     · have hTne : T omega ≠ ⊤ := ne_of_lt hTfinite
       have hsumFinite : T omega + R ≠ ⊤ := ENNReal.add_ne_top.mpr ⟨hTne, hRfinite⟩
       have hsigma : ContinuousPath.hitExitTime V V' omega = T omega + R := rfl
@@ -563,7 +563,7 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
           rw [Set.indicator_of_mem hmem, one_mul]
         · intro i hi
           have hnot : omega ∉ {eta | idx eta = i} := by
-            simpa only [Set.mem_setOf_eq] using Ne.symm hi
+            simpa only [Set.mem_ofPred_eq] using Ne.symm hi
           dsimp only [W]
           rw [Set.indicator_of_notMem hnot, zero_mul]
       · simp only [Set.indicator_of_notMem hs, mul_zero, tsum_zero]

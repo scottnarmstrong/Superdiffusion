@@ -96,7 +96,7 @@ theorem convex_faceHalf {U : Set (Vec d)} (hU : Convex ℝ U) (i : Fin d)
   have hset : {y : Vec d | 0 < σ * (a - y i)} =
       {y : Vec d | (fun z : Vec d => σ * z i) y < σ * a} := by
     ext y
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro h
       have : σ * (a - y i) = σ * a - σ * y i := by ring
@@ -202,7 +202,7 @@ private theorem hasFDerivAt_faceCutoff (i : Fin d) (a σ : ℝ) (n : ℕ) (y : V
   have hgEq : g = fun z : Vec d => (σ * a * ((n : ℝ) + 1) - 1) + L z := by
     funext z
     rw [hgdef, hLdef]
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.proj_apply,
+    simp only [smul_apply, ContinuousLinearMap.proj_apply,
       smul_eq_mul]
     ring
   have hg : HasFDerivAt g L y := by
@@ -221,7 +221,7 @@ private theorem fderiv_faceCutoff_apply (i : Fin d) (a σ : ℝ) (n : ℕ) (y : 
         (deriv Homogenization.smoothTransitionProfile
           (σ * (a - y i) * ((n : ℝ) + 1) - 1) * (-(σ * ((n : ℝ) + 1)))) := by
   rw [(hasFDerivAt_faceCutoff i a σ n y).fderiv]
-  simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.proj_apply,
+  simp only [smul_apply, ContinuousLinearMap.proj_apply,
     smul_eq_mul, basisVec_apply]
   by_cases hij : i = j
   · simp [hij]
@@ -280,7 +280,7 @@ theorem tendsto_volume_faceStrip {U : Set (Vec d)}
     (fun n => ((isOpen_faceStrip hU.isOpen i a σ n).measurableSet).nullMeasurableSet)
     (antitone_faceStrip U i a σ) ⟨0, hfin⟩
   rw [iInter_faceStrip U i a σ] at this
-  simpa using this
+  simpa using! this
 
 /-! ## 5. An `L²` convergence criterion on a vanishing strip -/
 
@@ -330,7 +330,7 @@ private theorem tendsto_eLpNorm_of_strip {H : Set (Vec d)} {S : ℕ → Set (Vec
       (Or.inr ENNReal.ofReal_ne_top)
     simpa using this
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hrpow
-    (fun n => zero_le _) hkey
+    (fun n => zero_le) hkey
 
 /-! ## 6. The cutoff product and its differential -/
 
@@ -378,7 +378,7 @@ private theorem fderiv_faceCutoff_mul_apply {ψ : Vec d → ℝ}
     rw [hχ.fderiv]
     exact hχ.mul hψat
   rw [hmul.fderiv]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     smul_eq_mul]
 
 /-- **The key product bound.**  The cutoff derivative blows up like `n`, but the
@@ -405,13 +405,13 @@ private theorem abs_mul_fderiv_faceCutoff_le {ψ : Vec d → ℝ} {L : ℝ}
     by_cases ht1 : 1 ≤ t
     · rw [Homogenization.smoothTransitionProfile.deriv_zero_of_one_le ht1]
       simpa using hgoal_nonneg
-    push_neg at ht0 ht1
+    push Not at ht0 ht1
     -- the transition band: `1 < σ(a - yᵢ)N < 2`
     have hband1 : 1 < σ * (a - y i) * N := by rw [htdef] at ht0; linarith only [ht0]
     have hband2 : σ * (a - y i) * N < 2 := by rw [htdef] at ht1; linarith only [ht1]
     have hgpos : 0 < σ * (a - y i) := by
       by_contra hg
-      push_neg at hg
+      push Not at hg
       have := mul_le_mul_of_nonneg_right hg hN.le
       rw [zero_mul] at this
       linarith only [hband1, this]

@@ -76,7 +76,7 @@ theorem openCubeAtScale_triadicCubeShift_eq_openCubeSet (R : TriadicCube d) :
   have hpow : Real.rpow (3 : ℝ) ((R.scale : ℤ) : ℝ) = (3 : ℝ) ^ R.scale :=
     Real.rpow_intCast 3 R.scale
   ext y
-  simp only [openCubeAtScale, openCubeSet, Set.mem_setOf_eq, triadicCubeShift,
+  simp only [openCubeAtScale, openCubeSet, Set.mem_ofPred_eq, triadicCubeShift,
     cubeScaleFactor, hpow]
   constructor
   · intro hy i
@@ -143,7 +143,7 @@ theorem sq_cubeLpNorm_two_cubeFluctuationVec_le_meanSquareOscillationVecOn
       (cubeSet Q) volume := by
     have h := hF_vol.integrable_norm_rpow (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
-    simpa using h
+    simpa using! h
   have hlp_sq : (cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuationVec Q u)) ^ (2 : ℕ) =
       cubeAverage Q (fun x => ‖cubeFluctuationVec Q u x‖ ^ (2 : ℕ)) := by
     simpa using
@@ -174,7 +174,7 @@ theorem sq_cubeLpNorm_two_cubeFluctuationVec_le_meanSquareOscillationVecOn
       rw [hcong]
       have hcomp : MemScalarL2 (cubeSet Q) (fun x => cubeFluctuationVec Q u x k) :=
         memScalarL2_coord_of_memVectorL2 hFmem k
-      simpa [pow_two, MemScalarL2, volumeMeasureOn, IntegrableOn] using
+      simpa [pow_two, MemScalarL2, volumeMeasureOn, IntegrableOn] using!
         hcomp.integrable_mul hcomp
     exact integrableOn_cubeSet_iff_integrableOn_openCubeSet.mp hint
   have hcubeavg : cubeAverage Q (fun x => vecNormSq (cubeFluctuationVec Q u x)) =

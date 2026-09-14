@@ -89,7 +89,7 @@ theorem cubeAverage_finset_sum_of_integrable {ι : Type*} (Q : TriadicCube d)
     (hf : ∀ i ∈ s, Integrable (f i) (normalizedCubeMeasure Q)) :
     cubeAverage Q (fun x => ∑ i ∈ s, f i x) = ∑ i ∈ s, cubeAverage Q (f i) := by
   simp only [cubeAverage_eq_integral_normalizedCubeMeasure]
-  exact integral_finset_sum s hf
+  exact integral_finsetSum s hf
 
 /-! ## Membership bookkeeping -/
 
@@ -115,7 +115,7 @@ private theorem memLp_sq_two_of_memLp_four_vec (Q : TriadicCube d) {f : Vec d �
 private theorem memLp_apply_of_memLp (Q : TriadicCube d) {u : Vec d → Vec d}
     {p : ℝ≥0∞} (hu : MemLp u p (normalizedCubeMeasure Q)) (i : Fin d) :
     MemLp (fun x => u x i) p (normalizedCubeMeasure Q) := by
-  simpa using (ContinuousLinearMap.proj (R := ℝ) i).comp_memLp' hu
+  simpa using! (ContinuousLinearMap.proj (R := ℝ) i).comp_memLp' hu
 
 /-- The Euclidean squared length of an `L^4` vector field lies in `L^2`. -/
 private theorem memLp_vecNormSq_two_of_memLp_four (Q : TriadicCube d)
@@ -123,7 +123,7 @@ private theorem memLp_vecNormSq_two_of_memLp_four (Q : TriadicCube d)
     MemLp (fun x => vecNormSq (u x)) 2 (normalizedCubeMeasure Q) := by
   have hsum : MemLp (fun x => ∑ i : Fin d, u x i ^ (2 : ℕ)) 2
       (normalizedCubeMeasure Q) :=
-    memLp_finset_sum (μ := normalizedCubeMeasure Q) Finset.univ
+    memLp_finsetSum (μ := normalizedCubeMeasure Q) Finset.univ
       (fun i _ => memLp_sq_two_of_memLp_four_vec Q (memLp_apply_of_memLp Q hu i))
   have hfun : (fun x => ∑ i : Fin d, u x i ^ (2 : ℕ)) =
       fun x => vecNormSq (u x) := by

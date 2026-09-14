@@ -52,7 +52,8 @@ theorem boundedMeasurableToScalarL2_add (hU : IsOpenBoundedConvexDomain U)
     boundedMeasurableToScalarL2_coeFn hU hg hgE,
     Lp.coeFn_add (boundedMeasurableToScalarL2 hU hf hfD)
       (boundedMeasurableToScalarL2 hU hg hgE)] with x h0 h1 h2 h3
-  rw [h0, h3, Pi.add_apply, h1, h2, domainExtension_add_apply]
+  rw [h0, h3, Pi.add_apply, h1, h2]
+  exact domainExtension_add_apply f g x
 
 theorem boundedMeasurableToScalarL2_smul (hU : IsOpenBoundedConvexDomain U)
     (c : ℝ) {f : U → ℝ} (hf : Measurable f) {D : ℝ} (hfD : ∀ y, |f y| ≤ D)

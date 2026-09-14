@@ -75,12 +75,12 @@ theorem normalizedL2On_doubled_le {i : Fin d} {a : ℝ} {K D : Set (Vec d)}
       ≤ 2 * normalizedL2On K (fun y => W y - beta) + 3 * |beta| := by
   classical
   set G : Vec d → ℝ := fun y => W y - beta with hGdef
-  haveI : IsFiniteMeasure (volume.restrict D) := by
+  have : IsFiniteMeasure (volume.restrict D) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hDtop
   have hKtop : volume K ≠ ⊤ := ne_top_of_le_ne_top hDtop (measure_mono hKD)
-  haveI : IsFiniteMeasure (volume.restrict K) := by
+  have : IsFiniteMeasure (volume.restrict K) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hKtop
@@ -116,16 +116,16 @@ theorem normalizedL2On_doubled_le {i : Fin d} {a : ℝ} {K D : Set (Vec d)}
   have hsplit : ∫ y in D, G y ^ 2 ≤ (∫ y in K, G y ^ 2) + ∫ y in B, G y ^ 2 := by
     have hcongr : ∫ y in D, G y ^ 2 = ∫ y in K ∪ B, G y ^ 2 :=
       MeasureTheory.setIntegral_congr_set hDae
-    have hunion : K ∪ B = K ∪ (B \ K) := (Set.union_diff_self (s := K) (t := B)).symm
+    have hunion : K ∪ B = K ∪ (B \ K) := (Set.union_sdiff_self (s := K) (t := B)).symm
     have hintBK : IntegrableOn (fun y => G y ^ 2) (B \ K) volume :=
-      hintB.mono_set Set.diff_subset
+      hintB.mono_set Set.sdiff_subset
     have hadd : ∫ y in K ∪ (B \ K), G y ^ 2
         = (∫ y in K, G y ^ 2) + ∫ y in B \ K, G y ^ 2 :=
       MeasureTheory.setIntegral_union Set.disjoint_sdiff_right (hBm.diff hKm) hintK hintBK
     have hmono : ∫ y in B \ K, G y ^ 2 ≤ ∫ y in B, G y ^ 2 :=
       MeasureTheory.setIntegral_mono_set hintB
         (Filter.Eventually.of_forall fun y => sq_nonneg (G y))
-        (HasSubset.Subset.eventuallyLE Set.diff_subset)
+        (LE.le.eventuallyLE Set.sdiff_subset)
     rw [hcongr, hunion, hadd]
     linarith only [hmono]
   -- the change of variables on the reflected part
@@ -158,7 +158,7 @@ theorem normalizedL2On_doubled_le {i : Fin d} {a : ℝ} {K D : Set (Vec d)}
     rw [← h1]
     exact MeasureTheory.setIntegral_mono_set hintKshift
       (Filter.Eventually.of_forall fun x => sq_nonneg _)
-      (HasSubset.Subset.eventuallyLE hpreB)
+      (LE.le.eventuallyLE hpreB)
   -- the pointwise expansion on `K`
   have hexpand : ∫ x in K, (G x + 2 * beta) ^ 2
       ≤ 2 * (∫ x in K, G x ^ 2) + 8 * beta ^ 2 * (volume K).toReal := by

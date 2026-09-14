@@ -78,7 +78,7 @@ theorem probeFramedLayerWaveFactor_le_sharpFramedLayerWaveEnvelope
   have hmul := mul_le_mul_of_nonneg_left hraw hframe
   simpa only [probeFramedLayerWaveFactor, probeSharpLayerFrame,
     probeSharpFramedLayerWaveEnvelope, probeMeanLayerFrame,
-    probeLayerWaveFactor] using hmul
+    probeLayerWaveFactor] using! hmul
 
 theorem probe_framedGood_add_collar_layer_rhs_le_sharpEnvelope
     (M : ABKModel d) {m : ℤ} {E b : ℝ}

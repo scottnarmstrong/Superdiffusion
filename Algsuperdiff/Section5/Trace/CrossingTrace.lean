@@ -282,7 +282,7 @@ private theorem isWeakPath_cons_append_singleton {d : ℕ}
     (hb : Section5.Percolation.siteDist y b ≤ 1) :
     Section5.Percolation.IsWeakPath (a :: Gamma ++ [b]) := by
   cases Gamma with
-  | nil => exact False.elim (Option.noConfusion hhead)
+  | nil => simp at hhead
   | cons z zs =>
       have hzx : z = x := by
         simpa only [List.head?_cons, Option.some.injEq] using hhead

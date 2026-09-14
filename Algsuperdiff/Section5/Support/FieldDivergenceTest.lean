@@ -71,7 +71,7 @@ private theorem exists_bound_of_continuous {U : Set (Vec d)} (hU : IsBoundedDoma
 theorem memScalarL2_of_continuous_of_isBoundedDomain {U : Set (Vec d)}
     (hUm : MeasurableSet U) (hU : IsBoundedDomain U) {f : Vec d → ℝ} (hf : Continuous f) :
     MemScalarL2 U f := by
-  haveI := hU.isFiniteMeasure_restrict_volume
+  have := hU.isFiniteMeasure_restrict_volume
   obtain ⟨C, hC⟩ := exists_bound_of_continuous hU hf
   refine MemLp.of_bound hf.aestronglyMeasurable C ?_
   filter_upwards [ae_restrict_mem hUm] with x hx
@@ -85,7 +85,7 @@ private theorem memScalarL2_of_continuous_hasCompactSupport {U : Set (Vec d)} {f
 private theorem integrable_mul_of_memScalarL2 {U : Set (Vec d)} {f g : Vec d → ℝ}
     (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
     Integrable (fun x => f x * g x) (volume.restrict U) := by
-  simpa only [Pi.mul_apply] using hf.integrable_mul hg
+  simpa only [Pi.mul_apply] using! hf.integrable_mul hg
 
 private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {P G : Vec d → Vec d}
     (hP : ∀ i : Fin d, MemScalarL2 U fun x => P x i)
@@ -94,7 +94,7 @@ private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {P G : Vec d → 
       ∑ i : Fin d, ∫ x in U, P x i * G x i ∂volume := by
   rw [show (fun x : Vec d => vecDot (P x) (G x)) =
       fun x : Vec d => ∑ i : Fin d, P x i * G x i from funext fun _ => rfl]
-  exact integral_finset_sum Finset.univ fun i _ => integrable_mul_of_memScalarL2 (hP i) (hG i)
+  exact integral_finsetSum Finset.univ fun i _ => integrable_mul_of_memScalarL2 (hP i) (hG i)
 
 /-! ## 2. The integration by parts -/
 
@@ -111,13 +111,13 @@ theorem integral_vecDot_h10Grad_eq_neg_integral_vecFieldDiv_mul {U : Set (Vec d)
     memScalarL2_of_continuous_of_isBoundedDomain hUm hU (hF i).continuous
   have hDcont : ∀ i : Fin d,
       Continuous fun x => (fderiv ℝ (fun z => F z i) x) (basisVec i) := fun i =>
-    ((hF i).continuous_fderiv le_rfl).clm_apply continuous_const
+    ((hF i).continuous_fderiv (by simp)).clm_apply continuous_const
   have hDL2 : ∀ i : Fin d,
       MemScalarL2 U fun x => (fderiv ℝ (fun z => F z i) x) (basisVec i) := fun i =>
     memScalarL2_of_continuous_of_isBoundedDomain hUm hU (hDcont i)
   have hdivL2 : MemScalarL2 U (vecFieldDiv F) :=
     memScalarL2_of_continuous_of_isBoundedDomain hUm hU
-      (continuous_finset_sum Finset.univ fun i _ => hDcont i)
+      (continuous_finsetSum Finset.univ fun i _ => hDcont i)
   set Dn : ℕ → Vec d → Vec d := fun n => euclideanGradient (phi.approx n) with hDn_def
   have hDnL2 : ∀ (n : ℕ) (i : Fin d), MemScalarL2 U fun x => Dn n x i := by
     intro n i
@@ -145,7 +145,7 @@ theorem integral_vecDot_h10Grad_eq_neg_integral_vecFieldDiv_mul {U : Set (Vec d)
           fun x : Vec d => ∑ i : Fin d,
             (fderiv ℝ (fun z => F z i) x) (basisVec i) * phi.approx n x from
         funext fun x => by rw [vecFieldDiv_apply, Finset.sum_mul]]
-      exact integral_finset_sum Finset.univ fun i _ =>
+      exact integral_finsetSum Finset.univ fun i _ =>
         integrable_mul_of_memScalarL2 (hDL2 i) (hthetaL2 n)
     rw [Finset.sum_congr rfl fun i _ => hstep i, hsum, Finset.sum_neg_distrib]
   -- the two limits
@@ -163,7 +163,7 @@ theorem integral_vecDot_h10Grad_eq_neg_integral_vecFieldDiv_mul {U : Set (Vec d)
   have hL : Filter.Tendsto (fun n => ∑ i : Fin d, ∫ x in U, F x i * Dn n x i ∂volume)
       Filter.atTop
       (nhds (∑ i : Fin d, ∫ x in U, F x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finset_sum Finset.univ fun i _ =>
+    tendsto_finsetSum Finset.univ fun i _ =>
       tendsto_integral_mul_of_tendsto_toScalarL2 (hFL2 i) (fun n => hDnL2 n i) (hglim i)
         (hconv i)
   have hR : Filter.Tendsto (fun n => -∫ x in U, vecFieldDiv F x * phi.approx n x ∂volume)

@@ -49,12 +49,12 @@ private theorem oddExtend_eq_self_of_not_beyond {x : Vec d} {m k : ℤ}
     funext j
     by_cases hup : MeetsUpperFace x m k j
     · have h1 := (hnb j).1 hup
-      push_neg at h1
+      push Not at h1
       rw [windowFold_apply, foldCoord_of_meetsUpperFace hup]
       exact min_eq_left (by linarith only [h1])
     · by_cases hlow : MeetsLowerFace x m k j
       · have h2 := (hnb j).2 hlow
-        push_neg at h2
+        push Not at h2
         rw [windowFold_apply, foldCoord_of_meetsLowerFace hup hlow]
         exact max_eq_left (by linarith only [h2])
       · rw [windowFold_apply, foldCoord_of_unmet hup hlow]
@@ -285,7 +285,7 @@ theorem oddExtend_ae_eq_self_of_faceOdd_forall {x : Vec d} {m k : ℤ} (hkm : k 
   refine MeasureTheory.ae_iff.2 (measure_mono_null ?_ hnull)
   intro y hy
   by_contra hcon
-  simp only [Set.mem_iUnion, Set.mem_union, Set.mem_setOf_eq, not_exists,
+  simp only [Set.mem_iUnion, Set.mem_union, Set.mem_ofPred_eq, not_exists,
     not_or] at hcon
   exact hy (oddExtend_eq_self_of_faceOdd_forall hkm hupO hlowO fun i =>
     ⟨fun _ => (hcon i).1, fun _ => (hcon i).2⟩)

@@ -81,7 +81,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
         tendsto_const_nhds (Or.inr (by simp))
     rw [zero_mul] at hprod
     have hreal := (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ⊤)).comp hprod
-    simpa using hreal
+    simpa using! hreal
   refine squeeze_zero_norm ?_ hBtend
   intro n
   rw [hdiff_eq n]
@@ -91,13 +91,13 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
     have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
       (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)) (r := 1)
       ((hf n).sub hg).1 hh.1 (fun x y => x * y) 1 hbound
-    simpa [B] using hh'
+    simpa [B] using! hh'
   calc ‖∫ x, (f n x - g x) * h x ∂μ‖
       ≤ (∫⁻ x, ENNReal.ofReal ‖(f n x - g x) * h x‖ ∂μ).toReal :=
         norm_integral_le_lintegral_norm _
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
         rw [eLpNorm_one_eq_lintegral_enorm]
-        simp_rw [ofReal_norm_eq_enorm]
+        simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
         refine ENNReal.toReal_mono ?_ hHolder
         exact ENNReal.mul_ne_top ((hf n).sub hg).2.ne hh.2.ne
@@ -123,7 +123,7 @@ private theorem integral_vecDot_split {W : Set (Vec d)} (w : H1Function W)
   have hint : ∀ j : Fin d,
       Integrable (fun y => G y j * w.grad y j) (volume.restrict W) := fun j =>
     (hG j).integrable_mul (w.gradMemL2 j)
-  rw [← integral_finset_sum _ fun j _ => hint j]
+  rw [← integral_finsetSum _ fun j _ => hint j]
   refine integral_congr_ae (Eventually.of_forall fun y => ?_)
   show vecDot (w.grad y) (G y) = ∑ j : Fin d, G y j * w.grad y j
   rw [vecDot]
@@ -164,7 +164,7 @@ theorem isWeaklyHarmonicOn_of_contDiff_tests {W : Set (Vec d)} (w : H1Function W
       (fun n => ∑ j : Fin d,
         ∫ y in W, euclideanGradient (φ.approx n) y j * w.grad y j ∂volume) atTop
       (nhds (∑ j : Fin d, ∫ y in W, φ.toH1Function.grad y j * w.grad y j ∂volume)) :=
-    tendsto_finset_sum _ fun j _ => hconv j
+    tendsto_finsetSum _ fun j _ => hconv j
   have hconst := htot.congr fun n => hsum n
   rw [hlim]
   exact tendsto_nhds_unique hconst tendsto_const_nhds

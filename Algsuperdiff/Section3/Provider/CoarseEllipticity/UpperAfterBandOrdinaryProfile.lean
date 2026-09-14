@@ -98,8 +98,8 @@ private theorem measurable_probeSharpAfterBandTunedBaseTerm
   let k₀ := collarBandMeanDepth M E
   have hterm := measurable_probeSharpAfterBandTerm_exactScale M root
     (probeSharpLayerAnchor root bfaProfileB k₀ n) k₀ m
-  simpa only [probeSharpAfterBandTunedBaseTerm, k₀] using
-    measurable_const.mul (hterm.pow_const (2 : ℕ))
+  unfold probeSharpAfterBandTunedBaseTerm
+  exact measurable_const.mul (hterm.pow_const (2 : ℕ))
 
 private theorem probeSharpAfterBandTunedBaseScale_nonneg
     (M : ABKModel d) (root m : ℤ) (E : ℝ) (k n : ℕ) :
@@ -273,8 +273,8 @@ private theorem isBigOWith_gammaSigma_one_probeSharpAfterBandTunedBaseTerm
   have hbase :=
     (isBigOWith_gammaSigma_one_probeSharpAfterBandTerm_sq_exactScale
       (m := R.scale) (ell := ell) (L := m) (k₀ := k₀) M hL).const_mul hc
-  simpa only [probeSharpAfterBandTunedBaseTerm,
-    probeSharpAfterBandTunedBaseScale, k₀, ell] using hbase
+  unfold probeSharpAfterBandTunedBaseTerm probeSharpAfterBandTunedBaseScale
+  exact hbase
 
 /-- The literal common-depth good after-band summand equals its outer
 coefficient times the separated hsep factor and tuned base carrier. -/
@@ -684,10 +684,13 @@ theorem exists_tunedAfterBand_good_finite_trace_split
       M hR hS hsigma0 hsigma hmaxAux hEgamma hgamma20 n
     exact Algsuperdiff.Section3.Provider.Stream.isBigOWith_comp_translateCutoffSample
       M shift
-      ((measurable_probeSharpAfterBandHsepResidual M R.scale (E : ℝ)).mul
-        (measurable_probeSharpAfterBandTunedBaseTerm
-          M R.scale m (E : ℝ) k n))
-      (by simpa only [V, B, Q, shift] using hcenter)
+      (show Measurable (fun omega =>
+          probeSharpAfterBandHsepResidual M R.scale (E : ℝ) omega *
+            probeSharpAfterBandTunedBaseTerm M R.scale m (E : ℝ) k n omega) from
+        (measurable_probeSharpAfterBandHsepResidual M R.scale (E : ℝ)).mul
+          (measurable_probeSharpAfterBandTunedBaseTerm
+            M R.scale m (E : ℝ) k n))
+      hcenter
   have hObig : IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 1) (fun omega => ∑' n, O n omega) AO := by
     have h := Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_gammaSigma_tsum_of_tsum_le
@@ -744,8 +747,9 @@ theorem exists_tunedAfterBand_good_finite_trace_split
     exact mul_nonneg (Nat.cast_nonneg d)
       (mul_nonneg hC0 (tsum_nonneg fun n => hV0 n omega))
   have hOsumMeas : Measurable (fun omega => ∑' n, O n omega) := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
-      (hOmeas n).real_toNNReal).coe_nnreal_real
+    have hnn : Measurable (fun omega =>
+        ((∑' n, (O n omega).toNNReal : NNReal) : ℝ)) :=
+      (Measurable.tsum fun n => (hOmeas n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
     funext omega
     rw [NNReal.coe_tsum]
@@ -753,8 +757,9 @@ theorem exists_tunedAfterBand_good_finite_trace_split
       rw [Real.toNNReal_of_nonneg (hO0 n omega)]
       rfl
   have hVsumMeas : Measurable (fun omega => ∑' n, V n omega) := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
-      (hVmeas n).real_toNNReal).coe_nnreal_real
+    have hnn : Measurable (fun omega =>
+        ((∑' n, (V n omega).toNNReal : NNReal) : ℝ)) :=
+      (Measurable.tsum fun n => (hVmeas n).real_toNNReal).coe_nnreal_real
     convert hnn using 1
     funext omega
     rw [NNReal.coe_tsum]
@@ -964,9 +969,9 @@ theorem exists_tunedAfterBand_good_finite_trace_split
     have hbound := mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right hordinaryConst hcstar0) htarget0
     convert hbound using 1
-    dsimp only [target]
-    push_cast
-    ring
+    all_goals first
+      | rfl
+      | (dsimp only [target]; push_cast; ring)
   let K : ℝ := probeSharpAfterBandTunedRareTracePrefactor d
   let X : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
   let eps : ℝ := Real.exp (-(Cup⁻¹ * X))

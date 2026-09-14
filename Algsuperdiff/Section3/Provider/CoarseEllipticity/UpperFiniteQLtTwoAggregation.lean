@@ -294,7 +294,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     intro n
     have hgrid : IsBigOWith mu (gammaSigma 1) (Gone n.pred) (a1 n) := by
       cases n with
-      | zero => simpa only [Nat.pred_zero] using hGoneO 0
+      | zero => simpa only [Nat.pred_zero] using! hGoneO 0
       | succ k => simpa only [Nat.pred_succ] using hGoneO k
     have hscaled := hgrid.const_mul (inv_nonneg.mpr (ha1 n).le)
     simpa only [VoneRaw, inv_mul_cancel₀ (ha1 n).ne'] using hscaled
@@ -303,7 +303,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     intro n
     have hgrid : IsBigOWith mu (gammaSigma sigmaExp) (Gexp n.pred) (aexp n) := by
       cases n with
-      | zero => simpa only [Nat.pred_zero] using hGexpO 0
+      | zero => simpa only [Nat.pred_zero] using! hGexpO 0
       | succ k => simpa only [Nat.pred_succ] using hGexpO k
     have hscaled := hgrid.const_mul (inv_nonneg.mpr (haexp n).le)
     simpa only [VexpRaw, inv_mul_cancel₀ (haexp n).ne'] using hscaled
@@ -363,7 +363,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
   have hDnonneg : ∀ n, 0 ≤ D n := fun _ => hCblock.le
   have hDsum : Summable fun n : ℕ =>
       Book.Ch02.geometricWeight s (r : ℝ) n * D n ^ ((r : ℝ) / 2) := by
-    simpa only [D] using
+    simpa only [D] using!
       (Homogenization.summable_geometricWeight
         (mul_pos hs (lt_of_lt_of_le zero_lt_one r.property))).mul_right
           (Cblock ^ ((r : ℝ) / 2))

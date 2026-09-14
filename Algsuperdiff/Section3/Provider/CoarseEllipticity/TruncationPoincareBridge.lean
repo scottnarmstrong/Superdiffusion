@@ -138,7 +138,7 @@ theorem solutionFluxField_memVectorL2 [NeZero d] (Q : TriadicCube d) (a : CoeffF
     have h1 : (Internal.Ch02.BookCh02.pointwiseCoeffOn U aQ).toCoeffField
         =ᵐ[volumeMeasureOn (cubeSet Q)] aQ.toCoeffField := by
       simpa [volumeMeasureOn,
-        volume_restrict_cubeSet_eq_volume_restrict_openCubeSet Q] using h0
+        volume_restrict_cubeSet_eq_volume_restrict_openCubeSet Q] using! h0
     filter_upwards [h1] with x hx
     have hpwf : Internal.Ch02.BookCh02.pointwiseCoeffField U aQ x =
         (Internal.Ch02.BookCh02.pointwiseCoeffOn U aQ).toCoeffField x := rfl

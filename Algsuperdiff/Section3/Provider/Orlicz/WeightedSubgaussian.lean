@@ -194,7 +194,7 @@ theorem hasSubgaussianMGF_of_tail {X : Ω → ℝ} (hX : AEMeasurable X μ) {c :
     intro s hs
     have hsub : {ω | s < W ω} ⊆ {ω | Real.sqrt (cc * s) < |X ω|} := by
       intro ω hω
-      simp only [Set.mem_setOf_eq] at hω ⊢
+      simp only [Set.mem_ofPred_eq] at hω ⊢
       have h1 : cc * s < (X ω) ^ 2 := by
         rw [hWdef, lt_div_iff₀ hcc] at hω; linarith only [hω]
       have h2 : Real.sqrt (cc * s) < Real.sqrt ((X ω) ^ 2) :=
@@ -393,7 +393,7 @@ theorem measureReal_abs_weightedSum_gt_le (a : ι → ℝ)
   have hR := hsum.measure_ge_le hε
   have hL := hsum.neg.measure_ge_le hε
   -- push the coercion of the ℝ≥0 parameter to the real variance `Σ (a i)² c i`.
-  simp only [NNReal.coe_sum, NNReal.coe_mul, NNReal.coe_mk, Pi.neg_apply] at hR hL
+  simp only [NNReal.coe_sum, Pi.neg_apply] at hR hL
   have hsub : {ω | ε < |∑ i ∈ s, a i * X i ω|}
       ⊆ {ω | ε ≤ ∑ i ∈ s, a i * X i ω} ∪ {ω | ε ≤ -∑ i ∈ s, a i * X i ω} := by
     intro ω hω
@@ -478,7 +478,7 @@ theorem weightedSum_subgaussian_tail (a : ι → ℝ)
     have hnull : μ {ω | (0 : ℝ) < |∑ i ∈ s, a i * X i ω|} = 0 := by
       apply measure_mono_null _ (ae_iff.1 haez')
       intro ω hω
-      simp only [Set.mem_setOf_eq] at hω ⊢
+      simp only [Set.mem_ofPred_eq] at hω ⊢
       intro hcontra
       rw [hcontra] at hω; simp at hω
     rw [(measureReal_eq_zero_iff (by finiteness)).mpr hnull]; positivity

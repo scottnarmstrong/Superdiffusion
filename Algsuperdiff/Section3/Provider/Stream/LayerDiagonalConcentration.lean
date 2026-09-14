@@ -327,7 +327,7 @@ theorem cubeFrobeniusMassFiniteShellIncrement_eq_sum_entrySq
     change (∫ x in cubeSet (originCube d l),
       ∑ i : Fin d, ∑ j : Fin d,
         (finiteShellIncrement omega n m x i j) ^ 2 ∂volume) = _
-    rw [integral_finset_sum]
+    rw [integral_finsetSum]
     · calc
         (∑ i : Fin d, ∫ x in cubeSet (originCube d l),
             ∑ j : Fin d, (finiteShellIncrement omega n m x i j) ^ 2 ∂volume) =
@@ -336,7 +336,7 @@ theorem cubeFrobeniusMassFiniteShellIncrement_eq_sum_entrySq
                 (finiteShellIncrement omega n m x i j) ^ 2 ∂volume := by
           apply Finset.sum_congr rfl
           intro i _
-          rw [integral_finset_sum]
+          rw [integral_finsetSum]
           intro j _
           exact hint (i, j)
         _ = ∑ p : Fin d × Fin d,
@@ -344,7 +344,7 @@ theorem cubeFrobeniusMassFiniteShellIncrement_eq_sum_entrySq
                 (finiteShellIncrement omega n m x p.1 p.2) ^ 2 ∂volume := by
           rw [Fintype.sum_prod_type]
     · intro i _
-      exact integrable_finset_sum _ fun j _ => hint (i, j)
+      exact integrable_finsetSum _ fun j _ => hint (i, j)
   rw [hsum, Finset.mul_sum]
   exact Finset.sum_congr rfl fun p _ => by
     rw [cubeAverageFiniteShellEntrySq, cubeAverage]
@@ -421,7 +421,7 @@ theorem sum_partitionStreamIncrementLaw_entrySqMeans_eq
       regFieldEntrySqMassRep_originCube_zero_partitionIncrement
         p.1 p.2 (k - 1) k omega)
   rw [Finset.sum_congr rfl (fun p _ => hmean p),
-    ← integral_finset_sum Finset.univ (fun p _ =>
+    ← integral_finsetSum Finset.univ (fun p _ =>
       integrable_cubeAverageFiniteShellEntrySq_partitionScale M k p.1 p.2)]
   have hsum : (fun omega : ShellSeq d =>
       ∑ p : Fin d × Fin d,

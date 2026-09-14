@@ -96,7 +96,7 @@ correspondence is in [`CORRESPONDENCE.md`](CORRESPONDENCE.md).
   checks that the restatement is proved from the library through an
   independent implementation of the Lean kernel. See
   [`SuperdiffusionAudit/README.md`](SuperdiffusionAudit/README.md).
-- **Pinned toolchain.** Lean `v4.26.0`, mathlib `v4.26.0`, and the
+- **Pinned toolchain.** Lean `v4.33.0`, mathlib `v4.33.0`, and the
   `CoarseGraining` and `MarkovProcess` libraries at fixed revisions, recorded
   in [`lake-manifest.json`](lake-manifest.json).
 
@@ -108,8 +108,8 @@ line range; the TeX files themselves are not part of this repository.
 
 About 590,000 lines of Lean in 2,136 modules, of which about 410,000 lines
 are code once comments and blank lines are removed, on top of the
-CoarseGraining library (about 1,700 modules, over 500,000 lines of code) and
-the MarkovProcess library (about 260 modules).
+CoarseGraining library (about 1,600 modules, about 560,000 lines of code) and
+the MarkovProcess library (about 250 modules).
 
 ## Building
 

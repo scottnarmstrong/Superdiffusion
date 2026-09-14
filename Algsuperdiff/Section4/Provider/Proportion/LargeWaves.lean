@@ -192,7 +192,7 @@ theorem lt_rowGE_of_notMem_eventG1a (M : ABKModel d) {sprime T : ℝ}
     (hsle : sprime ≤ 1 - M.gamma) (m : ℤ) {omega : Cutoff.CutoffSample d}
     (hnot : omega ∉ eventG1a M m T) :
     ENNReal.ofReal T < rowGE (arrayG1a M) sprime m omega := by
-  rw [eventG1a, Set.mem_setOf_eq, not_le] at hnot
+  rw [eventG1a, Set.mem_ofPred_eq, not_le] at hnot
   exact hnot.trans_le (eventG1a_lhs_le_rowGE M hsle m omega)
 
 end

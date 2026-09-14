@@ -52,8 +52,8 @@ theorem onePointProcess_spec {R : PositiveC0ContractiveResolvent (Vec d)}
       ∀ I : Finset NNReal,
         (onePointProcess hreg).map (ContinuousPath.finsetEvaluation I) =
           finiteSetKernel R.onePointKernelSemigroup I := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   refine ⟨?_, ?_⟩
   · change IsMarkovKernel
       (IsConservative.continuousProcess R.onePointKernelSemigroup
@@ -74,8 +74,8 @@ theorem onePointProcess_ae_stays_live
     ∀ᵐ omega ∂onePointProcess hreg (x : OnePoint (Vec d)),
       ContinuousPath.exitTime
         (Set.range ((↑) : Vec d → OnePoint (Vec d))) omega = ⊤ := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   exact hreg.ae_exitTime_eq_top one_pos x
     (hcons.ofReal_mul_kernelResolvent_one one_pos x)
 

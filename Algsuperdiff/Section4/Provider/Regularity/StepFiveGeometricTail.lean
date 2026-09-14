@@ -78,7 +78,7 @@ theorem mul_sum_Icc_le_of_zpow_dominated {r K : ℝ} (hr0 : 0 < r) (hr1 : r < 1)
   have h1r : (0 : ℝ) < 1 - r := by linarith only [hr1]
   have hrne : r ≠ 0 := ne_of_gt hr0
   intro n hn
-  induction n, hn using Int.le_induction_down with
+  induction n, hn using Int.leInductionDown with
   | base =>
       rw [Finset.Icc_eq_empty (by omega), Finset.sum_empty]
       have hz : m - m + 1 = (1 : ℤ) := by omega

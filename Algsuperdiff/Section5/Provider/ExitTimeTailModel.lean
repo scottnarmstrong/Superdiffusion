@@ -171,9 +171,9 @@ theorem measure_exitTime_le_exp_neg_displacementMinScale_streamProcess_v2
     have hprovider7 := hprovider6 hdata
     have hprovider8 := hprovider7 delta hdelta hdelta1
     have hprovider9 := hprovider8 t ht hnLower hnUpper hscale hdeltaSmall hlarge
-    letI streamMetricSpace :=
+    let streamMetricSpace :=
       (streamExhaustionTailInput M omegaFull).toOnePointRegular.metricSpace
-    letI streamCompleteSpace :=
+    let streamCompleteSpace :=
       (streamExhaustionTailInput M omegaFull).toOnePointRegular.completeSpace
     change streamProcess M omegaFull (x : OnePoint (Vec d))
         {eta | ContinuousPath.exitTime

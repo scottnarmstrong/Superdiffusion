@@ -38,7 +38,6 @@ private theorem smul_homeomorphUnitSphereProd_eq (z : ({0}ᶜ : Set 𝔼)) :
       = (z : 𝔼) := by
   have h := (homeomorphUnitSphereProd 𝔼).symm_apply_apply z
   have h2 := congrArg (fun w : ({0}ᶜ : Set 𝔼) => (w : 𝔼)) h
-  dsimp only at h2
   rw [homeomorphUnitSphereProd_symm_apply_coe] at h2
   exact h2
 
@@ -53,8 +52,8 @@ theorem integral_eq_integral_Ioi_sphere [NeZero d] {G : 𝔼 → ℝ} (hG : Inte
     ∫ z, G z
       = ∫ r in Ioi (0 : ℝ), r ^ (d - 1) • ∫ ω, G (r • (ω : 𝔼)) ∂(sphereMeasure d) := by
   classical
-  haveI : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
-  haveI : Nontrivial 𝔼 := inferInstance
+  have : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
+  have : Nontrivial 𝔼 := inferInstance
   have hdim : Module.finrank ℝ 𝔼 = d := finrank_euclideanSpace_fin
   have hmp := (volume : Measure 𝔼).measurePreserving_homeomorphUnitSphereProd
   -- The "profile" integrand pulled through the polar homeomorphism.
@@ -127,7 +126,7 @@ theorem continuousAt_sphereFlux [NeZero d] {u : EuclideanSpace ℝ (Fin d) → �
     (hu : ContDiff ℝ 1 u) (x : EuclideanSpace ℝ (Fin d)) (r₀ : ℝ) :
     ContinuousAt (fun r : ℝ => sphereFlux x r u) r₀ := by
   set μ := sphereMeasure d with hμ
-  have hcont_fderiv : Continuous (fun y => fderiv ℝ u y) := hu.continuous_fderiv le_rfl
+  have hcont_fderiv : Continuous (fun y => fderiv ℝ u y) := hu.continuous_fderiv (by simp)
   -- The integrand `F r ω = ⟨∇u(x + r ω), ω⟩`.
   set F : ℝ → sphere (0 : EuclideanSpace ℝ (Fin d)) 1 → ℝ :=
     fun r ω => fderiv ℝ u (x + r • (ω : EuclideanSpace ℝ (Fin d)))
@@ -136,7 +135,10 @@ theorem continuousAt_sphereFlux [NeZero d] {u : EuclideanSpace ℝ (Fin d) → �
   have hgcont : ∀ r : ℝ, Continuous
       (fun ω : sphere (0 : EuclideanSpace ℝ (Fin d)) 1 =>
         x + r • (ω : EuclideanSpace ℝ (Fin d))) :=
-    fun r => continuous_const.add (continuous_const.smul continuous_subtype_val)
+    fun r => continuous_const.add
+      ((continuous_const : Continuous (fun _ : sphere (0 : EuclideanSpace ℝ (Fin d)) 1 => r)).smul
+        (continuous_subtype_val : Continuous (fun ω : sphere (0 : EuclideanSpace ℝ (Fin d)) 1 =>
+          (ω : EuclideanSpace ℝ (Fin d)))))
   -- Local gradient bound on the compact ball.
   obtain ⟨M, hM⟩ := (isCompact_closedBall x (|r₀| + 1)).exists_bound_of_continuousOn
     (hcont_fderiv.continuousOn)

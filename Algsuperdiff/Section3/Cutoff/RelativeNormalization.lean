@@ -139,7 +139,7 @@ private theorem cutoff_range_on_scaled_thickenings (d : ℕ) (m : ℤ) {r : ℝ}
 private theorem continuous_coefficientCutoff_entry (nu : ℝ) (m : ℤ)
     (omega : CutoffSample d) (i j : Fin d) :
     Continuous (fun x : Vec d => coefficientCutoff nu m omega x i j) := by
-  simpa only [coefficientCutoff_apply, Matrix.add_apply, Matrix.smul_apply] using
+  simpa only [coefficientCutoff_apply, Matrix.add_apply, Matrix.smul_apply] using!
     (continuous_const.add (continuous_cutoff_entry m omega i j))
 
 /-- Any positive scaling that leaves the fixed thickening slack turns the literal
@@ -167,7 +167,8 @@ theorem scaledCoefficientCutoffLaw_unitRangeDependent (M : ABKModel d) (m : ℤ)
   have hAcont : ∀ omega i j, Continuous (fun x : Vec d => A omega x i j) := by
     intro omega i j
     exact (continuous_coefficientCutoff_entry M.nu m omega i j).comp
-      (continuous_const.smul continuous_id)
+      ((continuous_const : Continuous (fun _ : Vec d => r)).smul
+        (continuous_id : Continuous (fun x : Vec d => x)))
   have hlocalSource :=
     indep_cutoffSampleLocalSigma_of_indep_completion M m (r • S) (r • T)
       (indep_lowerShellLocalCompletion_of_cutoff_separation M m hrS hrT hsep)

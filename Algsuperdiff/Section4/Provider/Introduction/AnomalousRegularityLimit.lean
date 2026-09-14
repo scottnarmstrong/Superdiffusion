@@ -78,7 +78,7 @@ variable {d : ℕ}
 /-- The squared Euclidean magnitude is continuous on `Vec d`. -/
 theorem continuous_vecNormSq : Continuous fun v : Vec d => vecNormSq v := by
   show Continuous fun v : Vec d => ∑ i, v i * v i
-  exact continuous_finset_sum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
+  exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
 
 /-- The Euclidean magnitude is continuous on `Vec d`. -/
 theorem continuous_sqrt_vecNormSq :
@@ -282,7 +282,7 @@ theorem excess_display_closed {W A : Set (Vec d)} (hAW : A ⊆ W)
       s * eLpNorm (fun y => Real.sqrt (vecNormSq (G L y))) 2 (normalizedVolumeMeasureOn W))
     (TA := T A) (TW := T W) (t := t) hK (hT_ne A hA0) (hT_ne W hW0) ?_ ?_ ?_ hbd
   · have h := (ENNReal.continuous_ofReal.tendsto 0).comp ht
-    simpa using h
+    simpa using! h
   · intro L
     have htri := eLpNorm_sqrt_vecNormSq_le_add (μ := normalizedVolumeMeasureOn A)
       (F := G L) (G := F) (aestronglyMeasurable_sqrt_vecNormSq_normalized hAW (hG L))
@@ -370,7 +370,7 @@ theorem tendsto_sqrt_integral_grad_sub_cubeSetAt (M : ABKModel d)
     Tendsto (fun L : ℤ =>
         Real.sqrt (∫ z in cubeSetAt y n, ‖(u L).grad z - v.grad z‖ ^ (2 : ℕ) ∂volume))
       atTop (𝓝 0) := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   obtain ⟨C, hC⟩ := fullTailGood_sharp omega.2
   obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
   have hgamma : M.gamma < 1 := by
@@ -576,7 +576,7 @@ theorem anomalous_regularity_provider
   refine ⟨gamma0, C, hgamma0, hC, ?_⟩
   intro M hcstarM hgammaM alpha halpha halphaC m
   obtain ⟨X, hXmeas, hXtail, hXae⟩ := hmain M hcstarM hgammaM alpha halpha halphaC m
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   have hd : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
   refine ⟨fun omega => X omega.1, hXmeas.comp measurable_subtype_coe, ?_, ?_⟩
   · intro N

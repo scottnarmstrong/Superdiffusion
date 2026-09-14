@@ -181,7 +181,7 @@ theorem normalizedL2On_coveringCube_sub_datum_le_meanControl_atWindow [NeZero d]
     exact image_add_wellPlacedCentre_subset_openCubeSet x hnm
   have hccpos : 0 < volume cc := by
     rw [hcc]
-    exact lt_of_le_of_ne (zero_le _)
+    exact lt_of_le_of_ne (zero_le : (0 : ℝ≥0∞) ≤ volume _)
       (Ne.symm (volume_image_add_openCubeSet_ne_zero c (originCube d (n + 2))))
   have hcctop : volume cc ≠ ⊤ := by
     rw [hcc, volume_image_add_openCubeSet]
@@ -189,7 +189,7 @@ theorem normalizedL2On_coveringCube_sub_datum_le_meanControl_atWindow [NeZero d]
   have hmono : MeasureTheory.volume.restrict cc ≤
       MeasureTheory.volume.restrict (openCubeSet (originCube d m)) :=
     MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hccsub
-  haveI : IsFiniteMeasure (MeasureTheory.volume.restrict cc) := by
+  have : IsFiniteMeasure (MeasureTheory.volume.restrict cc) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hcctop

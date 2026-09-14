@@ -298,13 +298,14 @@ instance chalPotentialHasOrthogonalProjection {μ : Measure (RegCoeffField d)}
 submodules. -/
 theorem map_topologicalClosure {A B : Type*} [NormedAddCommGroup A] [NormedSpace ℝ A]
     [NormedAddCommGroup B] [NormedSpace ℝ B] (e : A ≃ₗᵢ[ℝ] B) (S : Submodule ℝ A) :
-    Submodule.map e S.topologicalClosure = (Submodule.map e S).topologicalClosure := by
+    Submodule.map e.toLinearIsometry.toLinearMap S.topologicalClosure =
+      (Submodule.map e.toLinearIsometry.toLinearMap S).topologicalClosure := by
   refine SetLike.coe_injective ?_
   simp only [Submodule.map_coe, Submodule.topologicalClosure_coe]
   exact e.toHomeomorph.image_closure _
 
 theorem map_horizontalGradientRange :
-    Submodule.map (lpEquiv (E := HilbertVec d) P)
+    Submodule.map (lpEquiv (E := HilbertVec d) P).toLinearIsometry.toLinearMap
         (Algsuperdiff.Probability.Stationary.horizontalGradientRange (μ := muR P) (d := d)) =
       horizontalGradientRange (μ := muC P) hstat := by
   ext F
@@ -320,7 +321,7 @@ theorem map_horizontalGradientRange :
     simpa only [LinearIsometryEquiv.apply_symm_apply] using hφ
 
 theorem map_stationaryPotentialSubspace :
-    Submodule.map (lpEquiv (E := HilbertVec d) P)
+    Submodule.map (lpEquiv (E := HilbertVec d) P).toLinearIsometry.toLinearMap
         (Algsuperdiff.Probability.Stationary.stationaryPotentialSubspace
           (μ := muR P) (d := d)) =
       stationaryPotentialSubspace (μ := muC P) hstat := by
@@ -340,7 +341,9 @@ theorem lpEquiv_starProjection (u : Lp (HilbertVec d) 2 (muR P)) :
   · intro w hw
     rw [← map_stationaryPotentialSubspace P hstat, Submodule.mem_map] at hw
     obtain ⟨w', hw', rfl⟩ := hw
-    rw [← map_sub, LinearIsometryEquiv.inner_map_map]
+    have hcoe : (lpEquiv (E := HilbertVec d) P).toLinearIsometry.toLinearMap w' =
+        lpEquiv (E := HilbertVec d) P w' := rfl
+    rw [hcoe, ← map_sub, LinearIsometryEquiv.inner_map_map]
     exact Submodule.starProjection_inner_eq_zero (K := _) u w' hw'
 
 end Gradients
@@ -360,7 +363,7 @@ theorem lpEquiv_corrector (e : Vec d)
         (Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector P
           (repoStationary P hstat) e hmemR) =
       zeroShellPotentialCorrector P hstat e hmemC := by
-  haveI := Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_vaddInvariant P
+  have := Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_vaddInvariant P
     (repoStationary P hstat)
   have hchal : zeroShellPotentialCorrector P hstat e hmemC =
       -(stationaryPotentialSubspace (μ := muC P) hstat).starProjection

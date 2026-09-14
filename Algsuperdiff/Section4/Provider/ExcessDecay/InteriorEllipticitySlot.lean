@@ -419,9 +419,8 @@ theorem eLpNorm_sub_weaklyHarmonic_le_coarseGraining_rebased [NeZero d] (M : ABK
       (eLpNorm_sub_weaklyHarmonic_eq_harmonicCorrector hsigma0
         (image_add_eq_translateSet x (openCubeSet (originCube d n))) hsub u v w hharm
         hval hgrad).symm
-  rw [hlhs] at hmain
-  refine hmain.trans (add_le_add le_rfl ?_)
-  exact correctionLeg_le_anchorGagliardo n hs hs1 hgL2child hgWchild
+  exact hlhs ▸ (hmain.trans (add_le_add le_rfl
+    (correctionLeg_le_anchorGagliardo n hs hs1 hgL2child hgWchild)))
 
 end
 

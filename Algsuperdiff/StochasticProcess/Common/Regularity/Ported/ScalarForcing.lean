@@ -30,7 +30,7 @@ theorem normalizedL2On_le_scalarLInfSizeOn
     (hg : MemScalarLInfOn U g) :
     normalizedL2On W g ≤ scalarLInfSizeOn U g := by
   have hWtop : volume W ≠ ⊤ := (ENNReal.toReal_ne_zero.mp hW.ne').2
-  letI finiteVolumeW : IsFiniteMeasure (volume.restrict W) := ⟨by
+  let finiteVolumeW : IsFiniteMeasure (volume.restrict W) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.mpr hWtop⟩
   have hgWtop : MemLp g ⊤ (volume.restrict W) :=

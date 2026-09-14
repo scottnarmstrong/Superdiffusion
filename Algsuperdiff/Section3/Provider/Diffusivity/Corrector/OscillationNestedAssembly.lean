@@ -225,7 +225,7 @@ theorem exists_gradient_oscillation_nested_telescope (hd : 0 < d) :
                 Real.sqrt (Book.Ch01.meanSquareOscillationVecOn
                   (openCubeAtScale z (n + (N : ℤ))) w.grad)
               + C * (N : ℝ) * ((3 : ℝ) ^ n * M) := by
-  haveI : NeZero d := ⟨hd.ne'⟩
+  have : NeZero d := ⟨hd.ne'⟩
   obtain ⟨C₀, hC₀nn, hdec⟩ := exists_gradient_oscillation_gap_decay_weakGradient hd
   obtain ⟨ρ, hρdef⟩ : ∃ r : ℝ, Real.sqrt ((3 : ℝ) ^ d) = r := ⟨_, rfl⟩
   have hρnn : (0 : ℝ) ≤ ρ := by

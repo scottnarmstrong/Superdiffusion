@@ -41,7 +41,7 @@ variable {d : ℕ}
 private theorem isFiniteMeasure_valueCarrier (d : ℕ) :
     IsFiniteMeasure
       (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) := by
-  letI : Fact (MeasureTheory.volume (cubeSet (originCube d 0)) < ⊤) :=
+  let : Fact (MeasureTheory.volume (cubeSet (originCube d 0)) < ⊤) :=
     ⟨volume_cubeSet_lt_top (originCube d 0)⟩
   have h : IsFiniteMeasure (volumeMeasureOn (cubeSet (originCube d 0))) := by
     change IsFiniteMeasure (MeasureTheory.volume.restrict (cubeSet (originCube d 0)))
@@ -130,7 +130,7 @@ theorem memLp_matrixNormField_two_carrier (h : UnitCubeSkewW2Infinity d) :
     MemLp (matrixNormField h) 2
       (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) := by
   classical
-  letI := isFiniteMeasure_valueCarrier d
+  let := isFiniteMeasure_valueCarrier d
   have hentry : ∀ i : Fin d, ∀ j : Fin d,
       MemLp (fun x => |h.toLInfSkewMatrixFieldOn.1.1 x i j|) 2
         (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :=
@@ -138,7 +138,7 @@ theorem memLp_matrixNormField_two_carrier (h : UnitCubeSkewW2Infinity d) :
   have hsum : MemLp (fun x => ∑ i : Fin d, ∑ j : Fin d,
       |h.toLInfSkewMatrixFieldOn.1.1 x i j|) 2
       (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :=
-    memLp_finset_sum _ fun i _ => memLp_finset_sum _ fun j _ => hentry i j
+    memLp_finsetSum _ fun i _ => memLp_finsetSum _ fun j _ => hentry i j
   refine hsum.of_le (aestronglyMeasurable_matrixNormField_carrier h)
     (Filter.Eventually.of_forall fun x => ?_)
   have hnn : (0 : ℝ) ≤ ∑ i : Fin d, ∑ j : Fin d,

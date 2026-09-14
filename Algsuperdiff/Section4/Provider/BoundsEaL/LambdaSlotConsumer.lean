@@ -78,7 +78,7 @@ theorem inv_unitCubeLambda_twoGamma_le_lambdaPrintedAtom (M : ABKModel d)
     (Algsuperdiff.Frozen.Section24.unitCubeLambda (2 * M.gamma) (.finite 2)
         (unitRescaledCutoffCoeff M R (R.scale - 2) omega))⁻¹ ≤
       lambdaPrintedAtom M R.scale (triadicCubeShift R) omega := by
-  haveI : NeZero d := neZeroFromModelSlot M
+  have : NeZero d := neZeroFromModelSlot M
   have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   set a := Cutoff.coefficientCutoffTriadicCoeffFamily M (R.scale - 2) omega with ha
   rw [unitCubeLambda_unitRescaledCutoffCoeff M R (R.scale - 2) (2 * M.gamma)

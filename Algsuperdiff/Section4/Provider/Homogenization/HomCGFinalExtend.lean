@@ -105,7 +105,7 @@ theorem le_mcShaneInf {A : Set (Vec d)} {K alpha c : ℝ} {f : Vec d → ℝ}
     (hA : A.Nonempty) (x : Vec d)
     (h : ∀ y ∈ A, c ≤ f y + K * ‖x - y‖ ^ alpha) :
     c ≤ mcShaneInf A K alpha f x := by
-  haveI : Nonempty (A : Type _) := hA.to_subtype
+  have : Nonempty (A : Type _) := hA.to_subtype
   exact le_ciInf fun y => h (y : Vec d) y.2
 
 /-- **The extension is an extension**: on `A` the McShane infimum returns `f`. -/

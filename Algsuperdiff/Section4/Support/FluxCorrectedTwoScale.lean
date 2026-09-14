@@ -87,7 +87,7 @@ noncomputable def fluxCorrectedTwoScaleErrorRepresentative (M : ABKModel d)
 theorem measurable_fluxCorrectedTwoScaleErrorRepresentative (M : ABKModel d)
     (L : ℤ) {m n : ℤ} (hnm : n ≤ m) (s : {s : ℝ // 0 < s}) :
     Measurable (fluxCorrectedTwoScaleErrorRepresentative M L m n s) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change Measurable (fluxCorrectedTwoScaleErrorFunctional M L m n (s : ℝ))
   exact measurable_fluxCorrectedTwoScaleErrorFunctional M L hnm s.2
 

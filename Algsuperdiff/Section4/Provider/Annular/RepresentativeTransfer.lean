@@ -52,7 +52,7 @@ theorem ofReal_tsum_le {iota : Type*} {f : iota → ℝ} (hf : ∀ i, 0 ≤ f i)
   by_cases hs : Summable f
   · exact le_of_eq (ENNReal.ofReal_tsum_of_nonneg hf hs)
   · rw [tsum_eq_zero_of_not_summable hs, ENNReal.ofReal_zero]
-    exact zero_le _
+    exact zero_le
 
 /-- `ofReal` commutes with a guarded value. -/
 theorem ofReal_ite_zero (P : Prop) [Decidable P] (a : ℝ) :
@@ -230,7 +230,7 @@ theorem indicator_observableSqSup_le [NeZero d] (M : ABKModel d) (m : ℤ)
       (congrArg (fun x : ℝ => ENNReal.ofReal (x ^ 2)) (hall L)).symm
       (hb hmem L.1 L.2)
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 /-! ## Part E -- the assembled representative display -/
 

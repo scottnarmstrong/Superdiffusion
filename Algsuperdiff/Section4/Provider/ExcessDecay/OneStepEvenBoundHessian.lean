@@ -73,7 +73,7 @@ theorem differentiableAt_fderiv_of_harmonicAt {u : 𝔼 → ℝ} {z : 𝔼} (h :
   have hc1 : ContDiffAt ℝ 1 (fderiv ℝ u) z := by
     have hstep := h.1.fderiv_right (m := 1) (by norm_num)
     simpa using hstep
-  exact hc1.differentiableAt le_rfl
+  exact hc1.differentiableAt (by norm_num)
 
 /-! ## 2. Second-order Taylor with a Hessian remainder -/
 

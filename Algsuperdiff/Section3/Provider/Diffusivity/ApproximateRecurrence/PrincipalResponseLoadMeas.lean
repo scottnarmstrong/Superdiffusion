@@ -315,9 +315,9 @@ private theorem measurable_shellIndexSigma_cubeAverageVec_of_class
         =ᵐ[volumeMeasureOn (openCubeSet Q)] fun x => F omega x i) :
     Measurable[Cutoff.shellIndexSigma I]
       fun omega : Cutoff.ShellSeq d => cubeAverageVec R (F omega) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
-  letI : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma I
+  let : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma I
   have hEq : (fun omega : Cutoff.ShellSeq d => cubeAverageVec R (F omega)) =
       fun omega : Cutoff.ShellSeq d =>
         (fun i => (cubeVolume R)⁻¹ *
@@ -348,7 +348,7 @@ theorem measurable_shellIndexSigma_freshShellCubeAverage
     {Q R : TriadicCube d} {jd : ℕ} (hR : R ∈ descendantsAtDepth Q jd) (n m : ℤ) :
     Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       fun omega : Cutoff.ShellSeq d => freshShellCubeAverage R omega n m := by
-  letI : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
+  let : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
   refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j0 => ?_
   have hbase : Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       fun omega : Cutoff.ShellSeq d =>
@@ -451,8 +451,8 @@ private theorem measurable_shellIndexSigma_cubeAverageVec_neumannFluxField
     Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       fun omega : Cutoff.ShellSeq d =>
         cubeAverageVec R (neumannFluxField sigma omega n m e' (wN omega)) := by
-  haveI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   refine measurable_shellIndexSigma_cubeAverageVec_of_class hR _
     (fun omega => (wN omega).gradToHilbertVectorL2 -
@@ -513,7 +513,7 @@ theorem measurable_shellIndexSigma_principalPz [NeZero d]
     Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       fun omega : Cutoff.ShellSeq d =>
         principalPz sigma omega n m e e' R (wD omega) (wN omega) := by
-  letI : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
+  let : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
   have hD := measurable_shellIndexSigma_cubeAverageVec_freshShellDirichletGrad
     (R := R) hR sigmaInvD n m eD wD hwD
   have hN := measurable_shellIndexSigma_cubeAverageVec_neumannFluxField
@@ -610,7 +610,7 @@ theorem measurable_shellIndexSigma_gaugedPrincipalLoadShell [NeZero d]
         (fun x => -streamForcing sigmaInvN omega n m eN x)) :
     Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       (gaugedPrincipalLoadShell sigma R n m e e' wD wN) := by
-  letI : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
+  let : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
   have hPz := measurable_shellIndexSigma_principalPz hR sigma sigmaInvD sigmaInvN n m
     eD eN e e' wD wN hwD hwN
   have hH := measurable_shellIndexSigma_freshShellCubeAverage hR (R := R) n m

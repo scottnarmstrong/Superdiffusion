@@ -39,7 +39,7 @@ theorem Algsuperdiff.Frozen.Section3.diffusivity_asymptotics
 -- FROZEN-STATEMENT-END
     := by
   by_cases hd : 2 ≤ d
-  · haveI : NeZero d := ⟨by omega⟩
+  · have : NeZero d := ⟨by omega⟩
     -- The provider export is gated at `mStarStar`; the frozen gate
     -- `mStar M < m0` is the stronger one, so the composition is a fortiori.
     obtain ⟨Cflow, hCflow, hmain⟩ :=

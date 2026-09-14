@@ -34,7 +34,7 @@ theorem ae_forall_cutoffResponseJ_le_observationHomogenizationError_sq
         Observable.cutoffResponseJ M cubeScale coefficientScale e omega ≤
           Observable.cutoffHomogenizationErrorRepresentative M coefficientScale
             cubeScale hs (Annealed.sigmaBar M coefficientScale) omega ^ 2 := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   let sigma := Annealed.sigmaBar M coefficientScale
   let Q := originCube d cubeScale

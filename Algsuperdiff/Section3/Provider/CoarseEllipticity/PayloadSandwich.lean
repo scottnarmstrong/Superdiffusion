@@ -164,7 +164,7 @@ theorem blockGridSup_const_mul {Omega : Type*} (d : ℕ) (m : ℤ) (k : ℕ)
       = fun R : TriadicCube d => c * |X R omega| := by
     funext R
     rw [abs_mul, abs_of_nonneg hc]
-  have hsup := Finset.comp_sup'_eq_sup'_comp
+  have hsup := Finset.apply_sup'_eq_sup'_comp
     (descendantsAtScale_originCube_nonempty d m k)
     (f := fun R : TriadicCube d => |X R omega|) (g := fun t : ℝ => c * t)
     (fun x y => mul_max_of_nonneg x y hc)

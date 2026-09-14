@@ -27,6 +27,14 @@ abbrev ShellAmbient (d : ℕ) :=
     (C(Vec d, Vec d →L[ℝ] Mat d) ×
       C(Vec d, Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)))
 
+private instance shellFieldNormedAddCommGroup (d : ℕ) :
+    NormedAddCommGroup (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.toNormedAddCommGroup
+
+private instance shellFieldNormedSpace (d : ℕ) :
+    NormedSpace ℝ (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.toNormedSpace
+
 noncomputable instance shellFieldTopologicalSpace (d : ℕ) :
     TopologicalSpace (ShellField d) :=
   shellFieldCompactOpenTopology d
@@ -107,12 +115,12 @@ theorem ext {j k : ShellField d} (h : ∀ x, j x = k x) : j = k := by
     apply ContinuousMap.ext
     intro x
     apply k.deriv_unique
-    simpa only [hval] using j.hasFDerivAt x
+    simpa only [hval] using! j.hasFDerivAt x
   have hsecond : j.1.2.2 = k.1.2.2 := by
     apply ContinuousMap.ext
     intro x
     apply k.secondDeriv_unique
-    simpa only [deriv, hfirst] using j.deriv_hasFDerivAt x
+    simpa only [deriv, hfirst] using! j.deriv_hasFDerivAt x
   apply Subtype.ext
   exact Prod.ext hval (Prod.ext hfirst hsecond)
 

@@ -43,7 +43,7 @@ theorem nonempty_openCubeSet (Q : TriadicCube d) : (openCubeSet Q).Nonempty := b
   have hs : 0 < cubeScaleFactor Q := by
     simpa [cubeScaleFactor] using zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale
   refine ⟨fun i => (Q.index i : ℝ) * cubeScaleFactor Q, ?_⟩
-  simp only [openCubeSet, Set.mem_setOf_eq]
+  simp only [openCubeSet, Set.mem_ofPred_eq]
   intro i
   constructor <;> nlinarith
 
@@ -66,7 +66,7 @@ theorem exists_isZeroTraceDirichletRhsWeakSolution_openCubeSet [NeZero d]
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a) :
     ∃ v : H10Function (openCubeSet Q),
       IsZeroTraceDirichletRhsWeakSolution a (openCubeSet Q) v g := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
   exact exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization
     (a := a) (U := openCubeSet Q) (g := g) (lam := lam) (Lam := Lam)

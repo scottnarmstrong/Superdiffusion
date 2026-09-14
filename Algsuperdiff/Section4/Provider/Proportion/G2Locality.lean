@@ -101,7 +101,7 @@ theorem measurable_cutoffCoarseFullBlockRaw_local (M : ABKModel d) (L : ℤ)
     (Q : TriadicCube d) {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
       (Observable.cutoffCoarseFullBlockRaw M L Q) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
+  let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   have hMu : ∀ P0 : BlockVec d, Measurable fun omega : Cutoff.CutoffSample d =>
       Mu (cubeSet Q) P0 (Cutoff.coefficientCutoff M.nu L omega).toFun :=
     fun P0 => Provider.BadEvents.measurable_Mu_coefficientCutoff_cutoffSampleLocal
@@ -223,7 +223,7 @@ theorem measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative_loca
     (hk : k ≤ Q.scale) (a0 : Mat d) {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
       (Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
+  let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   have hEq :
       Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0 =
         fun omega => ((descendantsAtScale Q k).card : ℝ)⁻¹ *
@@ -241,7 +241,10 @@ private theorem measurable_tsum_of_nonneg {Omega : Type*} [MeasurableSpace Omega
     (T : ℕ → Omega → ℝ) (hmeas : ∀ n, Measurable (T n))
     (hnonneg : ∀ n omega, 0 ≤ T n omega) :
     Measurable fun omega => ∑' n, T n omega := by
-  have hnn := (Measurable.nnreal_tsum fun n => (hmeas n).real_toNNReal).coe_nnreal_real
+  have hnn : Measurable (fun omega => ∑' n, (T n omega).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+      (hmeas n).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]
@@ -276,7 +279,7 @@ theorem measurable_errorFunctionalAtCube_local [NeZero d] (M : ABKModel d) (L : 
     {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
       (errorFunctionalAtCube M L Q s sigma) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
+  let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   refine Real.continuous_sqrt.measurable.comp ?_
   refine measurable_tsum_of_nonneg _ (fun l => ?_)
     (fun l omega => errorFunctional_term_nonneg M L Q hs sigma l omega)
@@ -385,7 +388,7 @@ theorem annularErrorObservable_comp_translate_ae_eq_literal (M : ABKModel d)
       (Localize.latticeCube n v) (s : ℝ) (.finite 2) (.finite 2)
       (Cutoff.coefficientCutoffTriadicCoeffFamily M (n - 2) omega)
       (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M (n - 2))) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   have hshift := Localize.triadicCubeShift_latticeCube (d := d) n v
   have hae : (fun omega => Support.annularErrorAtom M n (s : ℝ)
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega))
@@ -420,7 +423,7 @@ theorem annularErrorObservable_comp_translate_ae_eq_functional (M : ABKModel d)
       =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
     @errorFunctionalAtCube d (neZero_of_model M) M (n - 2) (Localize.latticeCube n v)
       (s : ℝ) (Annealed.sigmaBar M (n - 2)) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   exact (annularErrorObservable_comp_translate_ae_eq_literal M n s v).trans
     (homogenizationErrorOnCube_two_two_ae_eq_errorFunctionalAtCube M (n - 2)
       (Localize.latticeCube n v) s.2 (Annealed.sigmaBar M (n - 2)))
@@ -436,7 +439,7 @@ theorem measurable_errorAtomSq_local (M : ABKModel d) (n : ℤ)
     {U : Set (Vec d)} (hQU : cubeSet (Localize.latticeCube n v) ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M m U]
       (errorAtomSq M n s (Support.triadicLatticePoint n v)) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   have hloc : Measurable[Cutoff.cutoffSampleLocalSigma M (n - 2) U]
       (fun omega => Support.annularErrorObservable M n s
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega)) :=

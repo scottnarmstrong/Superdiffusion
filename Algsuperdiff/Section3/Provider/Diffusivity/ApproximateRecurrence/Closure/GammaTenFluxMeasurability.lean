@@ -176,7 +176,7 @@ theorem measurable_meanSquareOscillationVecOn_of_measurable_class {Omega : Type*
       IntegrableOn (fun x => (u omega x k) ^ 2) S volume) :
     Measurable fun omega => Book.Ch01.meanSquareOscillationVecOn S (u omega) := by
   classical
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hcoordMeas : ∀ k : Fin d, Measurable fun omega =>
       volumeAverage S (fun x => u omega x k) := by
@@ -267,7 +267,7 @@ theorem measurable_meshOscillationCell_neumannFluxField (Q : TriadicCube d)
     Measurable fun omega : ShellSeq d =>
       meshOscillationCell n
         (neumannFluxField sigma omega lowScale highScale e' (wN omega)) R := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hmem : ∀ omega : ShellSeq d, MemVectorL2 (openCubeSet Q)
       (neumannFluxField sigma omega lowScale highScale e' (wN omega)) := fun omega =>

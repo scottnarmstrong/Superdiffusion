@@ -391,7 +391,7 @@ theorem exists_freshShell_gridFourthMoment_mesoWindowEnergy_le_wired
                             ((wN omega).toH1Function.grad) R) ≤
                         (3 : ℝ) ^ d *
                           freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ))) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hleg⟩ :=
     exists_freshShell_cubeEuclideanL8_leg_bound d hd
   refine ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, ?_⟩

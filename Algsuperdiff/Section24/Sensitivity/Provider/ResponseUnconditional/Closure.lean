@@ -125,7 +125,7 @@ theorem responseJ_sensitivity_unconditional_of_mesoscale_cube_sensitivity
           C * min 1 (h.gradientW1Infinity *
             (unitCubeLambda s (.finite 2) a)⁻¹) ^ 2 := by
   classical
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   obtain ⟨C₀, K₁, hC₀, hK₁, hmain⟩ := hcube
   have hKnn : (0 : ℝ) ≤ max 3 K₁ :=
     le_trans (by norm_num : (0 : ℝ) ≤ 3) (le_max_left 3 K₁)

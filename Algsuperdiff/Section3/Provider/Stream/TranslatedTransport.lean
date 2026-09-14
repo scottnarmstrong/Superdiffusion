@@ -132,12 +132,12 @@ theorem isBigOWith_gammaSigma_of_law_eq
       = (Measure.map X mu).real {x : ℝ | A * t < x} := by
         have h := congrArg ENNReal.toReal
           (Measure.map_apply_of_aemeasurable (μ := mu) hX.aemeasurable hE)
-        simpa only [Set.preimage_setOf_eq] using h.symm
+        simpa only [Set.preimage_ofPred_eq] using! h.symm
     _ = (Measure.map Y mu).real {x : ℝ | A * t < x} := by rw [hmap]
     _ = mu.real {omega | A * t < Y omega} := by
         have h := congrArg ENNReal.toReal
           (Measure.map_apply_of_aemeasurable (μ := mu) hY.aemeasurable hE)
-        simpa only [Set.preimage_setOf_eq] using h
+        simpa only [Set.preimage_ofPred_eq] using! h
     _ ≤ Real.exp (-(t ^ sigma)) := hYtail ht
 
 /-- Every one-shell `Γ_σ` estimate holds verbatim at every translated base

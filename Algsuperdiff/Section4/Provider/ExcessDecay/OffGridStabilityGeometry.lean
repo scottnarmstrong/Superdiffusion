@@ -139,7 +139,7 @@ theorem scale_le_of_cubeSet_subset_offGridCube {w : Vec d} {P Q : TriadicCube d}
   rw [volume_cubeSet_toReal, volume_offGridCube_toReal] at hvol
   rw [cubeVolume_eq_pow_scale, cubeVolume_eq_pow_scale] at hvol
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hlt : (3 : ℝ) ^ P.scale < (3 : ℝ) ^ Q.scale :=
     zpow_lt_zpow_right₀ (by norm_num) hcon
   have hPpos : (0 : ℝ) < (3 : ℝ) ^ P.scale := zpow_pos (by norm_num) P.scale
@@ -271,7 +271,7 @@ private theorem disjoint_cubeSet_translateSet_cubeShrunkSet
   intro y hyQ hyS
   obtain ⟨p, hpPar, hpV⟩ : ∃ p, p ∈ cubeSet (parentCube Q) ∧ p ∉ offGridCube w P := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hQ.2 hcon
   refine hpV ?_
   have hyPar : y ∈ cubeSet (parentCube Q) := cubeSet_subset_cubeSet_parentCube Q hyQ
@@ -323,7 +323,7 @@ theorem volume_iUnion_maximalCubesAtScale_toReal_le (w : Vec d) (P : TriadicCube
   · refine le_trans hAle ?_
     have : (1 : ℝ) ≤ 2 * (d : ℝ) * t := by nlinarith only [hd1, hbig]
     nlinarith only [this, hVolP]
-  · push_neg at hbig
+  · push Not at hbig
     have hscaleP : cubeScaleFactor P = (3 : ℝ) ^ P.scale := rfl
     set S : Set (Vec d) := translateSet w (cubeShrunkSet P t) with hS
     have hSsub : S ⊆ offGridCube w P :=

@@ -107,7 +107,7 @@ theorem isCompact_commonCoarseMeshClosedCarrier
   exact (commonCoarseMesh N s).finite_toSet.isCompact_biUnion
     fun T _ => by
       rw [closedCarrier_eq_convexHull_vertexSet T]
-      exact (Set.finite_range T.vertex).isCompact_convexHull
+      exact (Set.finite_range T.vertex).isCompact_convexHull (𝕜 := ℝ)
 
 /-- If every window cube belongs to the Whitney partition, the common-mesh
 closed carrier lies strictly inside the open root cube. -/
@@ -146,7 +146,7 @@ theorem componentCorrectionPotential_eq_zero_of_notMem_commonCoarseMeshClosedCar
       globalCompetitor_eqOn_linearFn_closedCarrier_of_notMem_commonCoarseMesh
         hsm hC hN hs p hT hTnot hxT,
       sub_self]
-  · push_neg at hroot
+  · push Not at hroot
     exact zeroExtendedKuhnAffine_of_forall_notMem
       (rootCoarseMesh m s) (componentCorrectionDatum C p) hroot
 

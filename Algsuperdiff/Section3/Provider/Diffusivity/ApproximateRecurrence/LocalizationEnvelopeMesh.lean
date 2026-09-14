@@ -308,7 +308,7 @@ theorem gridFourthMoment_mesoWindowEnergy_le {Ω : Type*} [MeasurableSpace Ω]
       ∫ ω, cubeFamilyAverage (interiorMesoCubeGrid d K n (n + (N : ℤ) - 1))
         (fun R => mesoWindowFourthEnergy (n + (N : ℤ)) (u ω) R) ∂μ := by
     unfold cubeFamilyAverage
-    rw [← integral_finset_sum _ hcellInt, ← integral_const_mul]
+    rw [← integral_finsetSum _ hcellInt, ← integral_const_mul]
   have hptw : ∀ ω, cubeFamilyAverage (interiorMesoCubeGrid d K n (n + (N : ℤ) - 1))
       (fun R => mesoWindowFourthEnergy (n + (N : ℤ)) (u ω) R) ≤
         (3 : ℝ) ^ d * originCubeFourthEnergy K (u ω) := fun ω =>
@@ -318,7 +318,7 @@ theorem gridFourthMoment_mesoWindowEnergy_le {Ω : Type*} [MeasurableSpace Ω]
       (interiorMesoCubeGrid d K n (n + (N : ℤ) - 1))
       (fun R => mesoWindowFourthEnergy (n + (N : ℤ)) (u ω) R)) μ := by
     unfold cubeFamilyAverage
-    exact (integrable_finset_sum _ hcellInt).const_mul _
+    exact (integrable_finsetSum _ hcellInt).const_mul _
   calc gridFourthMoment μ (interiorMesoCubeGrid d K n (n + (N : ℤ) - 1))
         (fun R ω => mesoWindowEnergy (n + (N : ℤ)) (u ω) R)
       ≤ cubeFamilyAverage (interiorMesoCubeGrid d K n (n + (N : ℤ) - 1))

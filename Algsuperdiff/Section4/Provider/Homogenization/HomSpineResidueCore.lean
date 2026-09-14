@@ -61,7 +61,7 @@ theorem homK_pos {M : ABKModel d} (hlog : 4 ≤ |Real.log M.gamma|) : 0 < homK M
   have h := homK_ge M
   have h40 : (40 : ℝ) ≤ (homK M : ℝ) := by linarith only [h, hlog]
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hzero : homK M = 0 := Nat.le_zero.mp hcon
   rw [hzero] at h40
   norm_num at h40

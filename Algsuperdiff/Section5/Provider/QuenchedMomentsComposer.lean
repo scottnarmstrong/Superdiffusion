@@ -95,8 +95,8 @@ theorem secondMoment_quenched_of_moments (M : ABKModel d) (cstar t C0 : ℝ)
         Real.sqrt M.gamma * |Real.log M.gamma|) *
           ((3 : ℝ) ^ (confinementScale S L omega.1)) ^ 2 := by
   let input := streamExhaustionTailInput M omega
-  letI instMetric : MetricSpace (OnePoint (Vec d)) := input.toOnePointRegular.metricSpace
-  letI instComplete : CompleteSpace (OnePoint (Vec d)) :=
+  let instMetric : MetricSpace (OnePoint (Vec d)) := input.toOnePointRegular.metricSpace
+  let instComplete : CompleteSpace (OnePoint (Vec d)) :=
     input.toOnePointRegular.completeSpace
   let m := confinementScale S L omega.1
   let scaleSq : ℝ := ((3 : ℝ) ^ m) ^ (2 : ℕ)
@@ -144,7 +144,9 @@ theorem secondMoment_quenched_of_moments (M : ABKModel d) (cstar t C0 : ℝ)
                 ((0 : Vec d) : OnePoint (Vec d))) -
             (d : ℝ) * (2 * sigmaBar * t)| := by congr 1; ring
       _ ≤ (d : ℝ) * (Ccube * ((3 : ℝ) ^ m) ^ (2 : ℕ) * EB m omega.1 +
-            2 * (sigmaBar * t) * exitProbability) := by simpa only [htNN] using hsum
+            2 * (sigmaBar * t) * exitProbability) := by
+        simp only [htNN] at hsum
+        exact hsum
       _ = ((d : ℝ) * Ccube) * ((3 : ℝ) ^ m) ^ (2 : ℕ) * EB m omega.1 +
             2 * ((d : ℝ) * (sigmaBar * t)) * exitProbability := by ring
   have hraw := abs_fullSecondMoment_sub_two_mul_intrinsicSq_le_of_components
@@ -168,8 +170,8 @@ theorem secondMoment_quenched_of_moments (M : ABKModel d) (cstar t C0 : ℝ)
       _ = C0 * (err + Real.sqrt M.gamma * |Real.log M.gamma|) := by ring
   have hfinal := hraw.trans (mul_le_mul_of_nonneg_right hcoeff hscaleSq)
   dsimp only [fullSecondMoment, input, err, scaleSq, m] at hfinal ⊢
-  convert hfinal using 1
-  ring_nf
+  rw [mul_assoc (2 : ℝ) (d : ℝ)]
+  exact hfinal
 
 /-- The quenched squared-mean comparison obtained from the stopped mean and
 the squared stopping-time-removal estimate. -/
@@ -202,8 +204,8 @@ theorem meanSq_quenched_of_moments (M : ABKModel d) (t C0 : ℝ)
         M.gamma ^ (80 : ℕ)) *
           ((3 : ℝ) ^ (confinementScale S L omega.1)) ^ 2 := by
   let input := streamExhaustionTailInput M omega
-  letI instMetric : MetricSpace (OnePoint (Vec d)) := input.toOnePointRegular.metricSpace
-  letI instComplete : CompleteSpace (OnePoint (Vec d)) :=
+  let instMetric : MetricSpace (OnePoint (Vec d)) := input.toOnePointRegular.metricSpace
+  let instComplete : CompleteSpace (OnePoint (Vec d)) :=
     input.toOnePointRegular.completeSpace
   let m := confinementScale S L omega.1
   let scaleSq : ℝ := ((3 : ℝ) ^ m) ^ (2 : ℕ)

@@ -71,7 +71,7 @@ theorem memScalarLInfOn_const_mul
     (hg : MemScalarLInfOn W g) :
     MemScalarLInfOn W (fun x ↦ c * g x) := by
   have h := hg.const_smul c
-  simpa only [Pi.smul_apply, smul_eq_mul] using h
+  simpa only [Pi.smul_apply, smul_eq_mul] using! h
 
 /-- A scalar-forced weak solution with bounded forcing has a `C^{0,1/2}`
 representative on a ball about each interior point. The coefficient may have
@@ -117,7 +117,7 @@ theorem exists_local_holder_representative_of_weakSolution_continuousCoeff
   let aLocal : CoeffField d := fun x i j ↦
     if x ∈ B then normalizedFrozenCoeff nu a z x i j else 0
   have hmeas : Measurable aLocal := by
-    simpa only [aLocal, B] using hEllFrozen.1
+    simpa only [aLocal, B] using! hEllFrozen.1
   have hsmallLocal : CoefficientIdentityDistanceLE B aLocal delta := by
     filter_upwards [hsmall, ae_restrict_mem (isOpen_euclideanBall z R).measurableSet]
       with x hx hxb

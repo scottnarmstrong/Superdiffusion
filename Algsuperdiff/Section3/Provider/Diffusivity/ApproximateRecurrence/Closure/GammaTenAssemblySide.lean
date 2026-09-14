@@ -211,11 +211,11 @@ subtracted, and the cell has finite measure. -/
 theorem memVectorL2_cubeFluctuationVec (R : TriadicCube d) {u : Vec d → Vec d}
     (hu : MemVectorL2 (openCubeSet R) u) :
     MemVectorL2 (openCubeSet R) (cubeFluctuationVec R u) := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet R
   have hconst : MemVectorL2 (openCubeSet R) (fun _ : Vec d => cubeAverageVec R u) :=
     memVectorL2_const _
-  simpa [cubeFluctuationVec] using hu.sub hconst
+  simpa [cubeFluctuationVec] using! hu.sub hconst
 
 /-- **`hInt1`.**  The potential-leg gauged pairing integrand is integrable on the
 cell: both factors are vector `L^2` there. -/
@@ -229,17 +229,17 @@ theorem integrableOn_gaugedPairing_fst (R : TriadicCube d) (sig0 : ℝ)
         vecDot ((blockGaugeDown sig0 (blockMatVecMul (blockMatrixField a x) (T.eval x))).1)
           (cubeFluctuationVec R (fun y => (blockGaugeUp sig0 (F.eval y)).1) x))
       (cubeSet R) volume := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet R
   have hY : MemVectorL2 (openCubeSet R)
       (fun x => (blockMatVecMul (blockMatrixField a x) (T.eval x)).1) :=
     memVectorL2_blockMatrixField_fst a hpot hflux
   have hgaugeY : MemVectorL2 (openCubeSet R)
       (fun x => (blockGaugeDown sig0 (blockMatVecMul (blockMatrixField a x) (T.eval x))).1) := by
-    simpa [blockGaugeDown] using hY.const_smul (Real.sqrt sig0)⁻¹
+    simpa [blockGaugeDown] using! hY.const_smul (Real.sqrt sig0)⁻¹
   have hgaugeF : MemVectorL2 (openCubeSet R)
       (fun y => (blockGaugeUp sig0 (F.eval y)).1) := by
-    simpa [blockGaugeUp] using hFpot.const_smul (Real.sqrt sig0)
+    simpa [blockGaugeUp] using! hFpot.const_smul (Real.sqrt sig0)
   exact integrableOn_cubeSet_iff_integrableOn_openCubeSet.2
     (integrableOn_vecDot_of_memVectorL2 hgaugeY
       (memVectorL2_cubeFluctuationVec R hgaugeF))
@@ -255,17 +255,17 @@ theorem integrableOn_gaugedPairing_snd (R : TriadicCube d) (sig0 : ℝ)
         vecDot ((blockGaugeDown sig0 (blockMatVecMul (blockMatrixField a x) (T.eval x))).2)
           (cubeFluctuationVec R (fun y => (blockGaugeUp sig0 (F.eval y)).2) x))
       (cubeSet R) volume := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet R
   have hY : MemVectorL2 (openCubeSet R)
       (fun x => (blockMatVecMul (blockMatrixField a x) (T.eval x)).2) :=
     memVectorL2_blockMatrixField_snd a hpot hflux
   have hgaugeY : MemVectorL2 (openCubeSet R)
       (fun x => (blockGaugeDown sig0 (blockMatVecMul (blockMatrixField a x) (T.eval x))).2) := by
-    simpa [blockGaugeDown] using hY.const_smul (Real.sqrt sig0)
+    simpa [blockGaugeDown] using! hY.const_smul (Real.sqrt sig0)
   have hgaugeF : MemVectorL2 (openCubeSet R)
       (fun y => (blockGaugeUp sig0 (F.eval y)).2) := by
-    simpa [blockGaugeUp] using hFflux.const_smul (Real.sqrt sig0)⁻¹
+    simpa [blockGaugeUp] using! hFflux.const_smul (Real.sqrt sig0)⁻¹
   exact integrableOn_cubeSet_iff_integrableOn_openCubeSet.2
     (integrableOn_vecDot_of_memVectorL2 hgaugeY
       (memVectorL2_cubeFluctuationVec R hgaugeF))

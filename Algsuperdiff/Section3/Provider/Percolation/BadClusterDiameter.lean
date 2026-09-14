@@ -210,7 +210,7 @@ theorem mem_badSiteFinset_iff {M : ABKModel d} {m : ℤ} {h : ℕ} {omega : Cuto
     {u : Fin d → ℤ} :
     u ∈ badSiteFinset M m h omega ↔
       u ∈ cubeFinset (d := d) h ∧ omega ∈ badExtended M (siteCube (m - (h : ℤ)) u) := by
-  letI : DecidablePred
+  let : DecidablePred
       (fun u : Fin d → ℤ => omega ∈ badExtended M (siteCube (m - (h : ℤ)) u)) :=
     Classical.decPred _
   unfold badSiteFinset
@@ -500,7 +500,7 @@ theorem measureReal_maxBadClusterDiam_le_exp_of_gates (M : ABKModel d) {m : ℤ}
     exact measureReal_badClusterCrossingEvent₂_le_exp_of_gates M h hd hh hE hS hsigma0
       hsigma hb0 hb1 hEexp hE4 hunit hgamma20 hinvSq hEb hgamma k hkgain
   · -- the short-cluster regime `b h ≤ 1`: the plain union bound over base sites
-    push_neg at hcase
+    push Not at hcase
     have hG := gainGate₂_of_admissible M hd hsigma0 hsigma hb0 hEexp hEb hgamma
     have hbinv : (8 : ℝ) ≤ b⁻¹ := by
       rw [le_inv_comm₀ (by norm_num) hb0]

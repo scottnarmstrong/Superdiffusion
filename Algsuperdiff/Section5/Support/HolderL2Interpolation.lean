@@ -33,7 +33,7 @@ theorem memLp_two_of_continuousOn_of_holder {y : Vec d} {n : ℤ} {K : ℝ} (hK 
     {f : Vec d → ℝ} (hcont : ContinuousOn f (cubeSetAt y n))
     (hf : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) K f) :
     MemLp f 2 (volume.restrict (cubeSetAt y n)) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   refine MemLp.of_bound (hcont.aestronglyMeasurable (measurableSet_cubeSetAt y n))
     (|f y| + K * ((3 : ℝ) ^ n) ^ (1 / 2 : ℝ)) ?_

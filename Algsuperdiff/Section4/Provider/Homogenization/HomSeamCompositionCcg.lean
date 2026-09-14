@@ -69,7 +69,7 @@ theorem generator_renormalization_provider_final_of_supClauseAt (d : ℕ) (cstar
         CcgF) :
     GeneratorRenormalizationShape d cstar := by
   by_cases hd : 2 ≤ d
-  · haveI inst : NeZero d := ⟨by omega⟩
+  · have inst : NeZero d := ⟨by omega⟩
     have hd1 : 1 ≤ d := le_trans (by norm_num) hd
     obtain ⟨g1, Ctop, hg1, hCtop, hsupply⟩ :=
       seamSupplyFluxAtSupGradBudget_of_supClauseAt d hd1 cstar hcstar hg0 (hclause hd inst)
@@ -153,7 +153,7 @@ theorem generatorRenormalizationShape_of_supClauseProducerAtBudgeted (d : ℕ)
     GeneratorRenormalizationShape d cstar := by
   obtain ⟨gamma0, hg0, hprod⟩ := h
   by_cases hd : 2 ≤ d
-  · haveI inst : NeZero d := ⟨by omega⟩
+  · have inst : NeZero d := ⟨by omega⟩
     obtain ⟨CcgF, Cbud, hCbud, hCcg0, hCcgDom, hbud, hcl⟩ := hprod hd inst
     refine generator_renormalization_provider_final_of_supClauseAt d cstar hcstar
       hg0 one_pos hCbud hCcg0 (fun hd' M => ?_) (fun hd' M hlog => ?_)

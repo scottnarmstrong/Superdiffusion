@@ -90,7 +90,7 @@ theorem exists_deGiorgi_bound_constant {d : ℕ} (hd : 2 ≤ d) :
               0 < (0 : H1Function (axisCube z L)).toFun x} ≤
           volume (axisCube z L) := by
       simpa only [H1Function.zero_toFun, Pi.zero_apply, lt_self_iff_false,
-        and_false, Set.setOf_false, measure_empty, add_zero] using
+        and_false, Set.ofPred_false, measure_empty, add_zero] using
         (measure_mono (show
           {x | x ∈ axisCube z L ∧ 0 < v.toH1Function.toFun x} ⊆ axisCube z L from
             fun _ hx => hx.1))
@@ -114,7 +114,7 @@ theorem exists_deGiorgi_bound_constant {d : ℕ} (hd : 2 ≤ d) :
         Homogenization.IsZeroTraceDirichletRhsWeakSolution.levelEnergy_sumCoordNorm_le
           (isOpenBoundedConvexDomain_axisCube z L) hlam hEll hsolv hvMeas hq hM hk hqBound
       simpa only [zero_add, H1Function.zero_toFun, Pi.zero_apply,
-        H1Function.zero_grad, Pi.zero_apply, hk.not_gt, and_false, Set.setOf_false,
+        H1Function.zero_grad, Pi.zero_apply, hk.not_gt, and_false, Set.ofPred_false,
         Set.indicator_zero, eLpNorm_zero', ENNReal.toReal_zero,
         Finset.sum_const_zero, measure_empty, add_zero] using hlevel
     simpa only [zero_add] using hbound hE hmedian henergy
@@ -123,9 +123,9 @@ theorem exists_deGiorgi_bound_constant {d : ℕ} (hd : 2 ≤ d) :
   have hnegSol := weakSolution_neg hsol
   have hnegMeas : Measurable (-u).toH1Function.toFun := by
     change Measurable (-u.toH1Function).toFun
-    simpa only [H1Function.neg_toFun] using huMeas.neg
+    simpa only [H1Function.neg_toFun] using! huMeas.neg
   have hgNeg : MemVectorL2 (axisCube z L) (fun x => -g x) := by
-    simpa only [Pi.neg_apply] using hg.neg
+    simpa only [Pi.neg_apply] using! hg.neg
   have hgNegBound : ∀ᵐ x ∂volumeMeasureOn (axisCube z L),
       Real.sqrt (vecNormSq (-g x)) ≤ M := by
     filter_upwards [hgBound] with x hx

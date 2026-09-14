@@ -113,7 +113,7 @@ theorem cubeAverageVec_cubeFluctuationVec (Q : TriadicCube d) (u : Vec d → Vec
     (hu : MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeAverageVec Q (cubeFluctuationVec Q u) = 0 := by
   have h := cubeAverageVec_sub_const Q u (cubeAverageVec Q u) hu
-  simpa [cubeFluctuationVec, sub_self] using h
+  simpa [cubeFluctuationVec, sub_self] using! h
 
 /-- A field with vanishing cube average is its own fluctuation. -/
 theorem cubeFluctuationVec_eq_self_of_cubeAverageVec_eq_zero (Q : TriadicCube d)
@@ -195,16 +195,16 @@ theorem abs_cubeAverage_blockVecDot_le_besovDualityConst (Q : TriadicCube d) (s 
   have hsq : Real.sqrt sig0 ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hsig0)
   have hgY1 : MemLp (fun x => (blockGaugeDown sig0 (Y x)).1) (2 : ℝ≥0∞)
       (normalizedCubeMeasure Q) := by
-    simpa [blockGaugeDown] using hY1.const_smul ((Real.sqrt sig0)⁻¹)
+    simpa [blockGaugeDown] using! hY1.const_smul ((Real.sqrt sig0)⁻¹)
   have hgY2 : MemLp (fun x => (blockGaugeDown sig0 (Y x)).2) (2 : ℝ≥0∞)
       (normalizedCubeMeasure Q) := by
-    simpa [blockGaugeDown] using hY2.const_smul (Real.sqrt sig0)
+    simpa [blockGaugeDown] using! hY2.const_smul (Real.sqrt sig0)
   have hgF1 : MemLp (fun x => (blockGaugeUp sig0 (F x)).1) (2 : ℝ≥0∞)
       (normalizedCubeMeasure Q) := by
-    simpa [blockGaugeUp] using hF1.const_smul (Real.sqrt sig0)
+    simpa [blockGaugeUp] using! hF1.const_smul (Real.sqrt sig0)
   have hgF2 : MemLp (fun x => (blockGaugeUp sig0 (F x)).2) (2 : ℝ≥0∞)
       (normalizedCubeMeasure Q) := by
-    simpa [blockGaugeUp] using hF2.const_smul ((Real.sqrt sig0)⁻¹)
+    simpa [blockGaugeUp] using! hF2.const_smul ((Real.sqrt sig0)⁻¹)
   have hdual := abs_cubeAverage_blockVecDot_blockCubeFluctuation_le Q s
     (fun x => blockGaugeDown sig0 (Y x)) (fun x => blockGaugeUp sig0 (F x))
     hs hgY1 hgY2 hgF1 hgF2 hBg hInt1 hInt2 hneg1 hneg2 hpos1 hpos2

@@ -75,7 +75,7 @@ theorem setIntegral_abs_le_sqrt_mul_sqrt {W : Set (Vec d)} (hWfin : volume W ≠
     (hf : MemLp f 2 (volume.restrict W)) :
     ∫ y in W, |f y| ∂volume
       ≤ Real.sqrt (∫ y in W, f y ^ 2 ∂volume) * Real.sqrt ((volume W).toReal) := by
-  haveI : IsFiniteMeasure (volume.restrict W) := by
+  have : IsFiniteMeasure (volume.restrict W) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hWfin

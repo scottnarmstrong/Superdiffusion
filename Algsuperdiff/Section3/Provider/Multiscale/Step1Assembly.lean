@@ -97,7 +97,7 @@ theorem cubeUpperEllipticityLiteral_eq_LambdaSq (M : ABKModel d)
     cubeUpperEllipticityLiteral M Q cutoffScale s q omega =
       Ch02.LambdaSq Q s q.1
         (coefficientCutoffTriadicCoeffFamily M cutoffScale omega) := by
-  letI : NeZero d := neZero_of_model_step1 M
+  let : NeZero d := neZero_of_model_step1 M
   unfold cubeUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
   simp only [dif_pos
@@ -247,7 +247,7 @@ theorem lambdaGateFactor_le_one_of_notMem_bad_ae (hd : 2 ≤ d) (M : ABKModel d)
             (incrementUnitCube₂ Q Q.scale L omega).gradientW1Infinity *
             (Ch02.lambdaSq Q (3 / 8) (.finite 2)
               (coefficientCutoffTriadicCoeffFamily M Q.scale omega))⁻¹ ≤ 1 := by
-  letI : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
+  let : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
   filter_upwards [gradientW1Infinity_incrementUnitCube_le_lambdaGate_notMem_bad_ae
     hd M hS Q hm] with omega hgate hosc hloc L hL
   have h := hgate hosc hloc L hL

@@ -68,7 +68,7 @@ lemma column_markov {Y : Ω → ℝ} {p : ℝ} (hYmeas : Measurable Y)
   -- subset into the Markov super-level set
   have hsub : {ω | t < Y ω} ⊆ {ω | ENNReal.ofReal (t ^ p) ≤ f ω} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω ⊢
+    simp only [Set.mem_ofPred_eq] at hω ⊢
     rw [hf]
     exact ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow ht.le hω.le hp.le)
   have hmarkov := mul_meas_ge_le_lintegral₀ (hfmeas.aemeasurable (μ := P))

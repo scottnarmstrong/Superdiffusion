@@ -95,7 +95,7 @@ theorem ae_forall_cutoffResponseJWithComparator_eq_fromCommonCoarseBlock
         cutoffResponseJWithComparator M cubeScale coefficientScale sigma e omega =
           cutoffResponseJWithComparatorFromCommonCoarseBlock M cubeScale
             coefficientScale sigma e omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   filter_upwards
     [ae_forall_blockJObservableCubeSet_eq_cutoffCoarseRepresentative M
       coefficientScale (originCube d cubeScale)] with omega hblock

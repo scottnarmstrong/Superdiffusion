@@ -52,7 +52,7 @@ theorem memLp_ofVec_of_holderSeminormBoundOn_originCube {m : ℤ} {alpha K : ℝ
     (hg : HolderSeminormBoundOn (openCubeSet (originCube d m)) alpha K g) :
     MemLp (fun x => HilbertVec.ofVec (g x)) p.exponent
       (normalizedCubeMeasure (originCube d m)) := by
-  haveI : IsFiniteMeasure (normalizedCubeMeasure (originCube d m)) :=
+  have : IsFiniteMeasure (normalizedCubeMeasure (originCube d m)) :=
     normalizedCubeMeasure.instIsFiniteMeasure _
   have hcont : ContinuousOn g (openCubeSet (originCube d m)) :=
     Schauder.continuousOn_of_holderSeminormBoundOn hK halpha hg

@@ -98,7 +98,7 @@ theorem exists_triadic_scale {t : ℝ} (ht : 0 < t) {m : ℤ}
 /-- `3^{1/2} ≥ 3/2`. -/
 theorem three_rpow_half_ge : (3 : ℝ) / 2 ≤ (3 : ℝ) ^ ((1 : ℝ) / 2) := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have h0 : (0 : ℝ) ≤ (3 : ℝ) ^ ((1 : ℝ) / 2) := three_rpow_nonneg _
   have hsq : ((3 : ℝ) ^ ((1 : ℝ) / 2)) ^ (2 : ℕ) < ((3 : ℝ) / 2) ^ (2 : ℕ) :=
     pow_lt_pow_left₀ hcon h0 (by norm_num)
@@ -112,7 +112,7 @@ theorem three_rpow_half_ge : (3 : ℝ) / 2 ≤ (3 : ℝ) ^ ((1 : ℝ) / 2) := by
 /-- `3^{1/2} ≤ 2`. -/
 theorem three_rpow_half_le_two : (3 : ℝ) ^ ((1 : ℝ) / 2) ≤ 2 := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hsq : (2 : ℝ) ^ (2 : ℕ) < ((3 : ℝ) ^ ((1 : ℝ) / 2)) ^ (2 : ℕ) :=
     pow_lt_pow_left₀ hcon (by norm_num : (0 : ℝ) ≤ 2) (by norm_num)
   have he : ((3 : ℝ) ^ ((1 : ℝ) / 2)) ^ (2 : ℕ) = 3 := by

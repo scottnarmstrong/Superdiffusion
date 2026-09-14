@@ -446,7 +446,7 @@ theorem exists_iterateMeanBound_integral_cutoffResponseJ (d : ℕ) :
   -- the degenerate dimension: the standing model already excludes it
   rcases Nat.eq_zero_or_pos d with hd0 | hdpos
   · exact ⟨1, le_refl 1, fun M => absurd M.shellPrefix.dimension (by omega)⟩
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   -- the `A.4` recurrence constants and the engine, both dimension-only
   obtain ⟨ChomR, A, C, j0R, hChom10, hChom64, hA, hC, hrecMain⟩ :=
     exists_finiteRecurrence_integral_cutoffResponseJ d

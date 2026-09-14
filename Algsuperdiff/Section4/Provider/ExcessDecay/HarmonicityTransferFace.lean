@@ -115,7 +115,7 @@ private theorem integrableOn_vecDot {W : Set (Vec d)} {A B : Vec d → Vec d}
     funext y
     rw [vecDot]
   rw [IntegrableOn, hsum]
-  exact integrable_finset_sum _ fun j _ => (hA j).integrable_mul (hB j)
+  exact integrable_finsetSum _ fun j _ => (hA j).integrable_mul (hB j)
 
 /-! ## 3. The transfer -/
 
@@ -143,7 +143,7 @@ theorem isWeaklyHarmonicOn_of_oddFaceExtendGrad {U : Set (Vec d)}
   have hHmeas : MeasurableSet (faceHalf U i a σ) := hHopen.measurableSet
   have hHsub : faceHalf U i a σ ⊆ U := faceHalf_subset U i a σ
   have hUmeas : MeasurableSet U := hU.isOpen.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict (faceHalf U i a σ)) :=
+  have : IsFiniteMeasure (volume.restrict (faceHalf U i a σ)) :=
     (isOpenBoundedConvexDomain_faceHalf hU i a σ).isFiniteMeasure_restrict_volume
   -- the zero-extended gradient is globally `L²`
   have hGL2 : ∀ j : Fin d,
@@ -160,7 +160,7 @@ theorem isWeaklyHarmonicOn_of_oddFaceExtendGrad {U : Set (Vec d)}
   intro φ hφ hφc hφU
   -- the reflected test and the odd fold
   have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection a i z) := by
-    simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection a i)
+    simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection a i)
   have hφrc : HasCompactSupport fun z => φ (coordFaceReflection a i z) :=
     hasCompactSupport_comp_coordFaceReflection hφc a i
   have hφrU : tsupport (fun z => φ (coordFaceReflection a i z)) ⊆ U :=
@@ -224,7 +224,7 @@ theorem isWeaklyHarmonicOn_of_oddFaceExtendGrad {U : Set (Vec d)}
       ∫ y in U, vecDot (zeroExtendGrad (faceHalf U i a σ) v.grad y) (K y) ∂volume =
         ∫ y in faceHalf U i a σ, vecDot (v.grad y) (K y) ∂volume := by
     intro K _hK
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hUmeas hHsub ?_]
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUmeas hHsub ?_]
     · refine setIntegral_congr_fun hHmeas fun y hy => ?_
       rw [zeroExtendGrad_of_mem _ hy]
     · intro y hy

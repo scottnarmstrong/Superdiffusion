@@ -140,7 +140,7 @@ theorem tendsto_blockVecDot_blockMatVecMul_of_tendsto_toFullBlockMat
       (nhds (blockVecDot X (blockMatVecMul L Y))) := by
   classical
   simp only [blockVecDot_blockMatVecMul_eq_sum]
-  refine tendsto_finset_sum _ fun alpha _ => tendsto_finset_sum _ fun beta _ => ?_
+  refine tendsto_finsetSum _ fun alpha _ => tendsto_finsetSum _ fun beta _ => ?_
   exact Filter.Tendsto.const_mul _
     (Filter.Tendsto.mul_const _ (tendsto_pi_nhds.mp (tendsto_pi_nhds.mp hf alpha) beta))
 
@@ -173,7 +173,7 @@ theorem blockVecDot_annealedLimitBlock_le_annealedBlockMatrixAtScale
       blockVecDot X
         (blockMatVecMul
           (Ch04.annealedBlockMatrixAtScale (coefficientCutoffLaw M m) K) X) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   refine le_of_tendsto (tendsto_blockVecDot_annealedBlockMatrixAtScale M m X) ?_
   filter_upwards [eventually_ge_atTop K.toNat] with k hk
@@ -194,7 +194,7 @@ theorem integrable_blockVecDot_coarseBlockMatrix (M : ABKModel d) (m : ℤ)
       (fun a : RegCoeffField d =>
         blockVecDot X (blockMatVecMul (coarseBlockMatrix (cubeSet Q) a.toFun) Y))
       (coefficientCutoffLaw M m) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   exact Ch04.integrable_blockVecDot_blockMatVecMul_of_integrable_entries
     (fun alpha beta =>
@@ -213,7 +213,7 @@ theorem blockVecDot_annealedBlockMatrix_eq_integral (M : ABKModel d) (m : ℤ)
       ∫ a : RegCoeffField d,
         blockVecDot X (blockMatVecMul (coarseBlockMatrix (cubeSet Q) a.toFun) Y)
         ∂(coefficientCutoffLaw M m) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   exact (Ch04.integral_blockVecDot_blockMatVecMul_eq_of_integrable_entries
     (fun alpha beta =>
@@ -286,7 +286,7 @@ theorem coarseBlockMatrix_cubeSet_coefficientCutoff_eq_ch02 (M : ABKModel d) (m 
     coarseBlockMatrix (cubeSet Q) (coefficientCutoff M.nu m omega).toFun =
       Ch02.coarseBlockMatrix (Ch02.cubeDomain Q)
         ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn Q) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have haeeq : Ch02.CoeffOn.AEEq
       ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField

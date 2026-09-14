@@ -68,7 +68,7 @@ theorem gradientCoordL2NormSum_le {U : Set (Vec d)} (w : H1Function U) :
   have hgradInt : IntegrableOn (fun x => ‖w.grad x‖ ^ (2 : ℕ)) U volume := by
     have hn : MemLp (fun x => ‖w.grad x‖) 2 (volume.restrict U) := w.grad_memVectorL2.norm
     have := hn.integrable_mul hn
-    simpa [Pi.mul_apply, pow_two] using this
+    simpa [Pi.mul_apply, pow_two] using! this
   have hstep : ∀ i : Fin d, ‖w.gradCoordToScalarL2 i‖ ≤
       Real.sqrt (∫ x in U, ‖w.grad x‖ ^ (2 : ℕ) ∂volume) := by
     intro i
@@ -118,7 +118,7 @@ theorem exists_isDirichletSolutionAt_of_isEllipticFieldOn [NeZero d] {y : Vec d}
     {g : Vec d → Vec d} {Kg : ℝ} (hKg : 0 ≤ Kg)
     (hg : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kg g) :
     ∃ u : H1Function (cubeSetAt y n), IsDirichletSolutionAt a y n u g := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   have hforce : MemVectorL2 (cubeSetAt y n) (fun x => -g x) :=
     (memVectorL2_of_holderSeminormBoundOn_cubeSetAt hKg (by norm_num) hg).neg

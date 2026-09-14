@@ -97,7 +97,7 @@ the same local carrier sigma algebra. -/
 theorem measurable_entryProjectionReg_localSigmaR (U : Set (Vec d)) (i j : Fin d) :
     @Measurable (RegCoeffField d) (RegCoeffField d)
       (LocalSigmaR U) (LocalSigmaR U) (entryProjectionReg i j) := by
-  letI : MeasurableSpace (RegCoeffField d) := LocalSigmaR U
+  let : MeasurableSpace (RegCoeffField d) := LocalSigmaR U
   refine measurable_generateFrom ?_
   rintro _ ⟨r, s, phi, hphi, hsupp, t, ht, rfl⟩
   have hbase : @Measurable (RegCoeffField d) ℝ (LocalSigmaR U) _

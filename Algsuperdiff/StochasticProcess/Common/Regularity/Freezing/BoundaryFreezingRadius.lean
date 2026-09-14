@@ -75,7 +75,7 @@ private theorem exists_axisCubeFaceClearance_radius [NeZero d]
     (hx₀ : MemAxisCubeClosure z L x₀) :
     ∃ R > 0, AxisCubeFaceClearance z L R x₀ := by
   classical
-  haveI hcoordNonempty : Nonempty (Fin d) :=
+  have hcoordNonempty : Nonempty (Fin d) :=
     ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
   set gap : Fin d → ℝ := fun i =>
     min (if x₀ i = z i then L else x₀ i - z i)

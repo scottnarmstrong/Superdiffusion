@@ -327,7 +327,7 @@ theorem measureReal_siteBadEvent_le_of_gates (M : ABKModel d) (base : ℤ) {m : 
   · rw [measureReal_empty]
     exact (Real.exp_pos _).le
   · rename_i hlq
-    push_neg at hlq
+    push Not at hlq
     have hQ : (siteCube base u).scale ≤ m - 1 := hbase
     refine le_trans (measureReal_badScaleEvent_le_of_gates M (siteCube base u) hE hE4
       hunit hgamma20 hinvSq hS hQ hgamma hEabs (l - sepShift d)) ?_

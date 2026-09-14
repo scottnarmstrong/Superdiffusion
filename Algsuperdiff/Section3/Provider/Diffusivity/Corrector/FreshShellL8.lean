@@ -208,18 +208,24 @@ theorem continuous_finiteShellIncrement (omega : Cutoff.ShellSeq d) (n m : ℤ) 
     rw [Cutoff.finiteShellIncrement_apply]
     rfl
   rw [h]
-  exact continuous_finset_sum _ fun k _ => (omega k).1.1.continuous
+  exact continuous_finsetSum _ fun k _ => (omega k).1.1.continuous
 
 /-- The forcing of `e.def.w` is continuous. -/
 theorem continuous_streamForcing (sigmaInv : ℝ) (omega : Cutoff.ShellSeq d)
     (n m : ℤ) (e : Vec d) :
     Continuous (streamForcing sigmaInv omega n m e) := by
   have hF := continuous_finiteShellIncrement omega n m
-  refine continuous_const.smul (continuous_pi fun i => ?_)
-  simp only [matVecMul]
-  exact continuous_finset_sum _ fun j _ =>
-    (((continuous_apply j).comp ((continuous_apply i).comp hF)).mul
-      continuous_const)
+  have hmat : Continuous
+      (fun x : Vec d => matVecMul (Cutoff.finiteShellIncrement omega n m x) e) := by
+    refine continuous_pi fun i => ?_
+    simp only [matVecMul]
+    exact continuous_finsetSum _ fun j _ =>
+      (((continuous_apply j).comp ((continuous_apply i).comp hF)).mul
+        continuous_const)
+  have hsmul : Continuous
+      (fun x : Vec d => sigmaInv • matVecMul (Cutoff.finiteShellIncrement omega n m x) e) :=
+    (continuous_const : Continuous (fun _ : Vec d => sigmaInv)).smul hmat
+  exact hsmul
 
 /-- The pointwise size of the forcing of `e.def.w`, for a direction of Euclidean
 length at most one. -/
@@ -255,7 +261,9 @@ theorem cubeEuclideanLpNorm_streamForcing_le {sigmaInv : ℝ}
     continuous_streamIncrementSize n m omega
   have hmem : MemLp (fun x => sigmaInv • streamIncrementSize (d := d) n m omega x)
       (8 : ℝ≥0∞) (normalizedCubeMeasure (originCube d l)) :=
-    memLp_normalizedCubeMeasure_of_continuous _ _ (continuous_const.smul hcontSize)
+    memLp_normalizedCubeMeasure_of_continuous _ _
+      ((continuous_const : Continuous (fun _ : Vec d => sigmaInv)).smul hcontSize :
+        Continuous (fun x : Vec d => sigmaInv • streamIncrementSize (d := d) n m omega x))
   have hmono : cubeLpNorm (originCube d l) (8 : ℝ≥0∞)
         (fun x => Book.Ch02.vecNorm (streamForcing sigmaInv omega n m e x)) ≤
       cubeLpNorm (originCube d l) (8 : ℝ≥0∞)

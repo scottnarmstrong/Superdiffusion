@@ -107,7 +107,7 @@ theorem memVectorL2_matVecMul_coeffOn {Q : TriadicCube d}
       (fun x => matVecMul (b.toCoeffField x) (u.grad x)) :=
     memVectorL2_matVecMul_of_isEllipticFieldOn hEll u.grad_memVectorL2
   have hba : b.toCoeffField =ᵐ[volumeMeasureOn (openCubeSet Q)] a.toCoeffField := by
-    simpa only [b, Book.Ch02.cubeDomain_coe] using
+    simpa only [b, Book.Ch02.cubeDomain_coe] using!
       Internal.Ch02.BookCh02.pointwiseCoeffOn_ae_eq (Book.Ch02.cubeDomain Q) a
   apply (memLp_congr_ae ?_).mp hB
   filter_upwards [hba] with x hx
@@ -255,7 +255,7 @@ theorem exists_printedCoarseGrainingFiniteP_smoothDual (d : ℕ) (hd : 2 ≤ d)
             centeredCubeFluxComparisonSmoothDualLHS m a sigma0 u v s p ≤
           localCoarseGrainingLpRHS C (originCube d m) n
             (by simpa [originCube] using hnm.le) a sigma0 hsigma0 g u s1 s s2 p := by
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   obtain ⟨Ccz, hCczTop, hCcz⟩ := exists_centeredCubeFluxComparison_cz d hd p hp
   obtain ⟨Clc, hClcTop, hClc⟩ := exists_localCoarseGrainingLp d hd
   refine ⟨Ccz * cubeEuclideanNegativeWspSmoothDualBesovConstant d * Clc, ?_, ?_⟩

@@ -74,7 +74,7 @@ theorem streamIncrementLpNorm_deepBand_waveGauge_origin_probe
       Measurable
         (probeDeepBandGaugedTail M (originCube d m) ell k₀ N) := by
   have hband := cubeStreamIncrementLpNorm_deepBand_waveGauge_probe
-    M (originCube d m) ell hk₀ hN (by simpa using hm)
+    M (originCube d m) ell hk₀ hN (by simpa using! hm)
   refine ⟨?_, hband.2⟩
   intro omega
   have h := hband.1 omega

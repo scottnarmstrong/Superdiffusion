@@ -151,7 +151,7 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
           Book.Ch04.rosenthalDescendantsAtScaleSqrtConst d child 2 *
             Real.sqrt
               ((descendantsAtScale (originCube d parent) child).card : ℝ) * K := by
-  letI : IsProbabilityMeasure P := hP.isProbability
+  let : IsProbabilityMeasure P := hP.isProbability
   let Q : TriadicCube d := originCube d parent
   let D : Finset (TriadicCube d) := descendantsAtScale Q child
   let X : Set (Vec d) → RegCoeffField d → ℝ :=
@@ -164,7 +164,7 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
       aemeasurable_starredComparatorQuadratic_cubeSet
         hP B C q (originCube d child)
   have hZ0Meas : AEMeasurable (Z (originCube d child)) P := by
-    simpa only [Z, X, mu0] using hX0Meas.sub aemeasurable_const
+    simpa only [Z, X, mu0] using! hX0Meas.sub aemeasurable_const
   have hZ0Int : Integrable
       (fun a => |Z (originCube d child) a| ^ (2 : ℕ)) P := by
     simpa only [Z, X, mu0, Book.Ch04.restrictionCenteredOriginObservable]
@@ -206,7 +206,7 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
         B C q (cubeSet (originCube d child)) (triadicCubeShift R) a.toFun)
   have hZMeas : ∀ R ∈ D, AEMeasurable (Z R) P := by
     intro R hR
-    simpa only [Z, X] using
+    simpa only [Z, X] using!
       (aemeasurable_starredComparatorQuadratic_cubeSet hP B C q R).sub
         aemeasurable_const
   have hZInt : ∀ R ∈ D,
@@ -338,7 +338,7 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
     rw [ha]
   have hLocalSumMem : MemLp (fun a => ∑ R ∈ D, Zlocal R a)
       (2 : ENNReal) P := by
-    apply memLp_finset_sum D
+    apply memLp_finsetSum D
     intro R hR
     rw [memLp_two_iff_integrable_sq (hZlocalMeas R hR).aestronglyMeasurable]
     refine (hZlocalInt R hR).congr ?_
@@ -363,7 +363,7 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
               (cubeSet (originCube d child)) b ∂P)| ^ (2 : ℕ) ∂P) =
           ∫ a, |∑ R ∈ D, Z R a| ^ (2 : ℕ) ∂P by
         simp only [D, Q, Z, X, mu0], hIntegralEq]
-    simpa only [Q, D] using hRosenthal
+    simpa only [Q, D] using! hRosenthal
 
 private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_and_le
     {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ)
@@ -743,9 +743,9 @@ theorem relativeStarredComparator_origin_and_descendant_moment_bounds
     simp only [abs_mul, abs_of_nonneg hNInvNonneg]
     ring
   refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa only [P, c, sigma, a0, B, C0, X] using hOrigin.1
-  · simpa only [P, c, sigma, a0, B, C0, X] using hOrigin.2.1
-  · simpa only [P, c, sigma, a0, B, C0, X] using havgInt
+  · simpa only [P, c, sigma, a0, B, C0, X] using! hOrigin.1
+  · simpa only [P, c, sigma, a0, B, C0, X] using! hOrigin.2.1
+  · simpa only [P, c, sigma, a0, B, C0, X] using! havgInt
   · have hintegral :
         ∫ a,
           |Book.Ch04.restrictionCenteredDescendantAverage P (-c) parent X a| ^

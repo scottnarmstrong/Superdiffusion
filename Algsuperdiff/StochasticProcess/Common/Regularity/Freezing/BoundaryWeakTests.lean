@@ -36,7 +36,7 @@ theorem integral_vecDot_split_coords {W : Set (Vec d)} (F G : Vec d → Vec d)
   have hint : ∀ j : Fin d,
       Integrable (fun y => G y j * F y j) (volume.restrict W) := fun j =>
     (hG j).integrable_mul (hF j)
-  rw [← integral_finset_sum _ fun j _ => hint j]
+  rw [← integral_finsetSum _ fun j _ => hint j]
   refine integral_congr_ae (Eventually.of_forall fun y => ?_)
   show vecDot (F y) (G y) = ∑ j : Fin d, G y j * F y j
   rw [vecDot]
@@ -88,7 +88,7 @@ theorem isMatrixDivFormWeakSolutionZerothOrderOn_of_contDiff_tests
       (fun n => ∑ j : Fin d,
         ∫ y in W, euclideanGradient (phi.approx n) y j * F y j ∂volume) atTop
       (nhds (∑ j : Fin d, ∫ y in W, phi.toH1Function.grad y j * F y j ∂volume)) :=
-    tendsto_finset_sum _ fun j _ => hgradConv j
+    tendsto_finsetSum _ fun j _ => hgradConv j
   have hvalConv : Tendsto (fun n => ∫ y in W, phi.approx n y * g y ∂volume) atTop
       (nhds (∫ y in W, phi.toH1Function.toFun y * g y ∂volume)) :=
     tendsto_setIntegral_mul_of_tendsto_eLpNormTwo hg hvalL2 phi.toH1Function.memL2

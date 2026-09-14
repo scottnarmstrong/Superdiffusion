@@ -79,7 +79,7 @@ theorem holderSeminormOn_const_mul (U : Set (Vec d)) (alpha : ℝ) {t : ℝ} (ht
 theorem holderSeminormOn_zero {E : Type*} [NormedAddCommGroup E] (U : Set (Vec d))
     (alpha : ℝ) :
     holderSeminormOn U alpha (fun _ : Vec d => (0 : E)) = 0 := by
-  refine le_antisymm ?_ (zero_le _)
+  refine le_antisymm ?_ zero_le
   simp only [holderSeminormOn, iSup_le_iff]
   intro x _ z _ _
   simp
@@ -188,7 +188,7 @@ theorem isCubeRepresentative_zero_of_holderSeminormOn_eq_zero (M : ABKModel d) (
     (hu : IsDirichletSolutionAt ((Cutoff.coefficientCutoff M.nu n omega).toCoeffField)
       y n u g) :
     IsCubeRepresentative y n u fun _ => 0 := by
-  haveI : IsFiniteMeasure (volume.restrict (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volume.restrict (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   have hbound : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) 0 g := by
     refine (holderSeminormOn_le_ofReal_iff le_rfl).1 ?_
@@ -308,11 +308,11 @@ theorem localizedRegularity_apply_general (M : ABKModel d) (n : ℤ) (y : Vec d)
   · have hrep : IsCubeRepresentative y n u fun _ => 0 :=
       isCubeRepresentative_zero_of_holderSeminormOn_eq_zero M n y omega h0 hu
     have hIzero : I = 0 := by
-      refine le_antisymm ?_ (zero_le _)
+      refine le_antisymm ?_ zero_le
       refine le_trans (iInf_le_of_le _ (iInf_le _ hrep)) ?_
       rw [holderSeminormOn_zero, mul_zero]
     rw [hIzero]
-    exact zero_le _
+    exact zero_le
   · have hApos : 0 < A.toReal := ENNReal.toReal_pos h0 hg
     set t : ℝ := Real.rpow 3 (-(n : ℝ) / 2) / A.toReal with htdef
     have htpos : 0 < t := div_pos (rpow_three_half_pos _) hApos

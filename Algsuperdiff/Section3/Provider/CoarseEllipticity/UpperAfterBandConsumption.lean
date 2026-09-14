@@ -404,7 +404,7 @@ theorem measurable_probeSharpFramedCollarAfterBandCoordinateLane
     (j : Fin d) :
     Measurable (probeSharpFramedCollarAfterBandCoordinateLane M m R E j) := by
   have hnn :=
-    (Measurable.nnreal_tsum fun n =>
+    (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       ((measurable_probeSharpFramedCollarAfterBandLayer M R.scale E
           (collarBandMeanDepth M E) n (m - 1) m j).comp
         (measurable_translateCutoffSample (triadicCubeShift R))).real_toNNReal).coe_nnreal_real
@@ -601,7 +601,7 @@ theorem collar_afterBand_trace_isBigOWith_depthProfile
     simpa only [AP] using hrawP
   have hPmeas : Measurable
       (slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma) := by
-    simpa only [slstarPowerTerm] using
+    simpa only [slstarPowerTerm] using!
       measurable_comp_hsep M R.scale (E : ℝ) bfaProfileB fun hs : ℕ =>
         (3 : ℝ) ^ ((M.gamma + 2 * bfaProfileB) * (hs : ℝ))
   have hP := Algsuperdiff.Section3.Provider.Stream.isBigOWith_comp_translateCutoffSample
@@ -856,7 +856,7 @@ theorem collar_afterBand_trace_isBigOWith_depthProfile
       (upperProfileTargetSigma_pos hsigma0 hsigma) hX0 hXmeas hBpos hBsum
       hterm hsum.le
     simpa only [probeSharpFramedCollarAfterBandCoordinateLane, X, k₀, ell,
-      j₀] using hsumO
+      j₀] using! hsumO
   have hscaled := hcoordinate.const_mul (Nat.cast_nonneg d)
   have hbridge : ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure, ENNReal.ofReal
       (probeSharpFramedCollarAfterBandTraceLane M m R (E : ℝ) omega) =
@@ -1212,7 +1212,6 @@ theorem collar_afterBand_trace_isBigOWith_frozenReserve
   refine ⟨probeSharpFramedCollarAfterBandTraceLane_nonneg M.shellPrefix.dimension M m R (E : ℝ),
     measurable_probeSharpFramedCollarAfterBandTraceLane M m R (E : ℝ),
     hbridge, hraw.mono_scale ?_⟩
-  dsimp only
   rw [show ((k + 1 : ℕ) : ℝ) = (k : ℝ) + 1 by push_cast; ring]
   have hpow0 : 0 ≤ (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) :=
     Real.rpow_nonneg (by norm_num) _

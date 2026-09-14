@@ -53,7 +53,7 @@ theorem penalizedCubeResolventH10_value {V : Set (Vec d)} (hV : IsOpen V)
         (boundedMeasurableToScalarL2
           (isOpenBoundedConvexDomain_wholeSpaceCube d m)
           (hf.comp measurable_subtype_coe) (fun y ↦ hfD y)) := by
-  simpa only [potentialResolvent_apply] using
+  simpa only [potentialResolvent_apply] using!
     (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function
       (isOpenBoundedConvexDomain_wholeSpaceCube d m)
       (potentialSolution A.a mu.property A.hnu (A.cubeEllipticity m)
@@ -87,7 +87,7 @@ theorem penalizedCubeResolventH10_isScalarForcedWeakSolution
         (wholeSpacePenalizationPotential V n)
         (wholeSpacePenalizationPotential_isBounded hV n m) F := by
     apply ZeroTraceSobolev.ext
-    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F, hU] using
+    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F, hU] using!
         A.penalizedCubeResolventH10_value hV n mu hf hfD m
     · exact (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function hU
         (potentialSolution A.a mu.property A.hnu (A.cubeEllipticity m)

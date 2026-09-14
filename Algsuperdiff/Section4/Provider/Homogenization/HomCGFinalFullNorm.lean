@@ -91,7 +91,7 @@ private theorem inv_toReal_le_one (q : FiniteLpExponent) : (q.exponent.toReal)‚Å
   have ht1 : 1 < q.exponent.toReal := one_lt_finiteLpExponent_toReal q
   have htpos : 0 < q.exponent.toReal := finiteLpExponent_toReal_pos q
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hstep := mul_lt_mul_of_pos_right hcon htpos
   rw [one_mul, inv_mul_cancel‚ÇÄ (ne_of_gt htpos)] at hstep
   linarith only [hstep, ht1]

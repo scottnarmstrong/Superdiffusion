@@ -74,14 +74,14 @@ private theorem integrable_localCubeControl_shell
     simpa [g] using (integrable_localCubeControl_under_zeroShellLaw M q).const_mul a
   have hid_g : Integrable id (Measure.map g (ShellField.zeroShellLaw M.P).toMeasure) := by
     apply (integrable_map_measure measurable_id.aestronglyMeasurable hg.aemeasurable).mpr
-    simpa only [Function.comp_apply] using hg_int
+    simpa only [Function.comp_apply] using! hg_int
   have hmap : Measure.map f M.P.toMeasure =
       Measure.map g (ShellField.zeroShellLaw M.P).toMeasure := by
     simpa [f, g, a, q] using map_localCubeControl_shell_eq_zero M ell n
   have hid_f : Integrable id (Measure.map f M.P.toMeasure) := by
     rw [hmap]
     exact hid_g
-  simpa only [Function.comp_apply] using
+  simpa only [Function.comp_apply] using!
     (integrable_map_measure measurable_id.aestronglyMeasurable hf.aemeasurable).mp hid_f
 
 private theorem integral_localCubeControl_shell_le_expectedCubeMajorant
@@ -106,11 +106,11 @@ private theorem integral_localCubeControl_shell_le_expectedCubeMajorant
       ∫ j, g j ∂(ShellField.zeroShellLaw M.P).toMeasure := by
     calc
       (∫ omega, f omega ∂M.P.toMeasure) = ∫ x, id x ∂Measure.map f M.P.toMeasure := by
-        simpa only [Function.comp_apply] using
+        simpa only [Function.comp_apply] using!
           (integral_map hf.aemeasurable measurable_id.aestronglyMeasurable).symm
       _ = ∫ x, id x ∂Measure.map g (ShellField.zeroShellLaw M.P).toMeasure := by rw [hmap]
       _ = ∫ j, g j ∂(ShellField.zeroShellLaw M.P).toMeasure := by
-        simpa only [Function.comp_apply] using
+        simpa only [Function.comp_apply] using!
           integral_map hg.aemeasurable measurable_id.aestronglyMeasurable
   have hzero := integral_localCubeControl_zero_le_dim_majorant M q
   have ha : 0 ≤ a := Real.rpow_nonneg (by norm_num) _
@@ -160,7 +160,7 @@ private theorem ae_summable_of_summable_integrals
     rw [lintegral_tsum fun r => (hF_meas r).aemeasurable.ennreal_ofReal]
     exact hlin
   have hfinite : ∀ᵐ omega ∂μ, ∑' r, ENNReal.ofReal (F r omega) < ⊤ :=
-    ae_lt_top' (AEMeasurable.ennreal_tsum fun r =>
+    ae_lt_top' (AEMeasurable.tsum fun r =>
       (hF_meas r).aemeasurable.ennreal_ofReal) hlin'
   filter_upwards [hfinite] with omega homega
   have hs : Summable (fun r => ((F r omega).toNNReal : ℝ)) := by

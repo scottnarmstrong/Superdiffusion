@@ -84,7 +84,7 @@ private theorem scaleOccurrenceEvent_eq_biUnion {Ω : Type*} {d L : ℕ}
       ⋃ v ∈ touchingCenters L Γ, inflatedBadEvent B L v := by
   classical
   ext ω
-  simp only [scaleOccurrenceEvent, Set.mem_setOf_eq, Set.mem_iUnion]
+  simp only [scaleOccurrenceEvent, Set.mem_ofPred_eq, Set.mem_iUnion]
   constructor
   · intro h
     rw [inflatedCubeCount, Finset.card_pos] at h

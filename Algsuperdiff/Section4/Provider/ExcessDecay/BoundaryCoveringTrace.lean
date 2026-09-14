@@ -79,12 +79,12 @@ def h10RestrictOfApproxSupport {Ω W : Set (Vec d)} (hWopen : IsOpen W) (hWΩ : 
   approx_support_subset := hsupp
   tendsto_approx := by
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds u.tendsto_approx
-      (fun _ => zero_le _) fun n => ?_
+      (fun _ => zero_le) fun n => ?_
     exact eLpNorm_mono_measure _ (Measure.restrict_mono_set volume hWΩ)
   tendsto_approx_grad := by
     intro i
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
-      (u.tendsto_approx_grad i) (fun _ => zero_le _) fun n => ?_
+      (u.tendsto_approx_grad i) (fun _ => zero_le) fun n => ?_
     exact eLpNorm_mono_measure _ (Measure.restrict_mono_set volume hWΩ)
 
 @[simp] theorem h10RestrictOfApproxSupport_toFun {Ω W : Set (Vec d)} (hWopen : IsOpen W)

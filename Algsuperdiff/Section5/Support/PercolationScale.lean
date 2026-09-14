@@ -147,7 +147,7 @@ theorem lightQPathEvent_eq_iUnion (M : ABKModel d) (Creg Cinj : ℝ) (m : ℤ) (
                 (Percolation.pathSites N (pathExtend p)) omega : ℕ) : ℝ) <
                 (3 : ℝ) / 4 * (3 : ℝ) ^ k} := by
   ext omega
-  simp only [Set.mem_iUnion, Set.mem_setOf_eq, lightQPathEvent]
+  simp only [Set.mem_iUnion, Set.mem_ofPred_eq, lightQPathEvent]
   constructor
   · rintro ⟨N, x, hpath, h0, hN, hcard⟩
     refine ⟨N, fun j => x j.1, ?_, ?_, ?_, ?_⟩
@@ -235,7 +235,7 @@ theorem percolationScaleTotal_ae_crossing (M : ABKModel d) (Creg Cinj : ℝ) (m 
   have hindex : m - (k : ℤ) = n := by omega
   have hnot := percolationScaleTotal_spec M Creg Cinj m ep homega k hle
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   refine hnot ⟨N, x, hpath, h0, hN, ?_⟩
   rw [hindex]
   exact hlt
@@ -288,7 +288,7 @@ theorem measurableSet_lightQPathEvent (M : ABKModel d) (Creg Cinj : ℝ) (m : �
             (Percolation.pathSites N (pathExtend p)) omega : ℕ) : ℝ) <
             (3 : ℝ) / 4 * (3 : ℝ) ^ k} := by
       ext omega
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       exact ⟨fun h => h.2.2.2, fun h => ⟨hgeom.1, hgeom.2.1, hgeom.2.2, h⟩⟩
     rw [hset]
     exact measurableSet_lt hcount measurable_const
@@ -300,7 +300,7 @@ theorem measurableSet_lightQPathEvent (M : ABKModel d) (Creg Cinj : ℝ) (m : �
                 (Percolation.pathSites N (pathExtend p)) omega : ℕ) : ℝ) <
                 (3 : ℝ) / 4 * (3 : ℝ) ^ k} = (∅ : Set (Cutoff.CutoffSample d)) := by
       ext omega
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       exact fun h => hgeom ⟨h.1, h.2.1, h.2.2.1⟩
     rw [hset]
     exact MeasurableSet.empty
@@ -333,20 +333,20 @@ private theorem measurableSet_le_percolationScaleTotal (M : ABKModel d) (Creg Ci
     ext omega
     by_cases hA' : omega ∈ eventuallyHeavyPaths M Creg Cinj m ep
     · have hiff := le_percolationScaleTotal_iff M Creg Cinj m ep hA' N
-      simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
+      simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
         Set.mem_iInter, Set.mem_iUnion, hA', true_and, not_true, false_and, or_false]
       rw [hiff]
       refine forall_congr' fun j => ?_
       refine forall_congr' fun _ => ?_
       constructor
       · intro h
-        push_neg at h
+        push Not at h
         obtain ⟨kk, hk1, hk2⟩ := h
         exact ⟨kk, hk1, hk2⟩
       · rintro ⟨kk, hk1, hk2⟩ hcon
         exact hcon kk hk1 hk2
     · have hzero := percolationScaleTotal_eq_zero_of_not M Creg Cinj m ep hA'
-      simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
+      simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
         hA', false_and, false_or, not_false_eq_true, true_and, hzero]
   rw [hrw]
   refine MeasurableSet.union (hA.inter ?_) (hA.compl.inter (MeasurableSet.const _))
@@ -365,7 +365,7 @@ theorem measurable_percolationScaleTotal (M : ABKModel d) (Creg Cinj : ℝ) (m :
       {omega | N ≤ percolationScaleTotal M Creg Cinj m ep omega} \
         {omega | N + 1 ≤ percolationScaleTotal M Creg Cinj m ep omega} := by
     ext omega
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_diff, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_sdiff, Set.mem_ofPred_eq]
     omega
   rw [hrw]
   exact h1.diff h2

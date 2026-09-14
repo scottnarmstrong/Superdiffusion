@@ -28,7 +28,7 @@ theorem memLp_two_of_gaussian_tail
       μ {ω | t < X ω} ≤ ENNReal.ofReal (Real.exp (-(t ^ 2))) ) :
     MemLp X 2 μ := by
   have hXsq_meas : Measurable (fun ω ↦ X ω ^ 2) := by
-    simpa only [pow_two] using hXmeas.mul hXmeas
+    simpa only [pow_two] using! hXmeas.mul hXmeas
   have htail_sq : ∀ t : ℝ, 1 ≤ t →
       μ {ω | t < X ω ^ 2} ≤ ENNReal.ofReal (Real.exp (-t)) := by
     intro t ht

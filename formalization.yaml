@@ -1,11 +1,32 @@
-version: "v0.3"
+version: "v0.4"
 
 project:
   name: "Superdiffusion"
+  description: >-
+    A Lean formalization of the quantitative theory of advection-diffusion in
+    self-similar random incompressible flows: the superdiffusive asymptotics
+    of the effective diffusivity (Theorem A), the renormalization of the
+    generator (quantitative homogenization of the Dirichlet problem at every
+    scale, Theorem B), and the anomalous large-scale regularity theory
+    (Theorem C) of Armstrong-Bou-Rabee-Kuusi, together with the sensitivity
+    and coarse-matrix-derivative theory, the diffusivity recursion, and the
+    diffusion-process theory that support them. The formalization consumes
+    the public CoarseGraining homogenization library as its analytic base
+    and the public MarkovProcess library for the general theory of
+    continuous strong Markov processes of Feller semigroups. The three
+    headline theorems are independently checked using the
+    SuperdiffusionAudit/ comparator pairs.
   authors:
     - "Scott Armstrong"
     - "Tuomo Kuusi"
+  responsible_maintainers:
+    - "Scott Armstrong"
+    - "Tuomo Kuusi"
   license: "Apache-2.0"
+
+classification:
+  arxiv: ["math.PR", "math.AP", "math-ph"]
+  msc2020: ["60K37", "35B27", "60J60"]
 
 sources:
   - title: "Superdiffusion and anomalous regularization in self-similar random incompressible flows"
@@ -16,9 +37,30 @@ sources:
     id: "arXiv:2601.22142"
     url: "https://arxiv.org/abs/2601.22142"
     type: "manuscript"
+    relationship: "formalizes"
+    note: >-
+      The paper under formalization. Theorems A, B and C of the introduction
+      are all proved, each stated for the actual (un-cutoff) coefficient
+      field a = nu I + k in its introduction-level form; see status.scope
+      for the precise scope boundary and fidelity.divergences for the one
+      known divergence from the paper.
     license: "all rights reserved"
     author_contacted: "n/a"     # the formalizers are among the authors of the source
     prior_work: ""
+
+related_formalizations:
+  - id: "https://github.com/scottnarmstrong/CoarseGraining"
+    relationship: "builds-on"
+    note: >-
+      Scott Armstrong and Tuomo Kuusi, CoarseGraining (public Lean library, a
+      600k+-line development by the same authors). Superdiffusion consumes
+      it as its analytic base.
+  - id: "https://github.com/scottnarmstrong/MarkovProcess"
+    relationship: "builds-on"
+    note: >-
+      Scott Armstrong, MarkovProcess (public Lean library, pinned git
+      dependency at commit dbade0d). Superdiffusion uses it for the general
+      theory of continuous strong Markov processes of Feller semigroups.
 
 status:
   scope: >-
@@ -91,12 +133,12 @@ automation:
         - "gpt-5.6-terra"
       framework: "Claude Code (Anthropic) and Codex (OpenAI) agentic coding harnesses; most code by the Claude models"
       tool_setup: >-
-        Lake builds under leanprover/lean4:v4.26.0 with Mathlib v4.26.0, the
+        Lake builds under leanprover/lean4:v4.33.0 with Mathlib v4.33.0, the
         public CoarseGraining library and the public MarkovProcess library,
         both at pinned revisions.  The public CI builds the three headline
         theorems, prints their axiom dependencies, and runs their Mathlib-only
         comparator challenge/solution pairs.  The comparator workflow pins
-        leanprover/comparator commit 5756749, lean4export v4.26.0, and landrun
+        leanprover/comparator commit 5756749, lean4export v4.33.0, and landrun
         commit 811cfff; its configuration is shipped under .github/workflows/.
       cost:
         wall_time: "approximately two weeks of agentic work"

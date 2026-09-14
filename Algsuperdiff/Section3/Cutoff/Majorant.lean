@@ -88,9 +88,7 @@ theorem summable_cubeMajorant {gamma : ℝ} (hgamma : 0 < gamma)
     simpa using (summable_pow_mul_geometric_of_norm_lt_one (R := ℝ) 1 hq_norm)
   have hpolynomial : Summable (fun r : ℕ => (C + (r : ℝ)) * q ^ r) := by
     have hsum := (hgeometric.mul_left C).add hlinear
-    convert hsum using 1
-    ext r
-    ring
+    simpa only [Pi.add_apply, Pi.mul_apply, mul_add, add_mul] using hsum
   let A : ℝ := Real.rpow 3 (gamma * (m : ℝ))
   have hA_nonneg : 0 ≤ A := by
     dsimp [A]

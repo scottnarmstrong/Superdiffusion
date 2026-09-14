@@ -129,7 +129,7 @@ theorem interiorGradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
     (f := u.grad) (by norm_num) (by norm_num) Set.Subset.rfl (by
       change MemLp (fun x => HilbertVec.ofVec (u.grad x)) (ENNReal.ofReal 2)
         (volume.restrict (smallContrastUnitBall d))
-      simpa only [ENNReal.ofReal_ofNat] using
+      simpa only [ENNReal.ofReal_ofNat] using!
         memHilbertVectorL2_hilbertifyVecField hgradUnit)
   intro z hz r hr hrhalf
   have houter : euclideanBall z (1 / 2) ⊆ smallContrastUnitBall d := by
@@ -217,7 +217,7 @@ theorem interiorGradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
       smallContrastZerothGradientExtraConstant, smallContrastGradientConstant,
       smallContrastZerothOrderDataSize, smallContrastDataSize, H, P, Pd, D, F, G] at hprice ⊢
     convert hprice using 1
-    all_goals ring
+    all_goals first | rfl | ring
 
 /-- Concentric gradient row for the zeroth-order equation. -/
 theorem gradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
@@ -239,7 +239,7 @@ theorem gradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
     (f := u.grad) (by norm_num) (by norm_num) Set.Subset.rfl (by
       change MemLp (fun x => HilbertVec.ofVec (u.grad x)) (ENNReal.ofReal 2)
         (volume.restrict (smallContrastUnitBall d))
-      simpa only [ENNReal.ofReal_ofNat] using
+      simpa only [ENNReal.ofReal_ofNat] using!
         memHilbertVectorL2_hilbertifyVecField hgradUnit)
   have hread := gradientScaleBound_zerothOrder_on_ball (0 : Vec d) (R := 1)
     (by norm_num) (by norm_num) Set.Subset.rfl hd halpha hdelta0 hdelta
@@ -280,8 +280,8 @@ theorem gradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
       smallContrastZerothGradientExtraConstant, smallContrastGradientConstant,
       smallContrastZerothOrderDataSize, smallContrastDataSize, H, P, Pd, D, F, G] at hprice ⊢
     convert hprice using 1
-    all_goals simp only [smallContrastUnitBall, Real.one_rpow, one_mul]
-    all_goals ring
+    all_goals try simp only [smallContrastUnitBall, Real.one_rpow, one_mul]
+    all_goals first | rfl | ring
 
 end
 

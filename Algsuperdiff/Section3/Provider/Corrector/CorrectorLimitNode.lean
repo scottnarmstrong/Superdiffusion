@@ -217,13 +217,13 @@ private theorem integrable_setIntegral_energy_of_test
     (htest : ∀ᵐ ω ∂μ, ∀ v, P v →
       ∫ x in U, vecDot (Dfam ω x + (realize f ω x).toVec) (v x) = 0) :
     Integrable (fun ω => ∫ x in U, vecDot (Dfam ω x) (Dfam ω x)) μ := by
-  haveI : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by simp⟩
+  have : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by simp⟩
   -- Almost every realization is square integrable on `U`.
   have hFae : ∀ᵐ ω ∂μ, MemVectorL2 U fun x => (realize f ω x).toVec := by
     filter_upwards [ae_memLp_two_realize (μ := μ) hUfin hfm hf] with ω hω
     exact memVectorL2_toVec_of_memHilbertVectorL2 hω
   -- Step 2: a countable family of admissible competitors, dense in `L²(U;ℝᵈ)`.
-  haveI : Nonempty (admissibleL2Set U P) :=
+  have : Nonempty (admissibleL2Set U P) :=
     ⟨⟨toHilbertVectorL2OfVecField (hPmem 0 hP0),
       mem_admissibleL2Set.2 ⟨0, hPmem 0 hP0, rfl, hP0⟩⟩⟩
   obtain ⟨u, hu⟩ := TopologicalSpace.exists_dense_seq (admissibleL2Set U P)
@@ -327,7 +327,7 @@ private theorem integrable_setIntegral_energy_of_test
         (le_ciSup hbdd n)
     refine le_antisymm ?_ (ciSup_le hle)
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hεpos : 0 < ((∫ x in U, vecDot (Dfam ω x) (Dfam ω x)) - ⨆ n, phi n ω) / 2 := by
       linarith
     have hlast := hkey _ hεpos

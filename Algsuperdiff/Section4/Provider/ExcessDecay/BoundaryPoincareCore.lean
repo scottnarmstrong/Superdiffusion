@@ -104,7 +104,7 @@ private theorem eLpNorm_le_of_zeroSet_of_meanZeroBound {U E : Set (Vec d)}
     exact mul_nonneg (mul_nonneg hone hC) hS
   · have hE0 : volume E ≠ 0 := by
       intro h
-      exact hU0 (le_antisymm (by simpa [h] using hvol) (zero_le _))
+      exact hU0 (le_antisymm (by simpa [h] using hvol) zero_le)
     have hrestrU : (volume.restrict U) ≠ 0 := by
       intro h
       exact hU0 (by simpa using congrArg (fun μ => μ U) h)

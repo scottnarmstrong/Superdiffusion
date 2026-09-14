@@ -252,6 +252,9 @@ theorem measurable_matrixOperatorNorm_finiteShellIncrement (n m : ℤ) (z : Vec 
       matrixOperatorNorm (finiteShellIncrement omega n m z)) := by
   have hvec : Measurable (fun omega : ShellSeq d =>
       finiteShellIncrement omega n m z) := by
+    have hMAdd : MeasurableAdd₂ (Mat d) := by
+      show MeasurableAdd₂ (Fin d → Fin d → ℝ)
+      infer_instance
     have hrw : (fun omega : ShellSeq d => finiteShellIncrement omega n m z) =
         fun omega : ShellSeq d => ∑ k ∈ Finset.Ioc n m, (omega k) z := by
       funext omega

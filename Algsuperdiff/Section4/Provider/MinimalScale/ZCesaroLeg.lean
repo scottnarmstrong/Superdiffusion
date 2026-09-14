@@ -131,7 +131,7 @@ theorem sum_indicator_le_of_le_one (M : ABKModel d) (Ccg : ℝ) (s : {s : ℝ //
   · rw [Set.indicator_of_mem hmem,
       Set.indicator_of_mem (goodEventBase_subset_one M Ccg k s hep0 hep1 hmem)]
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 /-! ## 3. The `√`-arithmetic of the Markov level -/
 
@@ -629,8 +629,8 @@ theorem measure_tail_badCesaro_le_half (C : ℝ) (hC : 2 * zOneConst d ≤ C)
         (((0 : ℕ) : ℕ∞)) ≤ Probability.minimalScaleEN (badCesaro M s delta hs m) omega}
         = Set.univ :=
       Set.eq_univ_of_forall fun omega => by
-        simp only [Set.mem_setOf_eq, Nat.cast_zero]
-        exact zero_le _
+        simp only [Set.mem_ofPred_eq, Nat.cast_zero]
+        exact zero_le
     rw [huniv, measure_univ,
       show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm]
     refine ENNReal.ofReal_le_ofReal ?_

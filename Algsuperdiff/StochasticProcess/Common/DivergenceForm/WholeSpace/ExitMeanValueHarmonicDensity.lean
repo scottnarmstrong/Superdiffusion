@@ -86,7 +86,7 @@ def c0PosPart (g : C₀(Vec d, ℝ)) : C₀(Vec d, ℝ) where
   zero_at_infty' := by
     have hmax : Continuous fun r : ℝ ↦ max r 0 := continuous_id.max continuous_const
     have hcomp := (hmax.tendsto (0 : ℝ)).comp g.zero_at_infty'
-    simpa only [Function.comp_def, max_self] using hcomp
+    simpa only [Function.comp_def, max_self] using! hcomp
 
 @[simp] theorem c0PosPart_apply (g : C₀(Vec d, ℝ)) (x : Vec d) :
     c0PosPart g x = max (g x) 0 := rfl

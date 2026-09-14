@@ -83,7 +83,7 @@ private theorem volumeAverage_sub_const_sq_expand {W : Set (Vec d)}
       volumeAverage W (fun x => f x ^ 2) - 2 * c * volumeAverage W f + c ^ 2 := by
   have hVpos : (0 : ℝ) < (volume W).toReal := ENNReal.toReal_pos hWpos.ne' hWtop
   have hVne : ((volume W).toReal) ≠ 0 := ne_of_gt hVpos
-  haveI : IsFiniteMeasure (volume.restrict W) := by
+  have : IsFiniteMeasure (volume.restrict W) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hWtop
@@ -193,7 +193,7 @@ theorem normalizedL2On_sub_le_oscillation_add_meanGap_add_datumOscillation
   have hconstMem : MemLp
       (fun _ : Vec d => volumeAverage W u - volumeAverage W h) 2
       (volume.restrict W) := by
-    haveI : IsFiniteMeasure (volume.restrict W) := by
+    have : IsFiniteMeasure (volume.restrict W) := by
       refine ⟨?_⟩
       rw [Measure.restrict_apply_univ]
       exact lt_top_iff_ne_top.2 hWtop

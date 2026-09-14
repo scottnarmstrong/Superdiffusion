@@ -98,7 +98,7 @@ theorem measurableSet_fullTailGood (d : ℕ) (gamma : ℝ) :
         ⋂ n : ℤ, ⋂ y : Fin d → ℚ,
           {omega : CutoffSample d | UpperGradBounded n (ratPoint y) omega} := by
     ext omega
-    simp only [fullTailGoodSet, FullTailGood, Set.mem_setOf_eq, Set.mem_inter_iff,
+    simp only [fullTailGoodSet, FullTailGood, Set.mem_ofPred_eq, Set.mem_inter_iff,
       Set.mem_iInter]
     exact and_iff_right omega.2
   rw [hrw]

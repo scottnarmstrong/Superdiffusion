@@ -32,7 +32,7 @@ private theorem isScalarForcedWeakSolution_smul
       (c • u).toH1Function := by
   refine ⟨?_, ?_⟩
   · have h := hu.1.const_smul c
-    simpa only [Pi.smul_apply, smul_eq_mul] using h
+    simpa only [Pi.smul_apply, smul_eq_mul] using! h
   · intro phi
     have h := hu.2 phi
     have hflux :

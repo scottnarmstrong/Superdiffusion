@@ -224,7 +224,7 @@ theorem memVectorL2_of_holderSeminormBoundOn {m : ℤ} {alpha K : ℝ}
     {f : Vec d → Vec d} (hK : 0 ≤ K) (halpha : 0 < alpha)
     (hf : HolderSeminormBoundOn (openCubeSet (originCube d m)) alpha K f) :
     MemVectorL2 (openCubeSet (originCube d m)) f := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
     (isOpenBoundedConvexDomain_openCubeSet (originCube d m)).isFiniteMeasure_restrict_volume
   have hmeas : AEStronglyMeasurable f (volumeMeasureOn (openCubeSet (originCube d m))) :=
     (continuousOn_of_holderSeminormBoundOn hK halpha hf).aestronglyMeasurable

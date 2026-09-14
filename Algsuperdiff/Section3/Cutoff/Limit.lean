@@ -66,7 +66,7 @@ private theorem continuous_finiteLowerCutoff_entry (m : ℤ) (q : ℕ)
     funext x
     exact finiteLowerCutoff_apply_entry_eq_sum_range_desc m q omega x i j
   rw [hfun]
-  exact continuous_finset_sum _ fun r _ =>
+  exact continuous_finsetSum _ fun r _ =>
     ((continuous_apply j).comp
       ((continuous_apply i).comp (omega (m - (r : ℤ))).1.1.continuous))
 
@@ -114,7 +114,7 @@ theorem measurable_cutoff_apply_entry (m : ℤ) (x : Vec d) (i j : Fin d) :
   · rw [tendsto_pi_nhds]
     intro omega
     obtain ⟨ell, hx⟩ := exists_mem_openOriginCube x
-    simpa only [cutoff_apply_entry] using
+    simpa only [cutoff_apply_entry] using!
       (lowerTailGood_tendstoUniformlyOn_finiteLowerCutoff_entry omega.2 ell m i j).tendsto_at hx
 
 private theorem measurable_shell_entry_uncurried (n : ℤ) (i j : Fin d) :
@@ -152,7 +152,7 @@ private theorem measurable_cutoff_apply_entry_uncurried (m : ℤ) (i j : Fin d) 
   · rw [tendsto_pi_nhds]
     intro p
     obtain ⟨ell, hp⟩ := exists_mem_openOriginCube p.2
-    simpa only [cutoff_apply_entry] using
+    simpa only [cutoff_apply_entry] using!
       (lowerTailGood_tendstoUniformlyOn_finiteLowerCutoff_entry p.1.2 ell m i j).tendsto_at hp
 
 private theorem measurable_entryTestR_cutoff (m : ℤ) (i j : Fin d)

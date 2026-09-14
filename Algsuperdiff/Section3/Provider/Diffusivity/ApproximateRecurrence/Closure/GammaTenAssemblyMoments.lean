@@ -132,7 +132,7 @@ spelling the grid fold reads. -/
 theorem memLp_ofRealTwo_mul_of_memLp_four {mu : Measure Omega} {f g : Omega → ℝ}
     (hfm : MemLp f 4 mu) (hgm : MemLp g 4 mu) :
     MemLp (fun w => f w * g w) (ENNReal.ofReal 2) mu := by
-  haveI := holderTriple_four_four_two
+  have := holderTriple_four_four_two
   rw [gammaTenMoments_ofReal_two]
   exact hgm.mul' hfm
 
@@ -141,7 +141,7 @@ Hoelder twice, `L^4 x L^4 -> L^2` and then `L^2 x L^2 -> L^1`. -/
 theorem integrable_mul_mul_of_memLp_four {mu : Measure Omega} [IsFiniteMeasure mu]
     {f g h : Omega → ℝ} (hfm : MemLp f 4 mu) (hgm : MemLp g 4 mu) (hhm : MemLp h 4 mu) :
     Integrable (fun w => f w * g w * h w) mu := by
-  haveI := holderTriple_four_four_two
+  have := holderTriple_four_four_two
   have hfg : MemLp (fun w => f w * g w) 2 mu := hgm.mul' hfm
   have hh2 : MemLp h 2 mu := hhm.mono_exponent (by norm_num)
   exact hfg.integrable_mul hh2

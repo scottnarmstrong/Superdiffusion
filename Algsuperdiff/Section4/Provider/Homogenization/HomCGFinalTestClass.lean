@@ -150,7 +150,7 @@ theorem tendsto_cubePairing {Q : TriadicCube d}
     have hcomp : ∀ i : Fin d,
         Filter.Tendsto (fun k => psi k x i) Filter.atTop (nhds (psiLim x i)) :=
       fun i => ((continuous_apply i).tendsto (psiLim x)).comp h
-    have hsum := tendsto_finset_sum (Finset.univ : Finset (Fin d))
+    have hsum := tendsto_finsetSum (Finset.univ : Finset (Fin d))
       (fun i _ => (hcomp i).const_mul (F.toField x i))
     simpa only [vecDot] using hsum
 
@@ -264,7 +264,7 @@ theorem smoothDualDominatesHolderTestsAt (Q : TriadicCube d) (s' s : FractionalO
         exact norm_le_zero_iff.mp h
       simp [hphi, vecDot]
     rw [hzeroPairing, abs_zero, ENNReal.ofReal_zero]
-    exact zero_le _
+    exact zero_le
   · /- the generic ca -/
     set Kt := cgTestConst d Q s.1 s'.1 p.conjugate.exponent.toReal with hKtdef
     set G : ℝ := Kt * wsInftyGauge Q s.1 Ksup KHol with hGdef

@@ -216,11 +216,11 @@ theorem splitScaleObligations_integrability_closureFamilies (d : ℕ) [NeZero d]
     eventually_recurrenceParams_largeCube M n h, hKge] with K hK hK10 hKn
   refine ⟨hK, ?_⟩
   intro R hR
-  letI : MeasurableSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) := borel _
-  haveI : BorelSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) := ⟨rfl⟩
-  letI : MeasurableSpace (HilbertBlockL2
+  let : MeasurableSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) := borel _
+  have : BorelSpace (HilbertBlockL2 (openCubeSet (originCube d (K : ℤ)))) := ⟨rfl⟩
+  let : MeasurableSpace (HilbertBlockL2
       ((Ch02.cubeDomain R : Ch02.Domain d) : Set (Vec d))) := borel _
-  haveI : BorelSpace (HilbertBlockL2
+  have : BorelSpace (HilbertBlockL2
       ((Ch02.cubeDomain R : Ch02.Domain d) : Set (Vec d))) := ⟨rfl⟩
   obtain ⟨hpotSq, hfluxOne⟩ :=
     hmom M hgamma n h Ec hstate hpos hhcap e e' he he' K hK10 hKn R hR

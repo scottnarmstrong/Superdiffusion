@@ -60,7 +60,7 @@ theorem le_exp_mul_add_of_hasDerivAt_le {y y' : ℝ → ℝ} {c m t₁ t₂ : �
   have hederiv : ∀ τ, HasDerivAt e (-c * e τ) τ := by
     intro τ
     have hlin : HasDerivAt (fun s : ℝ => -(c * (s - t₁))) (-c) τ := by
-      simpa using (((hasDerivAt_id τ).sub_const t₁).const_mul c).neg
+      simpa using! (((hasDerivAt_id τ).sub_const t₁).const_mul c).neg
     simpa [hedef, mul_comm] using hlin.exp
   set z : ℝ → ℝ := fun τ => e τ * y τ - m * (τ - t₁) with hzdef
   set z' : ℝ → ℝ := fun τ => (-c * e τ * y τ + e τ * y' τ) - m with hz'def
@@ -70,7 +70,7 @@ theorem le_exp_mul_add_of_hasDerivAt_le {y y' : ℝ → ℝ} {c m t₁ t₂ : �
         (-c * e τ * y τ + e τ * y' τ) τ := (hederiv τ).mul (hderiv τ)
     have hlin : HasDerivAt (fun s : ℝ => m * (s - t₁)) m τ := by
       simpa using ((hasDerivAt_id τ).sub_const t₁).const_mul m
-    simpa [hz'def] using hprod.sub hlin
+    simpa [hz'def] using! hprod.sub hlin
   have hzbound : ∀ τ, t₁ ≤ τ → τ ≤ t₂ → z' τ ≤ 0 := by
     intro τ h1 h2
     have hey : e τ * y' τ ≤ e τ * (m + c * y τ) :=

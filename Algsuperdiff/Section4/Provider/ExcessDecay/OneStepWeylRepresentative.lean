@@ -91,7 +91,9 @@ theorem isOpen_innerRegion {U : Set (Vec d)} (hU : IsOpen U) (eps : ℝ) :
   refine fun z hz => hsub ?_
   refine Metric.mem_thickening_iff.2 ⟨p + (z - q), ?_, ?_⟩
   · rw [mem_closedBall, dist_eq_norm]
-    simpa using (mem_closedBall.1 hz)
+    have h : p + (z - q) - p = z - q := by abel
+    rw [h]
+    simpa only [dist_eq_norm] using (mem_closedBall.1 hz)
   · rw [dist_eq_norm]
     have hzq : z - (p + (z - q)) = q - p := by abel
     rw [hzq, ← dist_eq_norm]
@@ -372,7 +374,7 @@ theorem exists_harmonicRepresentative_full [NeZero d] {U : Set (Vec d)} (hUopen 
     filter_upwards [hae_all] with p hp hpj
     rw [hp k (hRmono j k hjk hpj), hp j hpj]
   set v : Vec d → ℝ :=
-    Set.indicator U (fun q => limUnder Filter.atTop (fun k => w k q)) with hvdef
+    Set.indicator U (fun q => Filter.limUnder Filter.atTop (fun k => w k q)) with hvdef
   have hval : ∀ (k : ℕ) (p : Vec d), p ∈ R k → v p = w k p := by
     intro k p hpk
     rw [hvdef, Set.indicator_of_mem (hRsub k hpk)]

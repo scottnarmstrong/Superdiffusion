@@ -60,7 +60,7 @@ theorem eq_analyticCubeResolvent_of_isRepresentative (A : WholeSpaceAnalyticData
     (isOpenBoundedConvexDomain_wholeSpaceCube d v).isOpen hucont.continuousOn
     (A.continuousOn_analyticCubeResolvent lam hf hfD v) ?_ hx
   filter_upwards [hurep, A.analyticCubeResolvent_ae lam hf hfD v] with y h1 h2
-  rw [h1, h2, alphaShiftedResolvent_apply]
+  rw [h1, h2]
   exact congrArg (fun w ↦ ZeroTraceSobolev.toL2 w y)
     (alphaShiftedSolution_congr_ellipticity A.a lam.property A.hnu A.hnu
       (partEllipticity A (isOpenBoundedConvexDomain_wholeSpaceCube d v))
@@ -93,8 +93,8 @@ theorem killedResolvent_le_ofReal_of_iInf_le
         (PositiveC0ContractiveResolvent.onePointLiveExtension
           (fun y => ENNReal.ofReal (P.f y))) (x : OnePoint (Vec d)) ≤
       ENNReal.ofReal c := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   have hFm : Measurable (onePointRealExtension P.f) :=
     measurable_onePointRealExtension P.hf
   have hF0 : ∀ z, 0 ≤ onePointRealExtension P.f z := by

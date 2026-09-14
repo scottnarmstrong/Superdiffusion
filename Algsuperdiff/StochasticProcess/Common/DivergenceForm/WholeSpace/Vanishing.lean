@@ -46,7 +46,7 @@ theorem cubeDatumResolventH10_value (mu : PositiveShift) {f : Vec d → ℝ}
         (boundedMeasurableToScalarL2
           (isOpenBoundedConvexDomain_wholeSpaceCube d m)
           (hf.comp measurable_subtype_coe) (fun y => hfD y)) := by
-  simpa only [alphaShiftedResolvent_apply] using
+  simpa only [alphaShiftedResolvent_apply] using!
     (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function
       (isOpenBoundedConvexDomain_wholeSpaceCube d m)
       (alphaShiftedSolution A.a mu.property A.hnu
@@ -77,7 +77,7 @@ theorem cubeDatumResolventH10_isScalarForcedWeakSolution
       alphaShiftedSolution A.a mu.property A.hnu
         (A.cubeEllipticity m) F := by
     apply ZeroTraceSobolev.ext
-    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F] using
+    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F] using!
         A.cubeDatumResolventH10_value mu hf hfD m
     · exact (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function hU
         (alphaShiftedSolution A.a mu.property A.hnu

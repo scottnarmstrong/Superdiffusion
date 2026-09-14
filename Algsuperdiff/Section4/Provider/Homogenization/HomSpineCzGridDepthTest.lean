@@ -177,7 +177,7 @@ theorem enorm_euclideanNorm_gridDualDepthTest_rpow (Q : TriadicCube d) (j : ℕ)
         (hdisj (Finset.mem_coe.mpr hS) (Finset.mem_coe.mpr hR) hSR) hxS) hxR
     · intro h
       exact absurd hR h
-  · push_neg at hx
+  · push Not at hx
     have hzero : gridDualDepthTest Q j v x = 0 := by
       rw [gridDualDepthTest]
       exact Finset.sum_eq_zero fun R hR => Set.indicator_of_notMem (hx R hR) _
@@ -196,7 +196,7 @@ theorem lintegral_enorm_euclideanNorm_gridDualDepthTest_rpow (Q : TriadicCube d)
       (fun x => ∑ R ∈ descendantsAtDepth Q j,
         (cubeSet R).indicator (fun _ => ‖euclideanNorm (v R)‖ₑ ^ r) x) from
     funext fun x => enorm_euclideanNorm_gridDualDepthTest_rpow Q j v hr x]
-  rw [lintegral_finset_sum _
+  rw [lintegral_finsetSum _
     (fun R _ => (measurable_const.indicator (measurableSet_cubeSet R)))]
   refine Finset.sum_congr rfl fun R hR => ?_
   rw [lintegral_indicator (measurableSet_cubeSet R), setLIntegral_const,
@@ -213,7 +213,7 @@ theorem normalizedEuclideanLpENorm_gridDualDepthTest (Q : TriadicCube d) (j : �
   simp only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
     BoundedMeasurableDomain.normalizedLpENorm,
     cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
-  rw [eLpNorm_eq_lintegral_rpow_enorm (ne_of_gt (lt_trans zero_lt_one q.one_lt)) q.lt_top.ne,
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (ne_of_gt (lt_trans zero_lt_one q.one_lt)) q.lt_top.ne,
     lintegral_enorm_euclideanNorm_gridDualDepthTest_rpow Q j v (finiteLpExponent_toReal_pos q)]
 
 /-- The Euclidean size of a dual-test coefficient: the `vecSupDual` factor is a
@@ -263,7 +263,7 @@ private theorem depthFlat_exponent_le {s t r m0 jj : ℝ} (hs : 0 < s) (hr : 0 <
 /-- The Hölder conjugacy of a finite exponent, read in the reals. -/
 theorem holderConjugate_toReal (p : FiniteLpExponent) :
     (p.exponent.toReal).HolderConjugate p.conjugate.exponent.toReal := by
-  letI : ENNReal.HolderConjugate p.exponent p.conjugate.exponent := p.holderConjugate
+  let : ENNReal.HolderConjugate p.exponent p.conjugate.exponent := p.holderConjugate
   exact ENNReal.HolderConjugate.toReal (one_lt_finiteLpExponent_toReal p)
 
 /-- The scale weight of the full norm, in `ENNReal.ofReal` form. -/
@@ -542,7 +542,7 @@ theorem depthEnergy_rpow_le_smoothDual_of_gagliardo (Q : TriadicCube d) (s : Fra
     exact mul_le_mul' le_rfl hfull
   rcases eq_or_ne E 0 with hE0 | hE0
   · rw [hE0, ENNReal.zero_rpow_of_pos (by positivity)]
-    exact zero_le _
+    exact zero_le
   · have hsplit : E = E ^ t⁻¹ * E ^ r⁻¹ := by
       have hinv : t⁻¹ + r⁻¹ = 1 := by
         have := hconj.mul_eq_add

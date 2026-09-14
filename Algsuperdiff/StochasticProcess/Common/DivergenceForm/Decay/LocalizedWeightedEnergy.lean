@@ -84,12 +84,12 @@ theorem weightedEnergy_localized_le {a : CoeffField d} {g zeta : Vec d → ℝ}
     exact (hcont.memLp_of_hasCompactSupport hcomp).restrict U
   have hq : MemVectorL2 U qf := by
     simpa only [MemVectorL2, volumeMeasureOn, qf, Pi.smul_apply, smul_eq_mul,
-      mul_comm] using
+      mul_comm] using!
       (MemLp.of_eval fun i : Fin d =>
         (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
   have hudz : MemVectorL2 U (fun x => u.toFun x • dz x) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul,
-      mul_comm] using
+      mul_comm] using!
       (MemLp.of_eval fun i : Fin d => u.memL2.mul' (hdzTop i))
   have hr : MemVectorL2 U rf := by
     have hbase : MemVectorL2 U (fun x => w.toH1Function.grad x - qf x) :=
@@ -105,7 +105,7 @@ theorem weightedEnergy_localized_le {a : CoeffField d} {g zeta : Vec d → ℝ}
       rw [show (fun y => zeta y ^ 2) = zeta * zeta by
         funext y; simp only [pow_two, Pi.mul_apply]]
       rw [fderiv_mul hdiff hdiff]
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       ring
     rw [hfd]
@@ -174,7 +174,7 @@ theorem weightedEnergy_localized_le {a : CoeffField d} {g zeta : Vec d → ℝ}
     by_cases hzero : fderiv ℝ zeta x = 0
     · have hdz : dz x = fun _ : Fin d => (0 : ℝ) := by
         funext i
-        simp only [dz, hzero, ContinuousLinearMap.zero_apply]
+        simp only [dz, hzero, zero_apply]
       have hdotzero : vecDot (matVecMul (a x) (u.grad x)) (dz x) = 0 := by
         rw [hdz]
         simp only [vecDot, mul_zero, Finset.sum_const_zero]
@@ -260,7 +260,7 @@ private theorem fderiv_mul_basisVec_local {f h : Vec d → ℝ}
   have hhd : DifferentiableAt ℝ h x := hh.differentiable (by simp) x
   rw [show (fun y => f y * h y) = f * h by funext y; simp only [Pi.mul_apply]]
   rw [fderiv_mul hfd hhd]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     smul_eq_mul]
   ring
 
@@ -289,7 +289,7 @@ theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
   have hzeta : ContDiff ℝ (⊤ : ℕ∞) zeta := heta.mul hchi
   have hzetaCompact : HasCompactSupport zeta := hetaCompact.mul_right
   have hetaSq : HasCompactSupport (fun x => eta x ^ 2) := by
-    simpa only [pow_two] using hetaCompact.mul_left (f := eta)
+    simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
   have hmassTop : MemLp (fun x => eta x ^ 2 * chi x ^ 2) ∞ mu := by
     refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict U
     · exact (heta.continuous.pow 2).mul (hchi.continuous.pow 2)

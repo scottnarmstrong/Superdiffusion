@@ -105,7 +105,7 @@ theorem continuous_gradToHilbertVectorL2_closureDirichletFamily [NeZero d]
     (c : ℝ) (e : Vec d) (K : ℕ) :
     Continuous fun f : C(Vec d, Mat d) =>
       (closureDirichletFamily c e K f).toH1Function.gradToHilbertVectorL2 := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet _
   have hEq : (fun f : C(Vec d, Mat d) =>
         (closureDirichletFamily c e K f).toH1Function.gradToHilbertVectorL2) =
@@ -135,7 +135,7 @@ theorem continuous_gradToHilbertVectorL2_closureNeumannFamily
     (c : ℝ) (e : Vec d) (K : ℕ) :
     Continuous fun f : C(Vec d, Mat d) =>
       (closureNeumannFamily c e K f).gradToHilbertVectorL2 := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet _
   have hEq : (fun f : C(Vec d, Mat d) =>
         (closureNeumannFamily c e K f).gradToHilbertVectorL2) =

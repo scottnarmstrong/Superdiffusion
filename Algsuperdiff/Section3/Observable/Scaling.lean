@@ -82,7 +82,7 @@ theorem dilatedFamily_root_aeeq_unitRescaledCoeffOn {d : ℕ} (m : ℤ)
       dilateCoeffField (-m) (F.coeffOn (originCube d m)).toCoeffField
         =ᵐ[volumeMeasureOn (openCubeSet (originCube d 0))]
           dilateCoeffField (-m) a.toCoeffField := by
-    simpa [dilateCoeffField, dilateOriginCube_neg_scale] using
+    simpa [dilateCoeffField, dilateOriginCube_neg_scale] using!
       (eventuallyEq_comp_undilate_of_ae_eq (-m) hF)
   exact hfamily.trans
     (hpull.trans (unitRescaledCoeffOn_toCoeffField_ae_eq m a).symm)

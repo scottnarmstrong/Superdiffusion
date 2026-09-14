@@ -77,8 +77,8 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
       atTop (nhds 0)) :
     Tendsto (fun n => ∫ x in U, f n x * h x ∂volume)
       atTop (nhds (∫ x in U, g x * h x ∂volume)) := by
-  letI : ENNReal.HolderConjugate p.exponent p.conjugate.exponent := p.holderConjugate
-  letI : ENNReal.HolderConjugate p.conjugate.exponent p.exponent := inferInstance
+  let : ENNReal.HolderConjugate p.exponent p.conjugate.exponent := p.holderConjugate
+  let : ENNReal.HolderConjugate p.conjugate.exponent p.exponent := inferInstance
   set μ : Measure (Vec d) := volume.restrict U with hμ
   have hfh_int : ∀ n, Integrable (fun x => f n x * h x) μ := by
     intro n
@@ -102,7 +102,7 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
         tendsto_const_nhds (Or.inr (by simp))
     rw [zero_mul] at hprod
     have hreal := (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ⊤)).comp hprod
-    simpa using hreal
+    simpa using! hreal
   refine squeeze_zero_norm ?_ hBtend
   intro n
   rw [hdiff_eq n]
@@ -113,13 +113,13 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
     have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
       (p := p.exponent) (q := p.conjugate.exponent) (r := 1)
       ((hf n).sub hg).1 hh.1 (fun x y => x * y) 1 hbound
-    simpa [B] using hh'
+    simpa [B] using! hh'
   calc ‖∫ x, (f n x - g x) * h x ∂μ‖
       ≤ (∫⁻ x, ENNReal.ofReal ‖(f n x - g x) * h x‖ ∂μ).toReal :=
         norm_integral_le_lintegral_norm _
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
         rw [eLpNorm_one_eq_lintegral_enorm]
-        simp_rw [ofReal_norm_eq_enorm]
+        simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
         refine ENNReal.toReal_mono ?_ hHolder
         exact ENNReal.mul_ne_top ((hf n).sub hg).2.ne hh.2.ne
@@ -239,7 +239,7 @@ private theorem fderiv_approx_eq_zero_of_notMem {V : Set (Vec d)}
     ((isClosed_tsupport (f := u.approx n)).isOpen_compl.eventually_mem hout).mono
       fun z hz => image_eq_zero_of_notMem_tsupport hz
   rw [hzero.fderiv_eq]
-  simp only [fderiv_zero, Pi.zero_apply, ContinuousLinearMap.zero_apply]
+  simp only [fderiv_zero, Pi.zero_apply, zero_apply]
 
 private theorem approx_sub_zeroExtend_eq {V : Set (Vec d)} (u : H10Function V)
     (n : ℕ) :
@@ -288,7 +288,7 @@ theorem hasWeakGradientOn_univ_zeroExtend {V : Set (Vec d)}
     (u_n := fun n => u.approx n)
     (Du_n := fun n y => fun i => (fderiv ℝ (u.approx n) y) (basisVec i))
     ?_ ?_ ?_ ?_ ?_ ?_ ?_
-  · simpa only [Measure.restrict_univ] using memL2_zeroExtend hV u
+  · simpa only [Measure.restrict_univ] using! memL2_zeroExtend hV u
   · exact gradMemL2_zeroExtendGrad hV u
   · intro n
     exact ((u.approx_smooth n).continuous.memLp_of_hasCompactSupport
@@ -308,7 +308,7 @@ theorem hasWeakGradientOn_univ_zeroExtend {V : Set (Vec d)}
       refine u.tendsto_approx.congr fun n => ?_
       rw [approx_sub_zeroExtend_eq u n,
         MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV]
-    simpa only [Measure.restrict_univ] using htend
+    simpa only [Measure.restrict_univ] using! htend
   · intro i
     have htend : Tendsto
         (fun n => eLpNorm (fun y => (fderiv ℝ (u.approx n) y) (basisVec i) -
@@ -316,7 +316,7 @@ theorem hasWeakGradientOn_univ_zeroExtend {V : Set (Vec d)}
       refine (u.tendsto_approx_grad i).congr fun n => ?_
       rw [fderiv_approx_sub_zeroExtendGrad_eq u n i,
         MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV]
-    simpa only [Measure.restrict_univ] using htend
+    simpa only [Measure.restrict_univ] using! htend
 
 /-! ## 3. Reflection transport of a global weak gradient -/
 

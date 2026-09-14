@@ -118,7 +118,7 @@ theorem measurable_fluxCorrectedRegField (M : ABKModel d) (L m : ℤ)
     Measurable (fluxCorrectedRegField M L m Q) :=
   (Cutoff.measurable_coefficientCutoff M.nu L).add
     (measurable_constRegCoeffField_comp _ fun i j => by
-      simpa only [Matrix.neg_apply] using
+      simpa only [Matrix.neg_apply] using!
         (measurable_fluxIncrementAverage_entry M L m Q i j).neg)
 
 /-! ## Local uniform ellipticity of every flux-corrected sample -/
@@ -254,7 +254,7 @@ private theorem measurableSet_aeLocallyUniformlyEllipticField :
           {a : RegCoeffField d |
             AEEQuantitativeEllipticSlice (cubeSet Q) k a.toFun} := by
     ext a
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_iUnion]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_iUnion]
     constructor
     · intro ha Q
       exact ha.exists_aeeQuantitativeEllipticSlice_cubeSet Q
@@ -284,7 +284,7 @@ theorem lawCarrier_map_fluxCorrectedRegField (M : ABKModel d) (L m : ℤ)
         (Cutoff.cutoffSampleLaw M).toMeasure) := by
   have hT : Measurable (fluxCorrectedRegField M L m Q) :=
     measurable_fluxCorrectedRegField M L m Q
-  haveI : IsProbabilityMeasure
+  have : IsProbabilityMeasure
       (Measure.map (fluxCorrectedRegField M L m Q)
         (Cutoff.cutoffSampleLaw M).toMeasure) :=
     Measure.isProbabilityMeasure_map hT.aemeasurable
@@ -308,7 +308,7 @@ theorem aemeasurable_fluxCorrectedCoarseFullBlockRaw (M : ABKModel d) (L m : ℤ
       (Cutoff.cutoffSampleLaw M).toMeasure := by
   have hcoarse :=
     (lawCarrier_map_fluxCorrectedRegField M L m Q).aemeasurable_coarseFullBlockMatrix_cubeSet R
-  simpa only [fluxCorrectedCoarseFullBlockRaw, Function.comp_def] using
+  simpa only [fluxCorrectedCoarseFullBlockRaw, Function.comp_def] using!
     hcoarse.comp_measurable (measurable_fluxCorrectedRegField M L m Q)
 
 /-- The common coarse-block representative of the flux-corrected coefficient. -/
@@ -502,8 +502,10 @@ theorem measurable_tsum_of_nonneg
     {Omega : Type*} [MeasurableSpace Omega] (term : ℕ → Omega → ℝ)
     (hmeas : ∀ n, Measurable (term n)) (hnonneg : ∀ n omega, 0 ≤ term n omega) :
     Measurable (fun omega => ∑' n, term n omega) := by
-  have hnn :=
-    (Measurable.nnreal_tsum fun n => (hmeas n).real_toNNReal).coe_nnreal_real
+  have hnn : Measurable (fun omega => ∑' n, (term n omega).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+      (hmeas n).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]
@@ -572,14 +574,14 @@ noncomputable def fluxCorrectedErrorRepresentative (M : ABKModel d) (L k : ℤ)
 theorem measurable_fluxCorrectedErrorRepresentative (M : ABKModel d) (L k : ℤ)
     (s : {s : ℝ // 0 < s}) :
     Measurable (fluxCorrectedErrorRepresentative M L k s) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change Measurable (fluxCorrectedErrorFunctional M L k (s : ℝ))
   exact measurable_fluxCorrectedErrorFunctional M L k s.2
 
 theorem fluxCorrectedErrorRepresentative_nonneg (M : ABKModel d) (L k : ℤ)
     (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
     0 ≤ fluxCorrectedErrorRepresentative M L k s omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change 0 ≤ fluxCorrectedErrorFunctional M L k (s : ℝ) omega
   exact fluxCorrectedErrorFunctional_nonneg M L k (s : ℝ) omega
 
@@ -640,7 +642,7 @@ theorem fluxCorrectedError_ae_eq_representative (M : ABKModel d) (L k : ℤ)
     @fluxCorrectedError d (neZero_of_model M) M L k (s : ℝ) =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
       fluxCorrectedErrorRepresentative M L k s := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change fluxCorrectedError M L k (s : ℝ) =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
     fluxCorrectedErrorFunctional M L k (s : ℝ)
   filter_upwards [ae_forall_normalizedBlockResponseMax_fluxCorrected_eq_representative

@@ -191,7 +191,7 @@ private theorem vecNormSq_gradientAverage_le_coarseSigmaStarInv (a : RegCoeffFie
             (JUpperBoundWeakNorms.canonicalMaximizerGradientOnCube Q
               ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn Q) p q) := by
       simpa [JUpperBoundWeakNorms.canonicalMaximizerGradientOnCube,
-        JUpperBoundWeakNorms.canonicalMaximizerSolutionOnCube] using
+        JUpperBoundWeakNorms.canonicalMaximizerSolutionOnCube] using!
         Ch04.canonicalScalarResponseGradientAverageCubeSet_eq_cubeAverageVec_canonicalMaximizer
           a ha hR p q
     rw [h1, h2]

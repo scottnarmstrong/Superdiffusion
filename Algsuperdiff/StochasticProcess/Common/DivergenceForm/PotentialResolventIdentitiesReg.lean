@@ -47,8 +47,8 @@ theorem potentialResolvent_resolvent_identity_apply (mu nu : PositiveShift)
   have hid := potentialResolvent_resolvent_identity a nu.property mu.property
     hlam hEll q hq
   have happ := congrArg (fun T : ScalarL2 U →L[ℝ] ScalarL2 U => T X) hid
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
-    ContinuousLinearMap.coe_comp', Function.comp_apply] at happ
+  simp only [sub_apply, smul_apply,
+    ContinuousLinearMap.coe_comp, Function.comp_apply] at happ
   have hstep : potentialResolvent a nu.property hlam hEll q hq X -
       potentialResolvent a mu.property hlam hEll q hq X =
       ((mu : ℝ) - (nu : ℝ)) • potentialResolvent a nu.property hlam hEll q hq

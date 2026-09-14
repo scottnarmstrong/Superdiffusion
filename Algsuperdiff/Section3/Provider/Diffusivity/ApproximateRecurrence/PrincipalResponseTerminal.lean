@@ -693,8 +693,8 @@ private theorem integrable_blockVecDot_blockDiag_smul_one_of_entries {d : ℕ}
     rw [blockVecDot_blockDiag_smul_one_vecDot]
     rfl
   rw [hEq]
-  exact ((integrable_finset_sum _ fun i _ => hW (Sum.inl i) (Sum.inl i)).const_mul a).add
-    ((integrable_finset_sum _ fun i _ => hW (Sum.inr i) (Sum.inr i)).const_mul b)
+  exact ((integrable_finsetSum _ fun i _ => hW (Sum.inl i) (Sum.inl i)).const_mul a).add
+    ((integrable_finsetSum _ fun i _ => hW (Sum.inr i) (Sum.inr i)).const_mul b)
 
 /-! ## The principal-response comparison -/
 
@@ -831,7 +831,7 @@ theorem exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimi
                           ∂(Cutoff.cutoffSampleLaw M).toMeasure) +
                     M.gamma ^ (6 : ℕ) := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cbase, c, C, hCbase, hCbased, hc, hC0, hbadhalf⟩ :=
     exists_const_descendantsAverage_switchCubeEnergy_badEvent_le_half d
   obtain ⟨g1, hg1p, hg1q, hgoodE⟩ :=

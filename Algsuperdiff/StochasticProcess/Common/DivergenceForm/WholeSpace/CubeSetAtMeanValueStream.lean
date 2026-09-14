@@ -82,8 +82,8 @@ theorem hasExitMeanValueOn_cubeSetAtHarmonicPart_sub_stream (y : Vec d) (n : ℤ
       (onePointRealExtension fun z ↦
         (streamWholeSpaceAnalyticData M omega).cubeSetAtHarmonicPart R y n mu g₁ z -
           (streamWholeSpaceAnalyticData M omega).cubeSetAtHarmonicPart R y n mu g₂ z) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   set A := streamWholeSpaceAnalyticData M omega with hA
   have h₁ := hasExitMeanValueOn_cubeSetAtHarmonicPart_stream R hreg hcons hid hT y n mu g₁ hg₁
   have h₂ := hasExitMeanValueOn_cubeSetAtHarmonicPart_stream R hreg hcons hid hT y n mu g₂ hg₂
@@ -137,8 +137,8 @@ theorem hasExitMeanValueOn_onePointRealExtension_of_forall_approx_harmonicPart_c
       R.isConservative_onePointKernelSemigroup
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
       (onePointRealExtension h) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   set A := streamWholeSpaceAnalyticData M omega with hA
   refine hasExitMeanValueOn_onePointRealExtension_of_forall_approx_cubeSetAt R hreg y n hh hN
     fun eps heps ↦ ?_
@@ -241,8 +241,8 @@ theorem hasExitMeanValueOn_onePointRealExtension_of_isWeaklyHarmonicOn_cubeSetAt
       R.isConservative_onePointKernelSemigroup
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
       (onePointRealExtension u) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   set A := streamWholeSpaceAnalyticData M omega with hA
   refine hasExitMeanValueOn_onePointRealExtension_of_forall_approx_harmonicPart_cubeSetAt_stream
     R hreg hcons hid hT y n hu hN fun eps heps ↦ ?_
@@ -323,8 +323,8 @@ theorem hasExitMeanValueOn_onePointRealExtension_of_contDiffBoundaryDatum_cubeSe
       R.isConservative_onePointKernelSemigroup
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
       (onePointRealExtension u) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   set F : C₀(Vec d, ℝ) := ⟨⟨b, hb.continuous⟩, hbCompact.is_zero_at_infty⟩ with hF
   set Phi : H1Function (cubeSetAt y n) :=
     H1Function.ofContDiffOnIsOpenBoundedConvexDomain

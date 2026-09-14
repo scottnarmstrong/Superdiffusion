@@ -111,7 +111,7 @@ theorem symmPart_subConstCutoffField (M : ABKModel d) (L : ℤ) (C : Mat d)
     (Cutoff.symmPart_coefficientCutoff M.nu L omega x) i) j
   have hCji : C j i = -C i j := by
     simpa only [Matrix.transpose_apply, Matrix.neg_apply]
-      using congrFun (congrFun hC i) j
+      using! congrFun (congrFun hC i) j
   simp only [symmPart, subConstCutoffField, Matrix.sub_apply] at hA ⊢
   linarith only [hA, hCji]
 

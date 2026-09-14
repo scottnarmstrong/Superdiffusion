@@ -679,9 +679,9 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
     have hw : ∀ n, 0 ≤ w n := fun n =>
       Homogenization.geometricWeight_nonneg n hsr.le
     have hwsum : Summable w := by
-      simpa only [w] using Homogenization.summable_geometricWeight hsr
+      simpa only [w] using! Homogenization.summable_geometricWeight hsr
     have hwtsum : (∑' n, w n) = 1 := by
-      simpa only [w] using Homogenization.tsum_geometricWeight_eq_one hsr
+      simpa only [w] using! Homogenization.tsum_geometricWeight_eq_one hsr
     have hae : ∀ᵐ omega ∂mu,
         Observable.cutoffUpperEllipticity M m m s hs
               (CoarseEllipticityExponent.finite r) omega * scaling ≤

@@ -111,7 +111,7 @@ theorem three_zpow_le_of_isConfinementScale {S : ℤ → ℝ} (hSnn : ∀ k, 0 �
     intro hmem
     have hle := hm.2 hmem
     omega
-  simp only [confinementSet, Set.mem_setOf_eq, not_le] at hnotmem
+  simp only [confinementSet, Set.mem_ofPred_eq, not_le] at hnotmem
   have hpred : widenedScale S (m - 1) ≤ ENNReal.ofReal (S (m - 1) + (9 : ℝ)⁻¹ * sR) := by
     refine (widenedScale_pred_le S m).trans (le_of_eq ?_)
     rw [← hsR, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ (9 : ℝ)⁻¹),
@@ -137,7 +137,7 @@ theorem measurableSet_mem_confinementSet {S : ℤ → Omega → ℝ} (hmeas : �
     (L : ℝ) (n : ℤ) :
     MeasurableSet
       {omega | n ∈ confinementSet (fun j => widenedScale (fun k => S k omega) j) L} := by
-  simp only [confinementSet, Set.mem_setOf_eq]
+  simp only [confinementSet, Set.mem_ofPred_eq]
   exact measurableSet_le
     (measurable_const.mul (measurable_const.add (measurable_widenedScale hmeas n)))
     measurable_const
@@ -178,7 +178,7 @@ theorem measure_isConfinementScale_eq_le (mu : Measure Omega) [IsProbabilityMeas
       _ = (1 : ℝ≥0∞) ^ q := (ENNReal.one_rpow q).symm
       _ ≤ ENNReal.ofReal (C * (3 : ℝ) ^ ((3 : ℤ) - (k : ℤ))) ^ q :=
           ENNReal.rpow_le_rpow (by rwa [ENNReal.one_le_ofReal]) hq.le
-  · push_neg at hk
+  · push Not at hk
     set m0 : ℤ := Int.log 3 L with hm0
     have hlow : (3 : ℝ) ^ m0 ≤ L := by
       rw [hm0]
@@ -312,7 +312,7 @@ theorem measurable_confinementScale {S : ℤ → Omega → ℝ} (hmeas : ∀ k, 
   have hmemA : ∀ (n : ℤ) (omega : Omega), omega ∈ A n ↔
       IsConfinementScale (fun j => widenedScale (fun k => S k omega) j) L n := by
     intro n omega
-    simp only [hAdef, Set.mem_inter_iff, Set.mem_iInter, Set.mem_compl_iff, Set.mem_setOf_eq]
+    simp only [hAdef, Set.mem_inter_iff, Set.mem_iInter, Set.mem_compl_iff, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨hn, hlt⟩
       refine ⟨hn, fun j hj => ?_⟩

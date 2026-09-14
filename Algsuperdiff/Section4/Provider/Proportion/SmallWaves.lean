@@ -64,7 +64,7 @@ private theorem isBigOWith_gammaSigma_zero {Omega : Type*} [MeasurableSpace Omeg
   have hAt : 0 < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
   have hset : upperTailEvent (fun _ : Omega => (0 : ℝ)) (A * t) = (∅ : Set Omega) := by
     ext omega
-    simp only [upperTailEvent, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_lt]
+    simp only [upperTailEvent, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
     exact hAt.le
   rw [hset, measureReal_empty]
   have : (0 : ℝ) < gammaSigma sigma t := Real.exp_pos _
@@ -92,7 +92,7 @@ theorem measurable_scoreG1b (M : ABKModel d) (m k : ℤ) :
 hypothesis, at the genuinely two-index shape. -/
 theorem shellLocal_scoreG1b (M : ABKModel d) (m k : ℤ) :
     Measurable[shellSigma d k] (scoreG1b M m k) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) := shellSigma d k
+  let : MeasurableSpace (Cutoff.CutoffSample d) := shellSigma d k
   exact measurable_fmax _ fun v =>
     measurable_shellSigma_comp k
       ((measurable_shellW2InfNormAt (Support.triadicLatticePoint k v) k).const_mul
@@ -307,7 +307,7 @@ theorem eventG1b_lhs_le_rowGE (M : ABKModel d) {s : ℝ} (hs0 : 0 < s) (hs1 : s 
       refine le_trans (mul_le_mul' (tsum_partialWeight_le hs0 hs1 m k) le_rfl) ?_
       rw [mul_assoc]
     · rw [if_neg hk]
-      exact zero_le _
+      exact zero_le
   calc (∑' n : {n : ℤ // n ≤ m},
         ENNReal.ofReal
             (Real.rpow (3 : ℝ) (-(1 / 4 : ℝ) * s * ((m - n.1 : ℤ) : ℝ))) *
@@ -332,7 +332,7 @@ theorem lt_rowGE_of_notMem_eventG1b (M : ABKModel d) {s T : ℝ} (hs0 : 0 < s)
     (hs1 : s ≤ 1) (m : ℤ) {omega : Cutoff.CutoffSample d}
     (hnot : omega ∉ eventG1b M m s T) :
     ENNReal.ofReal (T ^ 2 / g1bConst s) < rowGE (arrayG1b M s) (s / 8) m omega := by
-  rw [eventG1b, Set.mem_setOf_eq, not_le] at hnot
+  rw [eventG1b, Set.mem_ofPred_eq, not_le] at hnot
   have hC : 0 < g1bConst s := g1bConst_pos hs0
   have hlt : ENNReal.ofReal (T ^ 2) <
       ENNReal.ofReal (g1bConst s) * rowGE (arrayG1b M s) (s / 8) m omega :=
@@ -344,7 +344,7 @@ theorem lt_rowGE_of_notMem_eventG1b (M : ABKModel d) {s T : ℝ} (hs0 : 0 < s)
     field_simp
   rw [← heq] at hlt
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   exact absurd hlt (not_lt.2 (mul_le_mul' (le_refl (ENNReal.ofReal (g1bConst s))) hcon))
 
 end

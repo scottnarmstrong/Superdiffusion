@@ -239,7 +239,7 @@ theorem exists_lipschitzWith_representative_of_hasWeakGradientOn
       (fun m : ℕ => unitConvexApproxSequence u x0 (r0 / 2) (m + 1)) Filter.atTop u := by
     refine tendstoInMeasure_of_tendsto_eLpNorm (p := (2 : ℝ≥0∞)) (by norm_num) hmeasF
       hu.aestronglyMeasurable ?_
-    simpa using hconv
+    simpa using! hconv
   obtain ⟨ns, -, hae⟩ := hTIM.exists_seq_tendsto_ae
   have hlipS : LipschitzOnWith (Real.toNNReal ((d : ℝ) * K)) u
       {x | x ∈ V ∧ Filter.Tendsto

@@ -45,7 +45,7 @@ theorem tendsto_norm_scalarL2_sub_of_bounded_ae_tendsto
     (hpt : ∀ᵐ x ∂volumeMeasureOn U,
       Tendsto (fun k => F k x) atTop (nhds (G x))) :
     Tendsto (fun k => ‖F k - G‖) atTop (nhds 0) := by
-  letI := hU.isFiniteMeasure_restrict_volume
+  let := hU.isFiniteMeasure_restrict_volume
   have hsq : ∀ k, ‖F k - G‖ ^ 2 =
       ∫ x, (F k x - G x) ^ 2 ∂volumeMeasureOn U := by
     intro k
@@ -81,7 +81,7 @@ theorem tendsto_norm_scalarL2_sub_of_bounded_ae_tendsto
       (fun k => Real.sqrt (∫ x, (F k x - G x) ^ 2 ∂volumeMeasureOn U))
       atTop (nhds 0) := by
     have := (Real.continuous_sqrt.tendsto 0).comp hzero
-    simpa using this
+    simpa [Function.comp_def] using this
   have heq : (fun k => Real.sqrt (∫ x, (F k x - G x) ^ 2 ∂volumeMeasureOn U)) =
       fun k => ‖F k - G‖ := by
     funext k
@@ -94,7 +94,7 @@ private theorem abs_average_sub_const_le_of_ae {mu : Measure (Vec d)}
     [IsFiniteMeasure mu] (hmu : mu ≠ 0) {f : Vec d → ℝ} (hf : Integrable f mu)
     {c C : ℝ} (hC : ∀ᵐ y ∂mu, |f y - c| ≤ C) :
     |(⨍ y, f y ∂mu) - c| ≤ C := by
-  haveI : NeZero mu := ⟨hmu⟩
+  have : NeZero mu := ⟨hmu⟩
   have huniv : mu Set.univ ≠ 0 := by
     simpa [Measure.measure_univ_eq_zero] using hmu
   have hpos : 0 < mu.real Set.univ := by
@@ -162,7 +162,7 @@ theorem abs_representative_le_of_holder (G : ScalarL2 U)
   have hBopen : IsOpen B := isOpen_euclideanBall x₀ rho
   have hBmeas : MeasurableSet B := hBopen.measurableSet
   have hBne : B.Nonempty := ⟨x₀, center_mem_euclideanBall x₀ hrho⟩
-  haveI hBfin : IsFiniteMeasure (volume.restrict B) :=
+  have hBfin : IsFiniteMeasure (volume.restrict B) :=
     Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall x₀ rho
   have hBtop : volume B ≠ ⊤ := by
     have hlt := hBfin.measure_univ_lt_top
@@ -468,7 +468,7 @@ theorem tendsto_representative_of_tendsto_norm_reg [NeZero d]
     refine Real.sqrt_pos.2 (ENNReal.toReal_pos ?_ ?_)
     · exact ((isOpen_euclideanBall x rho).measure_pos volume
         ⟨x, center_mem_euclideanBall x hrho0⟩).ne'
-    · haveI := Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall
+    · have := Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall
         x rho
       have hlt := (inferInstance :
         IsFiniteMeasure (volume.restrict (euclideanBall x rho))).measure_univ_lt_top

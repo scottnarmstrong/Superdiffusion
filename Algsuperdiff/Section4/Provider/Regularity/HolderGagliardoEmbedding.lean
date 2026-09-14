@@ -82,10 +82,10 @@ private theorem enorm_gagliardoKernel_sq_le {A : Set (Vec d)} {g : Vec d → E} 
   · have hzero : Gagliardo.gagliardoKernel s 2 g z = 0 := by
       rw [hker, heq, sub_self, smul_zero]
     rw [hzero, enorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
-    exact zero_le _
+    exact zero_le
   have ht : 0 < dist z.1 z.2 := dist_pos.mpr hne
   have henorm : ‖z.1 - z.2‖ₑ = ENNReal.ofReal (dist z.1 z.2) := by
-    rw [dist_eq_norm, ← ofReal_norm_eq_enorm]
+    rw [dist_eq_norm, ← ofReal_norm]
   set t : ℝ := dist z.1 z.2 with htdef
   set M : ℝ := t ^ (-(s + (d : ℝ) / 2)) * (K * t ^ ((1 : ℝ) / 2)) with hMdef
   have hM0 : 0 ≤ M := by
@@ -96,10 +96,10 @@ private theorem enorm_gagliardoKernel_sq_le {A : Set (Vec d)} {g : Vec d → E} 
   have hbound : ‖Gagliardo.gagliardoKernel s 2 g z‖ₑ ≤ ENNReal.ofReal M := by
     have hscal : ‖(dist z.1 z.2 ^ (-(s + (d : ℝ) / 2)) : ℝ)‖ₑ =
         ENNReal.ofReal (t ^ (-(s + (d : ℝ) / 2))) := by
-      rw [← ofReal_norm_eq_enorm, Real.norm_eq_abs,
+      rw [← ofReal_norm, Real.norm_eq_abs,
         abs_of_nonneg (Real.rpow_nonneg ht.le _)]
     have hdiff : ‖g z.1 - g z.2‖ₑ ≤ ENNReal.ofReal (K * t ^ ((1 : ℝ) / 2)) := by
-      rw [← ofReal_norm_eq_enorm]
+      rw [← ofReal_norm]
       refine ENNReal.ofReal_le_ofReal ?_
       have hgb := hg z.1 h1 z.2 h2
       have hd12 : ‖z.1 - z.2‖ = t := (dist_eq_norm z.1 z.2).symm
@@ -194,7 +194,7 @@ theorem normalizedGagliardoESeminormOn_le_of_holderHalf {A : Set (Vec d)} {g : V
       _ = ENNReal.ofReal (K ^ 2) * M := by
           rw [ENNReal.inv_mul_cancel hA0 hAtop, mul_one]
   rw [Support.normalizedGagliardoESeminormOn_def,
-    eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num)]
+    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
   have htwo : (2 : ℝ≥0∞).toReal = 2 := by norm_num
   rw [htwo]
   refine (ENNReal.rpow_le_rpow hkey (by norm_num : (0 : ℝ) ≤ 1 / 2)).trans (le_of_eq ?_)

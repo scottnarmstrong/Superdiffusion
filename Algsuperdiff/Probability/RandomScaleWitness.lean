@@ -68,16 +68,16 @@ union starts at `N`, not at `N + 1`. -/
 theorem minimalScaleEN_tail_eq (bad : ℕ → Ω → Prop) (N : ℕ) :
     {ω | ((N + 1 : ℕ) : ℕ∞) ≤ minimalScaleEN bad ω} = ⋃ i : ℕ, {ω | bad (N + i) ω} := by
   ext ω
-  simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+  simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
   constructor
   · intro hω
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hbound : minimalScaleEN bad ω ≤ ((N : ℕ) : ℕ∞) := by
       refine iSup_le fun n => iSup_le fun hbad => ?_
       have hlt : n < N := by
         by_contra hnl
-        push_neg at hnl
+        push Not at hnl
         exact hcon (n - N) (by rwa [Nat.add_sub_cancel' hnl])
       rw [enat_cast_succ n, Nat.cast_le]
       omega
@@ -124,8 +124,8 @@ theorem measurableSet_minimalScaleEN_tail {bad : ℕ → Ω → Prop}
   rcases Nat.eq_zero_or_pos N with rfl | hN
   · have huniv : {ω : Ω | ((0 : ℕ) : ℕ∞) ≤ minimalScaleEN bad ω} = Set.univ :=
       Set.eq_univ_of_forall fun ω => by
-        simp only [Set.mem_setOf_eq, Nat.cast_zero]
-        exact zero_le _
+        simp only [Set.mem_ofPred_eq, Nat.cast_zero]
+        exact zero_le
     rw [huniv]
     exact MeasurableSet.univ
   · obtain ⟨M, rfl⟩ : ∃ M : ℕ, N = M + 1 := ⟨N - 1, by omega⟩
@@ -148,7 +148,7 @@ theorem measurable_minimalScaleEN {bad : ℕ → Ω → Prop}
       = {ω | ((n : ℕ) : ℕ∞) ≤ minimalScaleEN bad ω}
         \ {ω | ((n + 1 : ℕ) : ℕ∞) ≤ minimalScaleEN bad ω} := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_diff, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_sdiff, Set.mem_ofPred_eq]
     constructor
     · refine fun h => ⟨h.ge, fun hcon => ?_⟩
       rw [h, Nat.cast_le] at hcon
@@ -157,7 +157,7 @@ theorem measurable_minimalScaleEN {bad : ℕ → Ω → Prop}
       have hlt : minimalScaleEN bad ω < ((n : ℕ∞) + 1) := by
         rw [enat_cast_succ n]
         exact not_le.mp h2
-      exact le_antisymm ((ENat.lt_add_one_iff (ENat.coe_ne_top n)).mp hlt) h1
+      exact le_antisymm ((ENat.lt_add_one_iff (ENat.natCast_ne_top n)).mp hlt) h1
   rw [hset]
   exact (measurableSet_minimalScaleEN_tail hbad n).diff
     (measurableSet_minimalScaleEN_tail hbad (n + 1))

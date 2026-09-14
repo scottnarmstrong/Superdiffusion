@@ -308,7 +308,7 @@ private theorem compl_survivalEvent_eq {alpha : Type*} [MetricSpace alpha] (U : 
     (t : NNReal) :
     (survivalEvent U t)ᶜ = {eta | ContinuousPath.exitTime U eta ≤ (t : ℝ≥0∞)} := by
   ext eta
-  simp only [Set.mem_compl_iff, survivalEvent, Set.mem_setOf_eq, not_lt]
+  simp only [Set.mem_compl_iff, survivalEvent, Set.mem_ofPred_eq, not_lt]
 
 /-- **The early-exit tail of the stream process at and above the random confinement scale,
 with uniform constants.**  The displacement scales of the crossing scales of the percolation
@@ -653,8 +653,8 @@ theorem exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementSc
     ⟨delta, Yfam, hdelta, hdelta1, hYmeas, fun i omega => rfl⟩, hSmeas, hSnn, hCS, hpS1,
     hCSle, hKle, hpSrange, hSmom, hconf, ?_⟩
   filter_upwards [hconf, MeasureTheory.ae_all_iff.2 hYcross] with omega hmconf hmcross
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   set m : ℤ := confinementScale S L omega.1 with hmdef
   set tN : NNReal := t.toNNReal with htNdef
   have htN : (tN : ℝ) = t := Real.coe_toNNReal t ht.le
@@ -698,7 +698,7 @@ theorem exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementSc
     rw [hcs, ← hkdef]; exact hdeltaSmall
   set Good : Section5.Percolation.Site d → Prop :=
     fun z => omega.1 ∈ qEvent M Creg Cev n (rescaledLatticePoint n z) ep with hGooddef
-  letI instGood : DecidablePred Good := Classical.decPred Good
+  let instGood : DecidablePred Good := Classical.decPred Good
   have hGood : ∀ z, Good z ↔ omega.1 ∈ qEvent M Creg Cev n
       (rescaledLatticePoint n z) ep := fun z => Iff.rfl
   have hx : (0 : Vec d) ∈ Metric.closedBall (0 : Vec d) ((1 / 2 : ℝ) * (3 : ℝ) ^ (r - 1)) :=
@@ -747,12 +747,15 @@ theorem measureReal_compl_survivalEvent_confinementScale_le_pow_of_exitTail_at_c
           cubeSetAt (0 : Vec d) (confinementScale S L omega.1))
           t.toNNReal)ᶜ).toReal ≤ M.gamma ^ (100 : ℕ) := by
   filter_upwards [hconf, hexitTail] with omega hmconf hmexit
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   have hexp := exp_neg_mul_displacementMinScale_le_pow_of_isConfinementScale
     M.nu_pos hcstar M.shellPrefix.gamma_pos M.shellPrefix.gamma_le_quarter hgc ht hK hc
     hcK hKL hmconf
-  rw [compl_survivalEvent_eq]
+  have hset := compl_survivalEvent_eq (((↑) : Vec d → OnePoint (Vec d)) ''
+    cubeSetAt (0 : Vec d) (confinementScale S L omega.1)) t.toNNReal
+  refine le_of_eq_of_le (congrArg (fun s ↦ (((streamExhaustionTailInput M omega
+    ).wholeSpaceProcess ((0 : Vec d) : OnePoint (Vec d))) s).toReal) hset) ?_
   calc ((streamExhaustionTailInput M omega).wholeSpaceProcess
         ((0 : Vec d) : OnePoint (Vec d))
           {eta | ContinuousPath.exitTime

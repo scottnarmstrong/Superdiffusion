@@ -77,7 +77,7 @@ theorem continuous_finiteShellIncrement_entry (omega : ShellSeq d) (n m : ℤ)
     funext x
     exact finiteShellIncrement_apply_entry omega n m x i j
   rw [h]
-  exact continuous_finset_sum _ fun k _ =>
+  exact continuous_finsetSum _ fun k _ =>
     (continuous_apply j).comp ((continuous_apply i).comp (omega k).1.1.continuous)
 
 /-! ## Joint multi-shell translation covariance -/
@@ -274,7 +274,8 @@ theorem scaledStreamIncrementLaw_unitRangeDependent (M : ABKModel d) (n m : ℤ)
   have hAcont : ∀ omega i j, Continuous (fun x : Vec d => A omega x i j) := by
     intro omega i j
     exact (continuous_finiteShellIncrement_entry omega n m i j).comp
-      (continuous_const.smul continuous_id)
+      ((continuous_const : Continuous (fun _ : Vec d => r)).smul
+        (continuous_id : Continuous (fun x : Vec d => x)))
   have hlocalSource :=
     indep_lowerShellLocalSigma_of_cutoff_separation M m hrS hrT hsep
   have hA_local_S : @Measurable (ShellSeq d) (RegCoeffField d)

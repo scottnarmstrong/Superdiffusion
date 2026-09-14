@@ -26,7 +26,7 @@ Three further ingredients of the flux-vanishing crux:
 -/
 
 -- ==== the weak identity ====
-open scoped Real
+open scoped Real Laplacian
 open MeasureTheory InnerProductSpace
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -74,7 +74,7 @@ theorem iteratedFDeriv_two_eq_dirDeriv2 {f : EuclideanSpace ℝ (Fin d) → ℝ}
     (x v : EuclideanSpace ℝ (Fin d)) :
     iteratedFDeriv ℝ 2 f x ![v, v] = dirDeriv2 v f x := by
   have hfd : DifferentiableAt ℝ (fderiv ℝ f) x :=
-    ((hf.fderiv_right (by norm_num)).differentiable le_rfl) x
+    ((hf.fderiv_right (by norm_num)).differentiable_one) x
   have hcalc : fderiv ℝ (fun y => fderiv ℝ f y v) x = (fderiv ℝ (fderiv ℝ f) x).flip v := by
     have h := fderiv_clm_apply (𝕜 := ℝ) (c := fun y => fderiv ℝ f y) (u := fun _ : _ => v)
       hfd (differentiableAt_const v)
@@ -101,9 +101,9 @@ theorem green_dirDeriv2 {u ψ : EuclideanSpace ℝ (Fin d) → ℝ}
     (hu.fderiv_right (by norm_num)).clm_apply contDiff_const
   have hcd_d1ψ : ContDiff ℝ 1 (fun x => fderiv ℝ ψ x v) :=
     (hψ.fderiv_right (by norm_num)).clm_apply contDiff_const
-  have hd1u_diff : Differentiable ℝ (fun x => fderiv ℝ u x v) := hcd_d1u.differentiable le_rfl
+  have hd1u_diff : Differentiable ℝ (fun x => fderiv ℝ u x v) := hcd_d1u.differentiable_one
   have hd1u_cont : Continuous (fun x => fderiv ℝ u x v) := hcd_d1u.continuous
-  have hd1ψ_diff : Differentiable ℝ (fun x => fderiv ℝ ψ x v) := hcd_d1ψ.differentiable le_rfl
+  have hd1ψ_diff : Differentiable ℝ (fun x => fderiv ℝ ψ x v) := hcd_d1ψ.differentiable_one
   have hd1ψ_cont : Continuous (fun x => fderiv ℝ ψ x v) := hcd_d1ψ.continuous
   have hd1ψ_supp : HasCompactSupport (fun x => fderiv ℝ ψ x v) := hψc.fderiv_apply ℝ v
   have hd2ψ_cont : Continuous (dirDeriv2 v ψ) := continuous_dirDeriv2 hψ v
@@ -117,7 +117,7 @@ theorem green_dirDeriv2 {u ψ : EuclideanSpace ℝ (Fin d) → ℝ}
       (integrable_mul_ccs hd1u_cont hd1ψ_cont hd1ψ_supp)
       (integrable_mul_ccs hu_cont hd2ψ_cont hd2ψ_supp)
       (integrable_mul_ccs hu_cont hd1ψ_cont hd1ψ_supp)
-      hu_diff hd1ψ_diff
+      (fun x _ => hu_diff.differentiableAt) (fun x _ => hd1ψ_diff.differentiableAt)
     simpa [dirDeriv2] using h
   -- second integration by parts: ∫ ∂ᵥu · ∂ᵥψ = -∫ ∂ᵥᵥu · ψ
   have hIBP2 : (∫ x, (fderiv ℝ u x v) * (fderiv ℝ ψ x v))
@@ -127,7 +127,7 @@ theorem green_dirDeriv2 {u ψ : EuclideanSpace ℝ (Fin d) → ℝ}
       (integrable_mul_ccs hd2u_cont hψ_cont hψc)
       (integrable_mul_ccs hd1u_cont hd1ψ_cont hd1ψ_supp)
       (integrable_mul_ccs hd1u_cont hψ_cont hψc)
-      hd1u_diff hψ_diff
+      (fun x _ => hd1u_diff.differentiableAt) (fun x _ => hψ_diff.differentiableAt)
     simpa [dirDeriv2] using h
   rw [hIBP1, hIBP2, neg_neg]
 
@@ -150,7 +150,7 @@ theorem integral_mul_laplacian_eq_integral_laplacian_mul {u ψ : EuclideanSpace 
       rw [hlap, Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => by
         rw [iteratedFDeriv_two_eq_dirDeriv2 hψ x (b i)]
-    rw [hpt, MeasureTheory.integral_finset_sum]
+    rw [hpt, MeasureTheory.integral_finsetSum]
     intro i _
     exact integrable_mul_ccs hu.continuous (continuous_dirDeriv2 hψ (b i))
       (hasCompactSupport_dirDeriv2 hψc (b i))
@@ -163,7 +163,7 @@ theorem integral_mul_laplacian_eq_integral_laplacian_mul {u ψ : EuclideanSpace 
       rw [hlap, Finset.sum_mul]
       exact Finset.sum_congr rfl fun i _ => by
         rw [iteratedFDeriv_two_eq_dirDeriv2 hu x (b i)]
-    rw [hpt, MeasureTheory.integral_finset_sum]
+    rw [hpt, MeasureTheory.integral_finsetSum]
     intro i _
     exact integrable_mul_ccs (continuous_dirDeriv2 hu (b i)) hψ.continuous hψc
   rw [hΨ, hU]
@@ -174,7 +174,7 @@ end
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
 -- ==== the radial Laplacian ====
-open scoped Real RealInnerProductSpace ContDiff
+open scoped Real RealInnerProductSpace ContDiff Laplacian
 open MeasureTheory InnerProductSpace
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -223,9 +223,11 @@ theorem dirDeriv2_radial {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (x₀ y 
       simpa using (hasDerivAt_id t).const_mul (2 * ⟪y - x₀, v⟫)
     have h2 : HasDerivAt (fun s : ℝ => ‖v‖ ^ 2 * s ^ 2) (‖v‖ ^ 2 * (2 * t)) t := by
       simpa using ((hasDerivAt_pow 2 t).const_mul (‖v‖ ^ 2))
-    have h := ((hasDerivAt_const t (‖y - x₀‖ ^ 2)).add h1).add h2
+    have h : HasDerivAt (fun s : ℝ => ‖y - x₀‖ ^ 2 + 2 * ⟪y - x₀, v⟫ * s + ‖v‖ ^ 2 * s ^ 2)
+        (0 + 2 * ⟪y - x₀, v⟫ + ‖v‖ ^ 2 * (2 * t)) t :=
+      ((hasDerivAt_const t (‖y - x₀‖ ^ 2)).add h1).add h2
     simp only [hqdef]
-    convert h using 1
+    refine h.congr_deriv ?_
     ring
   -- along-the-line function `γ` and its two derivatives
   have hγ_eq : (fun s : ℝ => ψ (y + s • v)) = fun s : ℝ => φ (q s) := by
@@ -248,13 +250,13 @@ theorem dirDeriv2_radial {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (x₀ y 
   have hg_cd : ContDiff ℝ 1 (fun z : 𝔼 => fderiv ℝ ψ z v) :=
     (hψC.fderiv_right (show (1 : WithTop ℕ∞) + 1 ≤ ∞ by norm_cast)).clm_apply contDiff_const
   have hg_diff : DifferentiableAt ℝ (fun z : 𝔼 => fderiv ℝ ψ z v) y :=
-    (hg_cd.differentiable le_rfl) y
+    (hg_cd.differentiable_one) y
   -- `dirDeriv2 = deriv along v of g`
   have hdir : HasDerivAt (fun t : ℝ => fderiv ℝ ψ (y + t • v) v) (dirDeriv2 v ψ y) 0 := by
     have hpt : y = (fun s : ℝ => y + s • v) 0 := by simp
     have h := HasFDerivAt.comp_hasDerivAt_of_eq (f := fun s : ℝ => y + s • v) (x := 0)
       (hg_diff.hasFDerivAt) (hL 0) hpt
-    simpa only [dirDeriv2, Function.comp] using h
+    simpa only [dirDeriv2, Function.comp_def] using h
   -- rewrite that function through `hval`
   have hdir' : HasDerivAt
       (fun t : ℝ => deriv φ (q t) * (2 * ⟪y - x₀, v⟫ + 2 * ‖v‖ ^ 2 * t))
@@ -269,7 +271,7 @@ theorem dirDeriv2_radial {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (x₀ y 
       (deriv (deriv φ) (‖y - x₀‖ ^ 2) * (2 * ⟪y - x₀, v⟫)) 0 := by
     have hchain := (hφ'diff (q 0)).hasDerivAt.comp 0 (hq_deriv 0)
     rw [hq0] at hchain
-    simpa using hchain
+    simpa [Function.comp_def] using hchain
   have hlin : HasDerivAt (fun t : ℝ => 2 * ⟪y - x₀, v⟫ + 2 * ‖v‖ ^ 2 * t) (2 * ‖v‖ ^ 2) 0 := by
     simpa using ((hasDerivAt_id (0 : ℝ)).const_mul (2 * ‖v‖ ^ 2)).const_add
       (2 * ⟪y - x₀, v⟫)
@@ -328,7 +330,7 @@ theorem deriv_radialProfile {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (r : 
   have hφdiff : Differentiable ℝ φ := (contDiff_infty_iff_deriv.mp hφ).1
   have hsq : HasDerivAt (fun s : ℝ => s ^ 2) (2 * r) r := by simpa using hasDerivAt_pow 2 r
   have h : HasDerivAt (fun s : ℝ => φ (s ^ 2)) (deriv φ (r ^ 2) * (2 * r)) r := by
-    simpa [Function.comp] using (hφdiff (r ^ 2)).hasDerivAt.comp r hsq
+    simpa [Function.comp_def] using (hφdiff (r ^ 2)).hasDerivAt.comp r hsq
   rw [h.deriv]; ring
 
 /-- **The load-bearing 1-D radial identity** `(r^{d−1} p'(r))' = r^{d−1} m(r)`, in IBP-ready
@@ -352,12 +354,15 @@ theorem hasDerivAt_weighted_radialProfile {φ : ℝ → ℝ} (hφ : ContDiff ℝ
   have hsq : HasDerivAt (fun s : ℝ => s ^ 2) (2 * r) r := by simpa using hasDerivAt_pow 2 r
   have h_dphi_sq : HasDerivAt (fun s : ℝ => deriv φ (s ^ 2))
       (deriv (deriv φ) (r ^ 2) * (2 * r)) r := by
-    simpa [Function.comp] using (hφ'diff (r ^ 2)).hasDerivAt.comp r hsq
+    simpa [Function.comp_def] using (hφ'diff (r ^ 2)).hasDerivAt.comp r hsq
   have h_2s : HasDerivAt (fun s : ℝ => 2 * s) 2 r := by simpa using (hasDerivAt_id r).const_mul 2
-  have hmul := hpow.mul (h_2s.mul h_dphi_sq)
-  convert hmul using 1
+  have hmul : HasDerivAt (fun s : ℝ => s ^ (d - 1) * (2 * s * deriv φ (s ^ 2)))
+      (↑(d - 1) * r ^ (d - 1 - 1) * (2 * r * deriv φ (r ^ 2)) +
+        r ^ (d - 1) * (2 * deriv φ (r ^ 2) + 2 * r * (deriv (deriv φ) (r ^ 2) * (2 * r)))) r :=
+    hpow.mul (h_2s.mul h_dphi_sq)
+  refine hmul.congr_deriv ?_
   obtain ⟨k, rfl⟩ : ∃ k, d = k + 1 := ⟨d - 1, (Nat.succ_pred_eq_of_pos hd).symm⟩
-  simp only [Nat.add_sub_cancel, Pi.mul_apply]
+  simp only [Nat.add_sub_cancel]
   rcases k with _ | k' <;> push_cast <;> ring
 
 end
@@ -365,7 +370,7 @@ end
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
 -- ==== cutoff localization ====
-open scoped Real Topology
+open scoped Real Topology Laplacian
 open MeasureTheory InnerProductSpace Metric Filter
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -379,7 +384,7 @@ private theorem laplacian_zero_fun :
     Δ (0 : EuclideanSpace ℝ (Fin d) → ℝ) = 0 := by
   rw [show (0 : EuclideanSpace ℝ (Fin d) → ℝ) = fun _ => (0 : ℝ) from rfl]
   funext z
-  rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis, iteratedFDeriv_zero_fun]
+  rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis, iteratedFDeriv_fun_zero]
   simp
 
 /-- The support of `Δψ` is contained in the topological support of `ψ`: if `ψ` vanishes near `y`,

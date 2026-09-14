@@ -124,12 +124,12 @@ private theorem lowPower_isBigO_of_map_eq
     mu.real (absTailEvent f (A * t)) = (Measure.map f mu).real E := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := mu) hf.aemeasurable hE)
-      simpa [E, absTailEvent] using h.symm
+      simpa [E, absTailEvent] using! h.symm
     _ = (Measure.map g mu').real E := by rw [hmap]
     _ = mu'.real (absTailEvent g (A * t)) := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := mu') hg.aemeasurable hE)
-      simpa [E, absTailEvent] using h
+      simpa [E, absTailEvent] using! h
     _ ≤ (Psi t)⁻¹ := hg_tail ht
 
 private theorem lowPower_integral_eq_of_map_eq
@@ -202,7 +202,7 @@ private theorem integral_normalizedLowPowerLpMassRep_origin_eq_zero
       (measurable_partitionIncrementField (d := d) n m).aemeasurable).mpr ?_
     have hcomp : U ∘ F =
         streamIncrementLpMass 2 (m + (incrementPartitionShift d : ℤ)) n m := by
-      simpa only [Function.comp_apply] using hUcomp
+      simpa only [Function.comp_apply] using! hUcomp
     rw [hcomp]
     exact hmass_int
   unfold normalizedLowPowerLpMassRep
@@ -403,7 +403,7 @@ theorem isBigOWith_gammaSigma_streamIncrementLpMass_lowPower_partition
   have htrans := lowPower_isBigOWith_comp_of_map
     (mu := M.P.toMeasure) (F := F) (g := g)
     (show Measurable F by exact measurable_partitionIncrementField (d := d) n m) hg
-    (by simpa [P, K, j, S, color, g] using hmain)
+    (by simpa [P, K, j, S, color, g] using! hmain)
   have hfun : (fun omega : ShellSeq d => g (F omega)) =
       fun omega => streamIncrementLpMass p l n m omega - K ^ (p / 2) := by
     funext omega

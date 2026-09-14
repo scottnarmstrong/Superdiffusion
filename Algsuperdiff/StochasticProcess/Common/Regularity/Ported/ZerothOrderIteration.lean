@@ -198,7 +198,7 @@ theorem dyadicGradientScaleBound_zerothOrder_on_interiorBall [NeZero d]
       · simpa only [V, r, heq] using houter
       · exact (euclideanBall_subset_euclideanBall hr.le hlt).trans houter
     let uV : H1Function V := u.restrict (isOpen_euclideanBall z r) hVU
-    letI finiteVolumeV : IsFiniteMeasure (volumeMeasureOn V) :=
+    let finiteVolumeV : IsFiniteMeasure (volumeMeasureOn V) :=
       Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall z r
     have haV : CoefficientIdentityDistanceLE V a delta :=
       ha.filter_mono (ae_mono (Measure.restrict_mono hVU le_rfl))

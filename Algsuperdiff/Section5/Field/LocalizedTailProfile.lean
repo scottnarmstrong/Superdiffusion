@@ -329,8 +329,11 @@ private theorem agmonTailRate_div_logWeight_le
     unfold agmonTailRate K Q
     field_simp
   rw [hrateB, hrateL]
-  convert hmul using 1
-  field_simp
+  have hw' : K / B * Q / w = K / (B * w) * Q := by
+    field_simp [hw.ne', hB.ne']
+    try ring
+  rw [hw']
+  exact hmul
 
 omit [NeZero d] in
 private theorem rpow_ratio_le_div_pow {b s s₀ q : ℝ}

@@ -39,7 +39,7 @@ variable {d : ℕ}
 theorem abs_setIntegral_le_sqrt {U : Set (Vec d)} (hUfin : volume U ≠ ⊤) {f : Vec d → ℝ} (hf : MemLp f 2 (volume.restrict U)) :
     |∫ z in U, f z ∂volume| ≤
       Real.sqrt (volume.real U) * Real.sqrt (∫ z in U, f z ^ (2 : ℕ) ∂volume) := by
-  haveI : IsFiniteMeasure (volume.restrict U) := by
+  have : IsFiniteMeasure (volume.restrict U) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hUfin
@@ -75,7 +75,7 @@ private theorem sqrt_setIntegral_mono {U B : Set (Vec d)} (hBU : B ⊆ U)
       Real.sqrt (∫ z in U, f z ^ (2 : ℕ) ∂volume) := by
   refine Real.sqrt_le_sqrt ?_
   exact setIntegral_mono_set hUint (Filter.Eventually.of_forall fun z => by positivity)
-    (HasSubset.Subset.eventuallyLE hBU)
+    (LE.le.eventuallyLE hBU)
 
 /-! ## 2. The parameter integral is continuous -/
 
@@ -91,8 +91,8 @@ theorem continuous_fieldSetIntegral (M : ABKModel d) (y : Vec d) (n : ℤ)
     (hg : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kg g)
     {B : Set (Vec d)} (hBsub : B ⊆ cubeSetAt y n) :
     Continuous (fieldSetIntegral M y n hKg hg B) := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
-  haveI hfin : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
+  have hfin : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   obtain ⟨CP, hCP, hpoin⟩ :=
     exists_poincare_integral_constant (isOpenBoundedConvexDomain_cubeSetAt y n)
@@ -127,6 +127,9 @@ theorem continuous_fieldSetIntegral (M : ABKModel d) (y : Vec d) (n : ℤ)
         (A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩) i j := by
       rw [Matrix.sub_apply]
     rw [hsub]
+    let _ : Norm C(closedCubeAt y n, Mat d) := ContinuousMap.instNorm
+    let _ : SeminormedAddCommGroup C(closedCubeAt y n, Mat d) :=
+      ContinuousMap.instSeminormedAddCommGroup
     calc |(A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩) i j| ≤ ‖A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩‖ := by
           simpa [Real.norm_eq_abs] using
             Matrix.norm_entry_le_entrywise_sup_norm
@@ -175,7 +178,7 @@ theorem continuous_fieldSetIntegral (M : ABKModel d) (y : Vec d) (n : ℤ)
       (cubeSetAt y n) volume := w.toH1Function.memL2.integrable_sq
   have hsplit : fieldSetIntegral M y n hKg hg B A - fieldSetIntegral M y n hKg hg B A0 =
       ∫ z in B, w.toH1Function.toFun z ∂volume := by
-    haveI : IsFiniteMeasure (volume.restrict B) := by
+    have : IsFiniteMeasure (volume.restrict B) := by
       refine ⟨?_⟩
       rw [Measure.restrict_apply_univ]
       exact lt_top_iff_ne_top.2 hBfin

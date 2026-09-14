@@ -73,7 +73,7 @@ theorem exists_eta_abs_setIntegral_sub_le [NeZero d] {y : Vec d} {n : ℤ} {a : 
   set eta : ℝ := eps / (C + 1) with hetadef
   have hetann : (0 : ℝ) ≤ eta := by rw [hetadef]; positivity
   obtain ⟨w, hwf, hwg⟩ := exists_h10Function_sub hu hu'
-  haveI : IsFiniteMeasure (volume.restrict B) := by
+  have : IsFiniteMeasure (volume.restrict B) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hBfin
@@ -100,7 +100,7 @@ theorem exists_eta_abs_setIntegral_sub_le [NeZero d] {y : Vec d} {n : ℤ} {a : 
       Real.sqrt (∫ z in cubeSetAt y n, w.toH1Function.toFun z ^ (2 : ℕ) ∂volume) := by
     refine Real.sqrt_le_sqrt ?_
     exact setIntegral_mono_set hUint (Filter.Eventually.of_forall fun z => by positivity)
-      (HasSubset.Subset.eventuallyLE hB)
+      (LE.le.eventuallyLE hB)
   have hgrad : (∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖u.grad x - u'.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
@@ -156,7 +156,7 @@ theorem setAverage_ball_sub_of_h1 {y : Vec d} {n : ℤ} (u v : H1Function (cubeS
     ((isOpenBoundedConvexDomain_cubeSetAt y n).volume_lt_top).ne
   have hBfin : volume (Metric.ball p r) ≠ ⊤ :=
     ((measure_mono hB).trans_lt (lt_top_iff_ne_top.2 hcubefin)).ne
-  haveI : IsFiniteMeasure (volume.restrict (Metric.ball p r)) := by
+  have : IsFiniteMeasure (volume.restrict (Metric.ball p r)) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hBfin

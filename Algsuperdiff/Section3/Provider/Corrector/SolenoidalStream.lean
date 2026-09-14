@@ -155,7 +155,7 @@ theorem integrableOn_mul_of_memScalarL2 {u f : Vec d → ℝ} (hu : MemScalarL2 
     IntegrableOn (fun x => u x * f x) U := by
   have := hu.integrable_mul
     (memScalarL2_of_continuous_of_hasCompactSupport (U := U) hf hfc)
-  simpa [IntegrableOn, Pi.mul_apply] using this
+  simpa [IntegrableOn, Pi.mul_apply] using! this
 
 /-- The single integration by parts against an `H¹(U)` test function:
 `∫_U (∇φ)_i ∂_m T_{im} = − ∫_U φ ∂_i ∂_m T_{im}`. -/
@@ -244,9 +244,9 @@ theorem isSolenoidalZeroNormalTraceOn_streamDivergence
         exact integral_congr_ae (Filter.Eventually.of_forall fun x => hexpand x)
     _ = ∑ i : Fin d, ∑ m : Fin d,
           ∫ x in U, φ.grad x i * coordDeriv (T i m) m x := by
-        rw [integral_finset_sum _ (fun i _ => integrable_finset_sum _ fun m _ => hint i m)]
+        rw [integral_finsetSum _ (fun i _ => integrable_finsetSum _ fun m _ => hint i m)]
         exact Finset.sum_congr rfl fun i _ =>
-          integral_finset_sum _ fun m _ => hint i m
+          integral_finsetSum _ fun m _ => hint i m
     _ = ∑ i : Fin d, ∑ m : Fin d, -b i m := by
         refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun m _ => ?_
         exact setIntegral_grad_mul_coordDeriv_eq φ hsmooth hsupp hsub i m
@@ -277,7 +277,7 @@ theorem coordDeriv_mul {f g : Vec d → ℝ} {x : Vec d} (hf : DifferentiableAt 
     coordDeriv (fun y => f y * g y) m x
       = coordDeriv f m x * g x + f x * coordDeriv g m x := by
   simp only [coordDeriv, fderiv_fun_mul hf hg]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.coe_smul',
+  simp only [add_apply, FunLike.coe_smul,
     Pi.smul_apply, smul_eq_mul]
   ring
 
@@ -306,7 +306,7 @@ theorem streamDivergence_cutoffStream_apply {x : Vec d}
       (hS i m).sub_const _
     have := coordDeriv_mul (f := η) (g := fun y => S i m y - c i m) hη hsub m
     rw [coordDeriv_sub_const] at this
-    simpa [cutoffStream] using this.trans (by ring)
+    simpa [cutoffStream] using! this.trans (by ring)
   simp only [streamDivergence_apply]
   rw [Finset.sum_congr rfl fun m _ => hterm m, Finset.sum_add_distrib,
     ← Finset.mul_sum]

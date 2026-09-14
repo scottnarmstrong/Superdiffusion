@@ -107,8 +107,10 @@ theorem exists_forall_norm_fderiv_fderiv_le_of {f : 𝔼 → ℝ} (hf : ContDiff
     rw [Function.mem_support] at hz
     have hz' : fderiv ℝ (fderiv ℝ f) z ≠ 0 :=
       fun h => hz (by rw [h]; exact ContinuousLinearMap.opNorm_zero)
-    exact subset_trans (tsupport_fderiv_subset (𝕜 := ℝ)) (tsupport_fderiv_subset (𝕜 := ℝ))
-      (subset_tsupport _ hz')
+    have h1 : Function.support (fderiv ℝ (fderiv ℝ f)) ⊆ tsupport (fderiv ℝ f) :=
+      support_fderiv_subset (𝕜 := ℝ)
+    have h2 : tsupport (fderiv ℝ f) ⊆ tsupport f := tsupport_fderiv_subset (𝕜 := ℝ)
+    exact h2 (h1 hz')
   have hcsR : HasCompactSupport (fun z : 𝔼 => ‖fderiv ℝ (fderiv ℝ f) z‖) :=
     hcs.of_isClosed_subset isClosed_closure (closure_minimal hsubR isClosed_closure)
   obtain ⟨B, hB⟩ := hcont.bounded_above_of_compact_support hcsR
@@ -142,7 +144,7 @@ theorem norm_fderiv_fderiv_le_L1_of_harmonic [NeZero d] {w : 𝔼 → ℝ} (hw :
     (hB : ∀ z : 𝔼, ‖fderiv ℝ (fderiv ℝ (radialKernel d)) z‖ ≤ B)
     (hharm : HarmonicOnNhd w (ball x₀ ρ)) :
     ‖fderiv ℝ (fderiv ℝ w) x₀‖ ≤ (ε ^ (d + 2))⁻¹ * B * ∫ y in ball x₀ (2 * ε), |w y| ∂volume := by
-  letI : NormSMulClass ℝ (𝔼 →L[ℝ] 𝔼 →L[ℝ] ℝ) :=
+  let : NormSMulClass ℝ (𝔼 →L[ℝ] 𝔼 →L[ℝ] ℝ) :=
     NormedSpace.toNormSMulClass (𝕜 := ℝ) (E := 𝔼 →L[ℝ] 𝔼 →L[ℝ] ℝ)
   set K : 𝔼 → ℝ := radialKernelScaled d ε with hKdef
   set g : 𝔼 → ℝ := Set.indicator (ball x₀ (2 * ε)) w with hgdef
@@ -183,7 +185,7 @@ theorem norm_fderiv_fderiv_le_L1_of_harmonic [NeZero d] {w : 𝔼 → ℝ} (hw :
     have hval : ((L.precompL 𝔼).precompL 𝔼) (fderiv ℝ (fderiv ℝ K) t) (g (x₀ - t))
         = (g (x₀ - t)) • fderiv ℝ (fderiv ℝ K) t := by
       ext x v
-      simp only [ContinuousLinearMap.precompL_apply, ContinuousLinearMap.smul_apply, hLdef,
+      simp only [ContinuousLinearMap.precompL_apply, smul_apply, hLdef,
         ContinuousLinearMap.lsmul_apply, smul_eq_mul]
       ring
     rw [hval, norm_smul, Real.norm_eq_abs]
@@ -507,7 +509,7 @@ theorem interiorGradLipschitz_le_l2dev (d : ℕ) [NeZero d] :
     have hc1 : ContDiffAt ℝ 1 (fderiv ℝ u) p := by
       have := (hharm p hpR).1.fderiv_right (m := 1) (by norm_num)
       simpa using this
-    exact hc1.differentiableAt le_rfl
+    exact hc1.differentiableAt (by norm_num)
   have hbound : ∀ p ∈ Metric.ball x (r / 2), ‖fderiv ℝ (fderiv ℝ u) p‖ ≤
       C * r⁻¹ * r⁻¹ *
         Real.sqrt (meanSquareDeviationOn (euclideanBall (toEuc.symm x) r) (u ∘ toEuc) c) :=

@@ -140,6 +140,6 @@ theorem ae_stepOneEpsJ_le (d : ℕ) :
   · rw [Set.indicator_of_mem hmem]
     exact homega hmem
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 end Algsuperdiff.Section4.Provider.Regularity

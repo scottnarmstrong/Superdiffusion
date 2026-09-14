@@ -128,8 +128,8 @@ theorem tail_minimalScaleX_subset (Z : Omega → ℕ∞) (k N : ℕ) :
     {omega | (N : ℕ∞) ≤ minimalScaleX Z k omega} ⊆
       {omega | ((N - (k + 3) : ℕ) : ℕ∞) ≤ Z omega} := by
   intro omega homega
-  simp only [Set.mem_setOf_eq, minimalScaleX_eq_add_cast] at homega
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq, minimalScaleX_eq_add_cast] at homega
+  simp only [Set.mem_ofPred_eq]
   rcases eq_or_ne (Z omega) ⊤ with htop | hne
   · rw [htop]
     exact le_top

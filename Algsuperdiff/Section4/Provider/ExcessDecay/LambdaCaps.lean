@@ -189,7 +189,7 @@ theorem ae_fluxCorrectedEllipticityRatioMax_le (M : ABKModel d) (k : ℤ)
         fluxCorrectedEllipticityRatioMax M L k (s : ℝ) omega ≤
           2 * (d : ℝ) *
             (Support.fluxCorrectedErrorRepresentative M L k s omega ^ 2 + 1) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   filter_upwards [Support.ae_forall_fluxCorrectedError_eq_representative M k s]
     with omega hall
   intro L hL

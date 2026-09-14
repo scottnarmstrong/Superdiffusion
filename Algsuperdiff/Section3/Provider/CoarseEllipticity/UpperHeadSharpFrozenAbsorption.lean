@@ -178,7 +178,7 @@ theorem collar_head_tuned_trace_is_big_o_with_eighth_power
         (measurable_translateCutoffSample (triadicCubeShift R))
     have hhead : Measurable
         (waveHeadTerm M R.scale (E : ℝ) bfaProfileB ell) := by
-      simpa only [waveHeadTerm] using
+      simpa only [waveHeadTerm] using!
         (measurable_comp_hsep M R.scale (E : ℝ) bfaProfileB fun hs : ℕ =>
           Real.sqrt M.gamma * (3 : ℝ) ^ (-(M.gamma * (ell : ℝ))) *
             waveL4Head M ell hs)
@@ -191,7 +191,7 @@ theorem collar_head_tuned_trace_is_big_o_with_eighth_power
     convert hproduct using 1
     funext omega
     simp only [Y, ell, probeSharpFramedCollarWavePart,
-      probeSharpCollarBandMeanLayerCore, Function.comp_apply]
+      probeSharpCollarBandMeanLayerCore, Function.comp_apply, Pi.mul_apply]
     ring
   have hXsum : ∀ omega, Summable fun n => Y n omega := by
     intro omega
@@ -208,8 +208,11 @@ theorem collar_head_tuned_trace_is_big_o_with_eighth_power
         norm_whitneyDecayRatio_lt_one).mul_left D₀).mul_right Q
     exact Summable.of_nonneg_of_le (fun n => hX0 n omega) hle hright
   have hXsumMeas : Measurable (fun omega => ∑' n, Y n omega) := by
-    have hnn := (Measurable.nnreal_tsum fun n =>
-      (hXmeas n).real_toNNReal).coe_nnreal_real
+    have hnn : Measurable (fun omega : CutoffSample d =>
+        ∑' n, (Y n omega).toNNReal) :=
+      Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+        (hXmeas n).real_toNNReal
+    have hnn := hnn.coe_nnreal_real
     convert hnn using 1
     funext omega
     rw [NNReal.coe_tsum]

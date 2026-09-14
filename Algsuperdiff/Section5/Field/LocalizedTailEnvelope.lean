@@ -241,14 +241,14 @@ private theorem streamTailInnerFloor_lower (M : ABKModel d)
           (Real.rpow A e * Real.rpow D (-e)) * Real.rpow q (-e) :=
         mul_le_mul_of_nonneg_right (min_le_left _ _) hqpow0
       _ ≤ Real.rpow A e * Real.rpow (1 + euclideanNorm x) (-e) :=
-        by simpa only [mul_assoc] using
+        by simpa only [mul_assoc] using!
           mul_le_mul_of_nonneg_left hfactor (Real.rpow_nonneg hA.le _)
       _ = _ := by rfl
   · calc
       streamTailFloorConst M omega * Real.rpow q (-e) ≤
           streamTailFloorConst M omega * 1 :=
         mul_le_mul_of_nonneg_left hqpow (streamTailFloorConst_pos M omega).le
-      _ ≤ 1 / 2 := by simpa only [mul_one] using (min_le_right _ _)
+      _ ≤ 1 / 2 := by simpa only [mul_one] using! (min_le_right _ _)
 
 private theorem streamTailLinearConst_nonneg (M : ABKModel d) [NeZero d] :
     0 ≤ streamTailLinearConst M := by

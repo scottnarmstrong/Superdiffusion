@@ -85,7 +85,7 @@ theorem isBigOWith_const_mul {μ : Measure Ω} {Ψ : ℝ → ℝ} {X : Ω → �
   intro t ht
   have hset : upperTailEvent (fun ω => c * X ω) (c * A * t) = upperTailEvent X (A * t) := by
     ext ω
-    simp only [upperTailEvent, Set.mem_setOf_eq]
+    simp only [upperTailEvent, Set.mem_ofPred_eq]
     constructor
     · intro hx
       have : c * (A * t) < c * X ω := by rw [← mul_assoc]; exact hx

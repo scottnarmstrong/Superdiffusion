@@ -81,7 +81,7 @@ theorem exists_coarseGrainingSupMultiscale_of_depthConverseOn_at (d : ℕ) (hd :
           CoarseGrainingSupMultiscale (originCube d m) jn
             ((ENNReal.ofReal (Real.sqrt d) * CA * C).toReal) s.1 s1.1 s2.1
             p.exponent.toReal sigma0 E1 E2 Dg Gen Fgrad Fflux := by
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   obtain ⟨C, hCtop, hsd⟩ := exists_printedCoarseGrainingFiniteP_smoothDual d hd p hp
   refine ⟨C, hCtop.ne, ?_⟩
   intro CA hCA Pred hconv

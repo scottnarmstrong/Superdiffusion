@@ -62,8 +62,9 @@ private theorem continuousOn_normalizedSkewOperator
     {U : Set (Vec d)} {nu : ℝ} {a : CoeffField d}
     (hcont : ContinuousOn (fun y ↦ a y - nu • (1 : Mat d)) U) :
     ContinuousOn (normalizedSkewOperator nu a) U := by
-  exact matrixToHilbertOperator.continuous.comp_continuousOn
-    (continuousOn_const.smul hcont)
+  have h : ContinuousOn (fun y ↦ nu⁻¹ • (a y - nu • (1 : Mat d))) U :=
+    (continuousOn_const : ContinuousOn (fun _ : Vec d => nu⁻¹) U).smul hcont
+  exact matrixToHilbertOperator.continuous.comp_continuousOn h
 
 private theorem normalizedFrozenCoeff_sub_one_applyMat_eq
     (nu : ℝ) (hnu : 0 < nu) (a : CoeffField d) (z y : Vec d) :
@@ -222,7 +223,11 @@ theorem continuousOn_normalizedFrozenCoeff
       abel
     rw [heq]
     exact (hcont y hy).add continuousWithinAt_const
-  exact continuousOn_const.smul (ha.sub continuousOn_const)
+  have hsub : ContinuousOn (fun y ↦ a y - (a z - nu • (1 : Mat d))) U :=
+    ha.sub (continuousOn_const : ContinuousOn (fun _ : Vec d => a z - nu • (1 : Mat d)) U)
+  have h : ContinuousOn (fun y ↦ nu⁻¹ • (a y - (a z - nu • (1 : Mat d)))) U :=
+    (continuousOn_const : ContinuousOn (fun _ : Vec d => nu⁻¹) U).smul hsub
+  exact h
 
 /-- Ellipticity of the normalized frozen coefficient on a measurable subset of
 the set carrying the continuity, with the explicit constants `1` and

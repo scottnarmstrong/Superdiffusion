@@ -75,8 +75,8 @@ theorem abs_integral_eval_exitTimeTrunc_onePointRealExtension_le_cubeSetAt_of_hw
         ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
           R.isConservative_onePointKernelSemigroup (y : OnePoint (Vec d)))| ≤
       2 * K := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hM0 : 0 ≤ M := le_trans (abs_nonneg (u y)) (hM y)
   have hcentre : y ∈ cubeSetAt y n := mem_cubeSetAt_self y n
   refine abs_integral_eval_exitTimeTrunc_le_of_hasExitMeanValueOn
@@ -115,8 +115,8 @@ theorem sq_integral_eval_exitTimeTrunc_onePointRealExtension_le_cubeSetAt_of_hwf
         ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
           R.isConservative_onePointKernelSemigroup (y : OnePoint (Vec d))))
       ^ (2 : ℕ) ≤ 4 * K ^ (2 : ℕ) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hbase := abs_integral_eval_exitTimeTrunc_onePointRealExtension_le_cubeSetAt_of_hwfin
     R hreg y n hu hM hmean hwfin hb hK0 hKb hb0 t
   calc (∫ omega, onePointRealExtension b (omega (ContinuousPath.exitTimeTrunc
@@ -170,8 +170,8 @@ theorem abs_integral_eval_exitTimeTrunc_onePointRealExtension_sub_mul_le_cubeSet
         (IsConservative.continuousProcess R.onePointKernelSemigroup
             R.isConservative_onePointKernelSemigroup (y : OnePoint (Vec d))
           (survivalEvent (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) t)ᶜ).toReal) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hM0 : 0 ≤ M := le_trans (abs_nonneg (w y)) (hM y)
   have hCq0 : 0 ≤ Cq := le_trans (abs_nonneg (q y)) (hCq y)
   have hcentre : y ∈ cubeSetAt y n := mem_cubeSetAt_self y n

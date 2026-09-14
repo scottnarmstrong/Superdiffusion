@@ -105,7 +105,7 @@ theorem exists_responseJ_ugly_estimate (d : ℕ) (dimension : 2 ≤ d) :
           (Disorder.cstar M) M.gamma
           ((3 : ℝ) ^ (s * ((m : ℝ) - (n : ℝ))))
           ((3 : ℝ) ^ ((s + M.gamma) * ((m : ℝ) - (n : ℝ)))) C := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cs, hCs, hpre⟩ := exists_responseJ_ugly_pre_terms d dimension
   refine ⟨Cs, hCs, ?_⟩
   intro M m n a h e s kap Cl Cr Cp Ash C Gn Gm Lnrm hs0 hs14 hsgam he hnm hAsh

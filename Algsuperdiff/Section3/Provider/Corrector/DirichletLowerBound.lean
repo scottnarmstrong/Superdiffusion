@@ -70,7 +70,7 @@ theorem norm_sq_ofVec (a : Vec d) : ‖HilbertVec.ofVec a‖ ^ 2 = vecDot a a :=
 theorem memVectorL2_toVec_of_memHilbertVectorL2 {U : Set (Vec d)}
     {g : Vec d → HilbertVec d} (hg : MemHilbertVectorL2 U g) :
     MemVectorL2 U fun x => (g x).toVec := by
-  simpa using
+  simpa using!
     ((HilbertVec.continuousLinearEquivVec d).toContinuousLinearMap).comp_memLp' hg
 
 /-- Promoting a plain vector field preserves square integrability. -/

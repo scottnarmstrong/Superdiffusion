@@ -215,7 +215,7 @@ theorem isBigO_gammaSigma_two_geometricBlock [IsProbabilityMeasure μ]
       Finset.Ioc_eq_empty (not_lt.2 hempty)
     simp only [hnil, Finset.sum_empty]
     exact isBigO_gammaSigma_zero_fun hamp
-  · push_neg at hempty
+  · push Not at hempty
     have hn_le : n ≤ geometricBlockEnd gamma n m (j + 1) := by
       rw [geometricBlockEnd_eq]
       exact le_max_left _ _

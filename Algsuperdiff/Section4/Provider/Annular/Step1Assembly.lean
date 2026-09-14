@@ -175,7 +175,7 @@ theorem summable_annFam_rows {m : ℤ} {h : ℤ → ℤ → ℝ}
 transcendental atom is in sight here, by design. -/
 private theorem le_seven_quarters_of_sq {x : ℝ} (h : x ^ 2 = 3) : x ≤ 7 / 4 := by
   by_contra hc
-  push_neg at hc
+  push Not at hc
   have hlt : (7 / 4 : ℝ) ^ 2 < x ^ 2 := pow_lt_pow_left₀ hc (by norm_num) (by norm_num)
   rw [h] at hlt
   norm_num at hlt

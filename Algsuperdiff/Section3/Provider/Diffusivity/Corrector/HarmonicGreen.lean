@@ -93,7 +93,8 @@ theorem integral_mul_euclideanCoordDeriv_eq_neg_of_contDiff_one
     (integrable_mul_of_hasCompactSupport_right hduc hψcont hψc)
     (integrable_mul_of_hasCompactSupport_right hucont hdψc hdψsupp)
     (integrable_mul_of_hasCompactSupport_right hucont hψcont hψc)
-    (hu.differentiable le_rfl) (hψ.differentiable le_rfl)
+    (fun x _ => (hu.differentiable (by simp)).differentiableAt)
+    (fun x _ => (hψ.differentiable (by simp)).differentiableAt)
 
 /-- **Two integrations by parts in the same coordinate direction.**
 
@@ -127,7 +128,7 @@ theorem integral_mul_euclideanCoordSecondDeriv_eq
 proves `contDiff_euclideanCoordLaplacian` only at `C^infty`. -/
 theorem continuous_euclideanCoordLaplacian_of_contDiff_two {u : Vec d → ℝ}
     (hu : ContDiff ℝ (2 : ℕ) u) : Continuous (euclideanCoordLaplacian u) := by
-  refine continuous_finset_sum Finset.univ fun i _ => ?_
+  refine continuous_finsetSum Finset.univ fun i _ => ?_
   have hdu : ContDiff ℝ (1 : ℕ) (euclideanCoordDeriv i u) :=
     contDiff_euclideanCoordDeriv_of_contDiff_succ (n := 1) (by exact_mod_cast hu) i
   exact (contDiff_euclideanCoordDeriv_of_contDiff_succ (n := 0)
@@ -164,7 +165,7 @@ theorem integral_mul_euclideanCoordLaplacian_eq_integral_euclideanCoordLaplacian
       intro x
       rw [euclideanCoordLaplacian, Finset.mul_sum]
     simp only [hsum]
-    exact integral_finset_sum Finset.univ fun i _ =>
+    exact integral_finsetSum Finset.univ fun i _ =>
       integrable_mul_of_hasCompactSupport_right hucont (hdd ψ hψ i) (hddsupp i)
   have hright :
       ∫ x, euclideanCoordLaplacian u x * ψ x ∂volume =
@@ -175,7 +176,7 @@ theorem integral_mul_euclideanCoordLaplacian_eq_integral_euclideanCoordLaplacian
       intro x
       rw [euclideanCoordLaplacian, Finset.sum_mul]
     simp only [hsum]
-    exact integral_finset_sum Finset.univ fun i _ =>
+    exact integral_finsetSum Finset.univ fun i _ =>
       integrable_mul_of_hasCompactSupport_right (hdd u hu i) hψcont hψc
   rw [hleft, hright]
   exact Finset.sum_congr rfl fun i _ =>

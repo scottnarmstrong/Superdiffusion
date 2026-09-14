@@ -155,7 +155,7 @@ private theorem iIndepFun_centeredInflatedCubeIndicator_of_sameColor
   have hcomp := hraw.comp
     (g := fun i (x : ℝ) => x - P.real (inflatedBadEvent B L i.1))
     (fun _ => measurable_id.sub measurable_const)
-  simpa only [centeredInflatedCubeIndicator, Function.comp_apply] using hcomp
+  simpa only [centeredInflatedCubeIndicator, Function.comp_apply] using! hcomp
 
 private theorem measurable_centeredInflatedCubeIndicator
     {Ω : Type*} [MeasurableSpace Ω] {d L : ℕ} (P : Measure Ω)
@@ -174,7 +174,7 @@ private theorem integral_centeredInflatedCubeIndicator
   rw [integral_sub]
   · have hint : ∫ ω, (inflatedBadEvent B L v).indicator
         (fun _ => (1 : ℝ)) ω ∂P = P.real (inflatedBadEvent B L v) := by
-      simpa only [Pi.one_apply] using integral_indicator_one hmeasEvent
+      simpa only [Pi.one_apply] using! integral_indicator_one hmeasEvent
     rw [hint]
     simp only [integral_const, smul_eq_mul, probReal_univ, one_mul, sub_self]
   · exact (integrable_indicator_iff hmeasEvent).mpr (integrable_const _).integrableOn
@@ -215,7 +215,7 @@ theorem isBigO_gammaTwo_average_centeredInflatedCubeIndicator
     exact measurable_centeredInflatedCubeIndicator P hB v
   have hX : ∀ v ∈ s, IsBigO P (gammaSigma 2) (X v) (2 * R⁻¹) := by
     intro v hv
-    simpa only [X, centeredInflatedCubeIndicator] using
+    simpa only [X, centeredInflatedCubeIndicator] using!
       isBigO_gammaTwo_centeredIndicator_of_measureReal_le hR (htail v hv)
   have hmean : ∀ v ∈ s, ∫ ω, X v ω ∂P = 0 := by
     intro v _hv

@@ -84,7 +84,7 @@ private theorem openCarrier_eq_inter (T : KuhnCell d) :
             triadicLocalCoordinate T.supportCube x (T.order i) <
               triadicLocalCoordinate T.supportCube x (T.order j)} := by
   ext x
-  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq,
+  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq,
     KuhnCell.mem_openCarrier_iff]
 
 theorem isOpen_openCarrier (T : KuhnCell d) : IsOpen T.openCarrier := by
@@ -126,7 +126,7 @@ theorem convex_openCarrier (T : KuhnCell d) : Convex ℝ T.openCarrier := by
             (T.supportCube.index (T.order i) : ℝ) * cubeScaleFactor T.supportCube -
               (T.supportCube.index (T.order j) : ℝ) * cubeScaleFactor T.supportCube} := by
       ext x
-      simp only [Set.mem_setOf_eq, triadicLocalCoordinate, h, forall_const]
+      simp only [Set.mem_ofPred_eq, triadicLocalCoordinate, h, forall_const]
       constructor <;> intro hx <;> linarith
     rw [hset]
     exact convex_halfSpace_lt (isLinearMap_coord_sub (T.order i) (T.order j)) _
@@ -172,7 +172,7 @@ theorem kuhnCellInteriorPoint_mem_openCarrier (T : KuhnCell d) :
     ring
   rw [KuhnCell.mem_openCarrier_iff]
   refine ⟨?_, ?_⟩
-  · simp only [openCubeSet, Set.mem_setOf_eq, kuhnCellInteriorPoint]
+  · simp only [openCubeSet, Set.mem_ofPred_eq, kuhnCellInteriorPoint]
     intro k
     have hk := hfrac k
     constructor <;> nlinarith [hk.1, hk.2]
@@ -229,7 +229,7 @@ theorem carrier_subset_closure_openCarrier (T : KuhnCell d) :
     intro t ht0 ht1
     rw [KuhnCell.mem_openCarrier_iff]
     refine ⟨?_, ?_⟩
-    · simp only [openCubeSet, Set.mem_setOf_eq]
+    · simp only [openCubeSet, Set.mem_ofPred_eq]
       intro k
       have hxk := hxcube k
       have hyk := hymem.1 k
@@ -274,7 +274,7 @@ theorem volume_carrier_diff_openCarrier (T : KuhnCell d) :
     volume (T.carrier \ T.openCarrier) = 0 := by
   refine measure_mono_null ?_ ((convex_openCarrier T).addHaar_frontier volume)
   intro x hx
-  simp only [frontier, Set.mem_diff, (isOpen_openCarrier T).interior_eq]
+  simp only [frontier, Set.mem_sdiff, (isOpen_openCarrier T).interior_eq]
   exact ⟨carrier_subset_closure_openCarrier T hx.1, hx.2⟩
 
 /-! ## The open cells cover the root cube up to a null set -/

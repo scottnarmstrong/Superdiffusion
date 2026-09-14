@@ -115,7 +115,7 @@ theorem cutoffLowerEllipticityInv_le_nu_inv
     (q : CoarseEllipticityExponent) (omega : Cutoff.CutoffSample d) :
     Observable.cutoffLowerEllipticityInv M domainScale cutoffScale s hs q omega ≤
       M.nu⁻¹ := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   rw [Observable.cutoffLowerEllipticityInv_eq_literal]
   unfold Observable.cutoffLowerEllipticityInvLiteral
   rcases q with ⟨q, hq⟩

@@ -135,9 +135,9 @@ theorem euclideanCoordLaplacian_sq
     change (fderiv ℝ ((fun y ↦ (2 : ℝ) * g y) * euclideanCoordDeriv j g) x)
         (basisVec j) = _
     rw [fderiv_mul h2gdiff hDdiff]
-    simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply]
+    simp only [add_apply, smul_apply]
     rw [fderiv_const_mul hgdiff]
-    simp only [ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_eq_mul]
+    simp only [FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
     simp only [euclideanCoordSecondDeriv, euclideanCoordDeriv]
     ring
   rw [euclideanCoordLaplacian, Finset.sum_congr rfl
@@ -347,6 +347,8 @@ theorem normalizedIntegral_metricBall_eq_radialSphereAverage [NeZero d]
   have hd : (d : ℝ) ≠ 0 := by exact_mod_cast NeZero.ne d
   field_simp
 
+open scoped Laplacian
+
 /-- The volume-normalized ball average of a smooth subharmonic function is
 nondecreasing with the radius.  This is the constant-one submean comparison
 needed by the Schauder iteration. -/
@@ -433,8 +435,8 @@ theorem normalizedIntegral_vecNormSq_euclideanGradient_mono [NeZero d]
     intro y
     simp only [q, vecNormSq, vecDot, euclideanGradient, pow_two]
   simp_rw [hpoint]
-  rw [integral_finset_sum Finset.univ (fun i _ ↦ hqint i a),
-    integral_finset_sum Finset.univ (fun i _ ↦ hqint i b),
+  rw [integral_finsetSum Finset.univ (fun i _ ↦ hqint i a),
+    integral_finsetSum Finset.univ (fun i _ ↦ hqint i b),
     Finset.mul_sum, Finset.mul_sum]
   exact hsum
 
@@ -522,7 +524,7 @@ theorem volumeAverage_vecNormSq_grad_mono_euclideanBall_lt [NeZero d]
         change (↑(2 : ℕ∞) : WithTop ℕ∞) ≤ ↑(⊤ : ℕ∞)
         exact WithTop.coe_le_coe.mpr le_top))]
     simpa using hzero
-  letI finiteVolumeInnerBall := Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall z c
+  let finiteVolumeInnerBall := Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall z c
   have hvgrad : euclideanGradient v =ᵐ[volume.restrict (euclideanBall z c)] h.grad :=
     ae_eq_euclideanGradient_of_ae_eq_of_contDiff
       (isOpen_euclideanBall z c)

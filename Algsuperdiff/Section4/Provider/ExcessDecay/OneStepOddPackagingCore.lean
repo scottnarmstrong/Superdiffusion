@@ -156,7 +156,7 @@ theorem hasWeakGradientOn_comp_coordFaceReflection_of_symm {Ω : Set (Vec d)}
   have hεsq : ε * ε = 1 := by rw [hεdef]; split_ifs <;> norm_num
   have hpre : coordFaceReflection a i ⁻¹' Ω = Ω := Set.ext fun z => hsymm z
   have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection a i z) := by
-    simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection a i)
+    simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection a i)
   have hφrc : HasCompactSupport fun z => φ (coordFaceReflection a i z) :=
     hasCompactSupport_comp_coordFaceReflection hφc a i
   have hφrΩ : tsupport (fun z => φ (coordFaceReflection a i z)) ⊆ Ω :=
@@ -262,7 +262,7 @@ theorem memH10_comp_coordFaceReflection {Ω : Set (Vec d)} (hΩ : MeasurableSet 
       u.toH1Function.hasWeakGradient
   have hsm : ∀ n, ContDiff ℝ (⊤ : ℕ∞)
       fun y => u.approx n (coordFaceReflection a i y) := fun n => by
-    simpa [Function.comp] using
+    simpa [Function.comp] using!
       (u.approx_smooth n).comp (contDiff_coordFaceReflection a i)
   have hcs : ∀ n, HasCompactSupport
       fun y => u.approx n (coordFaceReflection a i y) := fun n =>
@@ -470,14 +470,14 @@ theorem setIntegral_mul_fderiv_of_localizedZeroTrace {Ω V : Set (Vec d)}
     have hae := HasWeakPartialDerivOn.ae_eq hONopen hu_loc hv_loc hwd_u hwd_v
     calc ∫ y in Ω, u.toH1Function.grad y j * ψ y ∂volume
         = ∫ y in Ω ∩ N, u.toH1Function.grad y j * ψ y ∂volume :=
-          setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩmeas hONsub
+          setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩmeas hONsub
             (hvanish _)
       _ = ∫ y in Ω ∩ N, v.grad y j * ψ y ∂volume := by
           refine integral_congr_ae ?_
           filter_upwards [hae] with y hy
           rw [hy]
       _ = ∫ y in Ω, v.grad y j * ψ y ∂volume :=
-          (setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩmeas hONsub
+          (setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩmeas hONsub
             (hvanish _)).symm
   calc ∫ y in Ω, v.toFun y * (fderiv ℝ ψ y) (basisVec j) ∂volume
       = ∫ y in Ω, u.toH1Function.toFun y * (fderiv ℝ ψ y) (basisVec j) ∂volume :=

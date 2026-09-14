@@ -222,7 +222,7 @@ private theorem tsum_geometric_indicator_ge {r : ℝ}
       r ^ N * (1 - r)⁻¹ := by
   have hs : Summable fun k : ℕ => if N ≤ k then r ^ k else 0 := by
     simpa only [← Set.piecewise_eq_indicator]
-      using (summable_geometric_of_lt_one hr0 hr1).indicator {k | N ≤ k}
+      using! (summable_geometric_of_lt_one hr0 hr1).indicator {k | N ≤ k}
   have hz : (∑ k ∈ Finset.range N, if N ≤ k then r ^ k else 0) = 0 := by
     apply Finset.sum_eq_zero
     intro k hk
@@ -246,7 +246,7 @@ private theorem badFamilyPotentialIncrement_integrable
     hb0 hb hk₀ hne N p
   have hNs := potentialZeroTraceFieldOn_badFamily_activeComponentPrefix
     hb0 hb hk₀ hne (N + 1) p
-  simpa only [vecNormSq, badFamilyPotentialApproximation] using
+  simpa only [vecNormSq, badFamilyPotentialApproximation] using!
     integrableOn_vecDot_of_memVectorL2 (hN.1.sub hNs.1) (hN.1.sub hNs.1)
 
 /-- The squared finite-prefix increment, integrated over the root cube, has a
@@ -278,7 +278,7 @@ theorem integral_vecNormSq_badFamilyPotentialApproximation_sub_succ_le
     vecNormSq p * (3 : ℝ) ^ (2 * b *
       ((hsep M m E b omega : ℝ) + (k₀ : ℝ) + 1))
   let r : ℝ := (3 : ℝ) ^ (-(1 / 2 : ℝ))
-  haveI : NeZero d :=
+  have : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hmono : Monotone hn := by
     change Monotone (whitneyScaleSeq b (hsep M m E b omega) k₀)
@@ -460,7 +460,7 @@ theorem integral_vecNormSq_badFamilyPotentialApproximation_sub_succ_le
     · dsimp [U]
       simpa only [Set.iUnion_subtype] using
         volume_openCubeSet_diff_iUnion_openCarrier hstep
-    · rw [Set.diff_eq_empty.mpr hUnionSub]
+    · rw [Set.sdiff_eq_empty.mpr hUnionSub]
       exact measure_empty
   have hdisj : Pairwise (Function.onFun Disjoint
       (fun T : ↑(simplexPartition (d := d) m hn) => T.1.openCarrier)) := by

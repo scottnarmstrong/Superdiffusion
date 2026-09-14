@@ -58,7 +58,7 @@ theorem exists_isDirichletSolutionAt_linearAxisDatum_streamCoefficient
     ∃ u : H1Function (cubeSetAt y n),
       IsDirichletSolutionAt (Field.streamCoefficient M.nu omega) y n u
         (linearAxisDatum i) := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   obtain ⟨Lam, hEll⟩ := exists_isEllipticFieldOn_streamCoefficient M.nu_pos omega y n
   exact exists_isDirichletSolutionAt_of_isEllipticFieldOn hEll
     (Real.rpow_nonneg (by norm_num) _) (holderSeminormBoundOn_linearAxisDatum i y n)
@@ -77,7 +77,7 @@ theorem tendsto_l2_exitTime_cutoff (M : ABKModel d)
     Tendsto (fun L : ℤ => Real.sqrt
         (∫ x in cubeSetAt y n, ((u L).toFun x - v.toFun x) ^ (2 : ℕ) ∂volume))
       atTop (𝓝 0) := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   obtain ⟨C, hC⟩ := Field.fullTailGood_sharp omega.2
   obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
   have hgamma : M.gamma < 1 := by
@@ -146,7 +146,7 @@ theorem exit_time_bounds_on_good_cube_stream (d : ℕ) (hdim : 2 ≤ d) (cstar :
       (uRep L) vRep (fun t => ENNReal.ofReal (uRep L t)) (hu L) hv (huRep L) hvRep
       (fun _ _ => rfl)).2 hepc z hz
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hposC : (0 : ℝ) < C⁻¹ * exitTimeScale M n :=
       mul_pos (inv_pos.2 hCpos) hTpos
     have hlt : ENNReal.ofReal (uRep L z) <

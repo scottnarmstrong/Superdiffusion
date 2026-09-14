@@ -52,8 +52,9 @@ theorem contDiff_one_setIntegral_of_continuous_hasFDerivAt
     have hCint : Integrable (fun _ : ℝ ↦ C) (volume.restrict K) :=
       MeasureTheory.integrableOn_const (hs := hK.measure_ne_top)
     exact hasFDerivAt_integral_of_dominated_of_fderiv_le
-      (F := F) (F' := F') (x₀ := x) (bound := fun _ ↦ C) (ε := 1)
-      one_pos hFmeas hFint hF'meas hbound hCint
+      (F := F) (F' := F') (x₀ := x) (bound := fun _ ↦ C)
+      (s := ball x 1) (hs := Metric.ball_mem_nhds x zero_lt_one)
+      hFmeas hFint hF'meas hbound hCint
       (Filter.Eventually.of_forall fun t y _ ↦ hdiff y t)
 
 end DivergenceFormProcess

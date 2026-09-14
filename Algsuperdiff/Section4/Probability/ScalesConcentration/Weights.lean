@@ -83,7 +83,8 @@ lemma tsum_int_pow_natAbs {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
   have hsum := summable_pow_natAbs hq0 hq1
   have heven : ∀ n : ℤ, q ^ (-n).natAbs = q ^ n.natAbs := by
     intro n; simp [Int.natAbs_neg]
-  rw [tsum_int_eq_zero_add_two_mul_tsum_pnat heven hsum]
+  rw [tsum_int_eq_zero_add_two_mul_tsum_pnat (f := fun ℓ : ℤ => q ^ ℓ.natAbs)
+    (fun n => heven n) hsum]
   have hpnat : ∑' n : ℕ+, q ^ ((n : ℤ)).natAbs = q / (1 - q) := by
     have : (fun n : ℕ+ => q ^ ((n : ℤ)).natAbs) = fun n : ℕ+ => q ^ (n : ℕ) := by
       funext n; simp

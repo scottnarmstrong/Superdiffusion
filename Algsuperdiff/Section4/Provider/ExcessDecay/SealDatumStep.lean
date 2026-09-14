@@ -127,7 +127,7 @@ theorem memLp_grad_of_subset {m : ℤ} (h : H1Function (openCubeSet (originCube 
 theorem integrableOn_of_memLp_two {A : Set (Vec d)} (hAtop : volume A ≠ ⊤)
     {f : Vec d → ℝ} (hf : MemLp f 2 (volume.restrict A)) :
     IntegrableOn f A volume := by
-  haveI : IsFiniteMeasure (volume.restrict A) := by
+  have : IsFiniteMeasure (volume.restrict A) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hAtop
@@ -137,7 +137,7 @@ theorem integrableOn_of_memLp_two {A : Set (Vec d)} (hAtop : volume A ≠ ⊤)
 theorem integrableOn_sub_const_sq {A : Set (Vec d)} (hAtop : volume A ≠ ⊤)
     {f : Vec d → ℝ} (hf : MemLp f 2 (volume.restrict A)) (b : ℝ) :
     IntegrableOn (fun y => (f y - b) ^ 2) A volume := by
-  haveI : IsFiniteMeasure (volume.restrict A) := by
+  have : IsFiniteMeasure (volume.restrict A) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hAtop
@@ -273,7 +273,7 @@ theorem normalizedL2On_sub_average_wellPlacedCube_le {n m : ℤ} (hnm : n + 2 �
     exact ENNReal.toReal_pos_iff.mp this |>.1
   have hf : MemLp h.toFun 2 (volume.restrict cc) := memLp_toFun_of_subset h hccsub
   have hconst : MemLp (fun _ : Vec d => volumeAverage cc h.toFun) 2 (volume.restrict cc) := by
-    haveI : IsFiniteMeasure (volume.restrict cc) := by
+    have : IsFiniteMeasure (volume.restrict cc) := by
       refine ⟨?_⟩
       rw [Measure.restrict_apply_univ]
       exact lt_top_iff_ne_top.2 hcctop
@@ -352,7 +352,7 @@ theorem sum_toReal_eLpNorm_grad_cube_le_anchorWindow {n m : ℤ} {z c : Vec d}
   have hW0 : volume W ≠ 0 := by
     intro h0
     have hcub : volume ((fun y => c + y) '' openCubeSet (originCube d (n + 2))) = 0 :=
-      le_antisymm (h0 ▸ measure_mono hsub) (zero_le _)
+      le_antisymm (h0 ▸ measure_mono hsub) zero_le
     have hpos := volume_toReal_image_add_openCubeSet_pos c (n + 2)
     rw [hcub] at hpos
     simp only [ENNReal.toReal_zero] at hpos

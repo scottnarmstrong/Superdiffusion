@@ -163,7 +163,7 @@ theorem memLp_two_normalizedCubeMeasure_of_holderHalf {m : ℤ} {K : ℝ} {f : V
     MemLp f 2 (normalizedCubeMeasure (originCube d m)) := by
   have hset : MeasurableSet (openCubeSet (originCube d m)) :=
     (isOpen_openCubeSet _).measurableSet
-  haveI : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
+  have : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact volume_openCubeSet_lt_top _
@@ -272,7 +272,7 @@ theorem abs_cubeAverage_le_of_bound {Q : TriadicCube d} {f : Vec d → ℝ} {K :
     (hf : ∀ x ∈ openCubeSet Q, |f x| ≤ K) :
     |cubeAverage Q f| ≤ K := by
   have hset : MeasurableSet (openCubeSet Q) := (isOpen_openCubeSet _).measurableSet
-  haveI : IsFiniteMeasure (volume.restrict (cubeSet Q)) := by
+  have : IsFiniteMeasure (volume.restrict (cubeSet Q)) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact volume_cubeSet_lt_top _

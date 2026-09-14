@@ -383,7 +383,7 @@ theorem count_chernoff_bound
         < ∑' j : ℤ, (Zcount X s lam m j ω : ℝ≥0∞)}
       ⊆ {ω | ε ≤ expZfun X p s lam r m ω} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω ⊢
+    simp only [Set.mem_ofPred_eq] at hω ⊢
     rw [ENNReal.tsum_eq_iSup_sum' (fun N : ℕ => Finset.Icc (-(N : ℤ)) (N : ℤ))
       exists_icc_superset] at hω
     obtain ⟨N, hN⟩ := lt_iSup_iff.1 hω

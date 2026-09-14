@@ -145,6 +145,7 @@ theorem badExtended_subset_iUnion_badScaleEvent (M : ABKModel d)
 
 /-! ## The cutoff-sample local sigma-fields -/
 
+set_option warn.classDefReducibility false in
 /-- The cutoff-sample sigma-field carrying the integral-local information in
 `U` of every shell of index at most `n`. -/
 def cutoffShellLocalSigma (n : ℤ) (U : Set (Vec d)) :
@@ -173,7 +174,7 @@ theorem measurableSet_badScaleEvent_succ_cutoffShellLocal (M : ABKModel d)
     (Q : TriadicCube d) (l : ℕ) {U : Set (Vec d)} (hU : cubeTreeRegion Q ⊆ U) :
     MeasurableSet[cutoffShellLocalSigma (Q.scale + (l : ℤ) + 1) U]
       (badScaleEvent M Q (l + 1)) := by
-  letI : MeasurableSpace (CutoffSample d) :=
+  let : MeasurableSpace (CutoffSample d) :=
     cutoffShellLocalSigma (Q.scale + (l : ℤ) + 1) U
   refine Finset.measurableSet_biUnion _ fun i hi => ?_
   refine Finset.measurableSet_biUnion _ fun R hR => ?_

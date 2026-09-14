@@ -133,7 +133,7 @@ theorem one_step_laplace_on_good_cube_stream_image (d : ℕ) (hdim : 2 ≤ d)
     intro z
     have hz := expectedExitTime_le_of_le_on P hP hKreg hupper z
     simpa only [ENNReal.coe_mul, hCupCoe, hTCoe, ENNReal.coe_toNNReal,
-      ENNReal.ofReal_mul hC.le] using hz
+      ENNReal.ofNNReal_toNNReal, ENNReal.ofReal_mul hC.le] using hz
   have hlowerClosed : ∀ z ∈ closure (cubeSetAt y (n - 1)),
       ((Real.toNNReal C⁻¹ * Real.toNNReal (exitTimeScale M n) : ℝ≥0) : ℝ≥0∞) ≤
         expectedExitTime P hP U (emb z) := by
@@ -141,7 +141,7 @@ theorem one_step_laplace_on_good_cube_stream_image (d : ℕ) (hdim : 2 ≤ d)
       (mul_pos hCinv hTreal) (hlower hepc)
     intro z hz
     simpa only [ENNReal.coe_mul, hclowCoe, hTCoe, ENNReal.coe_toNNReal,
-      ENNReal.ofReal_mul hCinv.le] using hbase z hz
+      ENNReal.ofNNReal_toNNReal, ENNReal.ofReal_mul hCinv.le] using hbase z hz
   refine ⟨oneStepLaplaceContraction_lt_one hCup hclow, ?_⟩
   intro z hz
   have hsurv := survivalProbabilityConstant_le_measure_le_exitTime_on P hP hFeller hKreg

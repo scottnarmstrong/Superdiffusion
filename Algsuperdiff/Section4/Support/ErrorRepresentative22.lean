@@ -180,8 +180,10 @@ private theorem aemeasurable_tsum_of_nonneg
     (hmeas : ∀ n, AEMeasurable (term n) mu)
     (hnonneg : ∀ n omega, 0 ≤ term n omega) :
     AEMeasurable (fun omega => ∑' n, term n omega) mu := by
-  have hnn :=
-    (AEMeasurable.nnreal_tsum fun n => (hmeas n).real_toNNReal).coe_nnreal_real
+  have hnn : AEMeasurable (fun omega => ∑' n, (term n omega).toNNReal) mu :=
+    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+      (hmeas n).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]
@@ -391,7 +393,7 @@ noncomputable def annularErrorObservable (M : ABKModel d) (n : ℤ)
 theorem measurable_annularErrorObservable (M : ABKModel d) (n : ℤ)
     (s : {s : ℝ // 0 < s}) :
     Measurable (annularErrorObservable M n s) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change Measurable (cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
     (Annealed.sigmaBar M (n - 2)))
   exact measurable_cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
@@ -400,7 +402,7 @@ theorem measurable_annularErrorObservable (M : ABKModel d) (n : ℤ)
 theorem annularErrorObservable_nonneg (M : ABKModel d) (n : ℤ)
     (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
     0 ≤ annularErrorObservable M n s omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change 0 ≤ cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
     (Annealed.sigmaBar M (n - 2)) omega
   exact cutoffHomogenizationErrorRepresentative22_nonneg M (n - 2) n s.2
@@ -413,7 +415,7 @@ theorem annularErrorAtom_ae_eq_annularErrorObservable (M : ABKModel d) (n : ℤ)
     @annularErrorAtom d (neZero_of_model M) M n (s : ℝ) =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
       annularErrorObservable M n s := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change cutoffHomogenizationErrorRaw22 M (n - 2) n (s : ℝ)
       (Annealed.sigmaBar M (n - 2)) =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
     cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2

@@ -41,7 +41,7 @@ private theorem integrable_scaleNormalized_LambdaSqCoeffField_pow
   have hscale :=
     Ch04.LambdaSqCoeffField_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
       ha k 0 s (.finite 1)
-  simpa only [Nat.add_zero] using congrArg (fun x : ℝ => x ^ xi) hscale.symm
+  simpa only [Nat.add_zero] using! congrArg (fun x : ℝ => x ^ xi) hscale.symm
 
 private theorem integrable_scaleNormalized_lambdaSqCoeffField_inv_pow
     (M : ABKModel d) (m : ℤ) (k : ℕ) {s : ℝ} (hs : 0 < s) (xi : ℕ) :
@@ -65,7 +65,7 @@ private theorem integrable_scaleNormalized_lambdaSqCoeffField_inv_pow
   have hscale :=
     Ch04.lambdaSqCoeffField_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
       ha k 0 s (.finite 1)
-  simpa only [Nat.add_zero] using
+  simpa only [Nat.add_zero] using!
     congrArg (fun x : ℝ => (x⁻¹) ^ xi) hscale.symm
 
 end

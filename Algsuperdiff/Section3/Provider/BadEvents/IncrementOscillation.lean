@@ -134,12 +134,19 @@ private theorem ioc_eq_range_map_asc {j L : ℤ} (hjL : j ≤ L) :
           have hcast : (a : ℤ) = (b : ℤ) := by omega
           exact_mod_cast hcast⟩ := by
   ext k
-  simp only [Finset.mem_Ioc, Finset.mem_map, Finset.mem_range,
-    Function.Embedding.coeFn_mk]
+  simp only [Finset.mem_Ioc, Finset.mem_map, Finset.mem_range]
   constructor
   · rintro ⟨hlo, hhi⟩
-    exact ⟨(k - j - 1).toNat, by omega, by omega⟩
+    refine ⟨(k - j - 1).toNat, by omega, ?_⟩
+    show j + 1 + ((k - j - 1).toNat : ℤ) = k
+    have h1 : (0 : ℤ) ≤ k - j - 1 := by omega
+    rw [Int.toNat_of_nonneg h1]
+    omega
   · rintro ⟨n, hn, rfl⟩
+    show j < j + 1 + (n : ℤ) ∧ j + 1 + (n : ℤ) ≤ L
+    have h2 : (0 : ℤ) ≤ L - j := by omega
+    have hn' : (n : ℤ) < ((L - j).toNat : ℤ) := by exact_mod_cast hn
+    rw [Int.toNat_of_nonneg h2] at hn'
     omega
 
 /-- The manuscript's `e.Bosc.def` complement control, now for the literal increment: on

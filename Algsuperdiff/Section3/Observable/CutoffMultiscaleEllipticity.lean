@@ -73,7 +73,7 @@ theorem measurable_cutoffLowerEllipticityInvLiteral (M : ABKModel d)
     (domainScale cutoffScale : ℤ) {s : ℝ} (hs : 0 < s)
     (q : CoarseEllipticityExponent) :
     Measurable (cutoffLowerEllipticityInvLiteral M domainScale cutoffScale s q) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   exact Algsuperdiff.Section3.Provider.BadEvents.measurable_comp_lambdaSqCoeffField_inv
     (Cutoff.measurable_coefficientCutoff M.nu cutoffScale)
     (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale)
@@ -85,7 +85,7 @@ theorem measurable_cutoffUpperEllipticityLiteral (M : ABKModel d)
     (domainScale cutoffScale : ℤ) {s : ℝ} (hs : 0 < s)
     (q : CoarseEllipticityExponent) :
     Measurable (cutoffUpperEllipticityLiteral M domainScale cutoffScale s q) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   exact Algsuperdiff.Section3.Provider.BadEvents.measurable_comp_LambdaSqCoeffField
     (Cutoff.measurable_coefficientCutoff M.nu cutoffScale)
     (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale)
@@ -95,7 +95,7 @@ private theorem cutoffLowerEllipticityInvLiteral_nonneg (M : ABKModel d)
     (domainScale cutoffScale : ℤ) {s : ℝ} (hs : 0 < s)
     (q : CoarseEllipticityExponent) (omega : CutoffSample d) :
     0 ≤ cutoffLowerEllipticityInvLiteral M domainScale cutoffScale s q omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   unfold cutoffLowerEllipticityInvLiteral
   exact inv_nonneg.mpr <| by
     rw [Ch04.lambdaSqCoeffField]
@@ -109,7 +109,7 @@ private theorem cutoffUpperEllipticityLiteral_nonneg (M : ABKModel d)
     (domainScale cutoffScale : ℤ) {s : ℝ} (hs : 0 < s)
     (q : CoarseEllipticityExponent) (omega : CutoffSample d) :
     0 ≤ cutoffUpperEllipticityLiteral M domainScale cutoffScale s q omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   unfold cutoffUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
   simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]

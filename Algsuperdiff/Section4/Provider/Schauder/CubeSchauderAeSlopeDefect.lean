@@ -89,7 +89,7 @@ theorem integral_campanatoCutoff_ge {m j : ℤ} {z : Vec d}
       ≤ ∫ y in openCubeSet (originCube d m), campanatoCutoff z j y ∂volume := by
     refine setIntegral_mono_set hηint.integrableOn
       (Filter.Eventually.of_forall fun y => campanatoCutoff_nonneg z j y)
-      (HasSubset.Subset.eventuallyLE hBsub)
+      (LE.le.eventuallyLE hBsub)
   rw [hBint] at hmono
   linarith only [hvol, hmono]
 
@@ -101,7 +101,7 @@ private theorem integrable_grad_sub_const_mul_cutoff {m j : ℤ} (z : Vec d)
       (volume.restrict (openCubeSet (originCube d m))) := by
   have hUdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
-  haveI : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
+  have : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact hUdom.volume_lt_top
@@ -137,7 +137,7 @@ theorem abs_slope_sub_le_cutoff_split {m j : ℤ} {z : Vec d}
         + ∫ y in truncatedWindow z m j, |u.grad y i - v i| ∂volume := by
   have hUdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
-  haveI : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
+  have : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact hUdom.volume_lt_top
@@ -183,7 +183,7 @@ theorem abs_slope_sub_le_cutoff_split {m j : ℤ} {z : Vec d}
         |(u.grad y i - v i) * campanatoCutoff z j y| ∂volume
       = ∫ y in truncatedWindow z m j,
         |(u.grad y i - v i) * campanatoCutoff z j y| ∂volume :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hUmeas hWU hzero
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUmeas hWU hzero
   have hgvW : Integrable (fun y => |u.grad y i - v i|)
       (volume.restrict (truncatedWindow z m j)) := by
     have hgL2 : MemLp (fun y => u.grad y i) 2
@@ -192,7 +192,7 @@ theorem abs_slope_sub_le_cutoff_split {m j : ℤ} {z : Vec d}
     have hW : MemLp (fun y => u.grad y i) 2
         (volume.restrict (truncatedWindow z m j)) :=
       memLp_restrict_of_subset hWU hgL2
-    haveI : IsFiniteMeasure (volume.restrict (truncatedWindow z m j)) := by
+    have : IsFiniteMeasure (volume.restrict (truncatedWindow z m j)) := by
       refine ⟨?_⟩
       rw [Measure.restrict_apply_univ]
       exact (isOpenBoundedConvexDomain_truncatedWindow z m j).volume_lt_top

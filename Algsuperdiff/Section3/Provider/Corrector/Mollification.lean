@@ -178,7 +178,7 @@ theorem ae_locallyIntegrable_realize {E : Type*} [NormedAddCommGroup E]
   filter_upwards [hae] with ω hω
   intro x
   obtain ⟨n, hn⟩ := exists_nat_gt (‖x‖ + 1)
-  haveI : IsFiniteMeasure (volume.restrict (Metric.closedBall (0 : Vec d) (n : ℝ))) := by
+  have : IsFiniteMeasure (volume.restrict (Metric.closedBall (0 : Vec d) (n : ℝ))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 (hball n)

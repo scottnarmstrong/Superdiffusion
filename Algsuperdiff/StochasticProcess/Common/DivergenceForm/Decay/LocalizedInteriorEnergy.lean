@@ -73,12 +73,12 @@ theorem weightedEnergy_split_interior_le {Om : Set (Vec d)}
     exact (hcont.memLp_of_hasCompactSupport hcomp).restrict Om
   have hqf : MemVectorL2 Om qf := by
     simpa only [MemVectorL2, volumeMeasureOn, qf, Pi.smul_apply, smul_eq_mul,
-      mul_comm] using
+      mul_comm] using!
       (MemLp.of_eval fun i : Fin d =>
         (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hweightTop)
   have hudZ : MemVectorL2 Om (fun y => u.toFun y • dz y) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul,
-      mul_comm] using
+      mul_comm] using!
       (MemLp.of_eval fun i : Fin d => u.memL2.mul' (hdzTop i))
   have hrf : MemVectorL2 Om rf := by
     have hbase : MemVectorL2 Om (fun y => test.toH1Function.grad y - qf y) :=
@@ -219,7 +219,7 @@ theorem weightedEnergy_split_interior_le {Om : Set (Vec d)}
     by_cases hzero : fderiv ℝ zeta y = 0
     · have hdz : dz y = fun _ : Fin d => (0 : ℝ) := by
         funext i
-        simp only [dz, hzero, ContinuousLinearMap.zero_apply]
+        simp only [dz, hzero, zero_apply]
       rw [hdz]
       simp only [vecDot, mul_zero, Finset.sum_const_zero, abs_zero]
       exact add_nonneg

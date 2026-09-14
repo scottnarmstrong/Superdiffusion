@@ -52,7 +52,7 @@ variable {d : ℕ}
 
 theorem integrableOn_h1Function {y : Vec d} {n : ℤ} (u : H1Function (cubeSetAt y n)) :
     IntegrableOn u.toFun (cubeSetAt y n) volume := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   exact u.memL2.integrable one_le_two
 
@@ -93,7 +93,7 @@ theorem eLpNorm_top_sub_eq_ballAverageSupNormOn [NeZero d] {y : Vec d} {n : ℤ}
 /-- **The localized regularity is a measurable function of the sample.** -/
 theorem measurable_localizedRegularity (M : ABKModel d) (n : ℤ) (y : Vec d) :
     Measurable (localizedRegularity M n y) := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense (Vec d)
   have hKn : (0 : ℝ) < Real.rpow 3 (-(n : ℝ) / 2) := Real.rpow_pos_of_pos (by norm_num) _
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M n : ℝ) := Provider.Orlicz.sigmaBar_pos M n
@@ -101,7 +101,7 @@ theorem measurable_localizedRegularity (M : ABKModel d) (n : ℤ) (y : Vec d) :
     rw [Ne, ENNReal.ofReal_eq_zero, not_le]
     exact mul_pos hsig hKn
   obtain ⟨t, htc, htmem, htapprox⟩ := exists_countable_normalizedForceAt_approx y n
-  haveI := htc.to_subtype
+  have := htc.to_subtype
   have hGn : ∀ G : ↥t, HolderSeminormBoundOn (cubeSetAt y n) (1 / 2)
       (Real.rpow 3 (-(n : ℝ) / 2)) (extendVec y n (G : C(closedCubeAt y n, Vec d))) :=
     fun G => htmem _ G.2
@@ -200,11 +200,11 @@ theorem measurable_localizedRegularity (M : ABKModel d) (n : ℤ) (y : Vec d) :
 /-- **The localized error is a measurable function of the sample.** -/
 theorem measurable_localizedError (M : ABKModel d) (n : ℤ) (y : Vec d) :
     Measurable (localizedError M n y) := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense (Vec d)
   have hKn : (0 : ℝ) < Real.rpow 3 (-(n : ℝ) / 2) := Real.rpow_pos_of_pos (by norm_num) _
   obtain ⟨t, htc, htmem, htapprox⟩ := exists_countable_normalizedForceAt_approx y n
-  haveI := htc.to_subtype
+  have := htc.to_subtype
   have hGn : ∀ G : ↥t, HolderSeminormBoundOn (cubeSetAt y n) (1 / 2)
       (Real.rpow 3 (-(n : ℝ) / 2)) (extendVec y n (G : C(closedCubeAt y n, Vec d))) :=
     fun G => htmem _ G.2

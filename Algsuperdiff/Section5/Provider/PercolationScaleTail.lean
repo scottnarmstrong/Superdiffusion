@@ -198,11 +198,11 @@ theorem subset_iUnion_lightQPathEvent (M : ABKModel d) (Creg Cinj : ℝ) (m : �
         j + 1 ≤ percolationScaleTotal M Creg Cinj m ep omega} ⊆
       ⋃ i : ℕ, lightQPathEvent M Creg Cinj m ep (j + i) := by
   intro omega homega
-  simp only [Set.mem_setOf_eq] at homega
+  simp only [Set.mem_ofPred_eq] at homega
   by_cases hgood : ∃ N : ℕ, ∀ k : ℕ, N ≤ k → omega ∉ lightQPathEvent M Creg Cinj m ep k
   · have hiff := (le_percolationScaleTotal_iff M Creg Cinj m ep hgood (j + 1)).1 homega
     have hj := hiff j (Nat.lt_succ_self j)
-    push_neg at hj
+    push Not at hj
     obtain ⟨k, hjk, hk⟩ := hj
     refine Set.mem_iUnion.2 ⟨k - j, ?_⟩
     have hkj : j + (k - j) = k := by omega

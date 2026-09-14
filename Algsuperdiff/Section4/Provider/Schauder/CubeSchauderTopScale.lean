@@ -81,7 +81,7 @@ theorem normalizedL2On_le_of_isDivFormWeakSolutionOn_one [NeZero d] {m : ℤ}
       ≤ schauderTopScaleConst d * KG * ((3 : ℝ) ^ m * Real.sqrt ((3 : ℝ) ^ m)) := by
   have hQdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
     hQdom.isFiniteMeasure_restrict_volume
   have hvolQ : (volume (openCubeSet (originCube d m))).toReal = ((3 : ℝ) ^ m) ^ d := by
     rw [volume_openCubeSet_toReal, cubeVolume_eq_pow_scale]

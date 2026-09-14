@@ -133,7 +133,10 @@ private theorem hasFDerivAt_streamFieldLarge_local
     (omega : FullSample d gamma) (x : Vec d) :
     HasFDerivAt (streamFieldLarge omega) (streamFieldLargeDeriv omega x) x := by
   have hdiff := (streamFieldLarge_contDiff_one omega).differentiable (by norm_num)
-  simpa only [fderiv_streamFieldLarge] using (hdiff x).hasFDerivAt
+  have hf : fderiv ℝ (streamFieldLarge omega) x = streamFieldLargeDeriv omega x :=
+    fderiv_streamFieldLarge omega x
+  rw [← hf]
+  exact (hdiff x).hasFDerivAt
 
 /-- The divergence of the nonnegative-shell part has the local squared-size
 bound required by the integration-by-parts estimate. -/

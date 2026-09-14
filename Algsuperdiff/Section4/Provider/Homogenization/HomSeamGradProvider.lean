@@ -109,19 +109,19 @@ theorem ae_ne_top_of_regTail {d : ℕ} (M : ABKModel d) {Cst : ℝ} (hCst : 1 �
         (fun N : ℕ => Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b)) Filter.atTop
         (nhds 0) := h0.congr fun N => (hrw N).symm
     have hcomp := (ENNReal.continuous_ofReal.tendsto (0 : ℝ)).comp hreal
-    simpa using hcomp
+    simpa using! hcomp
   rw [MeasureTheory.ae_iff]
   have hsub : ∀ N : ℕ,
       {omega : Cutoff.CutoffSample d | ¬ X omega ≠ ⊤} ⊆
         {omega : Cutoff.CutoffSample d | (N : ℕ∞) ≤ X omega} := by
     intro N omega homega
     have htop : X omega = ⊤ := not_not.mp homega
-    simp only [Set.mem_setOf_eq, htop, le_top]
+    simp only [Set.mem_ofPred_eq, htop, le_top]
   have hle : ∀ N : ℕ,
       (Cutoff.cutoffSampleLaw M).toMeasure {omega | ¬ X omega ≠ ⊤} ≤
         ENNReal.ofReal (Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b)) :=
     fun N => le_trans (measure_mono (hsub N)) (htail N)
-  exact le_antisymm (ge_of_tendsto' hlim hle) (zero_le _)
+  exact le_antisymm (ge_of_tendsto' hlim hle) zero_le
 
 end
 

@@ -82,7 +82,7 @@ theorem exists_isCubeRepresentative_cutoff (M : ABKModel d) (L n : ℤ) (y : Vec
     (hu : IsDirichletSolutionAt ((Cutoff.coefficientCutoff M.nu L omega).toCoeffField) y n u
       (linearAxisDatum i)) :
     ∃ uRep : Vec d → ℝ, IsCubeRepresentative y n u uRep := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   exact exists_isCubeRepresentative_of_isDirichletSolutionAt M.shellPrefix.dimension M.nu_pos
     (fun z => Cutoff.symmPart_coefficientCutoff M.nu L omega z)
     (((continuous_coefficientCutoff M L omega).sub continuous_const).continuousOn) hu
@@ -94,7 +94,7 @@ theorem exists_isCubeRepresentative_streamCoefficient (M : ABKModel d) (n : ℤ)
     (hu : IsDirichletSolutionAt (Field.streamCoefficient M.nu omega) y n u
       (linearAxisDatum i)) :
     ∃ uRep : Vec d → ℝ, IsCubeRepresentative y n u uRep := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   exact exists_isCubeRepresentative_of_isDirichletSolutionAt M.shellPrefix.dimension M.nu_pos
     (fun z => Field.symmPart_streamCoefficient M.nu omega z)
     (((Field.continuous_streamCoefficient M.nu omega).sub continuous_const).continuousOn) hu
@@ -106,7 +106,7 @@ theorem exists_isCubeRepresentative_comparator (M : ABKModel d) (n : ℤ) (y : V
     (hu : IsDirichletSolutionAt (fun _ => (Annealed.sigmaBar M n : ℝ) • (1 : Mat d)) y n u
       (linearAxisDatum i)) :
     ∃ uRep : Vec d → ℝ, IsCubeRepresentative y n u uRep := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   have hskew : matTranspose (0 : Mat d) = -(0 : Mat d) := by
     ext p q
     simp [matTranspose]

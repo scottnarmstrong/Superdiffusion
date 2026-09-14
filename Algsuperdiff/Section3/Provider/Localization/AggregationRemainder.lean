@@ -358,8 +358,7 @@ private theorem hasSum_envelope {q A B : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
   have hgeom : HasSum (fun j : ℕ => q ^ j) ((1 - q)⁻¹) :=
     hasSum_geometric_of_lt_one hq0 hq1
   have h := (hchoose.mul_left A).add (hgeom.mul_left B)
-  convert h using 2 with j
-  ring
+  simpa only [mul_assoc] using! h
 
 /-- **The termwise envelope.**  `min{γ²Δ²,1} ≤ γ²Δ² ≤ 2γ²((j+1)² + h²)`,
 `3^{2γh} ≤ 9` from `γ h ≤ 1`, and `(j+1)² ≤ 2 (j+2).choose 2`. -/

@@ -51,13 +51,13 @@ private theorem hasFDerivAt_streamFieldLarge (omega : FullSample d gamma)
   have hzero : Summable fun r : ℕ =>
       omega.1.1 (r : ℤ) (0 : Vec d) - omega.1.1 (r : ℤ) 0 := by
     simpa only [sub_self] using (summable_zero : Summable fun _r : ℕ => (0 : Mat d))
-  have h := hasFDerivAt_tsum_of_isPreconnected hu
+  unfold streamFieldLarge streamFieldLargeDeriv
+  exact hasFDerivAt_tsum_of_isPreconnected hu
     (isOpen_openCubeSet (originCube d (ell : ℤ)))
     (convex_openCubeSet (originCube d (ell : ℤ))).isPreconnected
     (fun r z _ => (ShellField.hasFDerivAt (omega.1.1 (r : ℤ)) z).sub_const
       (omega.1.1 (r : ℤ) 0))
     hbound (zero_mem_openOriginCube d (ell : ℤ)) hzero hx
-  simpa only [streamFieldLarge, streamFieldLargeDeriv] using h
 
 private theorem continuous_streamFieldLargeDeriv (omega : FullSample d gamma) :
     Continuous (streamFieldLargeDeriv omega) := by
@@ -80,6 +80,11 @@ private theorem continuous_streamFieldLargeDeriv (omega : FullSample d gamma) :
   have hcont : ContinuousOn (streamFieldLargeDeriv omega)
       (openCubeSet (originCube d (ell : ℤ))) := by
     unfold streamFieldLargeDeriv
+    -- The operator-norm uniformity on `Vec d →L[ℝ] Mat d` reached through the
+    -- ambient `NormedAddCommGroup` is only defeq (not instance-reducibly equal)
+    -- to `ContinuousLinearMap.uniformSpace`, so bridge the two by hand.
+    have : @CompleteSpace (Vec d →L[ℝ] Mat d) PseudoMetricSpace.toUniformSpace :=
+      inferInstanceAs (CompleteSpace (Vec d →L[ℝ] Mat d))
     exact continuousOn_tsum
       (fun r => (ShellField.deriv (omega.1.1 (r : ℤ))).continuous.continuousOn)
       hu hbound

@@ -140,7 +140,7 @@ theorem measurable_entry_eval_lihLocalSigma {U : Set (Vec d)} {x : Vec d} {r : �
     (hr : 0 < r) (hrU : Metric.closedBall x r ⊆ U) (i k : Fin d) :
     @Measurable (ShellField d) ℝ (ShellField.lihLocalSigma U) inferInstance
       (fun j => j x i k) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   set rho : ℕ → ℝ := fun n => r / ((n : ℝ) + 1) with hrhodef
   have hpos : ∀ n, 0 < rho n := fun n => by
     have : (0 : ℝ) < (n : ℝ) + 1 := by positivity
@@ -204,11 +204,11 @@ theorem tendsto_diffQuotient_deriv (j : ShellField d) (x v : Vec d) {rho : ℕ �
     exact ShellField.hasFDerivAt j x
   have hd : HasDerivAt (fun t : ℝ => (j : Vec d → Mat d) (x + t • v))
       (ShellField.deriv j x v) 0 := by
-    simpa only [Function.comp_def] using houter.comp_hasDerivAt 0 hinner
-  rw [hasDerivAt_iff_tendsto_slope] at hd
+    simpa only [Function.comp_def] using! houter.comp_hasDerivAt 0 hinner
+  have hd' := hasDerivAt_iff_tendsto_slope.1 hd
   have hin : Tendsto rho atTop (𝓝[≠] (0 : ℝ)) :=
     tendsto_nhdsWithin_iff.2 ⟨hrho, Eventually.of_forall fun n => hne n⟩
-  have hcomp := hd.comp hin
+  have hcomp := hd'.comp hin
   refine hcomp.congr fun n => ?_
   simp [slope, sub_zero]
 
@@ -220,7 +220,7 @@ theorem measurable_entry_eval_deriv_lihLocalSigma {U : Set (Vec d)} {x : Vec d}
     (i k : Fin d) :
     @Measurable (ShellField d) ℝ (ShellField.lihLocalSigma U) inferInstance
       (fun j => ShellField.deriv j x v i k) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   set nv : ℝ := ‖v‖ with hnvdef
   have hnv : 0 ≤ nv := norm_nonneg v
   set rho : ℕ → ℝ := fun n => r / (((n : ℝ) + 1) * (nv + 1)) with hrhodef
@@ -268,7 +268,7 @@ theorem measurable_eval_deriv_apply_lihLocalSigma {U : Set (Vec d)} {x : Vec d}
     {r : ℝ} (hr : 0 < r) (hrU : Metric.closedBall x r ⊆ U) (v : Vec d) :
     @Measurable (ShellField d) (Mat d) (ShellField.lihLocalSigma U) inferInstance
       (fun j => ShellField.deriv j x v) := by
-  letI : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
+  let : MeasurableSpace (ShellField d) := ShellField.lihLocalSigma U
   exact measurable_matrix_of_entries fun i k =>
     measurable_entry_eval_deriv_lihLocalSigma hr hrU v i k
 

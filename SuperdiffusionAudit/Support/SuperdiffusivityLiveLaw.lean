@@ -120,8 +120,8 @@ theorem map_pathPostcomp_liveLaw :
     ∀ x : Vec d,
       Measure.map (pathPostcomp (liveEmbedding (Vec d))) (liveLaw M omega x) =
         streamProcess M omega (x : OnePoint (Vec d)) := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   intro x
   have hae : ∀ᵐ path ∂streamProcess M omega (x : OnePoint (Vec d)),
       path ∈ Set.range (pathPostcomp (liveEmbedding (Vec d))) := by
@@ -133,9 +133,9 @@ theorem map_pathPostcomp_liveLaw :
 
 instance isProbabilityMeasure_liveLaw (x : Vec d) :
     IsProbabilityMeasure (liveLaw M omega x) := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
-  haveI := isMarkovKernel_streamProcess M omega
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
+  have := isMarkovKernel_streamProcess M omega
   refine ⟨?_⟩
   have h : Measure.map (pathPostcomp (liveEmbedding (Vec d))) (liveLaw M omega x) Set.univ =
       streamProcess M omega (x : OnePoint (Vec d)) Set.univ := by
@@ -153,8 +153,8 @@ theorem integral_liveLaw {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] 
       AEStronglyMeasurable G (streamProcess M omega (x : OnePoint (Vec d))) →
       (∫ path, G (pathPostcomp (liveEmbedding (Vec d)) path) ∂liveLaw M omega x) =
         ∫ path, G path ∂streamProcess M omega (x : OnePoint (Vec d)) := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   intro x G hG
   rw [← map_pathPostcomp_liveLaw M omega x] at hG ⊢
   rw [integral_map
@@ -167,8 +167,8 @@ theorem lintegral_liveLaw :
     ∀ (x : Vec d) (G : ContinuousPath (OnePoint (Vec d)) → ℝ≥0∞), Measurable G →
       (∫⁻ path, G (pathPostcomp (liveEmbedding (Vec d)) path) ∂liveLaw M omega x) =
         ∫⁻ path, G path ∂streamProcess M omega (x : OnePoint (Vec d)) := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   intro x G hG
   rw [← map_pathPostcomp_liveLaw M omega x, lintegral_map hG
     (measurableEmbedding_pathPostcomp (Y := OnePoint (Vec d)) injective_liveCoe).measurable]
@@ -176,8 +176,8 @@ theorem lintegral_liveLaw :
 /-- **Work item F.**  The live law starts where it is told. -/
 theorem liveLaw_start (x : Vec d) :
     liveLaw M omega x {path : ContinuousPath (Vec d) | path 0 = x} = 1 := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   have hev : Measurable (fun path : ContinuousPath (OnePoint (Vec d)) => path 0) :=
     ContinuousPath.measurable_coordinateProcess (alpha := OnePoint (Vec d)) 0
   have hdirac : Measure.map (fun path : ContinuousPath (OnePoint (Vec d)) => path 0)
@@ -187,12 +187,9 @@ theorem liveLaw_start (x : Vec d) :
       (streamWholeSpaceResolvent M omega).onePointKernelSemigroup
       (streamWholeSpaceResolvent M omega).isConservative_onePointKernelSemigroup
       (streamReg M omega).kolmogorovRegular
-    have hker : ((IsConservative.continuousProcess
-        (streamWholeSpaceResolvent M omega).onePointKernelSemigroup
-        (streamWholeSpaceResolvent M omega).isConservative_onePointKernelSemigroup).map
-          fun path : ContinuousPath (OnePoint (Vec d)) => path 0) (x : OnePoint (Vec d)) =
-        Kernel.id (x : OnePoint (Vec d)) := by rw [hzero]
-    rwa [Kernel.map_apply _ hev, Kernel.id_apply] at hker
+    have hker := DFunLike.congr_fun hzero (x : OnePoint (Vec d))
+    exact (Kernel.map_apply _ hev (x : OnePoint (Vec d))).symm.trans
+      (hker.trans (Kernel.id_apply _))
   have hmeasS : MeasurableSet ((fun path : ContinuousPath (OnePoint (Vec d)) => path 0) ⁻¹'
       {(x : OnePoint (Vec d))}) := hev (measurableSet_singleton _)
   have hpre : {path : ContinuousPath (Vec d) | path 0 = x} =
@@ -200,7 +197,7 @@ theorem liveLaw_start (x : Vec d) :
         ((fun path : ContinuousPath (OnePoint (Vec d)) => path 0) ⁻¹'
           {(x : OnePoint (Vec d))}) := by
     ext path
-    simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_singleton_iff,
+    simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_singleton_iff,
       pathPostcomp_apply, liveEmbedding_apply]
     exact ⟨fun h => by rw [h], fun h => injective_liveCoe h⟩
   rw [hpre, ← Measure.map_apply

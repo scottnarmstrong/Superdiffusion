@@ -62,7 +62,7 @@ measurable under the genuine cutoff-sample law. -/
 theorem measurable_cutoffHomogenizationErrorAtComparatorScale {d : ℕ}
     (M : ABKModel d) (m comparatorScale : ℤ) (s : {s : ℝ // 0 < s}) :
     Measurable (cutoffHomogenizationErrorAtComparatorScale M m comparatorScale s) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change Measurable (cutoffHomogenizationErrorRepresentative M m m s.2
     (Annealed.sigmaBar M comparatorScale))
   exact measurable_cutoffHomogenizationErrorRepresentative M m m s.2
@@ -80,7 +80,7 @@ theorem cutoffHomogenizationErrorAtComparatorScale_nonneg {d : ℕ}
     (M : ABKModel d) (m comparatorScale : ℤ) (s : {s : ℝ // 0 < s})
     (omega : Cutoff.CutoffSample d) :
     0 ≤ cutoffHomogenizationErrorAtComparatorScale M m comparatorScale s omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change 0 ≤ cutoffHomogenizationErrorRepresentative M m m s.2
     (Annealed.sigmaBar M comparatorScale) omega
   exact cutoffHomogenizationErrorRepresentative_nonneg M m m s.2
@@ -101,7 +101,7 @@ theorem cutoffHomogenizationErrorAtComparatorScale_ae_eq_raw {d : ℕ}
         (Cutoff.cutoffSampleLaw M).toMeasure]
       @cutoffHomogenizationErrorRaw d (neZero_of_model M) M m m (s : ℝ)
         (Annealed.sigmaBar M comparatorScale) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change cutoffHomogenizationErrorRepresentative M m m s.2
       (Annealed.sigmaBar M comparatorScale) =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
     cutoffHomogenizationErrorRaw M m m (s : ℝ)
@@ -121,7 +121,7 @@ theorem cutoffHomogenizationErrorAtComparatorScale_ae_eq_homogenizationErrorOnCu
         (neZero_of_model M) (originCube d m) (s : ℝ) .infinity (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega)
         (isotropicComparatorMatrix (Annealed.sigmaBar M comparatorScale)) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   exact (cutoffHomogenizationErrorAtComparatorScale_ae_eq_raw M m comparatorScale s).trans
     (Filter.Eventually.of_forall fun omega =>
       cutoffHomogenizationErrorRaw_characterization M m m (s : ℝ)

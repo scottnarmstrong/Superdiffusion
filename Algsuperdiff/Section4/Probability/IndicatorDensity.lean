@@ -70,7 +70,7 @@ theorem scaleProp_inter_le (A B : ℤ → Set Ω) (M : ℕ) (ω : Ω) :
   · rw [if_pos hAB]
     have hmem : ω ∉ A m ∨ ω ∉ B m := by
       by_contra hc
-      push_neg at hc
+      push Not at hc
       exact hAB ⟨hc.1, hc.2⟩
     rcases hmem with hc | hc
     · rw [if_pos ((Set.mem_compl_iff _ _).mpr hc)]; split_ifs <;> norm_num
@@ -90,9 +90,9 @@ theorem setOf_scaleProp_inter_subset (A B : ℤ → Set Ω) (M : ℕ) {θ θ₁ 
       ⊆ {ω | θ₁ < scaleProp (fun m => (A m)ᶜ) M ω}
         ∪ {ω | θ₂ < scaleProp (fun m => (B m)ᶜ) M ω} := by
   intro ω hω
-  simp only [Set.mem_setOf_eq] at hω
+  simp only [Set.mem_ofPred_eq] at hω
   by_contra hc
-  simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_lt] at hc
+  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_lt] at hc
   linarith [scaleProp_inter_le A B M ω, hc.1, hc.2]
 
 /-! ### The three-fold union bound -/
@@ -111,7 +111,7 @@ theorem scaleProp_subadd (A B Cev : ℤ → Set Ω) (M : ℕ) (ω : Ω) :
   by_cases hABC : ω ∈ (A m ∩ B m ∩ Cev m)ᶜ
   · rw [if_pos hABC]
     have hmem : ω ∉ A m ∨ ω ∉ B m ∨ ω ∉ Cev m := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       exact hABC ⟨⟨hc.1, hc.2.1⟩, hc.2.2⟩
     rcases hmem with h | h | h
     · rw [if_pos ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
@@ -135,12 +135,12 @@ theorem measure_bad_density_union [MeasurableSpace Ω] (P : Measure Ω)
         ∪ {ω | θ / 3 < scaleProp (fun m => (B m)ᶜ) M ω}
         ∪ {ω | θ / 3 < scaleProp (fun m => (Cev m)ᶜ) M ω} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω
+    simp only [Set.mem_ofPred_eq] at hω
     have hle := scaleProp_subadd A B Cev M ω
     have hsum : θ < scaleProp (fun m => (A m)ᶜ) M ω + scaleProp (fun m => (B m)ᶜ) M ω
         + scaleProp (fun m => (Cev m)ᶜ) M ω := lt_of_lt_of_le hω hle
     by_contra hc
-    simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_lt] at hc
+    simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_lt] at hc
     linarith [hc.1.1, hc.1.2, hc.2]
   calc P {ω | θ < scaleProp (fun m => (A m ∩ B m ∩ Cev m)ᶜ) M ω}
       ≤ P ({ω | θ / 3 < scaleProp (fun m => (A m)ᶜ) M ω}

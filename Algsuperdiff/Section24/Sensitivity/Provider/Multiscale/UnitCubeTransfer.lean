@@ -111,7 +111,7 @@ theorem coeffOn_descendant_aeeq_perturbCoeffOn
       =ᵐ[volumeMeasureOn (openCubeSet R)] a.toCoeffField := hFchild.trans hFroot
   refine (hGchild.trans hGroot).trans ?_
   filter_upwards [hFa] with x hx
-  simp only [perturbCoeffOn_toCoeffField, restrictLInfSkewMatrixFieldOn_apply]
+  show a.toCoeffField x + t • h.1.1 x = (F.coeffOn R).toCoeffField x + t • h.1.1 x
   rw [hx]
 
 /-! ## Root transfer to the frozen unit-cube scalars -/

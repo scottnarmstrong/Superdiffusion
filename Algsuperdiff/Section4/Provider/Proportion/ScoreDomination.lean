@@ -159,7 +159,7 @@ theorem iSup_shell_le_sum_annMax (M : ABKModel d) (Ccg : ℝ) {m k : ℤ} (hk : 
   rw [hbracket]
   refine le_trans (ENNReal.ofReal_le_ofReal hle) ?_
   exact Finset.single_le_sum (f := fun n => ENNReal.ofReal (annMax M Ccg n k omega))
-    (fun _ _ => zero_le _) hn
+    (fun _ _ => zero_le) hn
 
 /-- **The score-domination display, pointwise and unconditional.**
 

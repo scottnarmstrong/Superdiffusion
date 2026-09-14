@@ -107,7 +107,7 @@ theorem continuous_vecNorm : Continuous (Book.Ch02.vecNorm : Vec d → ℝ) := b
     rfl
   rw [h]
   exact Real.continuous_sqrt.comp
-    (continuous_finset_sum _ fun i _ => (continuous_apply i).mul (continuous_apply i))
+    (continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i))
 
 /-! ## Elementary `cubeLpNorm` A -/
 

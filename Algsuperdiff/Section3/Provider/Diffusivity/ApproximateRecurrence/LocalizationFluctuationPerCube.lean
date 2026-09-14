@@ -95,7 +95,7 @@ theorem integrableOn_const_vecDot (Q : TriadicCube d) (u : Vec d → Vec d) (c :
     (hu : ∀ i, IntegrableOn (fun x => u x i) (cubeSet Q) volume) :
     IntegrableOn (fun x => vecDot c (u x)) (cubeSet Q) volume := by
   unfold vecDot
-  exact integrable_finset_sum Finset.univ fun i _ => (hu i).const_mul (c i)
+  exact integrable_finsetSum Finset.univ fun i _ => (hu i).const_mul (c i)
 
 /-- The cube average of a linear functional of a field is the functional of the
 cube average. -/
@@ -103,7 +103,7 @@ theorem cubeAverage_const_vecDot (Q : TriadicCube d) (u : Vec d → Vec d) (c : 
     (hu : ∀ i, IntegrableOn (fun x => u x i) (cubeSet Q) volume) :
     cubeAverage Q (fun x => vecDot c (u x)) = vecDot c (cubeAverageVec Q u) := by
   unfold cubeAverage vecDot cubeAverageVec
-  rw [MeasureTheory.integral_finset_sum Finset.univ (fun i _ => (hu i).const_mul (c i)),
+  rw [MeasureTheory.integral_finsetSum Finset.univ (fun i _ => (hu i).const_mul (c i)),
     Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [MeasureTheory.integral_const_mul]

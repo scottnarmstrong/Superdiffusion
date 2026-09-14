@@ -244,7 +244,7 @@ theorem boundaryMargin_le_of_touchesBoundary {m : ℤ} {n : ℕ} {A : TriadicCub
   rw [hAscale, rootExtreme_sub_natCast] at hi
   have hxi : (((A.index i : ℝ) - (1 / 2 : ℝ)) * (3 : ℝ) ^ (m - (n : ℤ)) ≤ x i) ∧
       (x i < ((A.index i : ℝ) + (1 / 2 : ℝ)) * (3 : ℝ) ^ (m - (n : ℤ))) := by
-    simpa only [cubeSet, cubeScaleFactor, hAscale, Set.mem_setOf_eq] using hxA i
+    simpa only [cubeSet, cubeScaleFactor, hAscale, Set.mem_ofPred_eq] using hxA i
   have hnorm : |x i| ≤ ‖x‖ := by
     simpa only [Real.norm_eq_abs] using norm_le_pi_norm x i
   rcases hi with h | h

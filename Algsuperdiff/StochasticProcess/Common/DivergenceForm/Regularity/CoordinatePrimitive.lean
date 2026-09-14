@@ -71,7 +71,7 @@ theorem contDiff_one_coordinatePrimitive (f : Vec d → ℝ)
     have hslice : ContDiff ℝ 1 (fun y : Vec d ↦ F y t) := by
       exact hfamily.comp hembed
     exact hslice.differentiable (by norm_num) |>.differentiableAt.hasFDerivAt
-  simpa only [coordinatePrimitive, F] using
+  simpa only [coordinatePrimitive, F] using!
     contDiff_one_setIntegral_of_continuous_hasFDerivAt
       (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1)) hF hF' hdiff
 
@@ -88,7 +88,7 @@ theorem coordinatePrimitive_eq_intervalIntegral (f : Vec d → ℝ)
     intro t _
     dsimp [φ, φ']
     convert (hasDerivAt_id t).mul_const (x i - z) |>.const_add z using 1
-    all_goals ring
+    all_goals first | rfl | ring
   have hφ' : ContinuousOn φ' (uIcc (0 : ℝ) 1) :=
     continuous_const.continuousOn
   have hg : Continuous g := by

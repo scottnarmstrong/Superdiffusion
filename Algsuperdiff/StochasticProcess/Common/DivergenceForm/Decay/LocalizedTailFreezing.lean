@@ -63,7 +63,7 @@ private theorem isScalarForcedWeakSolution_const_smul_localized
     IsScalarForcedWeakSolution (fun x => c • a x) W (fun x => c * g x) u := by
   refine ⟨?_, fun phi => ?_⟩
   · have h := hu.1.const_smul c
-    simpa only [Pi.smul_apply, smul_eq_mul] using h
+    simpa only [Pi.smul_apply, smul_eq_mul] using! h
   · have h := hu.2 phi
     have hleft :
         (∫ x in W, vecDot (matVecMul (c • a x) (u.grad x))
@@ -236,7 +236,7 @@ theorem resolventTail_localized [NeZero d]
     (isScalarForcedWeakSolution_sub_skew_const hk).2 hsolB
   have hnormalized : IsScalarForcedWeakSolution
       (normalizedFrozenCoeff nu a x) B (fun y => nu⁻¹ * q y) zB := by
-    simpa only [normalizedFrozenCoeff] using
+    simpa only [normalizedFrozenCoeff] using!
       (isScalarForcedWeakSolution_const_smul_localized (c := nu⁻¹) hfrozen)
   have hnormalizedMeas : Measurable (normalizedFrozenCoeff nu a x) := by
     refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
@@ -366,13 +366,13 @@ theorem resolventTail_localized [NeZero d]
               (by linarith only [hr₀]) 2)))
     have hgap : -(r / 4) - (-(3 * r / 4) + r / 8) = 3 * r / 8 := by ring
     rw [hgap] at hraw
-    simpa only [zB, D] using hraw
+    simpa only [zB, D] using! hraw
   obtain ⟨v, hvcont, hvae, hvbound⟩ :=
     exists_representative_abs_center_le_exp hBopen hd halpha hdelta0 hdelta
       hnormalizedMeas hsmall hnormalized hr₀ (fun _ hy => hy) hG hqBound
       hgradB hkappa0 (by positivity : (0 : ℝ) ≤ 3 * r / 8) hD hL2
   refine ⟨v, hvcont, ?_, ?_⟩
-  · simpa only [zB, B] using hvae
+  · simpa only [zB, B] using! hvae
   · have hscaled := mul_le_mul_of_nonneg_left hvbound hmu.le
     refine hscaled.trans (le_of_eq ?_)
     have hgapRate := agmonRate_mul_eq d (Lam := Lloc) (mu := mu)

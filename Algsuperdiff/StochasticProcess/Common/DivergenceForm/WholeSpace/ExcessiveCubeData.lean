@@ -43,7 +43,7 @@ private theorem isClosed_memAxisCubeClosure (z : Vec d) (L : ℝ) :
   have hset : {x | MemAxisCubeClosure z L x} =
       ⋂ i : Fin d, (fun x : Vec d => x i) ⁻¹' Set.Icc (z i) (z i + L) := by
     ext x
-    simp only [MemAxisCubeClosure, Set.mem_setOf_eq, Set.mem_iInter,
+    simp only [MemAxisCubeClosure, Set.mem_ofPred_eq, Set.mem_iInter,
       Set.mem_preimage, Set.mem_Icc]
   rw [hset]
   exact isClosed_iInter fun i => isClosed_Icc.preimage (continuous_apply i)
@@ -60,7 +60,7 @@ theorem exists_continuous_zeroExtension_of_cube_boundary_zero
   let C : Set (Vec d) := {x | MemAxisCubeClosure z L x}
   have hCclosed : IsClosed C := isClosed_memAxisCubeClosure z L
   have hQC : axisCube z L ⊆ C := axisCube_subset_closureSet z L
-  let vc : C(C, ℝ) := ⟨fun x => v x, continuousOn_iff_continuous_restrict.mp hv⟩
+  let vc : C(C, ℝ) := ⟨fun x => v x, continuousOn_iff_continuous_domRestrict.mp hv⟩
   obtain ⟨e, he⟩ := ContinuousMap.exists_restrict_eq hCclosed vc
   have he_on_C : ∀ x, x ∈ C → e x = v x := fun x hx =>
     DFunLike.congr_fun he ⟨x, hx⟩
@@ -137,7 +137,8 @@ theorem exists_continuous_partSolution_zeroExtension
   refine ⟨w, hwcont, hwoff, ?_⟩
   filter_upwards [hWae, u.toH1Function.coeFn_toScalarL2,
     self_mem_ae_restrict hQ.isOpen.measurableSet] with x h1 h2 hx
-  rw [hwon x hx, h1, ← h2, huvalue, alphaShiftedResolvent_apply]
+  rw [hwon x hx, h1, ← h2, huvalue]
+  rfl
 
 /-- **The barrier data of the whole-space comparison on an axis cube.**  Every
 field is discharged: the continuous zero extension of the part solution comes

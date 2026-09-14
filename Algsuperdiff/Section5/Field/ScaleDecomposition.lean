@@ -54,10 +54,14 @@ theorem streamFieldSmall_apply_entry (omega : FullSample d gamma)
     streamFieldSmall omega x i k =
       ∑' r : ℕ, (omega.1.1 (-1 - (r : ℤ)) x i k -
         omega.1.1 (-1 - (r : ℤ)) 0 i k) := by
-  rw [streamFieldSmall,
-    tsum_apply (summable_streamIncrement_descending_matrix omega x),
-    tsum_apply (Pi.summable.1
-      (summable_streamIncrement_descending_matrix omega x) i)]
+  rw [streamFieldSmall]
+  have h1 : (∑' r : ℕ, (omega.1.1 (-1 - (r : ℤ)) x - omega.1.1 (-1 - (r : ℤ)) 0)) i
+      = ∑' r : ℕ, (omega.1.1 (-1 - (r : ℤ)) x - omega.1.1 (-1 - (r : ℤ)) 0) i :=
+    tsum_apply (summable_streamIncrement_descending_matrix omega x)
+  have h2 : (∑' r : ℕ, (omega.1.1 (-1 - (r : ℤ)) x - omega.1.1 (-1 - (r : ℤ)) 0) i) k
+      = ∑' r : ℕ, (omega.1.1 (-1 - (r : ℤ)) x - omega.1.1 (-1 - (r : ℤ)) 0) i k :=
+    tsum_apply (Pi.summable.1 (summable_streamIncrement_descending_matrix omega x) i)
+  rw [h1, h2]
   apply tsum_congr
   intro r
   rfl
@@ -67,10 +71,14 @@ theorem streamFieldLarge_apply_entry (omega : FullSample d gamma)
     (x : Vec d) (i k : Fin d) :
     streamFieldLarge omega x i k =
       ∑' r : ℕ, (omega.1.1 (r : ℤ) x i k - omega.1.1 (r : ℤ) 0 i k) := by
-  rw [streamFieldLarge,
-    tsum_apply (summable_streamIncrement_ascending_matrix omega x),
-    tsum_apply (Pi.summable.1
-      (summable_streamIncrement_ascending_matrix omega x) i)]
+  rw [streamFieldLarge]
+  have h1 : (∑' r : ℕ, (omega.1.1 (r : ℤ) x - omega.1.1 (r : ℤ) 0)) i
+      = ∑' r : ℕ, (omega.1.1 (r : ℤ) x - omega.1.1 (r : ℤ) 0) i :=
+    tsum_apply (summable_streamIncrement_ascending_matrix omega x)
+  have h2 : (∑' r : ℕ, (omega.1.1 (r : ℤ) x - omega.1.1 (r : ℤ) 0) i) k
+      = ∑' r : ℕ, (omega.1.1 (r : ℤ) x - omega.1.1 (r : ℤ) 0) i k :=
+    tsum_apply (Pi.summable.1 (summable_streamIncrement_ascending_matrix omega x) i)
+  rw [h1, h2]
   apply tsum_congr
   intro r
   rfl

@@ -147,7 +147,7 @@ theorem tendsto_triadicRadius_zero {R : ℝ} (hR : 0 < R) :
       tendsto_const_nhds.mul
         (tendsto_pow_atTop_nhds_zero_of_lt_one (𝕜 := ℝ) (r := (1 / 3 : ℝ))
           (by norm_num) (by norm_num))
-    simpa only [triadicRadius, mul_zero] using h
+    simpa only [triadicRadius, mul_zero] using! h
   exact tendsto_inf.2
     ⟨hfull, tendsto_principal.2 (Eventually.of_forall fun k => triadicRadius_pos hR k)⟩
 

@@ -68,8 +68,8 @@ theorem continuous_frobeniusMass_cutoff (m : ℤ) (omega : CutoffSample d) :
     Continuous (fun x : Vec d => matrixFrobeniusNormSq (cutoff m omega x)) := by
   show Continuous fun x : Vec d =>
     ∑ i : Fin d, ∑ l : Fin d, cutoff m omega x i l ^ 2
-  exact continuous_finset_sum _ fun i _ =>
-    continuous_finset_sum _ fun l _ =>
+  exact continuous_finsetSum _ fun i _ =>
+    continuous_finsetSum _ fun l _ =>
       (continuous_cutoff_entry m omega i l).pow 2
 
 /-- Carathéodory joint measurability of the cutoff Frobenius mass in the point
@@ -111,7 +111,7 @@ theorem integral_average_frobeniusMass_cutoff (M : ABKModel d) (l m : ℤ) :
         ∂(cutoffSampleLaw M).toMeasure =
       Disorder.cstarPlus M * Kgamma M.gamma / 2 *
         (3 : ℝ) ^ (2 * M.gamma * (m : ℝ)) := by
-  letI : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
+  let : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
     ⟨volume_openCubeSet_lt_top (originCube d l)⟩
   have hUmeas : MeasurableSet (openCubeSet (originCube d l)) :=
     measurableSet_openCubeSet (originCube d l)
@@ -186,11 +186,11 @@ theorem continuous_frobeniusMass_finiteShellIncrement (n m : ℤ)
       (fun x : Vec d => matrixFrobeniusNormSq (finiteShellIncrement omega n m x)) := by
   show Continuous fun x : Vec d =>
     ∑ i : Fin d, ∑ l : Fin d, finiteShellIncrement omega n m x i l ^ 2
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun l _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun l _ => ?_
   have hentry : Continuous
       (fun x : Vec d => finiteShellIncrement omega n m x i l) := by
     simp only [finiteShellIncrement_apply_entry]
-    exact continuous_finset_sum _ fun k _ =>
+    exact continuous_finsetSum _ fun k _ =>
       (continuous_apply l).comp ((continuous_apply i).comp (omega k).1.1.continuous)
   exact hentry.pow 2
 
@@ -227,11 +227,11 @@ theorem integrable_frobeniusMass_finiteShellIncrement (M : ABKModel d) (n m : �
   have hmem : ∀ i l : Fin d, MemLp
       (fun omega : ShellSeq d => ∑ k ∈ Finset.Ioc n m, (omega k) x i l) 2
       M.P.toMeasure :=
-    fun i l => memLp_finset_sum _ fun k _ => memLp_two_shell_entry M k x i l
+    fun i l => memLp_finsetSum _ fun k _ => memLp_two_shell_entry M k x i l
   have hbase : Integrable (fun omega : ShellSeq d =>
       ∑ i : Fin d, ∑ l : Fin d,
         (∑ k ∈ Finset.Ioc n m, (omega k) x i l) ^ 2) M.P.toMeasure := by
-    refine integrable_finset_sum _ fun i _ => integrable_finset_sum _ fun l _ => ?_
+    refine integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun l _ => ?_
     exact (memLp_two_iff_integrable_sq (hmem i l).aestronglyMeasurable).mp (hmem i l)
   refine hbase.congr (Filter.Eventually.of_forall fun omega => ?_)
   show (∑ i : Fin d, ∑ l : Fin d,
@@ -251,7 +251,7 @@ theorem integral_average_frobeniusMass_finiteShellIncrement (M : ABKModel d)
         ∂M.P.toMeasure =
       ∑ k ∈ Finset.Ioc n m, (3 : ℝ) ^ (2 * M.gamma * (k : ℝ)) *
         (Disorder.cstarPlus M * Real.log 3) := by
-  letI : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
+  let : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
     ⟨volume_openCubeSet_lt_top (originCube d l)⟩
   have hVpos : (0 : ℝ) < (volume (openCubeSet (originCube d l))).toReal := by
     rw [volume_openCubeSet_toReal]

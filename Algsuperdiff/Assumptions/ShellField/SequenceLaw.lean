@@ -113,3 +113,17 @@ theorem measurable_rotateSequence (R : Mat d) (hR : IsSignedPermutationMatrix R)
 end
 
 end Algsuperdiff.Frozen.Assumptions.ShellField
+
+/-! Migration cache (mathlib v4.33.1). Under the elementwise matrix norm, blind typeclass search
+for `ContinuousENorm (Matrix m n ℝ)` wanders through `CStarAlgebra`/`NormedRing` branches and gives
+up even though the instance exists. The frozen assumption files (`Frozen/Assumptions/ShellLawJ*`)
+open `Matrix.Norms.Elementwise` and integrate matrix-valued observables, so the cache lives here,
+scoped to that norm, and never inside a manifest-pinned file. -/
+namespace Matrix.Norms.Elementwise
+
+scoped instance instContinuousENormMatrixElementwise {m n : Type*} [Fintype m] [Fintype n] :
+    ContinuousENorm (Matrix m n ℝ) := by
+  show ContinuousENorm (m → n → ℝ)
+  infer_instance
+
+end Matrix.Norms.Elementwise

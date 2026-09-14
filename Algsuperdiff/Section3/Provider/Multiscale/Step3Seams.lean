@@ -226,7 +226,7 @@ theorem responseJ_simplexDomain_normalized_flux_le_of_notMem_bad_ae (hd : 2 ≤ 
                     (3 : ℝ) ^ (-(2 * M.gamma * (Q.scale : ℝ))) *
                     (incrementUnitCube₂ Q Q.scale L omega).w1Infinity ^ 2) *
                 vecNormSq p := by
-  letI : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
+  let : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
   have hinvSq := inv_sigmaBar_sq_le_four_mul_inv_cstar_mul_gamma_mul_rpow M hS
     (le_trans hji hi)
   filter_upwards [LambdaSq_quarter_le_of_notMem_bad_ae hd M hS Q hm,
@@ -305,7 +305,7 @@ theorem responseJ_simplexDomain_normalized_slope_le_of_notMem_bad_ae (hd : 2 ≤
             80 * simplexCrudeConst d (1 / 4) *
                 Ch02.multiscaleDescendantWeight Q k (1 / 4) *
                 (3 : ℝ) ^ (M.gamma * ((i : ℝ) - (Q.scale : ℝ))) * vecNormSq q := by
-  letI : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
+  let : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
   filter_upwards [lambdaSq_inv_le_of_notMem_bad_ae hd M hS Q hm (1 / 4) (.finite 2)
       (by norm_num) (by norm_num) (by norm_num),
     lambdaSq_quarter_inv_le_ten_mul_inv_sigmaBar_of_notMem_badLoc_ae M Q,

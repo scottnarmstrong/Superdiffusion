@@ -218,7 +218,7 @@ theorem exists_responseJ_ugly_estimate_of_grad_le (d : ℕ) (dimension : 2 ≤ d
           (Disorder.cstar M) M.gamma
           ((3 : ℝ) ^ (s * ((m : ℝ) - (n : ℝ))))
           ((3 : ℝ) ^ ((s + M.gamma) * ((m : ℝ) - (n : ℝ)))) C := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cs, hCs, hbase⟩ := exists_responseJ_ugly_estimate d dimension
   refine ⟨Cs, hCs, ?_⟩
   intro M m n a h e s kap Cl Cr Cp Ash C Gn Gm Lnrm hs0 hs14 hsgam he hnm hAsh
@@ -260,7 +260,7 @@ theorem exists_responseJ_ugly_estimate_of_grad_le (d : ℕ) (dimension : 2 ≤ d
     have hprod : (0 : ℝ) ≤ Cl * (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (n : ℝ))) :=
       le_trans hleft hlam
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have hlt : Cl * (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (n : ℝ))) < 0 :=
       mul_neg_of_neg_of_pos hneg hq
     linarith only [hprod, hlt]

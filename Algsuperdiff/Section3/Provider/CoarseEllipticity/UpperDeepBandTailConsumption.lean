@@ -375,7 +375,7 @@ private theorem collarDeepTail_layer_isBigOWith
     simpa only [AP] using hrawP
   have hPmeas : Measurable
       (slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma) := by
-    simpa only [slstarPowerTerm] using
+    simpa only [slstarPowerTerm] using!
       measurable_comp_hsep M R.scale (E : ℝ) bfaProfileB fun hs : ℕ =>
         (3 : ℝ) ^ ((M.gamma + 2 * bfaProfileB) * (hs : ℝ))
   have hP := Algsuperdiff.Section3.Provider.Stream.isBigOWith_comp_translateCutoffSample
@@ -596,7 +596,7 @@ theorem probeSharpFramedCollarDeepTailLayer_nonneg
 theorem measurable_probeSharpFramedCollarDeepTailLayer (M : ABKModel d) (m : ℤ)
     (R : TriadicCube d) (E : ℝ) (j : Fin d) (n : ℕ) :
     Measurable (probeSharpFramedCollarDeepTailLayer M m R E j n) := by
-  simpa only [probeSharpFramedCollarDeepTailLayer, Function.comp_apply] using
+  simpa only [probeSharpFramedCollarDeepTailLayer, Function.comp_apply] using!
     (measurable_collarDeepTail_layer M R.scale E (collarBandMeanDepth M E) n (m - 1) j).comp (measurable_translateCutoffSample (triadicCubeShift R))
 /- Whitney summation of the literal tenth lane at one coordinate.  The output
 scale has a single tuned cap-growth factor and a dimension-only deep-tail
@@ -829,8 +829,11 @@ theorem measurable_probeSharpFramedCollarDeepTailTraceLane (M : ABKModel d) (m :
     Measurable (probeSharpFramedCollarDeepTailTraceLane M m R E) := by
   change Measurable fun omega => ∑ j : Fin d, ∑' n : ℕ, probeSharpFramedCollarDeepTailLayer M m R E j n omega
   refine Finset.measurable_fun_sum Finset.univ fun j _ => ?_
-  have hnn := (Measurable.nnreal_tsum fun n =>
-    (measurable_probeSharpFramedCollarDeepTailLayer M m R E j n).real_toNNReal).coe_nnreal_real
+  have hnn : Measurable (fun omega : CutoffSample d => ∑' n : ℕ,
+      (probeSharpFramedCollarDeepTailLayer M m R E j n omega).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+      (measurable_probeSharpFramedCollarDeepTailLayer M m R E j n).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]

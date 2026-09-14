@@ -72,8 +72,8 @@ theorem abs_integral_eval_exitTimeTrunc_vecNormSq_sub_le_cubeSetAt
           ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
             R.isConservative_onePointKernelSemigroup (y : OnePoint (Vec d)))) -
         (d : ℝ) * (sigma * (t : ℝ))| ≤ (d : ℝ) * B := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hCQ0 : ∀ (i : Fin d) (z : OnePoint (Vec d)),
       |onePointRealExtension (fun w => c w * quadraticObservable (basisVec i) w) z| ≤ CQ := by
     intro i

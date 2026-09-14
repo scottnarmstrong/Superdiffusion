@@ -53,7 +53,7 @@ private theorem abs_average_sub_const_le {μ : Measure (Vec d)} [IsFiniteMeasure
     (hmu : μ ≠ 0) {f : Vec d → ℝ} (hf : Integrable f μ) {c C : ℝ}
     (hC : ∀ᵐ y ∂μ, |f y - c| ≤ C) :
     |(⨍ y, f y ∂μ) - c| ≤ C := by
-  haveI : NeZero μ := ⟨hmu⟩
+  have : NeZero μ := ⟨hmu⟩
   have huniv : μ Set.univ ≠ 0 := by
     simpa [Measure.measure_univ_eq_zero] using hmu
   have hpos : 0 < μ.real Set.univ := by
@@ -119,7 +119,7 @@ theorem tendsto_shrinkingBallAverage {x : Vec d} {r : ℝ} (hr : 0 < r)
   have hBmetric : B ⊆ Metric.ball x eta := fun y hy =>
     Metric.ball_subset_ball hrhoeta.le (euclideanBall_subset_metricBall hrhopos hy)
   have hBne : B.Nonempty := ⟨x, center_mem_euclideanBall x hrhopos⟩
-  haveI hBfin : IsFiniteMeasure (volume.restrict B) :=
+  have hBfin : IsFiniteMeasure (volume.restrict B) :=
     Homogenization.Book.Ch01.isFiniteMeasure_volumeMeasureOn_euclideanBall x rho
   have hBpos : volume.restrict B ≠ 0 := by
     intro hzero

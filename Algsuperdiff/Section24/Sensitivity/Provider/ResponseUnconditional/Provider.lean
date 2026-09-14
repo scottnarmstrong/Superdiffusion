@@ -111,7 +111,7 @@ theorem mesoscale_cube_sensitivity (dimension : 2 ≤ d) :
                   (Ch02.lambdaSq R (3 / 8) (.finite 2) F)⁻¹ ^ 2 *
                   h.gradientW1Infinity ^ 2) := by
   classical
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   refine ⟨jGateConst d, jErrorConst d, one_le_jGateConst d, jErrorConst_nonneg d, ?_⟩
   intro a h F G hF hG s μ σ0 e hs0 hs hμ hσ0 he
   refine ⟨valueBudget h, fun R => valueBudget_nonneg h R, ?_, ?_⟩

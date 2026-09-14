@@ -73,7 +73,7 @@ theorem probe_ofReal_cutoffBBlockFamily_descendant_le_sharpFramedMeanEnvelope_ae
           (probeSharpFramedMeanLayerEnvelope M R.scale (E : ℝ) b k₀ n
             (m - 1) L (translateCutoffSample (triadicCubeShift R) omega)
             (basisVec j) (superposedGradConst d)) := by
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   have hscale : R.scale = m - 1 - (k : ℤ) :=
     scale_eq_of_mem_descendantsAtScale hR
   have hmi : R.scale - 1 ≤ m - 1 := by

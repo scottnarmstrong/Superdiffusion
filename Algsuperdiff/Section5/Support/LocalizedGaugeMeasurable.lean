@@ -49,7 +49,7 @@ private theorem measurable_biSup_of_countable {alpha : Type*} [MeasurableSpace a
     {P : Set (Vec d)} (hP : P.Countable) {F : Vec d → alpha → ℝ≥0∞}
     (hF : ∀ x ∈ P, Measurable (F x)) :
     Measurable fun w => ⨆ x ∈ P, F x w := by
-  haveI := hP.to_subtype
+  have := hP.to_subtype
   have hrw : (fun w => ⨆ x ∈ P, F x w) = fun w => ⨆ x : ↥P, F (x : Vec d) w := by
     funext w
     exact iSup_subtype'

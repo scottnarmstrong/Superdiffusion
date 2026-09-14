@@ -178,7 +178,6 @@ theorem natAbs_centerIndex_sub_le_one_of_siteDist_lt {d L : ℕ}
   have heq : (q : ℤ) * ((centerIndex L z) i - (centerIndex L y) i) =
       (z i - y i) -
         ((centeredRemainder L z) i - (centeredRemainder L y) i) := by
-    change (q : ℤ) * ((centerIndex L z) i - (centerIndex L y) i) = _
     change (q : ℤ) * (centerIndex L z) i + (centeredRemainder L z) i = z i at hdecompZ
     change (q : ℤ) * (centerIndex L y) i + (centeredRemainder L y) i = y i at hdecompY
     rw [← hdecompZ, ← hdecompY]
@@ -214,7 +213,7 @@ private theorem natAbs_coord_sub_ge_three_of_sameColor {d : ℕ}
     ∃ i : Fin d, 3 ≤ (v i - w i).natAbs := by
   have hex : ∃ i : Fin d, v i ≠ w i := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hvw (funext h)
   obtain ⟨i, hi⟩ := hex
   have hcast : (v i : ZMod 3) = (w i : ZMod 3) := congr_fun hcolor i
@@ -225,7 +224,7 @@ private theorem natAbs_coord_sub_ge_three_of_sameColor {d : ℕ}
     rw [hneg] at hdvdInt
     have : (3 : ℤ).natAbs ∣ (-(v i - w i)).natAbs :=
       Int.natAbs_dvd_natAbs.mpr hdvdInt
-    simpa only [Int.natAbs_natCast, Int.natAbs_neg] using this
+    simpa only [Int.natAbs_natCast, Int.natAbs_neg] using! this
   have hpos : 0 < (v i - w i).natAbs := Int.natAbs_pos.mpr (sub_ne_zero.mpr hi)
   exact ⟨i, Nat.le_of_dvd hpos hdvd⟩
 

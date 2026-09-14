@@ -151,7 +151,7 @@ theorem abs_linearFn_sub_le (p x y : Vec d) :
 
 theorem continuous_linearFn (p : Vec d) : Continuous (linearFn (d := d) p) := by
   show Continuous fun x : Vec d => ∑ i, p i * x i
-  exact continuous_finset_sum _ fun i _ => continuous_const.mul (continuous_apply i)
+  exact continuous_finsetSum _ fun i _ => continuous_const.mul (continuous_apply i)
 
 /-! ## The component that claims a point -/
 
@@ -206,7 +206,7 @@ theorem volume_closedCubeCarrier_ne_zero {C : Set (TriadicCube d)}
     (openCubeSet_subset_cubeSet Q).trans
       ((cubeSet_subset_closedBall Q).trans (closedBall_subset_closedCubeCarrier hQ))
   have hle : volume (openCubeSet Q) = 0 :=
-    le_antisymm (hzero ▸ measure_mono hsub) (zero_le _)
+    le_antisymm (hzero ▸ measure_mono hsub) zero_le
   have hpos : 0 < cubeVolume Q := cubeVolume_pos Q
   rw [← volume_openCubeSet_toReal Q, hle, ENNReal.toReal_zero] at hpos
   exact lt_irrefl 0 hpos
@@ -315,7 +315,7 @@ theorem abs_componentAverage_sub_linearFn_le {C : Set (TriadicCube d)}
   have htop : volume s ≠ ⊤ := hcpt.measure_lt_top.ne
   have hvol : (volume s).toReal ≠ 0 :=
     (ENNReal.toReal_pos (volume_closedCubeCarrier_ne_zero hne) htop).ne'
-  letI : IsFiniteMeasure (volumeMeasureOn s) :=
+  let : IsFiniteMeasure (volumeMeasureOn s) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact lt_top_iff_ne_top.2 htop⟩
   have hint : IntegrableOn (linearFn p) s volume :=
     (continuous_linearFn p).continuousOn.integrableOn_compact hcpt

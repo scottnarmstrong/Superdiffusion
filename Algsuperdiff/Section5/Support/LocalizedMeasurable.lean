@@ -118,7 +118,7 @@ theorem sqrt_energy_grad_sub_le_data {y : Vec d} {n : ℤ} {a : CoeffField d} {l
     have hn : MemLp (fun x => ‖w.toH1Function.grad x‖) 2
         (volume.restrict (cubeSetAt y n)) := hwL2.norm
     have := hn.integrable_mul hn
-    simpa [Pi.mul_apply, pow_two] using this
+    simpa [Pi.mul_apply, pow_two] using! this
   have hEucInt : IntegrableOn (fun x => vecNormSq (w.toH1Function.grad x))
       (cubeSetAt y n) := integrableOn_vecDot_of_memVectorL2 hwL2 hwL2
   have hcompare : ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume ≤

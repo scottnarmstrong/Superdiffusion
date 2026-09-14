@@ -56,7 +56,8 @@ theorem ofReal_exp_mul_pow_le_of_budget {lam t kappa b : ℝ} {rho : ℝ≥0∞}
     ENNReal.ofReal (Real.exp (lam * t)) * rho ^ N ≤
         ENNReal.ofReal (Real.exp (lam * t)) *
           (ENNReal.ofReal (Real.exp (-kappa))) ^ N :=
-      mul_le_mul_of_nonneg_left (pow_le_pow_left' hrho N) (zero_le _)
+      mul_le_mul_of_nonneg_left (pow_le_pow_left' hrho N)
+        (zero_le : (0 : ℝ≥0∞) ≤ ENNReal.ofReal (Real.exp (lam * t)))
     _ = ENNReal.ofReal (Real.exp (lam * t - kappa * (N : ℝ))) := by
       rw [← ENNReal.ofReal_pow (Real.exp_nonneg _) N, ← Real.exp_nat_mul,
         ← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]

@@ -201,7 +201,7 @@ theorem clusterEvent₂_subset_union {B : ℕ → (Fin d → ℤ) → Set Ω} {k
     refine Or.inr (Set.mem_iUnion₂.mpr ⟨x i, ?_, Set.mem_iUnion₂.mpr ⟨l, ?_, hmem⟩⟩)
     · exact mem_locBox₂_of_two_mul_latDist_le (hM₀loc i hi)
     · exact Finset.mem_Icc.mpr ⟨hl1, hl2⟩
-  · push_neg at hcase
+  · push Not at hcase
     have hsmall : ∀ i, i ≤ M₀ → ω ∈ scaleUnion B k (x i) := by
       intro i hi
       obtain ⟨L, hL, hmem⟩ := mem_scaleUnion_iff.mp (hbad i (le_trans hi hM₀N))

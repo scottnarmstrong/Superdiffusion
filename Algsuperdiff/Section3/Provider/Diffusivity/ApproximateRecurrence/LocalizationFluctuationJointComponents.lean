@@ -119,7 +119,7 @@ theorem measurable_toHilbertBlockL2OfComponents {Omega : Type*} [MeasurableSpace
     (hfm : Measurable fun omega => toHilbertVectorL2OfVecField (hf omega))
     (hgm : Measurable fun omega => toHilbertVectorL2OfVecField (hg omega)) :
     Measurable fun omega => toHilbertBlockL2OfComponents (hf omega) (hg omega) := by
-  letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+  let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
   have hrw : (fun omega => toHilbertBlockL2OfComponents (hf omega) (hg omega))
       = fun omega =>
         ((hilbertBlockInl d).compLpL (μ := volumeMeasureOn U) (p := 2)

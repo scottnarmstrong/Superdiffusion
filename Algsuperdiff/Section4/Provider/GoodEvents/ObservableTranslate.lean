@@ -172,7 +172,7 @@ theorem measure_lt_of_eq_comp_translateCutoffSample (M : ABKModel d) (y : Vec d)
       (Cutoff.cutoffSampleLaw M).toMeasure {omega | t < g omega} := by
   have hset : {omega | t < f omega} =
       {omega | t < g (Cutoff.translateCutoffSample y omega)} :=
-    Set.ext fun omega => by rw [Set.mem_setOf_eq, Set.mem_setOf_eq, hfg omega]
+    Set.ext fun omega => by rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, hfg omega]
   rw [hset]
   exact measure_lt_comp_translateCutoffSample M y hg t
 

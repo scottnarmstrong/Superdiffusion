@@ -205,9 +205,9 @@ theorem exists_gradient_oscillation_gap_decay_weakGradient (hd : 0 < d) :
   obtain ⟨C, hCnn, hdec⟩ := exists_gradient_oscillation_gap_decay_of_isWeaklyHarmonicOn hd
   refine ⟨C, hCnn, ?_⟩
   intro z n k hk h hw c
-  haveI hUfin : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z (n + (k : ℤ)))) :=
+  have hUfin : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z (n + (k : ℤ)))) :=
     isFiniteMeasure_restrict.mpr (volume_openCubeAtScale_ne_top z (n + (k : ℤ)))
-  haveI hVfin : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z (n + (k : ℤ) - 1))) :=
+  have hVfin : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z (n + (k : ℤ) - 1))) :=
     isFiniteMeasure_restrict.mpr (volume_openCubeAtScale_ne_top z (n + (k : ℤ) - 1))
   have hVU : openCubeAtScale z (n + (k : ℤ) - 1) ⊆ openCubeAtScale z (n + (k : ℤ)) :=
     openCubeAtScale_subset_of_le z (by omega)

@@ -98,7 +98,7 @@ theorem lintegralDiscountedExit_ne_top {U : Set alpha} {lam : ℝ} (hlam : 0 ≤
                 (hphi _)
           _ = C := one_mul C
       · rw [Set.indicator_of_notMem homega]
-        exact zero_le C
+        exact zero_le
     calc lintegralDiscountedExit P hP U lam phi z
         ≤ ∫⁻ _omega : ContinuousPath alpha, C
           ∂(IsConservative.continuousProcess P hP z) := lintegral_mono hpoint

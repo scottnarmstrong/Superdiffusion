@@ -127,7 +127,7 @@ theorem isTwoTermBigOWith_annularErrorObservable_of_diagonal (M : ABKModel d)
       (Real.sqrt 3 * (annulusPenalty d 2 1 * A1))
       (Real.sqrt 3 * (annulusPenalty d (1 / 2) 1 * A2)) := by
   classical
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   obtain ⟨Y, Z, -, -, hA1, hA2, -, hYm, hZm, hdom, hYt, hZt⟩ := hdiag
   set law := (Cutoff.cutoffSampleLaw M).toMeasure with hlaw
   set a0 := Observable.isotropicComparatorMatrix (Annealed.sigmaBar M (n - 2)) with ha0

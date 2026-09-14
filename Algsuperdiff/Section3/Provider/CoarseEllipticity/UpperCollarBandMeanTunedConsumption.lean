@@ -199,17 +199,24 @@ theorem measurable_probeSharpFramedCollarBandMeanTunedCoordinateLane
     (M : ABKModel d) (m : ℤ) (R : TriadicCube d) (E : ℝ)
     (j : Fin d) :
     Measurable (probeSharpFramedCollarBandMeanTunedCoordinateLane M m R E j) := by
-  have hnn :=
-    (Measurable.nnreal_tsum fun n =>
+  have hnn : Measurable (fun omega : CutoffSample d => ∑' n : ℕ,
+      (probeSharpFramedCollarWavePart M R.scale E bfaProfileB
+        (collarBandMeanDepth M E) n (m - 1)
+        (basisVec j) (superposedGradConst d)
+        (fun _eta =>
+          waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+            (collarBandMeanDepth M E) ^ 2)
+        (translateCutoffSample (triadicCubeShift R) omega)).toNNReal) :=
+    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
       ((measurable_probeSharpFramedCollarBandMeanLayer M R.scale E
           (collarBandMeanDepth M E) n (m - 1) j).comp
-        (measurable_translateCutoffSample (triadicCubeShift R))).real_toNNReal).coe_nnreal_real
+        (measurable_translateCutoffSample (triadicCubeShift R))).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [probeSharpFramedCollarBandMeanTunedCoordinateLane, NNReal.coe_tsum]
   apply tsum_congr
   intro n
-  simp only [Function.comp_apply]
   rw [Real.toNNReal_of_nonneg
     (probeSharpFramedCollarBandMeanLayer_nonneg M.shellPrefix.dimension M
       R.scale E (collarBandMeanDepth M E) n (m - 1) j
@@ -354,7 +361,7 @@ theorem isBigOWith_upperProfileTarget_slstarPowerTerm_tuned
 private theorem measurable_slstarPowerTerm
     (M : ABKModel d) (root : ℤ) (E b gam : ℝ) :
     Measurable (slstarPowerTerm M root E b gam) := by
-  simpa only [slstarPowerTerm] using
+  simpa only [slstarPowerTerm] using!
     measurable_comp_hsep M root E b fun hs : ℕ =>
       (3 : ℝ) ^ ((gam + 2 * b) * (hs : ℝ))
 
@@ -386,7 +393,7 @@ theorem isBigOWith_upperProfileTarget_probeSharpCollarBandMeanTunedCoordinateMaj
       probeSharpCollarBandMeanTunedLayerScale_nonneg hd M (E : ℝ) n
   have hscaled := htranslated.const_mul hsum0
   simpa only [probeSharpCollarBandMeanTunedCoordinateMajorant,
-    probeSharpCollarBandMeanTunedCoordinateScale] using hscaled
+    probeSharpCollarBandMeanTunedCoordinateScale] using! hscaled
 
 /-- The actual translated coordinate lane inherits the target exponent from
 its proved pointwise majorant. -/

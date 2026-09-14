@@ -146,7 +146,7 @@ theorem cutoffUpperEllipticityLiteral_eq (M : ABKModel d) (m : ℤ) {s : ℝ}
     Observable.cutoffUpperEllipticityLiteral M m m s q omega =
       Ch02.LambdaSq (originCube d m) s q.1
         (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change Ch04.LambdaSqCoeffField (originCube d m) s q.1
       (Cutoff.coefficientCutoff M.nu m omega) = _
   rw [Ch04.LambdaSqCoeffField]
@@ -160,7 +160,7 @@ theorem cutoffLowerEllipticityInvLiteral_eq (M : ABKModel d) (m : ℤ) {s : ℝ}
     Observable.cutoffLowerEllipticityInvLiteral M m m s q omega =
       (Ch02.lambdaSq (originCube d m) s q.1
         (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega))⁻¹ := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   change (Ch04.lambdaSqCoeffField (originCube d m) s q.1
       (Cutoff.coefficientCutoff M.nu m omega))⁻¹ = _
   rw [Ch04.lambdaSqCoeffField]
@@ -178,7 +178,7 @@ theorem sq_cutoffHomogenizationError_le (M : ABKModel d) (m r : ℤ) {s : ℝ}
               (Annealed.sigmaBar M r : ℝ)⁻¹) +
           2 * (Observable.cutoffLowerEllipticityInv M m m s hs exponentTwo omega *
               (Annealed.sigmaBar M r : ℝ)) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   have hsigma : (0 : ℝ) < (Annealed.sigmaBar M r : ℝ) := (Annealed.sigmaBar M r).2
   filter_upwards
     [Observable.cutoffHomogenizationErrorAtComparatorScale_ae_eq_homogenizationErrorOnCube

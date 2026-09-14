@@ -294,7 +294,7 @@ theorem collar_head_coordinate_is_big_o_with
     M R.scale hSroot hsigma0 hsigma hmax hEgamma
   have hPmeas : Measurable
       (slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma) := by
-    simpa only [slstarPowerTerm] using
+    simpa only [slstarPowerTerm] using!
       measurable_comp_hsep M R.scale (E : ℝ) bfaProfileB fun hs : ℕ =>
         (3 : ℝ) ^ ((M.gamma + 2 * bfaProfileB) * (hs : ℝ))
   have hGmeas : Measurable fun omega : CutoffSample d =>

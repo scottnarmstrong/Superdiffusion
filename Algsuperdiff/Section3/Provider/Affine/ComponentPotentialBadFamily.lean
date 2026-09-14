@@ -36,7 +36,7 @@ theorem potentialZeroTraceFieldOn_globalCompetitorSlope_sub_badComponent
       (fun x => globalCompetitorSlope m
         (simplexScale m (whitneyScale M m E b k₀ omega)
           (componentWindowLayer m (whitneyScale M m E b k₀ omega) C)) C p x - p) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   let hn : ℕ → ℕ := whitneyScale M m E b k₀ omega
   let I : Set (TriadicCube d) := badFamily M m hn omega

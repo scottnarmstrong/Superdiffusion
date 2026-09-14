@@ -46,9 +46,9 @@ private theorem ae_norm_stopped_le_half_scale_model
         (eta (ContinuousPath.exitTimeTrunc
           (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m) t eta))‖ ≤
         (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-  letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
     (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
   filter_upwards [ae_eval_exitTimeTrunc_mem_closure_streamProcess_cubeSetAt_self
     M omega (0 : Vec d) m t] with eta heta
@@ -65,9 +65,9 @@ private theorem integral_stopped_eq_cubeStoppedMean_model
           (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m) t eta))
       ∂streamProcess M omega ((0 : Vec d) : OnePoint (Vec d)) =
         cubeStoppedMean M omega m t := by
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-  letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
     (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
   let F : ContinuousPath (OnePoint (Vec d)) → Vec d := fun eta =>
     onePointRetract (0 : Vec d)
@@ -161,8 +161,8 @@ private theorem vecNormSq_eq_stopped_cutoff_of_survival_model
         onePointRealExtension (fun z => cubeCutoff d m z * vecNormSq z)
           (eta (ContinuousPath.exitTimeTrunc
             (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m) t eta)) := by
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   intro eta heta
   have hsurvival : eta ∈ survivalEvent
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m) t :=
@@ -170,8 +170,13 @@ private theorem vecNormSq_eq_stopped_cutoff_of_survival_model
   have hmem := ContinuousPath.mem_of_lt_exitTime
     (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m) eta t hsurvival
   obtain ⟨z, hz, heq⟩ := hmem
-  rw [exitTimeTrunc_of_mem_survivalEvent hsurvival, ← heq, onePointRetract_coe,
-    onePointRealExtension_coe, cubeCutoff_eq_one_of_mem hz, one_mul]
+  have hgoal : vecNormSq (onePointRetract (0 : Vec d) ((z : OnePoint (Vec d)))) =
+      onePointRealExtension (fun w => cubeCutoff d m w * vecNormSq w)
+        ((z : OnePoint (Vec d))) := by
+    rw [onePointRetract_coe, onePointRealExtension_coe,
+      cubeCutoff_eq_one_of_mem hz, one_mul]
+  rw [exitTimeTrunc_of_mem_survivalEvent hsurvival]
+  exact heq ▸ hgoal
 
 private theorem rpow_half_pow_hundred_le_pow_fifty_model {q gamma : ℝ}
     (hq0 : 0 ≤ q) (hgamma0 : 0 ≤ gamma) (hq : q ≤ gamma ^ (100 : ℕ)) :
@@ -280,9 +285,9 @@ theorem streamProcess_moment_removal_bounds_of_confinement
       (intrinsicScale_pos M.nu_pos hcstar M.shellPrefix.gamma_pos ht)
   constructor
   · filter_upwards [hconf, htail, hearly] with omega hm htailOmega hearlyOmega
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-    letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+    let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+    let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+    let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
       (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
     let m : ℤ := confinementScale S L omega.1
     let U : Set (OnePoint (Vec d)) := ((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m
@@ -354,9 +359,9 @@ theorem streamProcess_moment_removal_bounds_of_confinement
         rw [show M.gamma ^ (100 : ℕ) = (M.gamma ^ (50 : ℕ)) ^ (2 : ℕ) by rw [← pow_mul]]
         ring
   · filter_upwards [hconf, htail, hearly] with omega hm htailOmega hearlyOmega
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
-    letI streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
+    let _ := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+    let _ := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+    let streamMarkovKernel : IsMarkovKernel (streamProcess M omega) :=
       (streamExhaustionTailInput M omega).wholeSpaceProcess_spec.1
     let m : ℤ := confinementScale S L omega.1
     let U : Set (OnePoint (Vec d)) := ((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m

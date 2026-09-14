@@ -201,7 +201,7 @@ theorem exists_normalizedBlockResponseMax_step3_split (d : ℕ) (dimension : 2 �
             (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
           step3Display C M L m R hle omega s +
             step3Display C M L m R hle (Cutoff.negateCutoffSample omega) s := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C, hC, hstep3⟩ := exists_responseJ_step3_recentered d dimension
   refine ⟨C, hC, ?_⟩
   intro M L m R hle omega s hs0 hs1 hgam

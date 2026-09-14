@@ -132,7 +132,7 @@ private theorem openCubeSet_originCube_subset_of_le {q q' : ℤ} (hq : q ≤ q')
 theorem localCubeControl_mono {q q' : ℤ} (hq : q ≤ q') (j : ShellField d) :
     localCubeControl q j ≤ localCubeControl q' j := by
   have hr_pos : (0 : ℝ) < cubeScaleFactor (originCube d q) := by
-    simpa [cubeScaleFactor] using (zpow_pos (show (0 : ℝ) < 3 by norm_num) q)
+    simpa [cubeScaleFactor] using! (zpow_pos (show (0 : ℝ) < 3 by norm_num) q)
   unfold localCubeControl ShellField.unitCubeValueNorm
   apply csSup_le
   · exact ⟨0, none, rfl⟩

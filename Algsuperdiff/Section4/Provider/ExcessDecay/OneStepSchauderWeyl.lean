@@ -61,7 +61,7 @@ theorem isWeaklyHarmonicOn_test_of_contDiff {U : Set (Vec d)} (hUopen : IsOpen U
     (hφ_supp : HasCompactSupport φ) (hφ_sub : tsupport φ ⊆ U) :
     ∫ x in U, vecDot (u.grad x) (euclideanGradient φ x) ∂volume = 0 := by
   simpa [Homogenization.H10Function.ofContDiff, Homogenization.H1Function.ofContDiff,
-    Homogenization.euclideanGradient, Homogenization.euclideanCoordDeriv] using
+    Homogenization.euclideanGradient, Homogenization.euclideanCoordDeriv] using!
     hu (Homogenization.H10Function.ofContDiff hUopen hφ hφ_supp hφ_sub)
 
 /-- **Weakly harmonic `H¹` functions annihilate compactly supported Laplacian tests.**
@@ -104,7 +104,7 @@ theorem isWeaklyHarmonicOn_integral_mul_euclideanCoordLaplacian_eq_zero {U : Set
       (((Homogenization.contDiff_euclideanCoordSecondDeriv hψ i
             i).continuous).memLp_of_hasCompactSupport
         (Homogenization.hasCompactSupport_euclideanCoordSecondDeriv hψ_supp i i)).restrict U
-    simpa [MeasureTheory.IntegrableOn] using u.memL2.integrable_mul hsecond_mem
+    simpa [MeasureTheory.IntegrableOn] using! u.memL2.integrable_mul hsecond_mem
   have hrightInt : ∀ i : Fin d,
       Integrable (fun x : Vec d => u.grad x i * euclideanCoordDeriv i ψ x)
         (volume.restrict U) := by
@@ -112,7 +112,7 @@ theorem isWeaklyHarmonicOn_integral_mul_euclideanCoordLaplacian_eq_zero {U : Set
     have hderiv_mem : MemLp (euclideanCoordDeriv i ψ) 2 (volume.restrict U) :=
       (((Homogenization.contDiff_euclideanCoordDeriv hψ i).continuous).memLp_of_hasCompactSupport
         (Homogenization.hasCompactSupport_euclideanCoordDeriv hψ_supp i)).restrict U
-    simpa [MeasureTheory.IntegrableOn] using (u.grad_memL2 i).integrable_mul hderiv_mem
+    simpa [MeasureTheory.IntegrableOn] using! (u.grad_memL2 i).integrable_mul hderiv_mem
   calc
     ∫ x in U, u x * euclideanCoordLaplacian ψ x ∂volume
         = ∫ x in U, ∑ i : Fin d, u x * euclideanCoordSecondDeriv i i ψ x ∂volume := by
@@ -120,13 +120,13 @@ theorem isWeaklyHarmonicOn_integral_mul_euclideanCoordLaplacian_eq_zero {U : Set
           filter_upwards with x
           simp [Homogenization.euclideanCoordLaplacian, Finset.mul_sum]
     _ = ∑ i : Fin d, ∫ x in U, u x * euclideanCoordSecondDeriv i i ψ x ∂volume :=
-          MeasureTheory.integral_finset_sum Finset.univ fun i _ => hleftInt i
+          MeasureTheory.integral_finsetSum Finset.univ fun i _ => hleftInt i
     _ = ∑ i : Fin d, -∫ x in U, u.grad x i * euclideanCoordDeriv i ψ x ∂volume :=
           Finset.sum_congr rfl fun i _ => hcomp i
     _ = -∑ i : Fin d, ∫ x in U, u.grad x i * euclideanCoordDeriv i ψ x ∂volume := by
           rw [Finset.sum_neg_distrib]
     _ = -∫ x in U, ∑ i : Fin d, u.grad x i * euclideanCoordDeriv i ψ x ∂volume := by
-          rw [MeasureTheory.integral_finset_sum Finset.univ fun i _ => hrightInt i]
+          rw [MeasureTheory.integral_finsetSum Finset.univ fun i _ => hrightInt i]
     _ = -∫ x in U, vecDot (u.grad x) (euclideanGradient ψ x) ∂volume := rfl
     _ = 0 := by rw [hgrad_zero, neg_zero]
 

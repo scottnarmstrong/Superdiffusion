@@ -167,7 +167,7 @@ theorem integrable_prod_vecDot_realize (Q : TriadicCube d)
     Integrable
       (fun p : Ω × Vec d => vecDot (realize X p.1 p.2).toVec (realize Y p.1 p.2).toVec)
       (μ.prod (volume.restrict (cubeSet Q))) := by
-  haveI := isFiniteMeasure_volume_restrict_cubeSet (d := d) Q
+  have := isFiniteMeasure_volume_restrict_cubeSet (d := d) Q
   have hpair : Integrable (fun ω => vecDot (X ω).toVec (Y ω).toVec) μ :=
     integrable_vecDot hX hY
   refine (integrable_prod_iff'
@@ -189,7 +189,7 @@ cube, i.e. it is an honest element of CoarseGraining's `L²(Q; ℝᵈ)` scale. -
 theorem ae_memHilbertVectorL2_realize (Q : TriadicCube d)
     {X : Ω → HilbertVec d} (hXm : StronglyMeasurable X) (hX : MemLp X 2 μ) :
     ∀ᵐ ω ∂μ, MemHilbertVectorL2 (cubeSet Q) (realize (d := d) X ω) := by
-  haveI := isFiniteMeasure_volume_restrict_cubeSet (d := d) Q
+  have := isFiniteMeasure_volume_restrict_cubeSet (d := d) Q
   filter_upwards [(integrable_prod_vecDot_realize Q hXm hXm hX hX).prod_right_ae] with ω hω
   refine (memLp_two_iff_integrable_sq_norm
     (stronglyMeasurable_realize hXm ω).aestronglyMeasurable).2 (hω.congr ?_)

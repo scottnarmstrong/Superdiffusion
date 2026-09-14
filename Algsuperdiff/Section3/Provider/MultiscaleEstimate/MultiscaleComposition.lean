@@ -354,7 +354,7 @@ private theorem display_of_branch {d : ℕ} {a C : ℝ} (ha : 0 < a) (haC : 2 * 
         (mul_le_mul_of_nonneg_right haC' heps0.le)
         (fun _ => Or.inr (mul_sqrt_le_of_two_mul ha haC heps0 hD hg))
     · -- leaf 3: the enlarged parameter `max epsilon (s / a)`
-      push_neg at hD
+      push Not at hD
       have hsa : s / a ≤ 1 / 2 := by
         rw [div_le_div_iff₀ ha (by norm_num : (0 : ℝ) < 2)]
         linarith

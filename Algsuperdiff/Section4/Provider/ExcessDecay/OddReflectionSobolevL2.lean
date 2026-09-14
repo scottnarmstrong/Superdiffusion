@@ -194,7 +194,7 @@ theorem volume_coordLevel_eq_zero (i : Fin d) (c : ℝ) :
   have hset : {y : Vec d | y i = c} =
       Set.pi Set.univ fun j => if j = i then ({c} : Set ℝ) else Set.univ := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_pi, Set.mem_univ, true_implies]
+    simp only [Set.mem_ofPred_eq, Set.mem_pi, Set.mem_univ, true_implies]
     constructor
     · intro hy j
       by_cases hji : j = i
@@ -350,7 +350,7 @@ theorem enorm_oddExtend (x : Vec d) (m k : ℤ) (f : Vec d → ℝ) (y : Vec d) 
     ‖oddExtend x m k f y‖ₑ = ‖f (windowFold x m k y)‖ₑ := by
   have hnorm : ‖oddExtend x m k f y‖ = ‖f (windowFold x m k y)‖ := by
     rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_oddExtend]
-  rw [← ofReal_norm_eq_enorm, ← ofReal_norm_eq_enorm, hnorm]
+  rw [← ofReal_norm, ← ofReal_norm, hnorm]
 
 /-- **, in the shape the `Lᵖ` layer consumes.** -/
 theorem setLIntegral_enorm_rpow_oddExtend_le (x : Vec d) {m k : ℤ} (hkm : k < m)
@@ -372,11 +372,11 @@ theorem eLpNorm_oddExtend_le (x : Vec d) {m k : ℤ} (hkm : k < m) (f : Vec d �
       (volume.restrict (reflectedWindow x m k)) =
       (∫⁻ y in reflectedWindow x m k, ‖oddExtend x m k f y‖ₑ ^ (2 : ℝ)) ^
         ((1 : ℝ) / 2) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num),
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num),
       htoReal]
   have hV : eLpNorm f 2 (volume.restrict (truncatedWindow x m k)) =
       (∫⁻ y in truncatedWindow x m k, ‖f y‖ₑ ^ (2 : ℝ)) ^ ((1 : ℝ) / 2) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num),
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num),
       htoReal]
   rw [hA, hV]
   have hle := setLIntegral_enorm_rpow_oddExtend_le x hkm f (2 : ℝ)

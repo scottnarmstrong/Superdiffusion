@@ -205,7 +205,7 @@ theorem partDomainRemainder_isSupersolution [NeZero d]
     exact hrφ
   rw [inner_zero_left, ← shiftedBilin_apply hEll α]
   change 0 ≤ shiftedBilin hEll α (rU - uU) φ
-  rw [map_sub, ContinuousLinearMap.sub_apply]
+  rw [map_sub, sub_apply]
   exact sub_nonneg.mpr (huφ'.trans_eq hrφ'.symm)
 
 /-- Resolvent estimate for the nonnegative supersolution remainder generated

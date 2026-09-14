@@ -405,7 +405,7 @@ theorem superposedFlux_upper_per_descendant_split
                         (-(Clane⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 8))
   intro k R hR
   have hd : 2 ≤ d := M.shellPrefix.dimension
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   have hmaxAux :
       max (Real.exp
         (Algsuperdiff.Section3.Provider.CoarseEllipticity.profileAuxiliaryConst d /
@@ -1061,7 +1061,7 @@ theorem superposedFlux_upper_per_descendant_split
       rw [hcoreEq]
       exact hraw
     simpa only
-      [Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily] using
+      [Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily] using!
         (measurable_const.mul hcore)
   simpa only [K, rarePerLaneScale, depthFactor, laneEps, laneX] using
     (nonnegative_pointwise_repair hblockMeas hUoneNonneg

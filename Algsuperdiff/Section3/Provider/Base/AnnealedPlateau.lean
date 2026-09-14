@@ -96,7 +96,7 @@ theorem integrable_average_frobeniusMass_cutoff (M : ABKModel d) (l m : ℤ) :
         Ch02.average (Ch02.cubeDomain (originCube d l))
           (fun x => Ch02.matrixFrobeniusNormSq (cutoff m omega x)))
       (cutoffSampleLaw M).toMeasure := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d l))) := by
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d l))) := by
     simpa [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet
         (originCube d l)).isFiniteMeasure_restrict_volume
@@ -358,7 +358,7 @@ theorem annealedPlateau (M : ABKModel d) (m : ℤ) :
       (Annealed.sigmaBar M m : ℝ) ≤
         M.nu * (1 + Disorder.cstarPlus M * (2 * M.nu ^ 2)⁻¹ * M.gamma⁻¹ *
           (1 + 4 * M.gamma) * (3 : ℝ) ^ (2 * M.gamma * (m : ℝ))) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   obtain ⟨-, hlim, -⟩ := Annealed.sigmaBar_characterization M m
   have hentry : Tendsto
@@ -366,7 +366,7 @@ theorem annealedPlateau (M : ABKModel d) (m : ℤ) :
       atTop (nhds ((Annealed.sigmaBar M m : ℝ))) := by
     have h1 := (tendsto_pi_nhds.mp hlim) (Sum.inl (0 : Fin d))
     have h2 := (tendsto_pi_nhds.mp h1) (Sum.inl (0 : Fin d))
-    simpa [toFullBlockMat, Ch02.blockDiag, Matrix.one_apply] using h2
+    simpa [toFullBlockMat, Ch02.blockDiag, Matrix.one_apply] using! h2
   exact ⟨ge_of_tendsto hentry (Filter.Eventually.of_forall fun n =>
       (annealedBAtScale_entry_bounds M m (n : ℤ)).1),
     le_of_tendsto hentry (Filter.Eventually.of_forall fun n =>

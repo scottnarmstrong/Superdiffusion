@@ -186,8 +186,9 @@ theorem valuePathForcing_apply (e : Vec d) (f : C(Vec d, Mat d)) :
 theorem continuous_matVecMul_left (e : Vec d) :
     Continuous (fun A : Mat d ↦ matVecMul A e) := by
   refine continuous_pi fun i ↦ ?_
-  refine continuous_finset_sum _ fun l _ ↦ ?_
-  exact ((continuous_apply l).comp (continuous_apply i)).mul continuous_const
+  refine continuous_finsetSum _ fun l _ ↦ ?_
+  have h₁ : Continuous (fun A : Mat d => A i) := continuous_apply i
+  exact ((continuous_apply l).comp h₁).mul continuous_const
 
 theorem continuous_valuePathForcing (e : Vec d) :
     Continuous (valuePathForcing (d := d) e) :=

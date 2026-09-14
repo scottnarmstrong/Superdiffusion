@@ -46,10 +46,13 @@ theorem integrable_one_add_cutoffLocalControl_pow (M : ABKModel d) (ell m : ℤ)
     intro j _hj
     have hterm := integrable_cutoffLocalControl_pow M ell m (p - j)
     simpa only [f] using hterm.mul_const (p.choose j : ℝ)
-  convert integrable_finset_sum (Finset.range (p + 1)) hf using 1
-  funext omega
-  rw [add_pow]
-  simp only [one_pow, one_mul, f]
+  have hfun : (fun omega : CutoffSample d => (1 + cutoffLocalControl ell m omega) ^ p) =
+      fun omega => ∑ j ∈ Finset.range (p + 1), f j omega := by
+    funext omega
+    rw [add_pow]
+    simp only [one_pow, one_mul, f]
+  rw [hfun]
+  exact integrable_finsetSum (Finset.range (p + 1)) hf
 
 /-- A deterministic polynomial majorant for the actual random upper
 ellipticity constant on a cube.  It is deliberately stated in terms of the

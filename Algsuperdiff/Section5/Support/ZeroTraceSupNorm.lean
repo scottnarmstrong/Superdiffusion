@@ -93,7 +93,7 @@ theorem mem_cubeSetAt_iff_norm_sub_lt {y : Vec d} {n : ℤ} {x : Vec d} :
 private theorem exists_norm_eq_one (hd : 0 < d) : ∃ u : Vec d, ‖u‖ = 1 := by
   refine ⟨basisVec (⟨0, hd⟩ : Fin d), le_antisymm ?_ ?_⟩
   · refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun j => ?_
-    by_cases hj : j = ⟨0, hd⟩ <;> simp [basisVec, Pi.single_apply, hj]
+    by_cases hj : j = ⟨0, hd⟩ <;> simp [basisVec, hj]
   · have h := norm_le_pi_norm (basisVec (⟨0, hd⟩ : Fin d)) ⟨0, hd⟩
     simpa only [basisVec, Pi.single_eq_same, norm_one] using h
 

@@ -165,7 +165,7 @@ theorem aemeasurable_cutoffMaxDescendantNormalizedBlockResponseRepresentative
     rw [Finset.sup'_apply]
     exact Ch04.RestrictionLawCarrier.finsetSupReal_eq_sup' S hS
       (fun R => cutoffNormalizedBlockResponseRepresentative M coefficientScale R a0 omega)
-  simpa [cutoffMaxDescendantNormalizedBlockResponseRepresentative, S] using hfin
+  simpa [cutoffMaxDescendantNormalizedBlockResponseRepresentative, S] using! hfin
 
 theorem cutoffMaxDescendantNormalizedBlockResponseRepresentative_nonneg
     {d : ℕ} [NeZero d] (M : ABKModel d) (coefficientScale : ℤ)
@@ -181,8 +181,10 @@ private theorem aemeasurable_tsum_of_nonneg
     (hmeas : ∀ n, AEMeasurable (term n) μ)
     (hnonneg : ∀ n omega, 0 ≤ term n omega) :
     AEMeasurable (fun omega => ∑' n, term n omega) μ := by
-  have hnn :=
-    (AEMeasurable.nnreal_tsum fun n => (hmeas n).real_toNNReal).coe_nnreal_real
+  have hnn : AEMeasurable (fun omega => ∑' n, (term n omega).toNNReal) μ :=
+    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
+      (hmeas n).real_toNNReal
+  have hnn := hnn.coe_nnreal_real
   convert hnn using 1
   funext omega
   rw [NNReal.coe_tsum]

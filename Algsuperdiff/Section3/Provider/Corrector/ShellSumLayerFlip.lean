@@ -149,7 +149,7 @@ theorem map_negateLayer (M : ABKModel d) (k : ℤ) :
     _ = Measure.infinitePi (fun l : ℤ =>
           Measure.map (fun F : ShellSeq d => negateLayerField k l (F l))
             M.P.toMeasure) := by
-        simpa only [Function.comp_apply] using hIndProd
+        simpa only [Function.comp_apply] using! hIndProd
     _ = Measure.infinitePi (fun l : ℤ =>
           Measure.map (fun F : ShellSeq d => F l) M.P.toMeasure) := by
         refine congrArg Measure.infinitePi ?_

@@ -73,7 +73,7 @@ private theorem measure_eq_top_eq_zero_g2 {f : Cutoff.CutoffSample d → ℝ≥0
   have h := ae_lt_top (μ := (Cutoff.cutoffSampleLaw M).toMeasure) hf hfin
   rw [MeasureTheory.ae_iff] at h
   refine measure_mono_null (fun omega homega => ?_) h
-  rw [Set.mem_setOf_eq] at homega ⊢
+  rw [Set.mem_ofPred_eq] at homega ⊢
   rw [homega]
   exact lt_irrefl _
 
@@ -99,7 +99,7 @@ theorem measurable_XcalE (M : ABKModel d) (s : {s : ℝ // 0 < s}) (j : ℤ) :
     rw [XcalE_eq_wsumE M s j omega]
     rfl
   rw [hrw]
-  exact Measurable.ennreal_tsum fun i =>
+  exact Measurable.tsum (L := SummationFilter.unconditional ℕ) fun i =>
     (((measurable_errorAnnMax M s j (j - 1 - (i : ℤ))).const_mul _).ennreal_ofReal)
 
 theorem measurable_XcalE_toReal (M : ABKModel d) (s : {s : ℝ // 0 < s}) (j : ℤ) :
@@ -279,7 +279,7 @@ theorem measurable_XrowTwoE (M : ABKModel d) (s : {s : ℝ // 0 < s}) (m : ℤ) 
   have hrw : XrowTwoE M s m = fun omega : Cutoff.CutoffSample d =>
       ∑' j : ℤ, ENNReal.ofReal (wt ((s : ℝ) / 4) m j * (XcalE M s j omega).toReal) := rfl
   rw [hrw]
-  exact Measurable.ennreal_tsum fun j =>
+  exact Measurable.tsum (L := SummationFilter.unconditional ℤ) fun j =>
     (((measurable_XcalE_toReal M s j).const_mul _).ennreal_ofReal)
 
 private theorem summable_wt_quarter {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (m : ℤ) :
@@ -387,11 +387,11 @@ theorem measure_compl_goodRowSetG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) {A1
     by_cases h1 : ∀ j : ℤ, XcalE M s j omega ≠ ⊤
     · refine Or.inr ?_
       have h2 : ¬ ∀ m : ℤ, XrowTwoE M s m omega ≠ ⊤ := fun h2 => homega ⟨h1, h2⟩
-      push_neg at h2
+      push Not at h2
       obtain ⟨m, hm⟩ := h2
       exact Set.mem_iUnion.2 ⟨m, hm⟩
     · refine Or.inl ?_
-      push_neg at h1
+      push Not at h1
       obtain ⟨j, hj⟩ := h1
       exact Set.mem_iUnion.2 ⟨j, hj⟩
   exact measure_mono_null hsub

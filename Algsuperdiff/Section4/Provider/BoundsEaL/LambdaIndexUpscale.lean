@@ -171,7 +171,7 @@ theorem lambdaPrintedAtom_le_descendantMax (M : ABKModel d) {Ccg : ℝ} (hCcg : 
         (1 + (9 : ℝ) ^ d) * (((Annealed.sigmaBar M (j - 3) : ℝ))⁻¹ *
           cgExcessDescendantMax M Ccg j z omega) := by
   classical
-  haveI : NeZero d := neZeroFromModel M
+  have : NeZero d := neZeroFromModel M
   have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hs3 : (0 : ℝ) < (Annealed.sigmaBar M (j - 3) : ℝ) := (Annealed.sigmaBar M (j - 3)).2
   set omega' : Cutoff.CutoffSample d := Cutoff.translateCutoffSample z omega with homega'

@@ -151,7 +151,7 @@ theorem exists_uglyJEstimate_annulus_of_eventG1 (d : ℕ) (dimension : 2 ≤ d) 
             (gradTailSq M m omega) (Disorder.cstar M) M.gamma
             ((3 : ℝ) ^ (s * ((m - n : ℤ) : ℝ)))
             ((3 : ℝ) ^ ((s + M.gamma) * ((m - n : ℤ) : ℝ))) C := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Cs, hCs, hchain⟩ := exists_uglyJEstimate_lattice_cube d dimension
   refine ⟨Cs, hCs, ?_⟩
   intro M m L m0 E omega s Cl C hS hm0 hmL hs0 hs14 hsgam homega hCl hlam hsignlow

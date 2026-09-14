@@ -180,7 +180,7 @@ theorem eLpNorm_sub_average_truncatedWindow_le (hd : d ≠ 0) {m j : ℤ} {z : V
     volume_toReal_truncatedWindow_pos z hz hjm
   have hpos : 0 < volume (truncatedWindow z m j) :=
     (ENNReal.toReal_pos_iff.1 hreal).1
-  haveI : IsFiniteMeasure (volume.restrict (truncatedWindow z m j)) := by
+  have : IsFiniteMeasure (volume.restrict (truncatedWindow z m j)) := by
     constructor
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 htop

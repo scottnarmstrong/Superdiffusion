@@ -210,12 +210,19 @@ private theorem ioc_eq_range_map_asc {n L : ℤ} (hnL : n ≤ L) :
           have hcast : (a : ℤ) = (b : ℤ) := by omega
           exact_mod_cast hcast⟩ := by
   ext k
-  simp only [Finset.mem_Ioc, Finset.mem_map, Finset.mem_range,
-    Function.Embedding.coeFn_mk]
+  simp only [Finset.mem_Ioc, Finset.mem_map, Finset.mem_range]
   constructor
   · rintro ⟨hlo, hhi⟩
-    exact ⟨(k - n - 1).toNat, by omega, by omega⟩
+    refine ⟨(k - n - 1).toNat, by omega, ?_⟩
+    show n + 1 + ((k - n - 1).toNat : ℤ) = k
+    have h1 : (0 : ℤ) ≤ k - n - 1 := by omega
+    rw [Int.toNat_of_nonneg h1]
+    omega
   · rintro ⟨w, hw, rfl⟩
+    show n < n + 1 + (w : ℤ) ∧ n + 1 + (w : ℤ) ≤ L
+    have h2 : (0 : ℤ) ≤ L - n := by omega
+    have hw' : (w : ℤ) < ((L - n).toNat : ℤ) := by exact_mod_cast hw
+    rw [Int.toNat_of_nonneg h2] at hw'
     omega
 
 private theorem three_mul_succ_le_three_pow (w : ℕ) : 3 * (w + 1) ≤ 3 ^ (w + 1) := by

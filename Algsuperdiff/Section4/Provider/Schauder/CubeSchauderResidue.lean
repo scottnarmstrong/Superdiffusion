@@ -141,7 +141,7 @@ theorem exists_frozenHarmonicReplacement_truncatedWindow [NeZero d] {m n : ℤ} 
   have hWdom : IsOpenBoundedConvexDomain W := isOpenBoundedConvexDomain_truncatedWindow x m n
   have hWne : W.Nonempty := truncatedWindow_nonempty n hx
   have hxW : x ∈ W := mem_truncatedWindow_self n hx
-  haveI : IsFiniteMeasure (volumeMeasureOn W) := hWdom.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn W) := hWdom.isFiniteMeasure_restrict_volume
   have hGW : MemVectorL2 W G := hGL2.mono_measure (Measure.restrict_mono hWsub le_rfl)
   have huW := Algsuperdiff.Section4.Provider.ExcessDecay.isDivFormWeakSolutionOn_restrict
     hWopen hWsub hu

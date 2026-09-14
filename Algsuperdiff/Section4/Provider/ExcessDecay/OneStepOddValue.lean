@@ -256,7 +256,7 @@ theorem exists_gradientHolder_boundary_odd_ae [NeZero d] (hd : d ≠ 0) {m n : �
     volume_toReal_reflectedWindow_pos x hx (by omega)
   have hUpos : 0 < (volume (truncatedWindow x m (n - 2))).toReal :=
     volume_toReal_truncatedWindow_pos x hx (by omega)
-  haveI : IsFiniteMeasure (volume.restrict (reflectedWindow x m (n - 2))) := by
+  have : IsFiniteMeasure (volume.restrict (reflectedWindow x m (n - 2))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_of_le_of_ne le_top (volume_reflectedWindow_ne_top x m (n - 2))

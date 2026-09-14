@@ -210,12 +210,12 @@ theorem ae_linfty_of_uniformBoxGauge_originCube [NeZero d] (m : ℤ) {s A : ℝ}
     linarith only [hP]
   have hdiam : ∀ x ∈ closedCubeSet (originCube d m), ∀ y ∈ closedCubeSet (originCube d m),
       ‖x - y‖ ≤ (3 : ℝ) ^ ((m : ℤ) : ℝ) := by
-    simpa using norm_sub_le_cubeScaleFactor (originCube d m)
+    simpa using! norm_sub_le_cubeScaleFactor (originCube d m)
   have hHol : HolderSeminormBoundOn (closedCubeSet (originCube d m)) (1 - s)
       (16 * (d : ℝ) * A) g :=
     holderSeminormBoundOn_of_uniformBoxGauge hw hwI hwc hGI hgauge hs0 hs2 hgc hgw hdiam
   have hres := ae_linfty_of_holder_of_boundary_zero_cube (originCube d m) hs1 hK hHol hzero
-  simpa using hres
+  simpa using! hres
 
 end
 

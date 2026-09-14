@@ -474,7 +474,7 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
   refine ⟨max 1 (max (Real.sqrt (2 * laneCoverConst d 1))
       (Real.sqrt (2 * laneCoverConst d (1 / 4)))), le_max_left _ _, ?_⟩
   intro M m E hLower hWindow L n hL hLn
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   set Ctwo : ℝ := max 1 (max (Real.sqrt (2 * laneCoverConst d 1))
     (Real.sqrt (2 * laneCoverConst d (1 / 4)))) with hCtwo

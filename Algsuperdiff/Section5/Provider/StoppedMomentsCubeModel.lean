@@ -259,8 +259,8 @@ theorem vecNormSq_cubeStoppedMean_le (M : ABKModel d) (omega : FullSample d M.ga
     (t : NNReal) :
     vecNormSq (cubeStoppedMean M omega m t) ≤
       (4 * d) * ((3 : ℝ) ^ m) ^ (2 : ℕ) * EBm ^ (2 : ℕ) := by
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   have h3 : (0 : ℝ) ≤ (3 : ℝ) ^ m := zpow_nonneg (by norm_num) m
   have hcoord : ∀ i : Fin d, cubeStoppedMean M omega m t i * cubeStoppedMean M omega m t i ≤
       4 * (((3 : ℝ) ^ m) ^ (2 : ℕ) * EBm ^ (2 : ℕ)) := by
@@ -340,8 +340,8 @@ theorem abs_cubeStoppedQuadratic_sub_le (M : ABKModel d) (omega : FullSample d M
           (2 * sigmaBarM) * (t : ℝ)| ≤
         10 * ((3 : ℝ) ^ m) ^ (2 : ℕ) * EBm +
           2 * (sigmaBarM * (t : ℝ)) * cubeExitProbability M omega m t := by
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   intro i
   obtain ⟨u, Y, hu, hN, hoff, hucont, hY, hharm, htrace, hKb⟩ :=
     exists_cutoffQuadraticObservable_stream (streamWholeSpaceResolvent M omega)

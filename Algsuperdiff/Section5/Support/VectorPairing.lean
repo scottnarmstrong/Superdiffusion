@@ -67,7 +67,7 @@ theorem abs_setIntegral_vecDot_le (U : Set (Vec d)) {F G : Vec d → Vec d}
   have hFn : MemLp (fun x => ‖F x‖) 2 (volume.restrict U) := hF.norm
   have hGn : MemLp (fun x => ‖G x‖) 2 (volume.restrict U) := hG.norm
   have hint : Integrable (fun x => ‖F x‖ * ‖G x‖) (volume.restrict U) := by
-    simpa [Pi.mul_apply] using hFn.integrable_mul hGn
+    simpa [Pi.mul_apply] using! hFn.integrable_mul hGn
   have h1 : |∫ x in U, vecDot (F x) (G x) ∂volume| ≤
       ∫ x in U, |vecDot (F x) (G x)| ∂volume := by
     simpa [Real.norm_eq_abs] using

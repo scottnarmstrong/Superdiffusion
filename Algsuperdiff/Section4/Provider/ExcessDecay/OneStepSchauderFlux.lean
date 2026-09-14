@@ -25,7 +25,7 @@ property:
 -/
 
 -- ==== flux vanishing ====
-open scoped Real ContDiff
+open scoped Real ContDiff Laplacian
 open MeasureTheory Metric Set InnerProductSpace
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -66,7 +66,7 @@ theorem integral_sphere_eq_measureReal_smul_sphereAverage [NeZero d] (u : 𝔼 �
 private theorem laplacian_zero_fun' : Δ (0 : 𝔼 → ℝ) = 0 := by
   rw [show (0 : 𝔼 → ℝ) = fun _ => (0 : ℝ) from rfl]
   funext z
-  rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis, iteratedFDeriv_zero_fun]
+  rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis, iteratedFDeriv_fun_zero]
   simp
 
 private theorem support_laplacian_subset' {ψ : 𝔼 → ℝ} :
@@ -183,7 +183,7 @@ end
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
 -- ==== flux integration by parts ====
-open scoped Real ContDiff
+open scoped Real ContDiff Laplacian
 open MeasureTheory Metric Set InnerProductSpace
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -221,7 +221,11 @@ private theorem radialTest_eq_zero_of_ge [NeZero d] {φ : ℝ → ℝ} {x : 𝔼
   by_contra hne
   obtain ⟨i⟩ : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
   set e : 𝔼 := EuclideanSpace.single i (1 : ℝ) with he_def
-  have he : ‖e‖ = 1 := by rw [he_def, EuclideanSpace.norm_single]; norm_num
+  have he : ‖e‖ = 1 := by
+    rw [he_def]
+    have h : ‖EuclideanSpace.single i (1 : ℝ)‖ = ‖(1 : ℝ)‖ :=
+      PiLp.norm_single (p := 2) (β := fun _ : Fin d => ℝ) i (1 : ℝ)
+    rw [h, norm_one]
   set w : 𝔼 := x + Real.sqrt t • e with hw_def
   have hwx : ‖w - x‖ = Real.sqrt t := by
     rw [hw_def, add_sub_cancel_left, norm_smul, Real.norm_eq_abs,
@@ -391,7 +395,7 @@ end
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
 -- ==== vanishing flux ====
-open scoped Real ContDiff Topology
+open scoped Real ContDiff Topology Laplacian
 open MeasureTheory Metric Set InnerProductSpace
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -426,7 +430,7 @@ theorem sphereFlux_eq_zero_of_harmonic [NeZero d]
     isOpen_lt continuous_const (hcont.mul continuous_const)
   have hρmem : ρ ∈ {s : ℝ | 0 < sphereFlux x s u * f₀} ∩ Ioo 0 R := by
     refine ⟨?_, hρ0, hρR⟩
-    simp only [Set.mem_setOf_eq, ← hf0]
+    simp only [Set.mem_ofPred_eq, ← hf0]
     exact mul_self_pos.mpr hne
   obtain ⟨δ, hδ0, hball⟩ :=
     Metric.isOpen_iff.mp (hsign_open.inter isOpen_Ioo) ρ hρmem

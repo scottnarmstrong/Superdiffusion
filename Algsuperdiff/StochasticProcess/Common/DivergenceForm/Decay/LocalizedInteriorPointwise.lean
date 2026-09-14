@@ -44,7 +44,7 @@ private theorem isScalarForcedWeakSolution_const_smul_interior
     (hu : IsScalarForcedWeakSolution a W g u) :
     IsScalarForcedWeakSolution (fun x => c • a x) W (fun x => c * g x) u := by
   refine ⟨?_, fun phi => ?_⟩
-  · simpa only [Pi.smul_apply, smul_eq_mul] using hu.1.const_smul c
+  · simpa only [Pi.smul_apply, smul_eq_mul] using! hu.1.const_smul c
   · have h := hu.2 phi
     have hleft :
         (∫ x in W, vecDot (matVecMul (c • a x) (u.grad x))
@@ -138,7 +138,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
     hEllS hsplit hksSkew hklSkew hklC1 hsol hMbound heta hetaCompact hetaOm
     hetaL hpsi hpsiGrad hsign hksSize hklDiv (by simpa only [hLloc_def] using hkappa)
   have hvol0 : (0 : ℝ) ≤ volLayer := le_trans ENNReal.toReal_nonneg hvolLayer
-  letI : IsFiniteMeasure (volumeMeasureOn Om) :=
+  let : IsFiniteMeasure (volumeMeasureOn Om) :=
     hOm.isBoundedDomain.isFiniteMeasure_restrict_volume
   have hlayerMeas : MeasurableSet {y ∈ Om | fderiv ℝ eta y ≠ 0} := by
     exact hOm.isOpen.measurableSet.inter
@@ -178,7 +178,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
             fun _ : Fin d => (0 : ℝ) := by
           funext i
           rw [hzero]
-          exact ContinuousLinearMap.zero_apply (basisVec i)
+          exact zero_apply (basisVec i)
         rw [hgrad0]
         simp only [vecNormSq, vecDot, mul_zero, Finset.sum_const_zero]
         exact le_rfl
@@ -247,7 +247,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
   have hweightTop : MemLp (fun y => eta y ^ 2 * Real.exp (kappa * psi y) ^ 2)
       ∞ (volumeMeasureOn Om) := by
     have hetaSq : HasCompactSupport (fun y => eta y ^ 2) := by
-      simpa only [pow_two] using hetaCompact.mul_left (f := eta)
+      simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
     refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict Om
     · exact (heta.continuous.pow 2).mul
         ((contDiff_exponentialWeight hpsi kappa).continuous.pow 2)
@@ -312,7 +312,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
   have hfrozen := (isScalarForcedWeakSolution_sub_skew_const hk).2 hsolB
   have hnormalized : IsScalarForcedWeakSolution (normalizedFrozenCoeff nu a x) B
       (fun y => nu⁻¹ * (-(mass * u.toFun y))) uB := by
-    simpa only [normalizedFrozenCoeff] using
+    simpa only [normalizedFrozenCoeff] using!
       isScalarForcedWeakSolution_const_smul_interior (c := nu⁻¹) hfrozen
   have hnormalizedMeas : Measurable (normalizedFrozenCoeff nu a x) := by
     refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
@@ -346,6 +346,6 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
   have hpoint := exists_representative_abs_center_le_exp hBopen hd halpha
     hdelta0 hdelta hnormalizedMeas hsmall hnormalized hr₀ (fun _ hy => hy)
     hG hgb hE' hkappa0 (by linarith only [hlayerLe]) hD0 hradB
-  simpa only [Lloc, kappa, B, uB] using hpoint
+  simpa only [Lloc, kappa, B, uB] using! hpoint
 
 end DivergenceFormProcess.Decay

@@ -46,7 +46,7 @@ theorem memVectorL2_matVecMul_const {U : Set (Vec d)} (H : Mat d)
   have hcoord :
       (fun x => matVecMul H (w x) i) = fun x => ∑ j : Fin d, H i j * w x j := rfl
   rw [hcoord]
-  exact MeasureTheory.memLp_finset_sum _ fun j _ => (hw.eval j).const_mul (H i j)
+  exact MeasureTheory.memLp_finsetSum _ fun j _ => (hw.eval j).const_mul (H i j)
 
 /-- An `L²` vector field pairs integrably against every `H^1_0` test gradient. -/
 theorem h10FluxIntegrable_of_memVectorL2 {U : Set (Vec d)} {F : Vec d → Vec d}
@@ -56,13 +56,13 @@ theorem h10FluxIntegrable_of_memVectorL2 {U : Set (Vec d)} {F : Vec d → Vec d}
       MeasureTheory.IntegrableOn
         (fun x => F x i * φ.toH1Function.grad x i) U := by
     intro i
-    simpa [Pi.mul_apply] using
+    simpa [Pi.mul_apply] using!
       (hF.eval i).integrable_mul (φ.toH1Function.gradMemL2 i)
   have hsum :
       (fun x => vecDot (F x) (φ.toH1Function.grad x)) =
         fun x => ∑ i : Fin d, F x i * φ.toH1Function.grad x i := rfl
   rw [hsum]
-  exact MeasureTheory.integrable_finset_sum _ fun i _ => hcoord i
+  exact MeasureTheory.integrable_finsetSum _ fun i _ => hcoord i
 
 /-- Difference of two weakly divergence-free fields with integrable pairings. -/
 theorem isSolenoidalOn_sub {U : Set (Vec d)} {F G : Vec d → Vec d}
@@ -139,7 +139,7 @@ theorem isSolenoidalOn_matVecMul_of_isPotentialOn_of_transpose_eq_neg
       MeasureTheory.IntegrableOn
         (fun x => u.grad x j * euclideanCoordDeriv i ψ x) U := by
     intro i j
-    simpa [Pi.mul_apply] using (hgradL2 j).integrable_mul (hDL2 i)
+    simpa [Pi.mul_apply] using! (hgradL2 j).integrable_mul (hDL2 i)
   have hpoint : ∀ x : Vec d,
       vecDot (matVecMul H (u.grad x)) (fun i => (fderiv ℝ ψ x) (basisVec i)) =
         ∑ i : Fin d, ∑ j : Fin d,
@@ -179,9 +179,9 @@ theorem isSolenoidalOn_matVecMul_of_isPotentialOn_of_transpose_eq_neg
     _ = ∑ i : Fin d, ∫ x in U,
             (∑ j : Fin d, H i j * (u.grad x j * euclideanCoordDeriv i ψ x))
               ∂MeasureTheory.volume := by
-          refine MeasureTheory.integral_finset_sum _ ?_
+          refine MeasureTheory.integral_finsetSum _ ?_
           intro i _
-          exact MeasureTheory.integrable_finset_sum _
+          exact MeasureTheory.integrable_finsetSum _
             fun j _ => (hInt i j).const_mul (H i j)
     _ = ∑ i : Fin d, ∑ j : Fin d,
             H i j *
@@ -189,7 +189,7 @@ theorem isSolenoidalOn_matVecMul_of_isPotentialOn_of_transpose_eq_neg
                 ∂MeasureTheory.volume := by
           refine Finset.sum_congr rfl ?_
           intro i _
-          rw [MeasureTheory.integral_finset_sum _
+          rw [MeasureTheory.integral_finsetSum _
             fun j _ => (hInt i j).const_mul (H i j)]
           exact Finset.sum_congr rfl fun j _ =>
             MeasureTheory.integral_const_mul _ _

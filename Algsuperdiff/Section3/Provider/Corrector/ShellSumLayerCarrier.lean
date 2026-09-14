@@ -125,9 +125,9 @@ def seqPathSum (n m : ℤ) (F : ℤ → C(Vec d, Mat d)) : C(Vec d, Mat d) :=
   ∑ k ∈ Finset.Ioc n m, F k
 
 theorem measurable_seqPathSum (n m : ℤ) : Measurable (seqPathSum (d := d) n m) := by
-  haveI : SecondCountableTopology (Mat d) :=
+  have : SecondCountableTopology (Mat d) :=
     inferInstanceAs (SecondCountableTopology (Fin d → Fin d → ℝ))
-  haveI : Filter.IsCountablyGenerated (uniformity (Mat d)) :=
+  have : Filter.IsCountablyGenerated (uniformity (Mat d)) :=
     inferInstanceAs (Filter.IsCountablyGenerated (uniformity (Fin d → Fin d → ℝ)))
   exact Finset.measurable_sum _ fun k _ => measurable_pi_apply k
 
@@ -227,7 +227,7 @@ private theorem toLp_finset_sum {Omega : Type*} [MeasurableSpace Omega]
     intro t
     have hfun : (∑ i ∈ t, g i) = fun omega => ∑ i ∈ t, g i omega :=
       funext fun omega => Finset.sum_apply omega t g
-    have h := memLp_finset_sum' (μ := mu) t fun j _ => hg j
+    have h := memLp_finsetSum' (μ := mu) t fun j _ => hg j
     rwa [hfun] at h
   induction s using Finset.induction_on with
   | empty =>
@@ -257,7 +257,7 @@ theorem carrierTransport_shellSumForcingL2 (M : ABKModel d) (e : Vec d) (n m : �
     have hfun : (∑ k ∈ Finset.Ioc n m, layerForcing (d := d) e k)
         = fun F => ∑ k ∈ Finset.Ioc n m, layerForcing e k F :=
       funext fun F => Finset.sum_apply F (Finset.Ioc n m) (fun k => layerForcing e k)
-    have h := memLp_finset_sum' (μ := (seqPathLaw M.P).toMeasure) (Finset.Ioc n m)
+    have h := memLp_finsetSum' (μ := (seqPathLaw M.P).toMeasure) (Finset.Ioc n m)
       fun k _ => memLp_two_layerForcing M e k
     rwa [hfun] at h
   have hrewrite : ((memLp_two_valuePathForcing_shellSum M e n m).comp_measurePreserving

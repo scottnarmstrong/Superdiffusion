@@ -44,8 +44,8 @@ theorem killedResolvent_one_eq_cubeSetAtOneResolvent_stream
       ENNReal.ofReal ((streamWholeSpaceAnalyticData M omega
         ).cubeSetAtOneResolvent y n ⟨lam, hlam⟩ x) := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   set P : WholeSpaceBarrierData A := A.cubeSetAtOneBarrierData y n ⟨lam, hlam⟩
   have hcrux := P.killedResolvent_eq_partResolvent_stream_general
     R hreg hcons hid hT hx
@@ -56,8 +56,8 @@ theorem killedResolvent_one_eq_cubeSetAtOneResolvent_stream
     rw [PositiveC0ContractiveResolvent.onePointLiveExtension_coe]
     show (1 : ℝ≥0∞) = ENNReal.ofReal (cubeSetAtOneDatum y n w)
     rw [cubeSetAtOneDatum_of_mem hw, ENNReal.ofReal_one]
-  rw [killedResolvent_congr_of_eqOn _ _ _ _ lam hobs (x : OnePoint (Vec d))]
-  exact hcrux
+  exact (killedResolvent_congr_of_eqOn _ _ _ _ lam hobs
+    (x : OnePoint (Vec d))).trans hcrux
 
 /-- The expected exit time from a translated triadic cube is the zero-shift
 limit of its Dirichlet resolvents of one. -/
@@ -80,8 +80,8 @@ theorem lintegral_exitTime_eq_cubeSetAtExitFunction_stream
       (streamWholeSpaceAnalyticData M omega
         ).cubeSetAtExitFunction y n (x : OnePoint (Vec d)) := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   refine IsConservative.lintegral_exitTime_eq_of_killedResolvent_eq
     R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
     (A.cubeSetAtExitResolvent y n) (A.cubeSetAtExitFunction y n)

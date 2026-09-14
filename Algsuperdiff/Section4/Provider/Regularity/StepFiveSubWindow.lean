@@ -45,7 +45,7 @@ theorem subset_of_iterationNest {U : ℤ → Set (Vec d)} {m : ℤ}
     (hnest : ∀ j : ℤ, j ≤ m → U (j - 1) ⊆ U j) {a : ℤ} :
     ∀ b : ℤ, a ≤ b → b ≤ m → U a ⊆ U b := by
   intro b hab
-  induction b, hab using Int.le_induction with
+  induction b, hab using Int.leInduction with
   | base => exact fun _ => subset_rfl
   | succ b hab ih =>
       intro hb1

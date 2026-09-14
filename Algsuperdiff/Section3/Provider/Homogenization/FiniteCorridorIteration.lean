@@ -293,7 +293,7 @@ private theorem weightedDefect_decay_of_kernel {F : ℕ → ℝ} {A C K₀ K δ 
           linarith
         have hCT : 0 ≤ C * (∑ k ∈ Finset.Icc 1 j, r ^ k) := mul_nonneg hC hT
         by_contra hcon
-        push_neg at hcon
+        push Not at hcon
         have hXle : K * δ * (δ + ρ ^ j) - F j ≤ 0 := by linarith
         have hmul2 : C * (∑ k ∈ Finset.Icc 1 j, r ^ k) *
             (K * δ * (δ + ρ ^ j) - F j) ≤

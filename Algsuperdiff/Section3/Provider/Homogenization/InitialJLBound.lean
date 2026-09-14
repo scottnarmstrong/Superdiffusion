@@ -224,7 +224,7 @@ theorem integrable_coarseBlockMatrixVariationSq (M : ABKModel d) (L : ℤ)
       (hE2.const_mul (2 * (2 * (4 * (d : ℝ) * M.nu⁻¹)) ^ 2 * vecNormSq p)))
     (fun omega => ?_)
   rw [Real.norm_eq_abs, coarseBlockMatrixVariationSq, abs_of_nonneg (vecNormSq_nonneg _)]
-  simpa only [Pi.add_apply] using
+  simpa only [Pi.add_apply] using!
     coarseBlockMatrixVariationSq_le_cutoffEnvelope M L omega Q p q hR
 
 /-- **The `hLHS` clause of
@@ -436,7 +436,7 @@ theorem sigmaBar_mul_integral_coarseMatrixVariationBlock_le (M : ABKModel d) (m 
       (integrable_descendantsAverage_coarseBlockMatrixVariationSq M L (originCube d m)
         (Observable.inverseSqrtLoad (Annealed.sigmaBar M L) e)
         (Observable.sqrtLoad (Annealed.sigmaBar M L) e) (Int.toNat (m - n)))).const_mul _
-  rw [hfun, integral_finset_sum _ hterm, Finset.mul_sum]
+  rw [hfun, integral_finsetSum _ hterm, Finset.mul_sum]
   refine Finset.sum_le_sum fun n _hn => ?_
   rw [integral_const_mul,
     integral_comp_coefficientCutoff M L

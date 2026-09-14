@@ -591,7 +591,7 @@ private theorem cutoffFrobeniusMass_le_root_control {d : ℕ}
     (m : ℤ) (omega : CutoffSample d) :
     Provider.Stream.cutoffFrobeniusMass R m omega ≤
       (d : ℝ) ^ 2 * cutoffLocalControl (cubeOriginCoverScale Q) m omega ^ 2 := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) := by
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) := by
     simpa only [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet R).isFiniteMeasure_restrict_volume
   have hintegrable : IntegrableOn
@@ -662,7 +662,7 @@ theorem cutoffUpperEllipticity_le_four_mul_infinity_half {d : ℕ}
     Observable.cutoffUpperEllipticity M m L s hs q omega ≤
       4 * Observable.cutoffUpperEllipticity M m L (s / 2) (by positivity)
         CoarseEllipticityExponent.infinity omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   rw [congrFun (Observable.cutoffUpperEllipticity_eq_literal M m L s hs q) omega,
     congrFun (Observable.cutoffUpperEllipticity_eq_literal M m L (s / 2)
       (by positivity) CoarseEllipticityExponent.infinity) omega]
@@ -679,7 +679,7 @@ theorem cutoffUpperEllipticity_le_four_mul_infinity_half {d : ℕ}
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)
         (t := s / 2) (s := s) (by positivity) (by linarith)
       simpa only [Ch04.LambdaSqCoeffField,
-        Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos] using
+        Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos] using!
         hmono.trans (le_mul_of_one_le_left
           (Ch02.LambdaSq_infinity_nonneg
             (originCube d m)
@@ -695,7 +695,7 @@ private theorem cutoffUpperEllipticity_infinity_half_mul_sigmaBarInv_le
       1 + (Ch02.geometricDiscount (s / 2) 2)⁻¹ *
         Provider.Base.cutoffMassLinearWeightedSum M (originCube d m) m
           ⟨s / 2, by constructor <;> linarith⟩ omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   let u : {u : ℝ // u ∈ Set.Ioo 0 1} :=
     ⟨s / 2, by constructor <;> linarith⟩
   let D : ℝ := Ch02.geometricDiscount (s / 2) 2
@@ -739,7 +739,7 @@ private theorem cutoffUpperEllipticity_infinity_half_mul_sigmaBarInv_le
           (coefficientCutoff M.nu m omega') ≤
         M.nu + M.nu⁻¹ * F := by
     simpa only [Ch04.maxDescendantBMatrixNormCoeffFieldAtScale,
-      coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos, F] using
+      coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos, F] using!
       (Provider.Base.maxDescendantBMatrixNormAtScale_coefficientCutoff_le
         M (originCube d m) m n omega')
   have hterm :
@@ -754,7 +754,7 @@ private theorem cutoffUpperEllipticity_infinity_half_mul_sigmaBarInv_le
           (Provider.Stream.cutoffFrobeniusMassMaximum_nonneg
             (originCube d m) m j omega'))
     simpa only [Finset.sum_singleton, mass,
-      Provider.Base.cutoffMassLinearWeightedSum, F] using hfinite
+      Provider.Base.cutoffMassLinearWeightedSum, F] using! hfinite
   have hweight : D⁻¹ * Ch02.geometricWeight (u : ℝ) 2 n = raw := by
     dsimp only [D, u, raw]
     rw [Ch02.geometricWeight]
@@ -1110,7 +1110,7 @@ theorem superposedFlux_coarse_ellipticity_upper_leg (d : ℕ) :
   · exact coarse_ellipticity_upper_of_le_mStarStar
       M m hm hfour hmassConst E sigma hsigma q s hsWindow
   · have hd : 2 ≤ d := M.shellPrefix.dimension
-    letI : NeZero d := ⟨by omega⟩
+    let : NeZero d := ⟨by omega⟩
     have hsigma0 : 0 < sigma := hsigma.1
     have hsigmaHalf : sigma ≤ 1 / 2 := hsigma.2
     have hgamma : M.gamma ≤ (E : ℝ) ^ (-5 : ℤ) :=

@@ -146,8 +146,8 @@ theorem measure_exitTime_le_exp_neg_displacementMinScale_streamProcess
   refine ⟨gamma0, Cev, C, c, hgamma0, hCev, hC, hc, ?_⟩
   intro M hcs hgam ep hep hepc n m hm omega i Good _inst hGood hcrossing hdata
     delta hdelta hdelta1 t ht hnLower hnUpper hscale hdeltaSmall hlarge x hx
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   exact measure_exitTime_le_exp_neg_displacementMinScale_of_oneStepLaplace_on M
     (streamProcess M omega (x : OnePoint (Vec d)))
     (((↑) : Vec d → OnePoint (Vec d)) '' openCubeSet (originCube d m)) t hC hdelta hdelta1

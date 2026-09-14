@@ -45,7 +45,7 @@ private theorem isPath_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
         exact hxRev.symm
       subst x
       have hadj := hΓ.getElem (i.1 - 1) (by omega)
-      simpa only [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hi)] using hadj
+      simpa only [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hi)] using! hadj
   have hleftMiddle : IsPath
       (Γ.take i.1 ++ geodesic (Γ.get i) (Γ.get j)) :=
     hleft.append hmiddle hjoinLeft
@@ -119,7 +119,7 @@ private theorem isPathFrom_spliceGeodesic {d k : ℕ}
       cases hΔ : spliceGeodesic (x :: xs) i j with
       | nil =>
           rw [hΔ, List.head?_nil] at hhead
-          exact False.elim (Option.noConfusion hhead)
+          exact False.elim (by cases hhead)
       | cons z zs =>
           have hz : z = x := by
             rw [hΔ, List.head?_cons, List.head?_cons,
@@ -137,7 +137,7 @@ private theorem isPathFrom_spliceGeodesic {d k : ℕ}
             have hlastSome :
                 some ((x :: zs).getLast (List.cons_ne_nil x zs)) =
                   some ((x :: xs).getLast (List.cons_ne_nil x xs)) := by
-              simpa only [List.getLast?_eq_some_getLast] using hlast'
+              simpa only [List.getLast?_eq_some_getLast] using! hlast'
             exact Option.some.inj hlastSome
           rwa [← hlastValue]
 
@@ -154,14 +154,14 @@ private def pathWalk {d : ℕ} (x : Site d) :
     (xs : List (Site d)) → IsPath (x :: xs) →
       (latticeGraph d).Walk x ((x :: xs).getLast (List.cons_ne_nil x xs))
   | [], _h => SimpleGraph.Walk.nil
-  | y :: ys, h => SimpleGraph.Walk.cons h.rel_head (pathWalk y ys h.tail)
+  | y :: ys, h => SimpleGraph.Walk.cons h.rel (pathWalk y ys h.tail)
 
 private theorem support_pathWalk {d : ℕ} (x : Site d) :
     ∀ (xs : List (Site d)) (h : IsPath (x :: xs)),
       (pathWalk x xs h).support = x :: xs
   | [], _h => rfl
   | y :: ys, h => by
-      simp only [pathWalk, SimpleGraph.Walk.support_cons]
+      simp only [pathWalk]
       exact congrArg (List.cons x) (support_pathWalk y ys h.tail)
 
 /-- Every crossing walk has a crossing subpath with no repeated vertices and
@@ -177,8 +177,9 @@ theorem exists_nodup_crossing_subpath {d k : ℕ} {Γ : List (Site d)}
       let p : (latticeGraph d).Walk x y := pathWalk x xs hpath
       let q : (latticeGraph d).Path x y := p.toPath
       let Δ : List (Site d) := (q : (latticeGraph d).Walk x y).support
-      have hΔcons : Δ = x :: Δ.tail :=
-        SimpleGraph.Walk.support_eq_cons (q : (latticeGraph d).Walk x y)
+      have hΔcons : Δ = x :: Δ.tail := by
+        show (q : (latticeGraph d).Walk x y).support = x :: _
+        rw [SimpleGraph.Walk.cons_tail_support]
       have hΔpath : IsPath Δ :=
         SimpleGraph.Walk.isChain_adj_support (q : (latticeGraph d).Walk x y)
       have hΔlast : Δ.getLast (SimpleGraph.Walk.support_ne_nil
@@ -194,7 +195,7 @@ theorem exists_nodup_crossing_subpath {d k : ℕ} {Γ : List (Site d)}
           exact hy
       have hΔnodup : Δ.Nodup := SimpleGraph.Path.nodup_support q
       have hsubsetP : Δ ⊆ p.support :=
-        SimpleGraph.Walk.support_toPath_subset p
+        SimpleGraph.Walk.support_toPath_subset_support p
       have hpSupport : p.support = x :: xs := support_pathWalk x xs hpath
       exact ⟨Δ, hΔcross, hΔnodup, by simpa only [hpSupport] using hsubsetP⟩
 
@@ -500,7 +501,7 @@ theorem inflatedGoodVertexCountNat_add_inflatedVertexCount_eq_card
     inflatedVertexCount_eq_card_inflatedBadVertices, inflatedBadVertices]
   norm_cast
   simpa only [not_not, add_comm] using
-    (Finset.filter_card_add_filter_neg_card_eq_card
+    (Finset.card_filter_add_card_filter_not
       (s := Γ.toFinset) (p := fun z => ω ∈ inflatedBadSet B z))
 
 /-- The inflated-good count is no larger than the original good-vertex
@@ -617,8 +618,7 @@ private theorem IsPreferredPath.exists_scales_inflatedVertexCount_le
       let occurring := (touchingCenters L Γ).filter fun v =>
         ω ∈ inflatedBadEvent B L v
       have hfmem : ∀ p ∈ pairs.filter (fun p => p.1 = L), p.2 ∈ occurring := by
-        intro p
-        intro hpFilter
+        intro p hpFilter
         have hp : p ∈ pairs := Finset.mem_of_mem_filter p hpFilter
         have hpL : p.1 = L := (Finset.mem_filter.mp hpFilter).2
         apply Finset.mem_filter.mpr
@@ -704,7 +704,6 @@ theorem IsPreferredPath.mem_weightedCubeEvent_of_competitor_goodVertexCount_lt
     linarith only [hcost, hpartition]
   obtain ⟨scales, hmass⟩ := hΓ.exists_scales_inflatedVertexCount_le
   refine ⟨scales, ?_⟩
-  dsimp only [weightedCubeEvent]
   linarith only [hbad, hmass]
 
 end Algsuperdiff.Section5.Percolation

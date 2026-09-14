@@ -467,6 +467,7 @@ private theorem crude_core [IsFiniteMeasure μ]
   filter_upwards [hae] with omega homega
   have hU := hUdom omega
   have hL := hW.dominates omega L hL0
+  simp only [Pi.add_apply]
   nlinarith [mul_le_mul_of_nonneg_left hU hcU.le,
     mul_le_mul_of_nonneg_left hL hcL.le]
 

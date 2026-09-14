@@ -88,10 +88,10 @@ theorem existsUnique_positivePartSubConst [NeZero d]
       hψqx.trans hqx
     by_cases hx : c < toL2 u x
     · have hxw : c < w.toH1Function.toFun x := by rwa [hwx]
-      simp only [Set.indicator_apply, Set.mem_setOf_eq, hx, hxw, if_true] at hraw ⊢
+      simp only [Set.indicator_apply, Set.mem_ofPred_eq, hx, hxw, if_true] at hraw ⊢
       exact (congrArg HilbertVec.ofVec hraw).trans hgx
     · have hxw : ¬c < w.toH1Function.toFun x := by simpa only [hwx] using hx
-      simp only [Set.indicator_apply, Set.mem_setOf_eq, hx, hxw, if_false] at hraw ⊢
+      simp only [Set.indicator_apply, Set.mem_ofPred_eq, hx, hxw, if_false] at hraw ⊢
       rw [hilbertifyVecField, hraw]
       rfl
   refine ⟨v, ⟨hvvalue, hvgradient⟩, ?_⟩

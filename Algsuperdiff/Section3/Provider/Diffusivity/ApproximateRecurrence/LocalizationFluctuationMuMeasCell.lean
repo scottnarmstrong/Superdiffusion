@@ -105,7 +105,7 @@ theorem integrable_blockVecDot_coarseBlockMatrix_cutoffSampleLaw (M : ABKModel d
             (Ch02.coarseBlockMatrix (Ch02.cubeDomain Q)
               ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn Q)) X))
       (cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hEq : (fun omega : CutoffSample d =>
         blockVecDot X
@@ -122,8 +122,8 @@ theorem integrable_blockVecDot_coarseBlockMatrix_cutoffSampleLaw (M : ABKModel d
     rw [toFullBlockMat_eq_blockMatEntry]
     ring
   rw [hEq]
-  exact integrable_finset_sum _ fun alpha _ =>
-    integrable_finset_sum _ fun beta _ =>
+  exact integrable_finsetSum _ fun alpha _ =>
+    integrable_finsetSum _ fun beta _ =>
       (integrable_blockMatEntry_switchCubeMatrix M m Q alpha beta).mul_const _
 
 /-- The `hintLHS` binder of the endpoint, at its own carriers.  Unconditional. -/
@@ -164,7 +164,7 @@ theorem integrable_switchCubeEnergy_of_le (M : ABKModel d) (m : ℤ) (R : Triadi
       switchCubeEnergy M m R (X omega) omega ≤ g omega) :
     Integrable (fun omega : CutoffSample d => switchCubeEnergy M m R (X omega) omega)
       (cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   refine Integrable.mono' hg (aestronglyMeasurable_switchCubeEnergy M m R hX) ?_
   filter_upwards [hle] with omega hom

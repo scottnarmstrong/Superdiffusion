@@ -100,7 +100,7 @@ theorem cubeLowerEllipticityInvLiteral_inv_eq_lambdaSq (M : ABKModel d)
     (cubeLowerEllipticityInvLiteral M Q cutoffScale s q omega)⁻¹ =
       Ch02.lambdaSq Q s q.1
         (coefficientCutoffTriadicCoeffFamily M cutoffScale omega) := by
-  letI : NeZero d := neZero_of_model_lambdaTransfer M
+  let : NeZero d := neZero_of_model_lambdaTransfer M
   rw [cubeLowerEllipticityInvLiteral_inv_eq, Ch04.lambdaSqCoeffField]
   simp only [dif_pos
     (coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
@@ -119,7 +119,7 @@ theorem lambdaSq_le_unitCubeLambda_unitRescaledCutoffCoeff (M : ABKModel d)
     (ht : 0 < t) (hts : t < s) (hq : q.IsAdmissible) (omega : CutoffSample d) :
     Ch02.lambdaSq Q t q (coefficientCutoffTriadicCoeffFamily M n omega) ≤
       unitCubeLambda s q (unitRescaledCutoffCoeff M Q n omega) := by
-  letI : NeZero d := neZero_of_model_lambdaTransfer M
+  let : NeZero d := neZero_of_model_lambdaTransfer M
   rw [unitCubeLambda_unitRescaledCutoffCoeff]
   exact ErrorComparison.lambdaSq_mono_of_lt Q
     (coefficientCutoffTriadicCoeffFamily M n omega) ht hts hq

@@ -52,7 +52,7 @@ theorem cubeOneResolventH10_value (mu : PositiveShift) (m : ℕ) :
           (measurable_const : Measurable
             (fun _ : wholeSpaceCube d m ↦ (1 : ℝ)))
           (D := 1) (fun _ ↦ by norm_num)) := by
-  simpa only [alphaShiftedResolvent_apply] using
+  simpa only [alphaShiftedResolvent_apply] using!
     (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function
     (isOpenBoundedConvexDomain_wholeSpaceCube d m)
     (alphaShiftedSolution A.a mu.property A.hnu
@@ -196,7 +196,7 @@ theorem cubeBoundaryRemainder_isScalarForcedWeakSolution
       alphaShiftedSolution A.a mu.property A.hnu
         (A.cubeEllipticity m) F := by
     apply ZeroTraceSobolev.ext
-    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F] using
+    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F] using!
         A.cubeOneResolventH10_value mu m
     · exact (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function hU
         (alphaShiftedSolution A.a mu.property A.hnu
@@ -237,7 +237,7 @@ theorem cubeBoundaryRemainder_isScalarForcedWeakSolution
           H1Function.sub_grad, H1Function.smul_grad,
           H1Function.ofContDiffOnIsOpenBoundedConvexDomain,
           H1Function.ofContDiffOnIsSobolevRegularDomain, fderiv_const_apply,
-          ContinuousLinearMap.zero_apply]
+          zero_apply]
         have hgrad : ((fun _ : Fin d ↦ (0 : ℝ)) -
             (mu : ℝ) • z.toH1Function.grad y) =
             (-(mu : ℝ)) • z.toH1Function.grad y := by
@@ -382,7 +382,7 @@ theorem cubeBoundaryRemainder_gradient_budget (mu : PositiveShift) (m : ℕ)
       alphaShiftedSolution A.a mu.property A.hnu
         (A.cubeEllipticity m) F := by
     apply ZeroTraceSobolev.ext
-    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F] using
+    · simpa only [ZeroTraceSobolev.toL2_ofH10Function, z, F] using!
         A.cubeOneResolventH10_value mu m
     · exact (Classical.choose_spec (ZeroTraceSobolev.exists_h10Function hU
         (alphaShiftedSolution A.a mu.property A.hnu
@@ -399,7 +399,7 @@ theorem cubeBoundaryRemainder_gradient_budget (mu : PositiveShift) (m : ℕ)
       H1Function.ofContDiffOnIsOpenBoundedConvexDomain,
       H1Function.ofContDiffOnIsSobolevRegularDomain, hilbertifyVecField,
       HilbertVec.ofVec, PiLp.toLp_apply, fderiv_const_apply,
-      ContinuousLinearMap.zero_apply, Pi.zero_apply]
+      zero_apply, Pi.zero_apply]
     rfl
   have hlocal := vectorLpSizeOn_grad_le_norm_gradToHilbertVectorL2 hW
     (A.cubeBoundaryRemainderH1 mu m)
@@ -473,8 +473,8 @@ private theorem cubeBoundaryCutoffGradientBudget_le_uniform (m : ℕ) :
     rw [div_le_iff₀ (by positivity : 0 < (3 : ℝ) ^ m / 4)]
     have hmul : 2 * (d : ℝ) ≤ 2 * (d : ℝ) * (3 : ℝ) ^ m :=
       le_mul_of_one_le_right (mul_nonneg (by norm_num) hd0) ht1
-    convert hmul using 1
-    ring
+    calc 2 * (d : ℝ) ≤ 2 * (d : ℝ) * (3 : ℝ) ^ m := hmul
+      _ = 8 * (d : ℝ) * ((3 : ℝ) ^ m / 4) := by ring
   unfold cubeBoundaryCutoffGradientBudget cubeBoundaryCutoffUniformGradientBudget
   rw [hdiff]
   have hratio0 : 0 ≤ 2 * (d : ℝ) / ((3 : ℝ) ^ m / 4) := by positivity

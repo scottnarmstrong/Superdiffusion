@@ -25,7 +25,7 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 -/
 
 -- ==== interior gradient estimate ====
-open scoped Real Convolution Topology
+open scoped Real Convolution Topology Laplacian
 open MeasureTheory Metric Set InnerProductSpace
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
@@ -89,7 +89,7 @@ theorem sq_setIntegral_abs_le (s : Set 𝔼) (hs : MeasurableSet s) (hμ : volum
     {f : 𝔼 → ℝ} {Mf : ℝ} (hf : AEStronglyMeasurable f (volume.restrict s))
     (hfb : ∀ᵐ y ∂(volume.restrict s), |f y| ≤ Mf) :
     (∫ y in s, |f y| ∂volume) ^ 2 ≤ (volume s).toReal * ∫ y in s, (f y) ^ 2 ∂volume := by
-  haveI : IsFiniteMeasure (volume.restrict s) :=
+  have : IsFiniteMeasure (volume.restrict s) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hμ.lt_top⟩
   have hpq : (2 : ℝ).HolderConjugate 2 := by
     rw [Real.holderConjugate_iff]; constructor <;> norm_num

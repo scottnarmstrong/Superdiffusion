@@ -59,7 +59,7 @@ noncomputable section
 /-- Squaring is monotone on the nonnegative reals. -/
 theorem le_of_sq_le_sq_of_nonneg {a b : ℝ} (h : a ^ 2 ≤ b ^ 2) (hb : 0 ≤ b) : a ≤ b := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   nlinarith [h, hb, hcon]
 
 /-! ### Translated kernels -/
@@ -303,7 +303,7 @@ theorem exists_integral_abs_kernel_taylor_le {κ : Vec d → ℝ} (hκc : HasCom
       |κ (y + t • (Pi.single i (1 : ℝ) : Vec d)) - κ y - t * kernelDeriv κ i y| = 0 := by
     intro y hy
     rw [Metric.mem_closedBall, dist_zero_right] at hy
-    push_neg at hy
+    push Not at hy
     have h1 : κ y = 0 := hκzero y (by linarith)
     have h2 : kernelDeriv κ i y = 0 := hκ₁zero y (by linarith)
     have h3 : max R 0 < ‖y + t • (Pi.single i (1 : ℝ) : Vec d)‖ := by

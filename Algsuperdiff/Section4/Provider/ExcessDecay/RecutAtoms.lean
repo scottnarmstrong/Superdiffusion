@@ -141,7 +141,7 @@ theorem eLpNorm_sub_volumeAverage_le_two_mul {A : Set (Vec d)} (h0 : volume A �
     eLpNorm (fun y => f y - volumeAverage A f) 2
         (Support.normalizedVolumeMeasureOn A) ≤
       2 * eLpNorm (fun y => f y - c) 2 (Support.normalizedVolumeMeasureOn A) := by
-  haveI := isProbabilityMeasure_normalizedVolumeMeasureOn h0 htop
+  have := isProbabilityMeasure_normalizedVolumeMeasureOn h0 htop
   set mu : Measure (Vec d) := Support.normalizedVolumeMeasureOn A with hmu
   by_cases hinf : eLpNorm (fun y => f y - c) 2 mu = ⊤
   · rw [hinf, ENNReal.mul_top (by norm_num : (2 : ℝ≥0∞) ≠ 0)]

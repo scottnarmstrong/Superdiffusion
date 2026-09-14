@@ -192,7 +192,7 @@ theorem UniformBoxGaugeBound.nonneg {m : ℤ} {s A : ℝ} {F : Vec d → Vec d}
   have h0 : (0 : ℝ) ≤ A * (3 : ℝ) ^ (-((m : ℝ) * s)) :=
     le_trans (norm_nonneg (boxAverageVec (d := d) m 0 F)) hle
   by_contra hA
-  push_neg at hA
+  push Not at hA
   have hneg : A * (3 : ℝ) ^ (-((m : ℝ) * s)) < 0 := mul_neg_of_neg_of_pos hA hpos
   linarith only [h0, hneg]
 

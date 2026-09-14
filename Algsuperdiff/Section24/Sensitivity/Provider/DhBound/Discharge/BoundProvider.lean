@@ -100,7 +100,7 @@ theorem coarseMatrixDerivative_bound {d : ℕ}
             (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹ *
             responseJ (cubeDomain (originCube d 0)) a p q := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   refine ⟨dhBoundConst d, dhBoundConst_pos dimension, ?_⟩
   intro a h p q
   -- canonical maximizers for the primal and adjoint problems

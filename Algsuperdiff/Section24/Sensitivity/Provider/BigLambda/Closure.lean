@@ -76,7 +76,7 @@ theorem bigLambda_sensitivity {d : ℕ} (dimension : 2 ≤ d) :
           C * (3 / 8 - s)⁻¹ * h.w1Infinity ^ 2 *
             (unitCubeLambda s (.finite 2) a)⁻¹ := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   refine ⟨bigLambdaConst d, bigLambdaConst_pos d, ?_⟩
   intro a h hgate s hs0 hs
   have hgate' := bigLambdaGate_of_frozen_gate a h hgate
@@ -187,7 +187,7 @@ theorem bigLambda_sensitivity_at_delta {d : ℕ} (dimension : 2 ≤ d) :
           C * δ⁻¹ * (3 / 8 - s)⁻¹ * h.w1Infinity ^ 2 *
             (unitCubeLambda s (.finite 2) a)⁻¹ := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   refine ⟨bigLambdaConst d, bigLambdaConst_pos d, ?_⟩
   intro a h hgate s δ hs0 hs hδ0 hδ1
   have hgate' := bigLambdaGate_of_frozen_gate a h hgate

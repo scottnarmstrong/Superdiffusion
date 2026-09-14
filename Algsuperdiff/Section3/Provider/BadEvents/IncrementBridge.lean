@@ -127,13 +127,13 @@ private theorem contDiff_one_entry (g : ShellField d) (i j : Fin d) :
   have hle : (1 : WithTop ℕ∞) ≤ 2 := by norm_num
   have hg : ContDiff ℝ 1 fun x : Vec d => g x := g.contDiff_two.of_le hle
   have hc := ((entryCLM i j).contDiff (n := 1)).comp hg
-  simpa [Function.comp_def] using hc
+  simpa [Function.comp_def] using! hc
 
 private theorem contDiff_one_deriv_entry (g : ShellField d) (k i j : Fin d) :
     ContDiff ℝ 1 fun x : Vec d => ShellField.deriv g x (basisVec k) i j := by
   have hc := (((entryCLM i j).comp (evalCLM (basisVec k))).contDiff (n := 1)).comp
     g.contDiff_deriv
-  simpa [Function.comp_def] using hc
+  simpa [Function.comp_def] using! hc
 
 /-! ## The unit-cube `W^{2,infinity}` package of a shell field -/
 

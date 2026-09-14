@@ -62,8 +62,8 @@ theorem integrable_vecDot_matWeakDiv {U : Set (Vec d)}
     Integrable (fun x => vecDot (matWeakDiv Dh x) (g x))
       (volumeMeasureOn U) := by
   rw [vecDot_matWeakDiv_eq_sum]
-  exact integrable_finset_sum Finset.univ fun j _ =>
-    integrable_finset_sum Finset.univ fun i _ =>
+  exact integrable_finsetSum Finset.univ fun j _ =>
+    integrable_finsetSum Finset.univ fun i _ =>
       (hDmem2 i i j).integrable_mul (hg j)
 
 /-- The weak-divergence pairing is square integrable when the derivative data
@@ -74,8 +74,8 @@ theorem memScalarL2_vecDot_matWeakDiv {U : Set (Vec d)}
     {g : Vec d → Vec d} (hg : ∀ j, MemScalarL2 U fun x => g x j) :
     MemScalarL2 U (fun x => vecDot (matWeakDiv Dh x) (g x)) := by
   rw [vecDot_matWeakDiv_eq_sum]
-  exact memLp_finset_sum Finset.univ fun j _ =>
-    memLp_finset_sum Finset.univ fun i _ => (hg j).mul' (hDmem i i j)
+  exact memLp_finsetSum Finset.univ fun j _ =>
+    memLp_finsetSum Finset.univ fun i _ => (hg j).mul' (hDmem i i j)
 
 /-- Coordinates of the skew-multiplied gradient are square integrable when the
 matrix entries are essentially bounded. -/
@@ -87,7 +87,7 @@ theorem memScalarL2_matVecMul_coord {U : Set (Vec d)}
   have hexp : (fun x => matVecMul (h x) (g x) i) =
       fun x => ∑ j, h x i j * g x j := rfl
   rw [hexp]
-  exact memLp_finset_sum Finset.univ fun j _ => (hg j).mul' (hmem i j)
+  exact memLp_finsetSum Finset.univ fun j _ => (hg j).mul' (hmem i j)
 
 /-- **Weak integration by parts at a smooth compactly supported test.**  For
 a.e. antisymmetric `h` with square-integrable weak first derivatives and every
@@ -111,7 +111,7 @@ theorem integral_euclideanGradient_dot_matVecMul_grad_eq_neg
       -∫ x in U, φ x * vecDot (matWeakDiv Dh x) (w.grad x)
         ∂MeasureTheory.volume := by
   classical
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   -- the skew test field pairing vanishes
   have hkey : ∫ x in U, vecDot (skewTestField h Dh φ x) (w.grad x)
       ∂MeasureTheory.volume = 0 :=
@@ -206,7 +206,7 @@ theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
           u.toH1Function.toFun x * vecDot (matWeakDiv Dh x) (w.grad x)
           ∂MeasureTheory.volume := by
   classical
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   have hmem2 : ∀ i j, MemScalarL2 U fun x => h x i j := fun i j =>
     (hmem i j).mono_exponent le_top
   have hDmem2 : ∀ k i j, MemScalarL2 U fun x => Dh k x i j := fun k i j =>
@@ -291,7 +291,7 @@ theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
       (nhds (∫ x in U,
         vecDot (u.toH1Function.grad x) (matVecMul (h x) (w.grad x))
         ∂MeasureTheory.volume)) := by
-    have hsum := tendsto_finset_sum (Finset.univ : Finset (Fin d))
+    have hsum := tendsto_finsetSum (Finset.univ : Finset (Fin d))
       fun i _ => hL_coord i
     have hseq_eq : ∀ n,
         (∑ i, ∫ x in U,
@@ -301,7 +301,7 @@ theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
             vecDot (euclideanGradient (u.approx n) x)
               (matVecMul (h x) (w.grad x)) ∂MeasureTheory.volume := by
       intro n
-      rw [← integral_finset_sum Finset.univ fun i _ => hgrad_int n i]
+      rw [← integral_finsetSum Finset.univ fun i _ => hgrad_int n i]
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
       show (∑ i, matVecMul (h x) (w.grad x) i *
           euclideanCoordDeriv i (u.approx n) x) =
@@ -315,7 +315,7 @@ theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
           ∫ x in U,
             vecDot (u.toH1Function.grad x) (matVecMul (h x) (w.grad x))
             ∂MeasureTheory.volume := by
-      rw [← integral_finset_sum Finset.univ fun i _ => hgradU_int i]
+      rw [← integral_finsetSum Finset.univ fun i _ => hgradU_int i]
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
       show (∑ i, matVecMul (h x) (w.grad x) i * u.toH1Function.grad x i) =
         vecDot (u.toH1Function.grad x) (matVecMul (h x) (w.grad x))

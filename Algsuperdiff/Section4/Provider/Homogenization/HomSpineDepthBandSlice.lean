@@ -86,7 +86,7 @@ theorem measurableSet_straddleBand (Q : TriadicCube d) (j k : ℕ)
             (1 / 3 : ℝ) ^ (k + 1) * cubeScaleFactor Q ≤ dist z.1 z.2} ∩
           {z : Vec d × Vec d | dist z.1 z.2 < (1 / 3 : ℝ) ^ k * cubeScaleFactor Q}) := by
     ext z
-    simp only [straddleBand, Set.mem_setOf_eq, Set.mem_inter_iff]
+    simp only [straddleBand, Set.mem_ofPred_eq, Set.mem_inter_iff]
     tauto
   rw [hEq]
   exact ((h1.inter h2).inter h3).inter (h4.inter h5)
@@ -123,7 +123,7 @@ theorem measure_straddleBandSlice_le (Q : TriadicCube d) (j k : ℕ)
   · /- off the layer set the slice is emp -/
     have hempty : {y : Vec d | (x, y) ∈ straddleBand Q j k v} = ∅ := by
       ext y
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro hy
       obtain ⟨hx1, -, hne, -, hlt⟩ := hy
       refine hx ?_
@@ -147,7 +147,7 @@ theorem measure_straddleBandSlice_le (Q : TriadicCube d) (j k : ℕ)
         exact mem_biUnion_cubeBoundaryLayer_of_gridDualDepthTest_ne Q j v
           (pow_nonneg (by norm_num) _) hx1 hne hlt
     rw [hempty, measure_empty]
-    exact zero_le _
+    exact zero_le
 
 /-! ## 3. The `x`-mass of the layer -/
 
@@ -197,7 +197,7 @@ theorem lintegral_enorm_gridDualDepthTest_eq (Q : TriadicCube d) (j : ℕ)
       (fun x => ∑ R ∈ descendantsAtDepth Q j,
         (cubeSet R).indicator (fun _ => ‖euclideanNorm (v R)‖ₑ ^ r) x) from
     funext fun x => enorm_euclideanNorm_gridDualDepthTest_rpow Q j v hr x]
-  rw [lintegral_finset_sum _
+  rw [lintegral_finsetSum _
     (fun R _ => (measurable_const.indicator (measurableSet_cubeSet R)))]
   refine Finset.sum_congr rfl fun R hR => ?_
   rw [lintegral_indicator_const (measurableSet_cubeSet R), cubeMeasure,
@@ -223,7 +223,7 @@ theorem lintegral_indicator_straddleLayerSet_le (Q : TriadicCube d) (j k : ℕ)
     by_cases hx : x ∈ cubeSet Q
     · rw [Set.indicator_of_mem hx]
     · rw [Set.indicator_of_notMem hx]
-      exact zero_le _
+      exact zero_le
   · /- near bands: the layer of thickness `t = 3^{j-k}` -/
     set t : ℝ := (1 / 3 : ℝ) ^ (k - j)
     have ht0 : (0 : ℝ) ≤ t := pow_nonneg (by norm_num) _
@@ -249,12 +249,12 @@ theorem lintegral_indicator_straddleLayerSet_le (Q : TriadicCube d) (j k : ℕ)
             ∑ S ∈ descendantsAtDepth Q j,
               (cubeBoundaryLayer S t).indicator (fun _ => ‖euclideanNorm (v S)‖ₑ ^ r) x :=
           Finset.single_le_sum (f := fun S => (cubeBoundaryLayer S t).indicator
-            (fun _ => ‖euclideanNorm (v S)‖ₑ ^ r) x) (fun S _ => zero_le _) hR
+            (fun _ => ‖euclideanNorm (v S)‖ₑ ^ r) x) (fun S _ => zero_le) hR
         rwa [Set.indicator_of_mem hxR] at hsingle
       · rw [Set.indicator_of_notMem hx]
-        exact zero_le _
+        exact zero_le
     refine le_trans (lintegral_mono hpt) ?_
-    rw [lintegral_finset_sum _
+    rw [lintegral_finsetSum _
       (fun R _ => (measurable_const.indicator (measurableSet_cubeBoundaryLayer R t)))]
     refine Finset.sum_le_sum fun R hR => ?_
     rw [lintegral_indicator_const (measurableSet_cubeBoundaryLayer R t)]

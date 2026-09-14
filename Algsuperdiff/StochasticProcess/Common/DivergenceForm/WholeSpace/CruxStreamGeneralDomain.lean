@@ -108,7 +108,7 @@ theorem iInf_toReal_analyticPenalizedResolvent_le_of_isRepresentative_of_error
     rw [hrestrict] at hlimitae
     refine eqOn_of_continuousOn_of_ae_eq hV.isOpen hlimitcont hucont ?_
     filter_upwards [hlimitae, hurep] with y hy hz
-    rw [hy, hz, alphaShiftedResolvent_apply]
+    rw [hy, hz]
     exact congrArg (fun w ↦ ZeroTraceSobolev.toL2 w y)
       (alphaShiftedSolution_congr_ellipticity A.a mu.property A.hnu A.hnu
         ((A.cubeEllipticity (v + 1)).mono hV.isOpen.measurableSet hVU)
@@ -194,11 +194,11 @@ theorem iInf_toReal_analyticPenalizedResolvent_le_utilde_stream {D : ℝ}
     exact h.congr' (Filter.Eventually.of_forall fun n ↦ by simp only [add_comm])
   have hsqrtTop : Tendsto (fun n : ℕ ↦ Real.sqrt ((P.lam : ℝ) + n))
       atTop atTop := by
-    simpa only [← Real.sqrt_eq_rpow] using
+    simpa only [← Real.sqrt_eq_rpow, Function.comp_def] using
       (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 2)).comp hmassTop
   have htail := (tendsto_streamFixedCollarTailProfile_atTop M omega v).comp hsqrtTop
   have herror : Tendsto error atTop (nhds 0) := by
-    simpa only [error, zero_div, mul_zero] using
+    simpa only [error, zero_div, mul_zero, Function.comp_def] using
       (htail.div_const (P.lam : ℝ)).const_mul D
   have hsqrtEventually : ∀ᶠ n : ℕ in atTop,
       1 < Real.sqrt ((P.lam : ℝ) + n) :=
@@ -263,8 +263,8 @@ theorem killedResolvent_eq_partResolvent_stream_general
         (PositiveC0ContractiveResolvent.onePointLiveExtension
           (fun y => ENNReal.ofReal (P.f y))) (x : OnePoint (Vec d)) =
       ENNReal.ofReal (P.utilde x) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   exact le_antisymm (P.killedResolvent_le_partResolvent_stream_general
     R hreg hcons hid hx) (P.killedResolvent_ge_partResolvent_wholeSpace_of_c0Barrier
       (streamWholeSpaceC0BarrierData M omega) R hreg hid (fun _ _ => hT _ _) hx)

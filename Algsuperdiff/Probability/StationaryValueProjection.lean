@@ -116,9 +116,10 @@ theorem zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
     _ = (zeroShellRegLaw P).toMeasure :=
       (zeroShellRegLaw_toMeasure_eq_map_forgetShell P).symm
 
+set_option warn.classDefReducibility false in
 /-- Full real stationarity of the zero-shell law supplies the invariant measure
 structure used by the stationary projection. -/
-noncomputable def zeroShellRegLaw_vaddInvariant
+theorem zeroShellRegLaw_vaddInvariant
     (P : MeasureTheory.ProbabilityMeasure (ℤ → ShellField d))
     (hstationary : ∀ z : Vec d,
       Measure.map (translateReg z) (zeroShellRegLaw P).toMeasure =

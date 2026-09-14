@@ -52,7 +52,7 @@ cube: it is continuous, hence bounded on the compact closure. -/
 theorem memVectorL2_of_differentiable_coord_openCubeAtScale {G : Vec d → Vec d}
     (hG : ∀ i : Fin d, Differentiable ℝ fun y => G y i) (z : Vec d) (m : ℤ) :
     MemVectorL2 (openCubeAtScale z m) G := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z m)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeAtScale z m)) :=
     (isOpenBoundedConvexDomain_openCubeAtScale z m).isFiniteMeasure_restrict_volume
   have hGcont : Continuous G := continuous_pi fun i => (hG i).continuous
   have hcl : IsCompact (closure (openCubeAtScale z m)) :=

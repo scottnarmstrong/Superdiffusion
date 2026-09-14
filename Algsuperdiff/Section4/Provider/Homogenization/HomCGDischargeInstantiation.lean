@@ -134,7 +134,7 @@ theorem exists_printedCoarseGraining_of_dirichletPair (d : ℕ) (hd : 2 ≤ d)
             centeredCubeFluxComparisonSmoothDualLHS m a sigma0 u v s p ≤
           localCoarseGrainingLpRHS C (originCube d m) n
             (by simpa [originCube] using hnm.le) a sigma0 hsigma0 g u s1 s s2 p := by
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   obtain ⟨C, hCtop, hC⟩ := exists_printedCoarseGrainingFiniteP_smoothDual d hd p hp
   refine ⟨C, hCtop, ?_⟩
   intro m n hnm s1 s s2 hs1s hss2 a sigma0 hsigma0 g hg u v h hsol hcomp

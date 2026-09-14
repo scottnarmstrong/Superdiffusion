@@ -287,8 +287,7 @@ theorem laplaceCost_le_of_auxiliaryScale_lt {d : ℕ} (M : ABKModel d)
       2 * (lengthTimeScale M.nu cstar M.gamma ((3 : ℝ) ^ n))⁻¹ := by
     have hi := inv_anti₀ (by positivity : 0 <
       lengthTimeScale M.nu cstar M.gamma ((3 : ℝ) ^ n) / 2) hhalf
-    convert hi using 1
-    all_goals field_simp
+    rwa [inv_div, div_eq_mul_inv] at hi
   have hcost : (C * exitTimeScale M n)⁻¹ * t ≤
       2 / C * (t / lengthTimeScale M.nu cstar M.gamma ((3 : ℝ) ^ n)) := by
     calc
@@ -318,7 +317,11 @@ theorem laplaceCost_le_of_auxiliaryScale_lt {d : ℕ} (M : ABKModel d)
               (2 * (delta * earlyExitProfileCost cstar M.gamma)) / C := by ring
           _ ≤ kappa / (64 * (3 : ℝ) ^ d) := by
             rw [div_le_div_iff₀ hC hden]
-            convert hdeltaSmall using 1 <;> ring
+            have hrearrange : (2 * (delta * earlyExitProfileCost cstar M.gamma)) *
+                (64 * (3 : ℝ) ^ d) =
+                  128 * (3 : ℝ) ^ d * delta * earlyExitProfileCost cstar M.gamma := by ring
+            rw [hrearrange, mul_comm kappa C]
+            exact hdeltaSmall
       have hp : 0 ≤ (3 : ℝ) ^ (m - n).toNat := by positivity
       calc
         2 / C * (delta * earlyExitProfileCost cstar M.gamma *

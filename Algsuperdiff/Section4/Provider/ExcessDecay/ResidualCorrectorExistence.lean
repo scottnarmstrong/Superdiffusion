@@ -90,7 +90,7 @@ theorem exists_weaklyHarmonicOn_of_datum [NeZero d] {V : Set (Vec d)}
     (hV : IsOpenBoundedConvexDomain V) (hne : V.Nonempty) (Φ : H1Function V) :
     ∃ w : H1Function V, IsWeaklyHarmonicOn V w ∧
       MemH10 V (fun y => w.toFun y - Φ.toFun y) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
   have hgrad : MemVectorL2 V Φ.grad := Φ.grad_memVectorL2
   have hg : MemVectorL2 V (fun y => -Φ.grad y) := hgrad.neg
   have hrealize :

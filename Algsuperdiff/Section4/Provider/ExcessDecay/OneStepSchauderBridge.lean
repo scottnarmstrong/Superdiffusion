@@ -38,6 +38,7 @@ canonical identification `toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d)`
 namespace Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
 
 open InnerProductSpace
+open scoped Laplacian
 open Homogenization (Vec basisVec basisVec_apply euclideanBall euclideanSqDist vecNormSq vecDot)
 
 noncomputable section
@@ -65,7 +66,7 @@ def toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d) :=
 @[simp] theorem toEuc_basisVec (i : Fin d) :
     toEuc (basisVec i) = EuclideanSpace.single i 1 := by
   ext j
-  simp [toEuc_apply, basisVec_apply, EuclideanSpace.single_apply]
+  simp [toEuc_apply, basisVec_apply]
 
 @[simp] theorem toEuc_symm_single (i : Fin d) :
     toEuc.symm (EuclideanSpace.single i (1 : ℝ)) = (basisVec i : Vec d) := by
@@ -97,7 +98,7 @@ theorem mem_euclideanBall_toEuc_iff (a b : Vec d) {r : ℝ} (hr : 0 < r) :
     rw [← norm_sq_toEuc_sub a b, Real.sqrt_sq (norm_nonneg _)]
   rw [hN]
   rw [show (euclideanBall b r : Set (Vec d)) = {x | euclideanSqDist x b < r ^ 2} from rfl,
-    Set.mem_setOf_eq, Real.sqrt_lt' hr]
+    Set.mem_ofPred_eq, Real.sqrt_lt' hr]
 
 /-! ## 3. The two-sided norm comparison -/
 
@@ -193,7 +194,7 @@ theorem iteratedFDeriv_two_affine (c : ℝ) (L : 𝔼 →L[ℝ] ℝ) (x : 𝔼) 
 theorem laplacian_affine (c : ℝ) (L : 𝔼 →L[ℝ] ℝ) : Δ (fun z : 𝔼 => c + L z) = 0 := by
   rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis]
   funext z
-  simp only [iteratedFDeriv_two_affine c L z, ContinuousMultilinearMap.zero_apply,
+  simp only [iteratedFDeriv_two_affine c L z, zero_apply,
     Finset.sum_const_zero, Pi.zero_apply]
 
 /-- **Affine functions are harmonic.**  (Mathlib has no such lemma.) -/
@@ -211,7 +212,7 @@ theorem harmonicOnNhd_sub_affine {V : 𝔼 → ℝ} {s : Set 𝔼} (hV : Harmoni
   have hsum := (hV x hx).add (harmonicOnNhd_affine (-c) (-L) s x hx)
   have heq : (V + fun z : 𝔼 => (-c) + (-L) z) = fun z => V z - (c + L z) := by
     funext z
-    simp only [Pi.add_apply, ContinuousLinearMap.neg_apply]
+    simp only [Pi.add_apply, neg_apply]
     ring
   rwa [heq] at hsum
 

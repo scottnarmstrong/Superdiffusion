@@ -55,7 +55,7 @@ theorem memLp_two_normalizedVolume_of_holderHalf {m : ℤ} {K : ℝ} {f : Vec d 
   have hvol0 : volume (openCubeSet (originCube d m)) ≠ 0 :=
     ((isOpen_openCubeSet _).measure_pos volume
       ⟨0, zero_mem_openCubeSet_originCube d m⟩).ne'
-  haveI : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
+  have : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact volume_openCubeSet_lt_top _

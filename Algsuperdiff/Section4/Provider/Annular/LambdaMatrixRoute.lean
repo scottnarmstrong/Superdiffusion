@@ -133,7 +133,7 @@ private theorem summable_finsetSum {iota : Type*} (s : Finset iota)
     Summable (fun j : ℕ => ∑ i ∈ s, F i j) := by
   classical
   induction s using Finset.induction_on with
-  | empty => simpa using summable_zero
+  | empty => simp
   | insert i s hi ih =>
       have hF : Summable (F i) := h i (Finset.mem_insert_self i s)
       have hrest : Summable (fun j : ℕ => ∑ k ∈ s, F k j) :=

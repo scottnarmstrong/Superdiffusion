@@ -403,7 +403,7 @@ private theorem laneFineTailRaw_le
   have hf : Summable f := by
     have htail := hfull.comp_injective (add_left_injective r)
     simpa only [f, laneErrorLayerRaw, Q, a, a0, r, originCube,
-      Function.comp_apply, Nat.add_comm] using htail
+      Function.comp_apply, Nat.add_comm] using! htail
   have hpoint : ∀ n, f n ≤ Ch02.geometricWeight (1 / 8) 2 (r + n) *
       Real.rpow 3 (2 * (1 / 16 : ℝ) * (n : ℝ)) * B := by
     intro n
@@ -427,7 +427,7 @@ private theorem laneFineTailRaw_le
             r n).symm
   have hbase : Summable (fun n : ℕ => Ch02.geometricWeight (1 / 8) 2 n *
       Real.rpow 3 (2 * (1 / 16 : ℝ) * (n : ℝ))) := by
-    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using
+    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using!
       (summable_geometricWeight_rpow (s := (1 / 16 : ℝ)) (t := (1 / 8 : ℝ))
         (q := 2) (by norm_num) (by norm_num))
   have hmajor : Summable (fun n : ℕ => Ch02.geometricWeight (1 / 8) 2 (r + n) *
@@ -440,7 +440,7 @@ private theorem laneFineTailRaw_le
       Real.rpow 3 (2 * (1 / 16 : ℝ) * (n : ℝ))) =
       Ch02.geometricDiscount (1 / 8 : ℝ) 2 *
         (1 - (3 : ℝ) ^ (-(((1 / 8 : ℝ) - (1 / 16 : ℝ)) * 2)))⁻¹ := by
-    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using
+    simpa only [show (2 / 2 : ℝ) = 1 by norm_num, Real.rpow_one] using!
       (tsum_geometricWeight_rpow (s := (1 / 16 : ℝ)) (t := (1 / 8 : ℝ))
         (q := 2) (by norm_num) (by norm_num))
   have hmajorEq :

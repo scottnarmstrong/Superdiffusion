@@ -219,7 +219,7 @@ theorem memScalarL2_skewTestField {U : Set (Vec d)}
   have hsum : MemLp
       (fun x => ∑ i, (euclideanCoordDeriv i φ x * h x i j + φ x * Dh i x i j)) 2
       (volumeMeasureOn U) :=
-    memLp_finset_sum (s := Finset.univ)
+    memLp_finsetSum (s := Finset.univ)
       (f := fun i => fun x =>
         euclideanCoordDeriv i φ x * h x i j + φ x * Dh i x i j)
       fun i _ => memScalarL2_skewTestField_summand hmem hDmem hφ hφc i j
@@ -286,7 +286,7 @@ theorem sum_integral_skewTestField_mul_deriv_eq_zero {U : Set (Vec d)}
       funext x
       rw [skewTestField, Finset.sum_mul]
     rw [hexp]
-    exact integral_finset_sum Finset.univ fun i _ =>
+    exact integral_finsetSum Finset.univ fun i _ =>
       integrable_memScalarL2_mul_of_bounded
         (memScalarL2_skewTestField_summand hmem hDmem hφ hφc i j)
         (hdψ_cont j) hC
@@ -361,12 +361,12 @@ theorem sum_integral_skewTestField_mul_deriv_eq_zero {U : Set (Vec d)}
                       φ x * h x i j * euclideanCoordSecondDeriv j i ψ x
                       ∂MeasureTheory.volume :=
                     Finset.sum_congr rfl fun j _ =>
-                      (integral_finset_sum Finset.univ fun i _ => hint i j).symm
+                      (integral_finsetSum Finset.univ fun i _ => hint i j).symm
               _ = ∫ x in U, ∑ j, ∑ i,
                       φ x * h x i j * euclideanCoordSecondDeriv j i ψ x
                       ∂MeasureTheory.volume :=
-                    (integral_finset_sum Finset.univ fun j _ =>
-                      integrable_finset_sum Finset.univ fun i _ => hint i j).symm
+                    (integral_finsetSum Finset.univ fun j _ =>
+                      integrable_finsetSum Finset.univ fun i _ => hint i j).symm
       _ = -∫ x in U,
               φ x * ∑ i, ∑ j, h x i j * euclideanCoordSecondDeriv j i ψ x
               ∂MeasureTheory.volume := by

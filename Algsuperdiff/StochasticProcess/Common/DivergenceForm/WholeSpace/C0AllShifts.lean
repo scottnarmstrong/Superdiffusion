@@ -71,7 +71,7 @@ theorem hasVanishingAnalyticMinimalResolvent_of_aboveOne
         (mul_nonneg (inv_nonneg.mpr lam.property.le) (norm_nonneg g))).2
       intro x
       rw [Real.norm_eq_abs]
-      simpa only [T, div_eq_inv_mul] using
+      simpa only [T, div_eq_inv_mul] using!
         A.abs_analyticMinimalResolventReal_le lam g.continuous.measurable
           (abs_le_norm_c0_allShifts g) x
     have hunorm : ∀ n, ‖u n‖ ≤ (lam : ℝ)⁻¹ ^ n * ‖f‖ := by
@@ -115,6 +115,7 @@ theorem hasVanishingAnalyticMinimalResolvent_of_aboveOne
       change _ = T g x + _
       rw [← hinner]
       convert hEq using 1
+      all_goals rfl
     have hexpand : ∀ n x,
         A.analyticMinimalResolventReal mu f f.continuous.measurable
             (abs_le_norm_c0_allShifts f) x =
@@ -167,7 +168,7 @@ theorem hasVanishingAnalyticMinimalResolvent_of_aboveOne
       simpa only [Real.dist_eq, sub_zero, abs_of_nonneg hnonneg] using hn n le_rfl
     rw [hexpand n x]
     exact (abs_add_le _ _).trans_lt (by
-      simpa only [add_halves] using add_lt_add hx (hrem'.trans_lt htail))
+      simpa only [add_halves] using! add_lt_add hx (hrem'.trans_lt htail))
 
 end WholeSpaceAnalyticData
 

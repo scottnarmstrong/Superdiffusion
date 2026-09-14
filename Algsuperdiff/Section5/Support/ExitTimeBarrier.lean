@@ -87,9 +87,9 @@ theorem continuous_bumpLaplacian (d : ℕ) : Continuous (bumpLaplacian d) := by
       (fderiv ℝ (fun w : Vec d =>
         euclideanCoordDeriv i (fun s : Vec d => referenceBump d s) w) t) (basisVec i) from
     funext fun t => bumpLaplacian_eq d t]
-  exact continuous_finset_sum Finset.univ fun i _ =>
+  exact continuous_finsetSum Finset.univ fun i _ =>
     (((contDiff_euclideanCoordDeriv_referenceBump d i).continuous_fderiv
-      le_rfl).clm_apply continuous_const)
+      (by simp)).clm_apply continuous_const)
 
 /-- **The Laplacian of the reference bump is bounded on the ball of radius
 `1/2`**, the range of the rescaled argument over the cube. -/
@@ -115,7 +115,7 @@ private theorem fderiv_scale_comp {f : Vec d → ℝ} (hf : ContDiff ℝ 1 f) (c
       (c • ContinuousLinearMap.id ℝ (Vec d)) z := ((hasFDerivAt_id z).sub_const y).const_smul c
   have hcomp : HasFDerivAt (fun w : Vec d => f (c • (w - y)))
       ((fderiv ℝ f (c • (z - y))).comp (c • ContinuousLinearMap.id ℝ (Vec d))) z :=
-    (hf.differentiable le_rfl (c • (z - y))).hasFDerivAt.comp z hS
+    (hf.differentiable (by simp) (c • (z - y))).hasFDerivAt.comp z hS
   rw [hcomp.fderiv]
   simp
 
@@ -138,12 +138,12 @@ private theorem euclideanGradient_exitTimeBarrier (y : Vec d) (n : ℤ) (A : ℝ
     exact (contDiff_referenceBump d).comp hS
   have hdiff : DifferentiableAt ℝ
       (fun w : Vec d => referenceBump d (((3 : ℝ) ^ n)⁻¹ • (w - y))) z :=
-    (hg.differentiable (by exact_mod_cast le_top)).differentiableAt
+    (hg.differentiable (by simp)).differentiableAt
   show (fderiv ℝ (exitTimeBarrier y n A) z) (basisVec i) = _
   rw [show exitTimeBarrier y n A =
       fun w : Vec d => A * referenceBump d (((3 : ℝ) ^ n)⁻¹ • (w - y)) from rfl,
     fderiv_const_mul hdiff A]
-  rw [ContinuousLinearMap.smul_apply, smul_eq_mul, mul_assoc]
+  rw [smul_apply, smul_eq_mul, mul_assoc]
   congr 1
   exact fderiv_scale_comp ((contDiff_referenceBump d).of_le (by exact_mod_cast le_top)) _ y z _
 
@@ -168,8 +168,8 @@ private theorem vecFieldDiv_euclideanGradient_exitTimeBarrier (y : Vec d) (n : �
       have hS : ContDiff ℝ 1 fun w : Vec d => ((3 : ℝ) ^ n)⁻¹ • (w - y) :=
         (contDiff_id.sub contDiff_const).const_smul _
       exact (((contDiff_euclideanCoordDeriv_referenceBump d i).comp hS).differentiable
-        le_rfl).differentiableAt
-    rw [fderiv_const_mul hdiff (A * ((3 : ℝ) ^ n)⁻¹), ContinuousLinearMap.smul_apply,
+        (by simp)).differentiableAt
+    rw [fderiv_const_mul hdiff (A * ((3 : ℝ) ^ n)⁻¹), smul_apply,
       smul_eq_mul,
       fderiv_scale_comp (contDiff_euclideanCoordDeriv_referenceBump d i)
         (((3 : ℝ) ^ n)⁻¹) y z (basisVec i)]
@@ -276,7 +276,7 @@ theorem exists_exitTimeBarrier (d : ℕ) (y : Vec d) (n : ℤ) {sig : ℝ} (hsig
       (referenceBump d).one_of_mem_closedBall (by simpa [Metric.mem_closedBall,
         dist_zero_right] using hin), mul_one]
   · intro phi hphi
-    haveI : IsFiniteMeasure (volume.restrict (cubeSetAt y n)) :=
+    have : IsFiniteMeasure (volume.restrict (cubeSetAt y n)) :=
       (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
     have hFC1 : ∀ i : Fin d, ContDiff ℝ 1 fun z => euclideanGradient bar z i := by
       intro i
@@ -325,8 +325,8 @@ theorem exists_exitTimeBarrier (d : ℕ) (y : Vec d) (n : ℤ) {sig : ℝ} (hsig
     have hdivL2 : MemScalarL2 (cubeSetAt y n) (vecFieldDiv (euclideanGradient bar)) :=
       memScalarL2_of_continuous_of_isBoundedDomain (measurableSet_cubeSetAt y n)
         (isOpenBoundedConvexDomain_cubeSetAt y n).isBoundedDomain
-        (continuous_finset_sum Finset.univ fun i _ =>
-          (((hFC1 i).continuous_fderiv le_rfl).clm_apply continuous_const))
+        (continuous_finsetSum Finset.univ fun i _ =>
+          (((hFC1 i).continuous_fderiv (by simp)).clm_apply continuous_const))
     have hintProd : Integrable
         (fun x => (-(sig * vecFieldDiv (euclideanGradient bar) x)) * phi.toH1Function.toFun x)
         (volume.restrict (cubeSetAt y n)) := by

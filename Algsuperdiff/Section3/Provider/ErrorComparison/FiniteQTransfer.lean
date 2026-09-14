@@ -363,7 +363,7 @@ theorem maxDescendantSigmaStarInv_le_rpow_mul_max_descendants_lambdaSq_inv
       _ ≤ Real.rpow (3 : ℝ) (2 * t * (i : ℝ)) * Lb :=
           mul_le_mul_of_nonneg_right hwle hLbnonneg
   · -- shallow scales: `e.subadda.nosymm` at the norm level
-    push_neg at hdeep
+    push Not at hdeep
     have hR'scale : R'.scale = Q.scale - (i : ℤ) :=
       Homogenization.descendant_scale_eq_of_mem_descendantsAtScale hR'
     have hnR' : n ≤ R'.scale := by
@@ -425,7 +425,7 @@ theorem rpow_three_neg_eighth_le : Real.rpow (3 : ℝ) (-(1 / 8 : ℝ)) ≤ 7 / 
       show -(1 / 8 : ℝ) * ((8 : ℕ) : ℝ) = -1 by norm_num,
       rpow_neg' (by norm_num : (0 : ℝ) ≤ 3), rpow_one']
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hlt : ((7 : ℝ) / 8) ^ (8 : ℕ) ≤ Real.rpow (3 : ℝ) (-(1 / 8 : ℝ)) ^ (8 : ℕ) :=
     pow_le_pow_left₀ (by norm_num) hcon.le 8
   rw [hpow] at hlt

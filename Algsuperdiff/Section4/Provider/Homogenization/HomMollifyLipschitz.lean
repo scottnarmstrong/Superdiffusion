@@ -135,7 +135,7 @@ theorem fderiv_convolution_apply_basisVec {w : Vec d → ℝ} {G : Vec d → Vec
   have hp := convolution_precompR_apply (f := w) (g := fderiv ℝ ψ)
     (μ := (volume : Measure (Vec d))) (ContinuousLinearMap.lsmul ℝ ℝ) hwLoc
     (HasCompactSupport.fderiv (𝕜 := ℝ) hψ.compactSupport)
-    (hψ.smooth.continuous_fderiv hone) a (basisVec i)
+    (hψ.smooth.continuous_fderiv (by simp)) a (basisVec i)
   rw [hd.fderiv, hp, convolution_lsmul, convolution_lsmul]
   simp only [smul_eq_mul]
   exact integral_mul_fderiv_sub_eq_integral_weakGrad hw hψ.smooth hψ.compactSupport i a
@@ -157,7 +157,7 @@ theorem boxAverage_finset_sum {n : ℤ} {x : Vec d} (c : Fin d → ℝ) (h : Fin
     boxAverage n x (fun a => ∑ i, c i * h i a) = ∑ i, c i * boxAverage n x (h i) := by
   have hsum : ∫ a in boxSet n x, ∑ i, c i * h i a
       = ∑ i, ∫ a in boxSet n x, c i * h i a :=
-    integral_finset_sum _ fun i _ => (hint i).const_mul (c i)
+    integral_finsetSum _ fun i _ => (hint i).const_mul (c i)
   rw [boxAverage_eq_inv_mul_integral, hsum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_const_mul, boxAverage_eq_inv_mul_integral]
@@ -188,7 +188,7 @@ theorem fderiv_boxRegularization_apply {w : Vec d → ℝ} {G : Vec d → Vec d}
   have hp := convolution_precompR_apply (f := boxKernel (d := d) n)
     (g := fderiv ℝ (w ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] ψ))
     (μ := (volume : Measure (Vec d))) (ContinuousLinearMap.lsmul ℝ ℝ) hKloc
-    (HasCompactSupport.fderiv (𝕜 := ℝ) hVc) (hVsmooth.continuous_fderiv hone) x v
+    (HasCompactSupport.fderiv (𝕜 := ℝ) hVc) (hVsmooth.continuous_fderiv (by simp)) x v
   rw [boxRegularization_eq_convolution n ψ w, hd.fderiv, hp,
     convolution_boxKernel_eq_boxAverage]
   have hdir : (fun a => (fderiv ℝ (w ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] ψ) a) v)

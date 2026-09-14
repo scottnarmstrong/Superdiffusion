@@ -60,7 +60,7 @@ theorem zpow_three_pos (m : ℤ) : (0 : ℝ) < (3 : ℝ) ^ m := zpow_pos (by nor
 an integer power of three. -/
 theorem mem_openCubeAtScale_iff (z : Vec d) (m : ℤ) (y : Vec d) :
     y ∈ openCubeAtScale z m ↔ ∀ i : Fin d, |y i - z i| < (3 : ℝ) ^ m / 2 := by
-  simp only [openCubeAtScale, Set.mem_setOf_eq, rpow_three_intCast]
+  simp only [openCubeAtScale, Set.mem_ofPred_eq, rpow_three_intCast]
 
 /-- **The containment criterion.**
 

@@ -48,15 +48,42 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-- Continuity of addition on the second-derivative fibre.  Mathlib's default
-instance search reaches this only past its heartbeat budget, so the file
-installs it as a local instance. -/
-private theorem continuousAdd_matrixSecondDerivative (d : ℕ) :
-    ContinuousAdd (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := by
-  have h : IsTopologicalAddGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
-  exact h.toContinuousAdd
+/-- Migration cache (mathlib v4.33.1): `ContinuousLinearMap.add` on the nested second-derivative
+fibre needs `ContinuousAdd (Vec d →L[ℝ] Mat d)` as a hypothesis (the codomain of the outer map).
+A blind search for that hypothesis tries the `IsTopologicalAddGroup.toContinuousAdd` route only
+after first wandering, unsuccessfully, through every `Vec d →L[ℝ] Mat d`-as-endomorphism-ring
+candidate (`IsSemitopologicalSemiring`, `IsTopologicalSemiring`, down through `CStarAlgebra`,
+`NormedRing`, `Field`, …), and gives up before ever reaching the right one.  Naming the direct
+term sidesteps that search entirely; it is what the nested-level caches below build on. -/
+private instance instContinuousAddVecMatCLM (d : ℕ) :
+    ContinuousAdd (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.topologicalAddGroup.toContinuousAdd
 
-attribute [local instance] continuousAdd_matrixSecondDerivative
+/-- Migration cache (mathlib v4.33.1): pin the nested second-derivative fibre's
+`TopologicalSpace`/`IsTopologicalAddGroup`/`ContinuousAdd` directly via
+`ContinuousLinearMap.topologicalSpace` / `ContinuousLinearMap.topologicalAddGroup`, now that the
+one-level-down hypothesis (`instContinuousAddVecMatCLM` above) resolves immediately instead of
+wandering.  An earlier version of this cache instead proved `ContinuousAdd` at the nested type via
+a bare `inferInstance`-built `private theorem` turned into a `local instance`; under mathlib
+v4.33.0 that candidate's explicit `(d : ℕ)` argument fails to unify with the ambient section `d`
+at the actual `Continuous.add` use sites below (`tryResolve` reports a stray metavariable), even
+though the identical goal succeeds when posed in isolation.  Building `ContinuousAdd` directly
+from a plain (non-`local`) instance avoids that failure entirely. -/
+private instance instTopologicalSpaceVecVecMatCLM (d : ℕ) :
+    TopologicalSpace (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.topologicalSpace
+
+private instance instIsTopologicalAddGroupVecVecMatCLM (d : ℕ) :
+    IsTopologicalAddGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.topologicalAddGroup
+
+private instance instContinuousAddVecVecMatCLM (d : ℕ) :
+    ContinuousAdd (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  (instIsTopologicalAddGroupVecVecMatCLM d).toContinuousAdd
+
+private instance instAddCommGroupVecVecMatCLM (d : ℕ) :
+    AddCommGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.addCommGroup
 
 /-! ## The zero shell field -/
 
@@ -86,13 +113,23 @@ theorem zero_secondDeriv (x : Vec d) : secondDeriv (zero d) x = 0 :=
 
 /-! ## Binary sums -/
 
+/-- Continuity of the summed second-derivative field, as a standalone lemma.  Ordinary instance
+search for `ContinuousAdd` on the nested second-derivative fibre leaves `d` tied to an unresolved
+metavariable at every use site below (mathlib v4.33.0), even though the identical goal resolves
+immediately once posed on its own; supplying `instContinuousAddVecVecMatCLM` explicitly via `@`
+sidesteps that search rather than relying on it. -/
+private theorem continuous_add_secondDeriv (j k : ShellField d) :
+    Continuous (fun x => secondDeriv j x + secondDeriv k x) :=
+  @Continuous.add (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) _ _ (instContinuousAddVecVecMatCLM d)
+    (Vec d) _ _ _ (secondDeriv j).continuous (secondDeriv k).continuous
+
 /-- The pointwise sum of two shell fields, with the summed derivative data. -/
 def add (j k : ShellField d) : ShellField d :=
   ⟨(⟨fun x => j x + k x, j.1.1.continuous.add k.1.1.continuous⟩,
       (⟨fun x => deriv j x + deriv k x,
           (deriv j).continuous.add (deriv k).continuous⟩,
         ⟨fun x => secondDeriv j x + secondDeriv k x,
-          (secondDeriv j).continuous.add (secondDeriv k).continuous⟩)), by
+          continuous_add_secondDeriv j k⟩)), by
     refine ⟨?_, ?_, ?_⟩
     · intro x
       exact (j.hasFDerivAt x).add (k.hasFDerivAt x)
@@ -120,16 +157,25 @@ theorem add_secondDeriv (j k : ShellField d) (x : Vec d) :
 
 /-! ## Finite sums -/
 
+/-- Continuity of the finite-summed second-derivative field, as a standalone lemma; see
+`continuous_add_secondDeriv` for why the needed instances are supplied explicitly via `@`
+rather than left to search. -/
+private theorem continuous_sum_secondDeriv {ι : Type*} (s : Finset ι) (f : ι → ShellField d) :
+    Continuous (fun x => ∑ i ∈ s, secondDeriv (f i) x) :=
+  @continuous_finsetSum ι (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) (Vec d) _ _
+    (instAddCommGroupVecVecMatCLM d).toAddCommMonoid (instContinuousAddVecVecMatCLM d)
+    (fun i => secondDeriv (f i)) s fun i _ => (secondDeriv (f i)).continuous
+
 /-- The pointwise `Finset` sum of shell fields, with the summed derivative
 data.  This is the finite-sum carrier required by the literal oscillation
 event of `e.Bosc.def`. -/
 def sum {ι : Type*} (s : Finset ι) (f : ι → ShellField d) : ShellField d :=
   ⟨(⟨fun x => ∑ i ∈ s, f i x,
-        continuous_finset_sum s fun i _ => (f i).1.1.continuous⟩,
+        continuous_finsetSum s fun i _ => (f i).1.1.continuous⟩,
       (⟨fun x => ∑ i ∈ s, deriv (f i) x,
-          continuous_finset_sum s fun i _ => (deriv (f i)).continuous⟩,
+          continuous_finsetSum s fun i _ => (deriv (f i)).continuous⟩,
         ⟨fun x => ∑ i ∈ s, secondDeriv (f i) x,
-          continuous_finset_sum s fun i _ => (secondDeriv (f i)).continuous⟩)), by
+          continuous_sum_secondDeriv s f⟩)), by
     refine ⟨?_, ?_, ?_⟩
     · intro x
       have h : HasFDerivAt (fun y => ∑ i ∈ s, f i y)

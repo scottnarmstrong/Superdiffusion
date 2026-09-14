@@ -145,7 +145,7 @@ theorem euclideanCoordSecondDeriv_radial
         (h1 _ (euclideanNorm_pos (sub_ne_zero.mpr hyz))) i]
       ring
   rw [euclideanCoordSecondDeriv, heq.fderiv_eq, hg.fderiv]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul,
+  simp only [add_apply, smul_apply, smul_eq_mul,
     coordFDeriv_apply, basisVec_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
     Finset.mem_univ, if_true]
   field_simp

@@ -54,7 +54,7 @@ variable {d : ℕ}
 private theorem memLp_posPart_sub_const {U : Set (Vec d)} (hUfin : volume U ≠ ⊤)
     {g : Vec d → ℝ} (hg : MemLp g 2 (volume.restrict U)) (c : ℝ) :
     MemLp (fun x => max (g x - c) 0) 2 (volume.restrict U) := by
-  haveI : IsFiniteMeasure (volume.restrict U) := by
+  have : IsFiniteMeasure (volume.restrict U) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hUfin
@@ -106,7 +106,7 @@ theorem ae_le_of_tendsto_l2 {U : Set (Vec d)} (hUfin : volume U ≠ ⊤)
   have hzero : (∫ x in U, max (g x - c) 0 ^ (2 : ℕ) ∂volume) = 0 := by
     refine le_antisymm ?_ hnn
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact absurd hle0 (not_le.2 (Real.sqrt_pos.2 hcon))
   have hae := (integral_eq_zero_iff_of_nonneg (fun x => by positivity) hhint).1 hzero
   filter_upwards [hae] with x hx
@@ -160,7 +160,7 @@ private theorem tendsto_sqrt_setIntegral_mono {y : Vec d} {n : ℤ} {V : Set (Ve
   refine squeeze_zero (fun L => Real.sqrt_nonneg _) (fun L => ?_) hlim
   refine Real.sqrt_le_sqrt ?_
   exact setIntegral_mono_set (hint L) (Filter.Eventually.of_forall fun x => by positivity)
-    (HasSubset.Subset.eventuallyLE hV)
+    (LE.le.eventuallyLE hV)
 
 /-- **A uniform bound on the truncated solutions' representatives passes to the
 representative of the `L²` limit**, at every point of an open subset of the

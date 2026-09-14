@@ -122,7 +122,7 @@ theorem hbdryOfScalarCoarse (d : ℕ) :
   · refine ⟨1, one_pos, ?_⟩
     intro M
     exact absurd M.shellPrefix.dimension (by omega)
-  haveI : NeZero d := ⟨hd⟩
+  have : NeZero d := ⟨hd⟩
   obtain ⟨CC, Cfin, hCC, hCfin, hcomp⟩ := exists_boundaryClauseComposed_honest d
   obtain ⟨CS, hCS, hS⟩ := exists_inv_sigmaBar_add_three_le d
   have hleC : CC ≤ max (max CC CS) (4 * Cfin) :=

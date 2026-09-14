@@ -98,7 +98,7 @@ theorem tail_set_zWitness (M : ABKModel d) (s delta : ℝ) (hs : 0 < s) (m : ℤ
       = {omega | (N : ℕ∞) ≤ Probability.minimalScaleEN bad1 omega} ∪
         {omega | (N : ℕ∞) ≤ Probability.minimalScaleEN (badDensity M s delta hs m) omega} := by
   ext omega
-  simp only [Set.mem_setOf_eq, Set.mem_union, zWitness, Probability.minimalScaleEN_sup,
+  simp only [Set.mem_ofPred_eq, Set.mem_union, zWitness, Probability.minimalScaleEN_sup,
     le_max_iff]
 
 /-! ## 2. Both deterministic clauses -/
@@ -157,8 +157,8 @@ theorem measure_tail_badDensity_le_half (C : ℝ) (hC : 2 * zTwoConst d ≤ C)
         (((0 : ℕ) : ℕ∞)) ≤ Probability.minimalScaleEN (badDensity M s delta hs m) omega}
         = Set.univ :=
       Set.eq_univ_of_forall fun omega => by
-        simp only [Set.mem_setOf_eq, Nat.cast_zero]
-        exact zero_le _
+        simp only [Set.mem_ofPred_eq, Nat.cast_zero]
+        exact zero_le
     rw [huniv, measure_univ,
       show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm]
     refine ENNReal.ofReal_le_ofReal ?_

@@ -218,7 +218,7 @@ theorem gamma_le_one_sixteenth_of_admissible (M : ABKModel d) {Ccg E : ℝ}
     le_trans (le_max_left _ _) hadm
   have hE2 : (2 : ℝ) ≤ E := by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have hmul : E * Algsuperdiff.Section3.Disorder.cstar M <
         2 * Algsuperdiff.Section3.Disorder.cstar M :=
       mul_lt_mul_of_pos_right hlt hc
@@ -262,7 +262,7 @@ theorem cubeLowerEllipticityInv_le_two_mul_finsetSupReal_ae (M : ABKModel d)
       cubeLowerEllipticityInv M Q n (1 / 8) (by norm_num) exponentTwo omega ≤
         2 * Ch02.finsetSupReal (descendantsAtScale Q n) fun R =>
           cubeLowerEllipticityInv M R n (1 / 16) (by norm_num) exponentTwo omega := by
-  letI : NeZero d := neZero_of_model_low M
+  let : NeZero d := neZero_of_model_low M
   have hall : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       ∀ R ∈ descendantsAtScale Q n,
         cubeLowerEllipticityInv M R n (1 / 16) (by norm_num) exponentTwo omega =

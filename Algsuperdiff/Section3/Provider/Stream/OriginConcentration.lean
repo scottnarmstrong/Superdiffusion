@@ -105,11 +105,11 @@ theorem integral_zeroShell_entry_eq_zero (M : ABKModel d) (x : Vec d) (i l : Fin
       Measure.map (fun F : ShellSeq d => F 0) M.P.toMeasure := rfl
   rw [hmap, integral_map (ShellField.measurable_zeroShellMap (d := d)).aemeasurable
     (ShellField.measurable_eval_entry x i l).aestronglyMeasurable]
-  have hint : Integrable (fun omega : ShellSeq d => (omega 0) x) M.P.toMeasure :=
-    M.J1.integrable x
-  have h := ContinuousLinearMap.integral_comp_comm (matrixEntryCLM i l) hint
-  rw [M.J1.mean_zero x, map_zero] at h
-  simpa only [matrixEntryCLM_apply] using h
+  have h : (∫ omega : ShellSeq d, matrixEntryCLM i l ((omega 0) x) ∂M.P.toMeasure) =
+      matrixEntryCLM i l (∫ omega : ShellSeq d, (omega 0) x ∂M.P.toMeasure) :=
+    ContinuousLinearMap.integral_comp_comm (matrixEntryCLM i l) (M.J1.integrable x)
+  rw [M.J1.mean_zero x] at h
+  simpa only [matrixEntryCLM_apply, Matrix.zero_apply] using h
 
 /-- ABK26's "`j_k(0)` is mean zero", for every shell index and every matrix
 entry.  This is the frozen (J1) mean-zero field transported to shell `k`

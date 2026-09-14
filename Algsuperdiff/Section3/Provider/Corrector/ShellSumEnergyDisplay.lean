@@ -95,7 +95,7 @@ private theorem valuePathForcing_smul_direction (c : ℝ) (e : Vec d)
     simp only [matVecMul, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl fun l _ => by ring
   rw [h]
-  simpa only [HilbertVec.ofVecL_apply] using
+  simpa only [HilbertVec.ofVecL_apply] using!
     map_smul (HilbertVec.ofVecL d) c (matVecMul (f 0) e)
 
 /-- The shell-sum forcing is linear in the direction. -/

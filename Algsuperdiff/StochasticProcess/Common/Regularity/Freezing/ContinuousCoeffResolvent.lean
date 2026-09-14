@@ -37,7 +37,7 @@ theorem isCompact_memAxisCubeClosure (z : Vec d) (L : ℝ) :
   have hset : {x | MemAxisCubeClosure z L x} =
       Set.pi Set.univ fun i => Set.Icc (z i) (z i + L) := by
     ext x
-    simp only [MemAxisCubeClosure, Set.mem_setOf_eq, Set.mem_pi, Set.mem_univ,
+    simp only [MemAxisCubeClosure, Set.mem_ofPred_eq, Set.mem_pi, Set.mem_univ,
       Set.mem_Icc, forall_const]
   rw [hset]
   exact isCompact_univ_pi fun _ => isCompact_Icc

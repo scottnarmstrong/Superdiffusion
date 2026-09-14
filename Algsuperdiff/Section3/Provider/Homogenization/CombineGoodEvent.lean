@@ -694,7 +694,7 @@ theorem exists_cutoffGoodEvent_cutoffResponseJ_le_preVarianceSplitDisplay (d : �
   classical
   by_cases hd : d = 0
   · exact ⟨1, le_rfl, fun M => absurd M.shellPrefix.dimension (by omega)⟩
-  letI : NeZero d := ⟨hd⟩
+  let : NeZero d := ⟨hd⟩
   obtain ⟨C, hC, hbound⟩ :=
     exists_goodEvent_restrictionResponseJ_centralChild_le_preVarianceSplitDisplay d
   refine ⟨C, hC, ?_⟩

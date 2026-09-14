@@ -493,7 +493,7 @@ theorem annularDecompPre_slot_of_mem_annularEvent (d : ℕ) (dimension : 2 ≤ d
         ∀ L : ℤ, m ≤ L →
           IsAnnularDecompPre (s : ℝ) m (jLegField M L m omega)
             (annularResponseMaxPref M L m omega) 4 := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   intro M Ccg m s hs14 omega _hmem L _hL
   exact annularDecompPre_jLegField dimension M L m omega s.2 hs14
 

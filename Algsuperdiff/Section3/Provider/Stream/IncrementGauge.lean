@@ -43,7 +43,7 @@ theorem matrixDerivativeNorm_zero_le :
   rw [matrixDerivativeNorm_le_iff]
   refine ⟨le_refl 0, fun v _ => le_of_eq ?_⟩
   show matrixOperatorNorm ((0 : ShellField.MatrixDerivative d) v) = 0
-  rw [ContinuousLinearMap.zero_apply, matrixOperatorNorm_zero]
+  rw [zero_apply, matrixOperatorNorm_zero]
 
 theorem matrixSecondDerivativeNorm_zero_le :
     ShellField.matrixSecondDerivativeNorm
@@ -52,7 +52,7 @@ theorem matrixSecondDerivativeNorm_zero_le :
   refine ⟨le_refl 0, fun u _ => ?_⟩
   show ShellField.matrixDerivativeNorm
     ((0 : ShellField.MatrixSecondDerivative d) u) ≤ 0
-  rw [ContinuousLinearMap.zero_apply]
+  rw [zero_apply]
   exact matrixDerivativeNorm_zero_le
 
 /-! ## The gauges of the zero shell field -/

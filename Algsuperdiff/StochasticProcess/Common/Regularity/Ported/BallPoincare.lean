@@ -58,7 +58,7 @@ theorem normalizedL2On_axisCube_sub_average_le_vectorGradient
     exact pow_pos hL d
   have hWtop : volume W ≠ ⊤ := by
     exact (ENNReal.toReal_ne_zero.mp hWpos.ne').2
-  letI : IsFiniteMeasure (volume.restrict W) := by
+  let : IsFiniteMeasure (volume.restrict W) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.mpr hWtop
@@ -134,16 +134,14 @@ theorem normalizedL2On_metricBall_sub_average_le_vectorGradient [NeZero d]
   have hset2 :
       axisCube (stoppingAxisCubeCorner x 1 r) (2 * r) = Metric.ball x r := by
     simpa only [stoppingAxisCubeSide, mul_one] using hset'
-  let v : H1Function
-      (axisCube (stoppingAxisCubeCorner x 1 r) (stoppingAxisCubeSide 1 r)) :=
-    castH1Domain hset'.symm u
   have hraw := normalizedL2On_axisCube_sub_average_le_vectorGradient
     (stoppingAxisCubeCorner x 1 r)
     (show 0 < stoppingAxisCubeSide 1 r by
       simp only [stoppingAxisCubeSide]
-      positivity) v
-  simpa only [v, castH1Domain_toFun, castH1Domain_grad, hset', hset2,
-    stoppingAxisCubeSide, mul_one] using hraw
+      positivity)
+    (castH1Domain hset'.symm u)
+  rw [castH1Domain_toFun, castH1Domain_grad] at hraw
+  simpa only [hset', hset2, stoppingAxisCubeSide, mul_one] using! hraw
 
 end
 

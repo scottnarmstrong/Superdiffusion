@@ -78,8 +78,8 @@ theorem skewFieldDiv_apply (k : Vec d → Mat d) (x : Vec d) (j : Fin d) :
 theorem continuous_skewFieldDiv_apply {k : Vec d → Mat d}
     (hk : ∀ p q : Fin d, ContDiff ℝ 1 fun x => k x p q) (j : Fin d) :
     Continuous fun x => skewFieldDiv k x j := by
-  refine continuous_finset_sum _ fun i _ => ?_
-  exact ((hk i j).continuous_fderiv le_rfl).clm_apply continuous_const
+  refine continuous_finsetSum _ fun i _ => ?_
+  exact ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
 
 /-! ### `L²` membership on a bounded domain -/
 
@@ -94,7 +94,7 @@ private theorem exists_bound_of_continuousOn {V : Set (Vec d)}
 private theorem memScalarL2_of_continuous_bounded (hUm : MeasurableSet U)
     (hU : IsBoundedDomain U) {f : Vec d → ℝ} (hf : Continuous f) :
     MemScalarL2 U f := by
-  haveI := hU.isFiniteMeasure_restrict_volume
+  have := hU.isFiniteMeasure_restrict_volume
   obtain ⟨C, hC⟩ := exists_bound_of_continuousOn hU hf
   refine MemLp.of_bound hf.aestronglyMeasurable C ?_
   filter_upwards [ae_restrict_mem hUm] with x hx
@@ -108,7 +108,7 @@ private theorem memScalarL2_of_continuous_compactSupport {f : Vec d → ℝ}
 private theorem integrable_mul_of_memScalarL2 {f g : Vec d → ℝ}
     (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
     Integrable (fun x => f x * g x) (volume.restrict U) := by
-  simpa only [Pi.mul_apply] using hf.integrable_mul hg
+  simpa only [Pi.mul_apply] using! hf.integrable_mul hg
 
 /-- A `C¹` function on a bounded measurable domain, packaged with its
 classical gradient. -/
@@ -119,7 +119,7 @@ private def contDiffOneH1 (hUm : MeasurableSet U) (hU : IsBoundedDomain U)
   memL2 := memScalarL2_of_continuous_bounded hUm hU hf.continuous
   gradMemL2 := fun _ =>
     memScalarL2_of_continuous_bounded hUm hU
-      ((hf.continuous_fderiv le_rfl).clm_apply continuous_const)
+      ((hf.continuous_fderiv (by simp)).clm_apply continuous_const)
   hasWeakGradient := HasWeakGradientOn.of_contDiff hf
 
 /-! ### From smooth tests to zero-trace tests -/
@@ -131,7 +131,7 @@ private theorem integral_vecDot_eq_sum_coord {F G : Vec d → Vec d}
       ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
   rw [show (fun x : Vec d => vecDot (F x) (G x)) =
       fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  exact integral_finset_sum Finset.univ fun i _ =>
+  exact integral_finsetSum Finset.univ fun i _ =>
     integrable_mul_of_memScalarL2 (hF i) (hG i)
 
 private theorem integral_vecDot_congr_of_forall_smooth {P Q : Vec d → Vec d}
@@ -160,11 +160,11 @@ private theorem integral_vecDot_congr_of_forall_smooth {P Q : Vec d → Vec d}
       using phi.tendsto_approx_grad i
   have hPconv : Tendsto (fun n => ∑ i : Fin d, ∫ x in U, P x i * Dn n x i ∂volume) atTop
       (nhds (∑ i : Fin d, ∫ x in U, P x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finset_sum Finset.univ fun i _ =>
+    tendsto_finsetSum Finset.univ fun i _ =>
       tendsto_integral_mul_of_tendsto_toScalarL2 (hP i) (fun n => hDn n i) (hDlim i) (hconv i)
   have hQconv : Tendsto (fun n => ∑ i : Fin d, ∫ x in U, Q x i * Dn n x i ∂volume) atTop
       (nhds (∑ i : Fin d, ∫ x in U, Q x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finset_sum Finset.univ fun i _ =>
+    tendsto_finsetSum Finset.univ fun i _ =>
       tendsto_integral_mul_of_tendsto_toScalarL2 (hQ i) (fun n => hDn n i) (hDlim i) (hconv i)
   have heq : ∀ n : ℕ, (∑ i : Fin d, ∫ x in U, P x i * Dn n x i ∂volume) =
       ∑ i : Fin d, ∫ x in U, Q x i * Dn n x i ∂volume := by
@@ -199,7 +199,7 @@ private theorem integral_vecDot_matVecMul_smooth_eq
     fun i j => (contDiff_euclideanCoordDeriv (hDpsi j) i).continuous
   have hDkcont : ∀ i j : Fin d,
       Continuous (euclideanCoordDeriv i fun y => k y i j) :=
-    fun i j => ((hk i j).continuous_fderiv le_rfl).clm_apply continuous_const
+    fun i j => ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
   set chi : Fin d → Fin d → Vec d → ℝ :=
     fun i j x => k x i j * euclideanCoordDeriv j psi x with hchi_def
   set dA : Fin d → Fin d → Vec d → ℝ :=
@@ -212,19 +212,19 @@ private theorem integral_vecDot_matVecMul_smooth_eq
   have hchiL2 : ∀ i j : Fin d, MemScalarL2 U (chi i j) := by
     intro i j
     refine memScalarL2_of_continuous_compactSupport ((hchiC1 i j).continuous) ?_
-    simpa only [hchi_def, Pi.mul_apply] using
+    simpa only [hchi_def, Pi.mul_apply] using!
       (hDpsic j).mul_left (f := fun x : Vec d => k x i j)
   have hdAL2 : ∀ i j : Fin d, MemScalarL2 U (dA i j) := by
     intro i j
     refine memScalarL2_of_continuous_compactSupport
       ((hDkcont i j).mul ((hDpsi j).continuous)) ?_
-    simpa only [hdA_def, Pi.mul_apply] using
+    simpa only [hdA_def, Pi.mul_apply] using!
       (hDpsic j).mul_left (f := euclideanCoordDeriv i fun y : Vec d => k y i j)
   have hdBL2 : ∀ i j : Fin d, MemScalarL2 U (dB i j) := by
     intro i j
     refine memScalarL2_of_continuous_compactSupport
       ((hk i j).continuous.mul (hD2cont i j)) ?_
-    simpa only [hdB_def, Pi.mul_apply] using
+    simpa only [hdB_def, Pi.mul_apply] using!
       (hD2c i j).mul_left (f := fun x : Vec d => k x i j)
   have hchiInt : ∀ i j : Fin d,
       Integrable (fun x => chi i j x * phi.toH1Function.grad x i)
@@ -244,7 +244,7 @@ private theorem integral_vecDot_matVecMul_smooth_eq
     intro i j x
     have hf : HasFDerivAt (fun y : Vec d => k y i j)
         (fderiv ℝ (fun y : Vec d => k y i j) x) x :=
-      ((hk i j).differentiable le_rfl x).hasFDerivAt
+      ((hk i j).differentiable (by norm_num) x).hasFDerivAt
     have hg : HasFDerivAt (euclideanCoordDeriv j psi)
         (fderiv ℝ (euclideanCoordDeriv j psi) x) x :=
       ((hDpsi j).differentiable (by norm_num) x).hasFDerivAt
@@ -254,7 +254,7 @@ private theorem integral_vecDot_matVecMul_smooth_eq
       hf.mul hg
     rw [hmul.fderiv]
     simp only [hdA_def, hdB_def, euclideanCoordDeriv, euclideanCoordSecondDeriv,
-      ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+      add_apply, smul_apply, smul_eq_mul]
     ring
   -- one integration by parts per index pair
   have key : ∀ i j : Fin d,
@@ -285,10 +285,10 @@ private theorem integral_vecDot_matVecMul_smooth_eq
           (phi.toH1Function.grad x)) =
         fun x : Vec d => ∑ i : Fin d, ∑ j : Fin d,
           chi i j x * phi.toH1Function.grad x i from funext hpt,
-      integral_finset_sum Finset.univ
-        fun i _ => integrable_finset_sum Finset.univ fun j _ => hchiInt i j]
+      integral_finsetSum Finset.univ
+        fun i _ => integrable_finsetSum Finset.univ fun j _ => hchiInt i j]
     exact Finset.sum_congr rfl fun i _ =>
-      integral_finset_sum Finset.univ fun j _ => hchiInt i j
+      integral_finsetSum Finset.univ fun j _ => hchiInt i j
   -- the drift part of the double sum
   have hsumA : (∑ i : Fin d, ∑ j : Fin d,
         ∫ x in U, dA i j x * phi.toH1Function.toFun x ∂volume) =
@@ -298,14 +298,14 @@ private theorem integral_vecDot_matVecMul_smooth_eq
         ∫ x in U, dA i j x * phi.toH1Function.toFun x ∂volume) =
         ∫ x in U, ∑ j : Fin d, ∑ i : Fin d,
           dA i j x * phi.toH1Function.toFun x ∂volume := by
-      rw [integral_finset_sum Finset.univ
-        fun j _ => integrable_finset_sum Finset.univ fun i _ => hdAInt i j]
+      rw [integral_finsetSum Finset.univ
+        fun j _ => integrable_finsetSum Finset.univ fun i _ => hdAInt i j]
       rw [show (∑ i : Fin d, ∑ j : Fin d,
             ∫ x in U, dA i j x * phi.toH1Function.toFun x ∂volume) =
           ∑ j : Fin d, ∑ i : Fin d,
             ∫ x in U, dA i j x * phi.toH1Function.toFun x ∂volume from Finset.sum_comm]
       exact Finset.sum_congr rfl fun j _ =>
-        (integral_finset_sum Finset.univ fun i _ => hdAInt i j).symm
+        (integral_finsetSum Finset.univ fun i _ => hdAInt i j).symm
     rw [hswap]
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
     simp only [vecDot]
@@ -322,10 +322,10 @@ private theorem integral_vecDot_matVecMul_smooth_eq
         ∫ x in U, dB i j x * phi.toH1Function.toFun x ∂volume) =
         ∫ x in U, ∑ i : Fin d, ∑ j : Fin d,
           dB i j x * phi.toH1Function.toFun x ∂volume := by
-      rw [integral_finset_sum Finset.univ
-        fun i _ => integrable_finset_sum Finset.univ fun j _ => hdBInt i j]
+      rw [integral_finsetSum Finset.univ
+        fun i _ => integrable_finsetSum Finset.univ fun j _ => hdBInt i j]
       exact Finset.sum_congr rfl fun i _ =>
-        (integral_finset_sum Finset.univ fun j _ => hdBInt i j).symm
+        (integral_finsetSum Finset.univ fun j _ => hdBInt i j).symm
     rw [hswap]
     refine integral_eq_zero_of_ae (Filter.Eventually.of_forall fun x => ?_)
     have hzero : ∑ i : Fin d, ∑ j : Fin d,
@@ -391,7 +391,7 @@ theorem memScalarL2_matVecMul_coord (hUm : MeasurableSet U)
     (hk : ∀ p q : Fin d, ContDiff ℝ 1 fun x => k x p q) {G : Vec d → Vec d}
     (hG : ∀ j : Fin d, MemScalarL2 U fun x => G x j) (i : Fin d) :
     MemScalarL2 U fun x => matVecMul (k x) (G x) i :=
-  memLp_finset_sum Finset.univ fun j _ =>
+  memLp_finsetSum Finset.univ fun j _ =>
     memScalarL2_mul_of_continuous_left hUm hUb (hk i j).continuous (hG j)
 
 /-- The drift pairing of a `C¹` matrix field against an `L²` vector field is
@@ -401,7 +401,7 @@ theorem memScalarL2_vecDot_skewFieldDiv (hUm : MeasurableSet U)
     (hk : ∀ p q : Fin d, ContDiff ℝ 1 fun x => k x p q) {G : Vec d → Vec d}
     (hG : ∀ j : Fin d, MemScalarL2 U fun x => G x j) :
     MemScalarL2 U fun x => vecDot (skewFieldDiv k x) (G x) :=
-  memLp_finset_sum Finset.univ fun j _ =>
+  memLp_finsetSum Finset.univ fun j _ =>
     memScalarL2_mul_of_continuous_left hUm hUb
       (continuous_skewFieldDiv_apply hk j) (hG j)
 
@@ -429,7 +429,7 @@ theorem integral_vecDot_matVecMul_grad_eq_neg (hUm : MeasurableSet U)
     fun x j => -(phi.toH1Function.toFun x * skewFieldDiv k x j) with hQ_def
   have hPmem : ∀ j : Fin d, MemScalarL2 U fun x => P x j := by
     intro j
-    exact memLp_finset_sum Finset.univ fun i _ =>
+    exact memLp_finsetSum Finset.univ fun i _ =>
       memScalarL2_mul_of_continuous_left hUm hUb (hk i j).continuous
         (phi.toH1Function.gradMemL2 i)
   have hQmem : ∀ j : Fin d, MemScalarL2 U fun x => Q x j := by
@@ -546,7 +546,7 @@ theorem integral_mul_vecDot_matVecMul_eq_half (hUm : MeasurableSet U)
   have hbG : MemScalarL2 U fun x => vecDot (skewFieldDiv k x) (G x) :=
     memScalarL2_vecDot_skewFieldDiv hUm hUb hk z.toH1Function.gradMemL2
   have hbDw : Continuous fun x => vecDot (skewFieldDiv k x) (Dw x) :=
-    continuous_finset_sum _ fun i _ =>
+    continuous_finsetSum _ fun i _ =>
       (continuous_skewFieldDiv_apply hk i).mul (hDwCont i)
   have hwzf : MemScalarL2 U fun x => w x * zf x :=
     memScalarL2_mul_of_continuous_left hUm hUb hw.continuous z.toH1Function.memL2

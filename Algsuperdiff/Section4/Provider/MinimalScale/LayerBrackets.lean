@@ -204,7 +204,7 @@ theorem iIndepFun_scoreG1b_windowSum (M : ABKModel d) (w : ℤ → ℤ → ℝ) 
       (Cutoff.cutoffSampleLaw M).toMeasure := by
   refine Algsuperdiff.Section4.Probability.iIndepFun_of_iIndep_sigma (iIndep_shellSigma M)
     fun i => ?_
-  letI : MeasurableSpace (Cutoff.CutoffSample d) := shellSigma d i
+  let : MeasurableSpace (Cutoff.CutoffSample d) := shellSigma d i
   refine Finset.measurable_sum _ fun k _ => ?_
   exact (shellLocal_scoreG1b M k i).const_mul (w i k)
 
@@ -297,7 +297,8 @@ theorem ae_wsumE_ne_top {P : Measure Omega} {T : ℕ → Omega → ℝ} {c a : �
     exact ENNReal.tsum_le_tsum hlint
   have hne : ∫⁻ omega, wsumE T c omega ∂P ≠ (⊤ : ℝ≥0∞) :=
     ne_top_of_le_ne_top ENNReal.ofReal_ne_top hbound
-  have hae := MeasureTheory.ae_lt_top (Measurable.ennreal_tsum fun j => hmeas j) hne
+  have hae := MeasureTheory.ae_lt_top
+    (Measurable.tsum (L := SummationFilter.unconditional ℕ) fun j => hmeas j) hne
   filter_upwards [hae] with omega homega using ne_of_lt homega
 
 end Series

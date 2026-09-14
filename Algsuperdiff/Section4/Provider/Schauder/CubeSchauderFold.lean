@@ -120,7 +120,7 @@ theorem exists_oddAffineDatum_priced (d : ℕ) [NeZero d] :
       rw [oddClassDefect_congr_ae hWVU, hexc] at hmain
       refine le_trans hmain (mul_le_mul_of_nonneg_right ?_ (affineExcessRaw_nonneg _ _))
       linarith only [hC20, hC30]
-    · push_neg at hcorner
+    · push Not at hcorner
       have hother : ∀ j, j ≠ i →
           ¬ MeetsUpperFace x m (n - 2) j ∧ ¬ MeetsLowerFace x m (n - 2) j := hcorner
       rcases hmeti with hup | hlow
@@ -141,7 +141,7 @@ theorem exists_oddAffineDatum_priced (d : ℕ) [NeZero d] :
           refine le_trans hmain (mul_le_mul_of_nonneg_right ?_ (affineExcessRaw_nonneg _ _))
           linarith only [hC10, hC20]
   · -- the unmet configuration: the odd class is the full affine class
-    push_neg at hmet
+    push Not at hmet
     have hnup : ∀ i : Fin d, ¬ MeetsUpperFace x m (n - 2) i := fun i h => (hmet i).1 h
     have hnlow : ∀ i : Fin d, ¬ MeetsLowerFace x m (n - 2) i := fun i h => (hmet i).2 h
     refine ⟨c, A, isOddAffineData_of_no_met_face _ _ hnup hnlow, ?_⟩

@@ -33,7 +33,7 @@ variable {d : ℕ} [NeZero d]
 /-- The Chapter 4 primitive scalarization data of the genuine cutoff law at a
 fixed origin-cube scale, built from the law carrier, isotropy and adjoint
 invariance only. -/
-private noncomputable def cutoffPrimitiveScalarizationData
+private theorem cutoffPrimitiveScalarizationData
     (M : ABKModel d) (m : ℤ) (n : ℤ) :
     Ch04.Internal.AnnealedPrimitiveScalarizationData
       (Cutoff.coefficientCutoffLaw M m) n :=

@@ -354,7 +354,7 @@ theorem harmonic_approximation_provider (d : ℕ) :
       Real.rpow (3 : ℝ) (n : ℝ) :=
     mul_nonneg (mul_nonneg (mul_nonneg hC0pos.le hS6) hflux3) hR3n
   -- `∇h` is integrable on the `n+3` window
-  haveI hfin : IsFiniteMeasure (volume.restrict
+  have hfin : IsFiniteMeasure (volume.restrict
       ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
         openCubeSet (originCube d m)))) := by
     refine ⟨?_⟩

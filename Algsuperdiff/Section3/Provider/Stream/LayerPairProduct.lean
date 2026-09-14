@@ -112,7 +112,7 @@ private theorem indepFun_fineNormalizedSingleShellField (M : ABKModel d)
   have hG : Measurable G := (measurable_smulReg _
     (zpow_ne_zero s (by norm_num))).comp
       Frozen.Assumptions.ShellField.measurable_forgetShell
-  simpa only [G, Function.comp_apply] using
+  simpa only [G, Function.comp_apply] using!
     (M.shellPrefix.independent.indepFun hne).comp hG hG
 
 private theorem cubeFrobeniusMassReg_fineNormalized_eq
@@ -242,13 +242,13 @@ private theorem frozenSlice_isBigO
   by_cases hm : cubeFrobeniusMassReg Q a = 0
   · have hzero := frozenDescendantPairingAverage_isBigO_of_zero
       M k' Q hQ a ha hm (layerPairFrozenUpperScale_nonneg M k k' l omega)
-    simpa only [frozenDescendantPairingAverage, Q, s, a] using hzero
+    simpa only [frozenDescendantPairingAverage, Q, s, a] using! hzero
   · have hpos : 0 < cubeFrobeniusMassReg Q a :=
       lt_of_le_of_ne hmassNonneg (Ne.symm hm)
     have hraw := frozenDescendantPairingAverage_isBigO_of_pos
       M k' Q hQ a ha hpos
     exact (by
-      simpa only [frozenDescendantPairingAverage, Q, s, a] using
+      simpa only [frozenDescendantPairingAverage, Q, s, a] using!
         hraw.mono_scale hscale)
 
 /-- Corrected large-gap fixed-pair concentration before deterministic scale

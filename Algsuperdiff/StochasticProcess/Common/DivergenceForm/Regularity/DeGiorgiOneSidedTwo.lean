@@ -145,7 +145,7 @@ theorem deGiorgi_one_sided_core_two :
     have hset : {x | m₀ < w₁.toFun x} ∩ axisCube z L =
         {x | x ∈ axisCube z L ∧ m₀ < w₁.toFun x} := by
       ext x
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
       tauto
     rw [hset]
     exact hbad
@@ -193,11 +193,11 @@ theorem deGiorgi_one_sided_core_two :
         {x | m₀ + K < w₁.toFun x} := by
       ext x
       rw [hK_def]
-      simp only [Set.mem_setOf_eq, not_le]
+      simp only [Set.mem_ofPred_eq, not_le]
     rw [hset, Measure.restrict_apply' hUmeas]
     have hinter : {x | m₀ + K < w₁.toFun x} ∩ axisCube z L = T := by
       ext x
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, T]
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, T]
       tauto
     rw [hinter]
     exact hTzero

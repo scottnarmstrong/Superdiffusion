@@ -111,7 +111,7 @@ theorem p_concentration_for_scales_Cstar
       ⊆ {ω | ENNReal.ofReal (θ * ((m : ℝ) + 1))
         < ∑' j : ℤ, (Zcount X s lam m j ω : ℝ≥0∞)} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω ⊢
+    simp only [Set.mem_ofPred_eq] at hω ⊢
     rw [one_div, inv_mul_eq_div, lt_div_iff₀ hmpos] at hω
     -- hω: θ * ((m:ℝ)+1) < ∑ k, (if 9*… < Yk then 1 else 0)
     have hcast : ENNReal.ofReal (∑ k ∈ Finset.Icc (0 : ℤ) (m : ℤ),

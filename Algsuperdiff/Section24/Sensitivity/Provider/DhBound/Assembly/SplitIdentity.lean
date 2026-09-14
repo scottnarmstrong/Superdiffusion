@@ -51,7 +51,7 @@ theorem integrable_vecDot_matVecMul_grad {U : Domain d}
   have hpt : (fun x => vecDot (u.grad x) (matVecMul (h.1.1 x) (v.grad x))) =
       fun x => ∑ i, u.grad x i * matVecMul (h.1.1 x) (v.grad x) i := rfl
   rw [hpt]
-  exact integrable_finset_sum Finset.univ fun i _ =>
+  exact integrable_finsetSum Finset.univ fun i _ =>
     (u.gradMemL2 i).integrable_mul (memScalarL2_matVecMul_grad h v i)
 
 /-- The `p · h ∇v` integrand is integrable. -/
@@ -60,12 +60,12 @@ theorem integrable_vecDot_const_matVecMul_grad {U : Domain d}
     (p : Vec d) :
     Integrable (fun x => vecDot p (matVecMul (h.1.1 x) (v.grad x)))
       (volumeMeasureOn ((U : Set (Vec d)))) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn ((U : Set (Vec d)))) :=
+  have : IsFiniteMeasure (volumeMeasureOn ((U : Set (Vec d)))) :=
     U.isDomain.isFiniteMeasure_restrict_volume
   have hpt : (fun x => vecDot p (matVecMul (h.1.1 x) (v.grad x))) =
       fun x => ∑ i, p i * matVecMul (h.1.1 x) (v.grad x) i := rfl
   rw [hpt]
-  refine integrable_finset_sum Finset.univ fun i _ => ?_
+  refine integrable_finsetSum Finset.univ fun i _ => ?_
   exact ((memScalarL2_matVecMul_grad h v i).integrable one_le_two).const_mul (p i)
 
 /-! ## Average-level bookkeeping -/
@@ -84,7 +84,7 @@ theorem average_vecDot_const_eq_vecDot_averageVec {U : Domain d}
   show (MeasureTheory.volume ((U : Set (Vec d)))).toReal⁻¹ *
       ∫ x in ((U : Set (Vec d))), (∑ i, p i * G x i) ∂MeasureTheory.volume =
     ∑ i, p i * Book.Ch02.average U (fun x => G x i)
-  rw [MeasureTheory.integral_finset_sum Finset.univ
+  rw [MeasureTheory.integral_finsetSum Finset.univ
     (fun i _ => (hG i).const_mul (p i)), Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [MeasureTheory.integral_const_mul]

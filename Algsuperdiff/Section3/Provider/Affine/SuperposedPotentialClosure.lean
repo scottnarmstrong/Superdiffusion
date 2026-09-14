@@ -73,7 +73,7 @@ theorem ae_tendsto_badFamilyPotentialApproximation
     · dsimp [U]
       simpa only [Set.iUnion_subtype] using
         volume_openCubeSet_diff_iUnion_openCarrier hstep
-    · rw [Set.diff_eq_empty.mpr hUnionSub]
+    · rw [Set.sdiff_eq_empty.mpr hUnionSub]
       exact measure_empty
   have hcover : ∀ᵐ x ∂volumeMeasureOn U,
       x ∈ ⋃ T : ↑(simplexPartition (d := d) m hn), T.1.openCarrier := by
@@ -122,9 +122,9 @@ theorem potentialZeroTraceFieldOn_superposedCompetitorSlope_sub_badFamily
     (whitneyScale M m E b k₀ omega)
     (badFamily M m (whitneyScale M m E b k₀ omega) omega) p x - p
   let P := PotentialSolenoidalL2Data.ofSubmoduleClosures U
-  haveI : NeZero d :=
+  have : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
-  haveI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U) :=
+  have : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U) :=
     (isOpenBoundedConvexDomain_openCubeSet (originCube d m)).isFiniteMeasure_restrict_volume
   obtain ⟨F, hF⟩ := cauchySeq_tendsto_of_complete
     (cauchySeq_badFamilyPotentialApproximationL2 hb0 hb hk₀ hne p)
@@ -146,7 +146,7 @@ theorem potentialZeroTraceFieldOn_superposedCompetitorSlope_sub_badFamily
       Filter.atTop ⇑F := by
     refine hLpMeasure.congr_left fun N => ?_
     simpa only [U, badFamilyPotentialApproximationL2,
-      badFamilyPotentialApproximation] using
+      badFamilyPotentialApproximation] using!
       coeFn_toVectorL2
         (potentialZeroTraceFieldOn_badFamily_activeComponentPrefix
           hb0 hb hk₀ hne N p).1

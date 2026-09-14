@@ -184,8 +184,8 @@ theorem meanSquareOscillationVecOn_le_volumeAverage_vecNormSq {V : Set (Vec d)}
     unfold volumeAverage vecNormSq vecDot
     rw [← Finset.mul_sum]
     congr 1
-    rw [MeasureTheory.integral_finset_sum Finset.univ
-      (fun k _ => by simpa [pow_two] using (hcoordsq k))]
+    rw [MeasureTheory.integral_finsetSum Finset.univ
+      (fun k _ => by simpa [pow_two] using! (hcoordsq k))]
     refine Finset.sum_congr rfl fun k _ => ?_
     exact integral_congr_ae (Filter.Eventually.of_forall fun x => by ring)
   calc Book.Ch01.meanSquareOscillationVecOn V u

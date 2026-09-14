@@ -145,7 +145,7 @@ theorem exists_superposedFluxLowerPointwiseRepresentative
       (bfaProfileSigma_pos hsigma) (bfaProfileSigma_le_one_half hsigmaHalf)
       bfaProfileB_pos bfaProfileB_le_one_eighth hEexp hE4 hunit hgamma20
       hinvSq hEb hgammaZ hk₀three heps hbeta hbeta9 hbetab hgammaWin hcap
-    simpa [P, superposedFluxSharpDepthConst, superposedFluxSharpDepthRandom] using hsharp
+    simpa [P, superposedFluxSharpDepthConst, superposedFluxSharpDepthRandom] using! hsharp
   obtain ⟨N, hsubN, hNmeas, hN0⟩ :=
     exists_measurable_superset_of_null (ae_iff.mp hae)
   let H : ℝ := superposedFluxCutoffCap M m
@@ -181,7 +181,7 @@ theorem exists_superposedFluxLowerPointwiseRepresentative
         (superposedFluxSharpDepthAmp M m E sigma n.pred) := by
       refine Homogenization.Book.Ch04.IsBigOWith.gammaSigma_mono_exponent htau ?_
       simpa [superposedFluxSharpDepthRandom, superposedFluxSharpDepthAmp,
-        superposedFluxSharpDepthConst, superposedFluxSharpDepthRare] using hsharp.2
+        superposedFluxSharpDepthConst, superposedFluxSharpDepthRare] using! hsharp.2
     have hcappedO : IsBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma ((1 - sigma) / 2)) (capped n)
         (superposedFluxSharpDepthAmp M m E sigma n.pred) :=
@@ -215,7 +215,6 @@ theorem exists_superposedFluxLowerPointwiseRepresentative
         Real.rpow_le_rpow_of_exponent_le (by norm_num)
           (mul_le_mul_of_nonneg_left (by exact_mod_cast hpred)
             M.shellPrefix.gamma_pos.le)
-      unfold superposedFluxSharpDepthConst at hprof
       unfold superposedFluxSharpDepthConst finiteQGeometricProfile
       calc
         2 * superposedFluxSharpConst M (m - 1 - (n.pred : ℤ)) (m - 1)

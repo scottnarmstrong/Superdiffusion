@@ -31,10 +31,8 @@ noncomputable section
 
 private theorem continuous_fullBlockReflect {d : ℕ} :
     Continuous (fullBlockReflect (d := d)) := by
-  rw [continuous_pi_iff]
-  intro alpha
-  rw [continuous_pi_iff]
-  intro beta
+  refine continuous_pi_iff.2 fun alpha => ?_
+  refine continuous_pi_iff.2 fun beta => ?_
   cases alpha <;> cases beta <;>
     simp [fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect] <;>
     fun_prop
@@ -98,7 +96,7 @@ theorem aemeasurable_cutoffCoarseFullBlockRaw {d : ℕ}
         (Measure.map (Cutoff.coefficientCutoff M.nu coefficientScale)
           (Cutoff.cutoffSampleLaw M).toMeasure) := by
     simpa only [Cutoff.coefficientCutoffLaw_eq_map] using hcoarse
-  simpa only [cutoffCoarseFullBlockRaw, Function.comp_def] using
+  simpa only [cutoffCoarseFullBlockRaw, Function.comp_def] using!
     hmap.comp_measurable (Cutoff.measurable_coefficientCutoff M.nu coefficientScale)
 
 /-- The common coarse-block representative on actual cutoff samples.  It is the
@@ -283,7 +281,7 @@ noncomputable def unitSphereOfFullBlockVec {d : ℕ} (e : FullBlockVec d)
   refine ⟨WithLp.toLp 2 e, mem_sphere_zero_iff_norm.mpr ?_⟩
   have hsq : ‖WithLp.toLp 2 e‖ ^ 2 = 1 := by
     rw [EuclideanSpace.norm_sq_eq]
-    simpa only [WithLp.ofLp_toLp, Real.norm_eq_abs, sq_abs] using he
+    simpa only [WithLp.ofLp_toLp, Real.norm_eq_abs, sq_abs] using! he
   nlinarith [norm_nonneg (WithLp.toLp 2 e)]
 
 /-- On any full coarse matrix whose normalized quadratic response is nonnegative on
@@ -308,7 +306,7 @@ theorem normalizedBlockResponseMaxFromFullCoarseBlock_eq_representativeFunctiona
         (ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) e))}
   have hsphere : (Metric.sphere (0 : EuclideanSpace ℝ (BlockCoord d)) 1).Nonempty :=
     NormedSpace.sphere_nonempty.mpr zero_le_one
-  letI : Nonempty (FullBlockUnitSphere d) := hsphere.to_subtype
+  let : Nonempty (FullBlockUnitSphere d) := hsphere.to_subtype
   have hSne : S.Nonempty := by
     rcases hsphere with ⟨u, hu⟩
     let u' : FullBlockUnitSphere d := ⟨u, hu⟩
@@ -319,7 +317,7 @@ theorem normalizedBlockResponseMaxFromFullCoarseBlock_eq_representativeFunctiona
     rintro value ⟨e, he, rfl⟩
     let u := unitSphereOfFullBlockVec e he
     simpa [f, normalizedBlockResponseQuadraticMap,
-      normalizedBlockResponseQuadraticOnUnitSphere, u] using f.apply_le_norm u
+      normalizedBlockResponseQuadraticOnUnitSphere, u] using! f.apply_le_norm u
   have hbdd : BddAbove S := ⟨‖f‖, hupper⟩
   change sSup S = ‖f‖
   apply le_antisymm

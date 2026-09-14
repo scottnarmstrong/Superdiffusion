@@ -97,7 +97,7 @@ theorem gamma_pos_of_kap {kap cstar gam : ℝ} (hkap0 : 0 < kap) (hcstar : 0 < c
     (hkap : gam * kap ^ 2 = cstar) : 0 < gam := by
   have hk2 : (0 : ℝ) < kap ^ 2 := by positivity
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have : gam * kap ^ 2 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hcon hk2.le
   linarith only [this, hkap, hcstar]
 
@@ -226,7 +226,7 @@ theorem uglyPatch2 {Cs Cl Cr Cp A cstar gam kap Pm Pn Q W Wg GF2 lamInv sigm sig
   have hCl0 : 0 ≤ Cl * Q := le_trans (mul_nonneg hsign0.le hlamInv) hlam
   have hCl : 0 ≤ Cl := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hneg : Cl * Q < 0 := mul_neg_of_neg_of_pos hcon hQ0
     linarith only [hCl0, hneg]
   have hCr : 0 ≤ Cr := le_trans (mul_nonneg hsigminv.le hsign0.le) hratio
@@ -414,7 +414,7 @@ theorem uglyJEstimate_core
   have hCl0 : 0 ≤ Cl * Q := le_trans (mul_nonneg hsign0.le hlamInv) hlam
   have hCl : 0 ≤ Cl := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hneg : Cl * Q < 0 := mul_neg_of_neg_of_pos hcon hQ0
     linarith only [hCl0, hneg]
   -- the four patches
@@ -704,7 +704,7 @@ theorem uglyJEstimate_of_sensitivity
     le_trans (mul_nonneg hsign0.le hlamInv) hlam
   have hCl : 0 ≤ Cl := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hneg : Cl * (3 : ℝ) ^ (gam * q) < 0 :=
       mul_neg_of_neg_of_pos hcon (three_rpow_pos _)
     linarith only [hClQ, hneg]

@@ -250,26 +250,26 @@ theorem norm_toEuclideanCLM_diagonal_mul_mul_diagonal_le (s t : ℝ) (X : FullBl
   have hUL : (ofFullBlockMat (D * X * D)).upperLeft =
       (s * s) • (ofFullBlockMat X).upperLeft := by
     ext i j
-    simp only [hD, ofFullBlockMat, Matrix.mul_diagonal, Matrix.diagonal_mul,
-      Sum.elim_inl, Matrix.smul_apply, smul_eq_mul]
+    show (D * X * D) (Sum.inl i) (Sum.inl j) = s * s * X (Sum.inl i) (Sum.inl j)
+    simp only [hD, Matrix.mul_diagonal, Matrix.diagonal_mul, Sum.elim_inl]
     ring
   have hUR : (ofFullBlockMat (D * X * D)).upperRight =
       (s * t) • (ofFullBlockMat X).upperRight := by
     ext i j
-    simp only [hD, ofFullBlockMat, Matrix.mul_diagonal, Matrix.diagonal_mul,
-      Sum.elim_inl, Sum.elim_inr, Matrix.smul_apply, smul_eq_mul]
+    show (D * X * D) (Sum.inl i) (Sum.inr j) = s * t * X (Sum.inl i) (Sum.inr j)
+    simp only [hD, Matrix.mul_diagonal, Matrix.diagonal_mul, Sum.elim_inl, Sum.elim_inr]
     ring
   have hLL : (ofFullBlockMat (D * X * D)).lowerLeft =
       (s * t) • (ofFullBlockMat X).lowerLeft := by
     ext i j
-    simp only [hD, ofFullBlockMat, Matrix.mul_diagonal, Matrix.diagonal_mul,
-      Sum.elim_inl, Sum.elim_inr, Matrix.smul_apply, smul_eq_mul]
+    show (D * X * D) (Sum.inr i) (Sum.inl j) = s * t * X (Sum.inr i) (Sum.inl j)
+    simp only [hD, Matrix.mul_diagonal, Matrix.diagonal_mul, Sum.elim_inl, Sum.elim_inr]
     ring
   have hLR : (ofFullBlockMat (D * X * D)).lowerRight =
       (t * t) • (ofFullBlockMat X).lowerRight := by
     ext i j
-    simp only [hD, ofFullBlockMat, Matrix.mul_diagonal, Matrix.diagonal_mul,
-      Sum.elim_inr, Matrix.smul_apply, smul_eq_mul]
+    show (D * X * D) (Sum.inr i) (Sum.inr j) = t * t * X (Sum.inr i) (Sum.inr j)
+    simp only [hD, Matrix.mul_diagonal, Matrix.diagonal_mul, Sum.elim_inr]
     ring
   have hbound := norm_toEuclideanCLM_le_sum_matrixOperatorNorm_blocks (D * X * D)
   rw [hUL, hUR, hLL, hLR, matrixOperatorNorm_smul, matrixOperatorNorm_smul,

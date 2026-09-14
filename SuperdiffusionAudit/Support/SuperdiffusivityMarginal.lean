@@ -132,8 +132,8 @@ private theorem lintegral_onePointLiveExtension (t : ℝ) :
     (∫⁻ path, onePointLiveExtension (ENNReal.ofReal ∘ f) (path t.toNNReal)
         ∂streamProcess M omega (x : OnePoint (Vec d))) =
       ENNReal.ofReal (∫ path, f (path t.toNNReal) ∂liveLaw M omega x) := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   have hFenn : Measurable (onePointLiveExtension (ENNReal.ofReal ∘ f)) :=
     measurable_onePointLiveExtension (ENNReal.measurable_ofReal.comp hcont.measurable)
   have hmeas : Measurable fun path : ContinuousPath (OnePoint (Vec d)) =>
@@ -159,8 +159,8 @@ theorem integral_exp_neg_mul_liveLaw :
         ∫ path, f (path s.toNNReal) ∂liveLaw M omega x) =
       ((streamWholeSpaceAnalyticData M omega).analyticMinimalResolvent ⟨lam, hlam⟩ f
         hcont.measurable hf1 x).toReal := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   set g : ℝ → ℝ := fun s => ∫ path, f (path s.toNNReal) ∂liveLaw M omega x with hg
   have hg0 : ∀ s, 0 ≤ g s := fun s =>
     integral_nonneg fun path => hf0 _
@@ -183,10 +183,15 @@ theorem integral_exp_neg_mul_liveLaw :
       (Set.range ((↑) : Vec d → OnePoint (Vec d))) OnePoint.isOpen_range_coe lam
       (onePointLiveExtension (ENNReal.ofReal ∘ f)) (x : OnePoint (Vec d)) =
       ∫⁻ t in Set.Ioi (0 : ℝ), ENNReal.ofReal (Real.exp (-lam * t) * g t) := by
-    rw [IsConservative.killedResolvent]
+    unfold IsConservative.killedResolvent
     refine setLIntegral_congr_fun measurableSet_Ioi fun t _ => ?_
-    rw [IsConservative.lintegral_killedKernel _ _ _ _ _ _ hFenn,
-      ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    have hkk := IsConservative.lintegral_killedKernel
+      (streamWholeSpaceResolvent M omega).onePointKernelSemigroup
+      (streamWholeSpaceResolvent M omega).isConservative_onePointKernelSemigroup
+      (Set.range ((↑) : Vec d → OnePoint (Vec d))) OnePoint.isOpen_range_coe
+      (Real.toNNReal t) (x : OnePoint (Vec d)) hFenn
+    refine Eq.trans (congrArg (fun z => ENNReal.ofReal (Real.exp (-lam * t)) * z) hkk) ?_
+    rw [ENNReal.ofReal_mul (Real.exp_nonneg _)]
     congr 1
     rw [← streamProcess_eq M omega,
       ← lintegral_onePointLiveExtension M omega hcont hf0 hf1 x t]
@@ -194,8 +199,7 @@ theorem integral_exp_neg_mul_liveLaw :
     filter_upwards [streamProcess_ae_stays_live M omega x] with path hpath
     refine Set.indicator_of_mem ?_ _
     show ((t.toNNReal : NNReal) : ℝ≥0∞) < ContinuousPath.exitTime _ path
-    rw [hpath]
-    exact ENNReal.coe_lt_top
+    exact lt_of_lt_of_eq ENNReal.coe_lt_top hpath.symm
   have hlive := (streamReg M omega).killedResolvent_live_eq_kernelResolvent lam
     (ENNReal.measurable_ofReal.comp hcont.measurable) x
   have hker := kernelResolventIdentifiesAnalyticMinimal_stream M omega ⟨lam, hlam⟩
@@ -324,7 +328,7 @@ theorem integral_eval_eq_of_isDiffusionOf (Q : Vec d → Measure (ContinuousPath
     {f : Vec d → ℝ}
     (hf : IsResolventTest f) (x : Vec d) {t : ℝ} (ht : 0 < t) :
     (∫ path, f (path t.toNNReal) ∂Q x) = ∫ path, f (path t.toNNReal) ∂liveLaw M omega x := by
-  haveI := hQ.1 x
+  have := hQ.1 x
   obtain ⟨C, -, hC⟩ := exists_bound_isResolventTest hf
   refine LaplaceUniqueness.eq_of_integral_exp_neg_mul_eq (B := C)
     (continuous_pathIntegral (Q x) hf.1 hC)
@@ -344,13 +348,13 @@ theorem map_eval_eq_liveLaw (Q : Vec d → Measure (ContinuousPath (Vec d)))
     Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal) (Q x) =
       Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal)
         (liveLaw M omega x) := by
-  haveI := hQ.1 x
+  have := hQ.1 x
   have hevm : Measurable fun path : ContinuousPath (Vec d) => path t.toNNReal :=
     ContinuousPath.measurable_coordinateProcess (alpha := Vec d) t.toNNReal
-  haveI : IsProbabilityMeasure
+  have : IsProbabilityMeasure
       (Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal) (Q x)) :=
     Measure.isProbabilityMeasure_map hevm.aemeasurable
-  haveI : IsProbabilityMeasure
+  have : IsProbabilityMeasure
       (Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal)
         (liveLaw M omega x)) := Measure.isProbabilityMeasure_map hevm.aemeasurable
   have hnonneg : ∀ psi : Vec d → ℝ, Continuous psi → HasCompactSupport psi →
@@ -395,7 +399,7 @@ theorem map_eval_eq_liveLaw (Q : Vec d → Measure (ContinuousPath (Vec d)))
   have hsub : ∀ mu : Measure (Vec d), IsFiniteMeasure mu →
       (∫ y, phi y ∂mu) = (∫ y, p y ∂mu) - ∫ y, n y ∂mu := by
     intro mu hmu
-    haveI := hmu
+    have := hmu
     rw [← integral_sub (integrable_of_bounded hpc hpC) (integrable_of_bounded hnc hnC)]
     exact integral_congr_ae (Filter.Eventually.of_forall hsplit)
   rw [hsub _ inferInstance, hsub _ inferInstance,
@@ -415,8 +419,8 @@ theorem integral_eval_eq_streamProcess {E : Type*} [NormedAddCommGroup E] [Norme
     (∫ path, G (path t.toNNReal) ∂Q x) =
       ∫ path, G (onePointRetract (0 : Vec d) (path t.toNNReal))
         ∂streamProcess M omega (x : OnePoint (Vec d)) := by
-  letI := (streamReg M omega).metricSpace
-  letI := (streamReg M omega).completeSpace
+  let := (streamReg M omega).metricSpace
+  let := (streamReg M omega).completeSpace
   have hevm : Measurable fun path : ContinuousPath (Vec d) => path t.toNNReal :=
     ContinuousPath.measurable_coordinateProcess (alpha := Vec d) t.toNNReal
   have hstep : (∫ path, G (path t.toNNReal) ∂Q x) =

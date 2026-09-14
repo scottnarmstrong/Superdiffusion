@@ -233,7 +233,7 @@ theorem tsum_partialWeight_le {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (m k : ℤ
             rw [rpow_add_three]
             rfl
     · rw [if_neg hn]
-      exact zero_le _
+      exact zero_le
   refine le_trans (ENNReal.tsum_le_tsum hterm) ?_
   rw [ENNReal.tsum_mul_right]
   refine mul_le_mul' ?_ le_rfl

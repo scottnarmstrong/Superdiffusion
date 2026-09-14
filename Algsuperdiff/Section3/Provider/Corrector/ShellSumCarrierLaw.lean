@@ -96,9 +96,9 @@ theorem measurable_shellSumValuePath (n m : ℤ) :
     Measurable (shellSumValuePath (d := d) n m) := by
   -- The two carrier facts making the compact-open path space second countable,
   -- hence its (continuous) addition jointly measurable for the Borel field.
-  haveI : SecondCountableTopology (Mat d) :=
+  have : SecondCountableTopology (Mat d) :=
     inferInstanceAs (SecondCountableTopology (Fin d → Fin d → ℝ))
-  haveI : Filter.IsCountablyGenerated (uniformity (Mat d)) :=
+  have : Filter.IsCountablyGenerated (uniformity (Mat d)) :=
     inferInstanceAs (Filter.IsCountablyGenerated (uniformity (Fin d → Fin d → ℝ)))
   exact Finset.measurable_sum _ fun k _ =>
     ShellField.measurable_valuePath.comp (measurable_pi_apply k)

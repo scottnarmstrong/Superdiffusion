@@ -111,7 +111,7 @@ theorem potentialBilin_apply
     (u v : ZeroTraceSobolev U) :
     potentialBilin (α := α) hEll q hq u v =
       shiftedPotentialBilin a α q U u v := by
-  simp only [potentialBilin, ContinuousLinearMap.add_apply,
+  simp only [potentialBilin, add_apply,
     ContinuousLinearMap.bilinearComp_apply, ContinuousLinearMap.comp_apply,
     shiftedPotentialBilin]
   change shiftedBilin hEll α u v +
@@ -141,7 +141,7 @@ private theorem potentialBilin_lower_bound
         inner ℝ (potentialMul q hq (toL2 u)) (toL2 u) :=
       le_add_of_nonneg_right (potentialTerm_nonneg hq u)
     _ = potentialBilin (α := α) hEll q hq u u := by
-      simp only [potentialBilin, ContinuousLinearMap.add_apply,
+      simp only [potentialBilin, add_apply,
         ContinuousLinearMap.bilinearComp_apply, ContinuousLinearMap.comp_apply]
       rfl
 
@@ -329,7 +329,7 @@ theorem potentialSolution_resolvent_identity
       ((β - α) • potentialResolvent a hβ hlam hEll q hq f) := by
     intro v
     rw [← potentialBilin_apply hEll q hq]
-    rw [map_sub, ContinuousLinearMap.sub_apply]
+    rw [map_sub, sub_apply]
     rw [potentialBilin_apply hEll q hq, potentialBilin_apply hEll q hq]
     change shiftedPotentialBilin a α q U uα v -
       shiftedPotentialBilin a α q U uβ v = _
@@ -361,7 +361,7 @@ theorem potentialResolvent_resolvent_identity
         (potentialResolvent a hβ hlam hEll q hq)) := by
   apply ContinuousLinearMap.ext
   intro f
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
+  simp only [sub_apply, smul_apply,
     ContinuousLinearMap.comp_apply, potentialResolvent_apply]
   rw [← map_sub,
     potentialSolution_resolvent_identity a hα hβ hlam hEll q hq f, map_smul]

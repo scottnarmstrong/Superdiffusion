@@ -69,7 +69,7 @@ theorem zeroShell_translatedUnitCubeControl_gaussian_tail (M : ABKModel d)
         {j | t < translatedUnitCubeControl z j} =
         Measure.map (translatedUnitCubeControl z)
           (ShellField.zeroShellLaw M.P).toMeasure {x | t < x} := by
-      simpa only [Set.preimage_setOf_eq] using
+      simpa only [Set.preimage_ofPred_eq] using!
         (Measure.map_apply_of_aemeasurable
           (measurable_translatedUnitCubeControl z).aemeasurable
           (measurableSet_lt measurable_const measurable_id)).symm
@@ -77,7 +77,7 @@ theorem zeroShell_translatedUnitCubeControl_gaussian_tail (M : ABKModel d)
           (ShellField.zeroShellLaw M.P).toMeasure {x | t < x} := by rw [hmap]
     _ = (ShellField.zeroShellLaw M.P).toMeasure
           {j | t < ShellField.unitCubeValueNorm j} := by
-      simpa only [Set.preimage_setOf_eq] using
+      simpa only [Set.preimage_ofPred_eq] using!
         Measure.map_apply_of_aemeasurable ShellField.unitCubeValueNorm_measurable.aemeasurable
           (measurableSet_lt measurable_const measurable_id)
     _ ≤ _ := htail
@@ -104,10 +104,10 @@ theorem integrable_originCubeUnitControlMax_zero (M : ABKModel d)
       (ShellField.zeroShellLaw M.P).toMeasure {j | 1 * t < X R j} ≤
         ENNReal.ofReal (Real.exp (-(t ^ (2 : ℝ)))) := by
     intro R _ t ht
-    simpa only [one_mul, X, ← Real.rpow_natCast] using
+    simpa only [one_mul, X, ← Real.rpow_natCast] using!
       zeroShell_translatedUnitCubeControl_gaussian_tail M
         (triadicCubeShift R) t ht
-  simpa only [originCubeUnitControlMax, S, X, hS] using
+  simpa only [originCubeUnitControlMax, S, X, hS] using!
     Algsuperdiff.Probability.integrable_finset_sup'_of_gaussian_tail
       (μ := (ShellField.zeroShellLaw M.P).toMeasure) hS (by norm_num : (0 : ℝ) < 1)
       hNonneg hMeas hTail
@@ -136,10 +136,10 @@ theorem integral_originCubeUnitControlMax_zero_le (M : ABKModel d)
       (ShellField.zeroShellLaw M.P).toMeasure {j | 1 * t < X R j} ≤
         ENNReal.ofReal (Real.exp (-(t ^ (2 : ℝ)))) := by
     intro R _ t ht
-    simpa only [one_mul, X, ← Real.rpow_natCast] using
+    simpa only [one_mul, X, ← Real.rpow_natCast] using!
       zeroShell_translatedUnitCubeControl_gaussian_tail M
         (triadicCubeShift R) t ht
-  simpa only [originCubeUnitControlMax, S, X, hS, mul_one, gaussianMaximumDimConst] using
+  simpa only [originCubeUnitControlMax, S, X, hS, mul_one, gaussianMaximumDimConst] using!
     Algsuperdiff.Probability.integral_finset_sup'_le_of_gaussian_tail_of_card_eq_three_pow_sqrt
       (μ := (ShellField.zeroShellLaw M.P).toMeasure) hS
       (by norm_num : (0 : ℝ) < 1) hCard hNonneg hMeas hTail
@@ -167,7 +167,7 @@ theorem integrable_localCubeControl_under_zeroShellLaw_of_nonpos (M : ABKModel d
     apply (integrable_map_measure
       ShellField.unitCubeValueNorm_measurable.aestronglyMeasurable
       ShellField.measurable_zeroShellMap.aemeasurable).mpr
-    simpa only [Function.comp_apply] using integrable_unitCubeValueNorm_zero M
+    simpa only [Function.comp_apply] using! integrable_unitCubeValueNorm_zero M
   apply hUnit.mono'
   · exact (measurable_localCubeControl q).aestronglyMeasurable
   · filter_upwards with j

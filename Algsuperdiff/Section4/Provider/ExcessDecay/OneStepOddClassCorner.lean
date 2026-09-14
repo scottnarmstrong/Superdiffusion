@@ -126,7 +126,7 @@ theorem normalizedL2On_evenAffinePart_slab_le {m : ℤ} {x : Vec d} {face : Fin 
   have heP : MemLp (evenAffinePart x m face c' A') 2 (volume.restrict P) := by
     rw [evenAffinePart]
     exact memLp_affineEval_coordBox loP hiP _ _
-  haveI : IsFiniteMeasure (volume.restrict P) := by
+  have : IsFiniteMeasure (volume.restrict P) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_of_le_of_ne le_top (volume_coordBox_ne_top _ _)

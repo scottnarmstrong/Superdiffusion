@@ -84,7 +84,7 @@ private theorem measurable_intFamily_apply {Omega : Type*} [MeasurableSpace Omeg
     exact (hij (homega.1.symm.trans homega.2)).elim)
   have hEq : f = fun omega => F (m omega) omega := by
     funext omega
-    exact hfon (m omega) (by simp only [sets, Set.mem_setOf_eq])
+    exact hfon (m omega) (by simp only [sets, Set.mem_ofPred_eq])
   rw [← hEq]
   exact hf
 

@@ -646,7 +646,7 @@ theorem isBigOWith_gammaSigma_one_good_head_tuned_ordinary_coordinate_lane_comp
       simpa only [goodHeadTunedCoordinateLane,
         goodHeadTunedCoordinateScale,
         goodHeadTunedOrdinaryCoordinateLane,
-        goodHeadTunedOrdinaryCoordinateScale] using hordinary)
+        goodHeadTunedOrdinaryCoordinateScale] using! hordinary)
 
 theorem isBigOWith_upperProfileTarget_good_head_tuned_rare_coordinate_lane_comp
     (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
@@ -684,7 +684,7 @@ theorem isBigOWith_upperProfileTarget_good_head_tuned_rare_coordinate_lane_comp
       (goodHeadTunedCoordinateLane M R.scale (E : ℝ) k j)
       (goodHeadTunedCoordinateScale M (E : ℝ) sigma k j) := by
     simpa only [goodHeadTunedCoordinateLane,
-      goodHeadTunedCoordinateScale] using hcenter
+      goodHeadTunedCoordinateScale] using! hcenter
   have hproduct := isBigOWith_upperProfileTarget_hsep_mul_one
     hsigma0 hsigma
     (upperHsepResidualScale_pos sigma M.gamma).le
@@ -698,7 +698,7 @@ theorem isBigOWith_upperProfileTarget_good_head_tuned_rare_coordinate_lane_comp
       (goodHeadTunedRareCoordinateLane M R.scale (E : ℝ) k j)
       (goodHeadTunedRareCoordinateScale M (E : ℝ) sigma k j) := by
     simpa only [goodHeadTunedRareCoordinateLane,
-      goodHeadTunedRareCoordinateScale] using hproduct
+      goodHeadTunedRareCoordinateScale] using! hproduct
   have htranslated :=
     Algsuperdiff.Section3.Provider.Stream.isBigOWith_comp_translateCutoffSample
       M (triadicCubeShift R)

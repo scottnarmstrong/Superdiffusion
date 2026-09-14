@@ -64,7 +64,7 @@ theorem exists_h1_oddCompetitor_affineSplit {m k : ℤ} {x : Vec d}
     ∃ vodd : H1Function (truncatedWindow x m k),
       IsWeaklyHarmonicOn (truncatedWindow x m k) vodd ∧
       ∀ y, vodd.toFun y = v.toFun y - affineLift x cl Al y - v₁.toFun y := by
-  haveI : IsFiniteMeasure (Homogenization.volumeMeasureOn (truncatedWindow x m k)) :=
+  have : IsFiniteMeasure (Homogenization.volumeMeasureOn (truncatedWindow x m k)) :=
     (isOpenBoundedConvexDomain_truncatedWindow x m k).isFiniteMeasure_restrict_volume
   set hSob := (isOpenBoundedConvexDomain_truncatedWindow x m k).isSobolevRegularDomain
     with hSobdef

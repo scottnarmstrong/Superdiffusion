@@ -104,7 +104,9 @@ theorem norm_le_sqrt_dim_mul_matrixDerivativeNorm (D : ShellField.MatrixDerivati
   rcases eq_or_lt_of_le (norm_nonneg v) with hv | hv
   · have hv0 : v = 0 := by rwa [eq_comm, norm_eq_zero] at hv
     subst hv0
-    simp only [map_zero, norm_zero, mul_zero, le_refl]
+    show ‖D 0‖ ≤ Real.sqrt d * ShellField.matrixDerivativeNorm D * ‖(0 : Vec d)‖
+    have hD0 : D 0 = 0 := map_zero D
+    simp only [hD0, norm_zero, mul_zero, le_refl]
   · obtain ⟨hs, hunit⟩ := exists_unit_rescale hv
     have hpos : 0 < Real.sqrt d * ‖v‖ := mul_pos hs hv
     set c : ℝ := (Real.sqrt d * ‖v‖)⁻¹ with hc
@@ -147,7 +149,9 @@ theorem norm_le_dim_mul_matrixSecondDerivativeNorm
   rcases eq_or_lt_of_le (norm_nonneg v) with hv | hv
   · have hv0 : v = 0 := by rwa [eq_comm, norm_eq_zero] at hv
     subst hv0
-    simp only [map_zero, norm_zero, mul_zero, le_refl]
+    show ‖H 0‖ ≤ (d : ℝ) * ShellField.matrixSecondDerivativeNorm H * ‖(0 : Vec d)‖
+    have hH0 : H 0 = 0 := map_zero H
+    simp only [hH0, norm_zero, mul_zero, le_refl]
   · obtain ⟨hs, hunit⟩ := exists_unit_rescale hv
     have hpos : 0 < Real.sqrt d * ‖v‖ := mul_pos hs hv
     set c : ℝ := (Real.sqrt d * ‖v‖)⁻¹ with hc
@@ -230,7 +234,7 @@ theorem matrixSecondDerivativeNorm_secondDeriv_sum_le {iota : Type*} (s : Finset
       ShellField.matrixSecondDerivativeNorm (0 : ShellField.MatrixSecondDerivative d) ≤ 0 := by
     rw [ShellField.matrixSecondDerivativeNorm_le_iff]
     refine ⟨le_rfl, fun u _ => ?_⟩
-    simpa only [ContinuousLinearMap.zero_apply, norm_zero, mul_zero] using
+    simpa only [zero_apply, norm_zero, mul_zero] using
       ShellField.matrixDerivativeNorm_le_sq_mul_norm (0 : ShellField.MatrixDerivative d)
   exact Finset.le_sum_of_subadditive (ShellField.matrixSecondDerivativeNorm (d := d)) hzero
     ShellField.matrixSecondDerivativeNorm_add_le s (fun i => ShellField.secondDeriv (f i) x)

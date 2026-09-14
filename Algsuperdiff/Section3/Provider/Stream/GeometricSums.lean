@@ -165,7 +165,7 @@ private theorem div_mul_mul_cancel {a b c : ℝ} (hc : c ≠ 0) :
 private theorem one_sub_inv_mul_sum_zpow {r : ℝ} (hr : r ≠ 0) {n m : ℤ}
     (hnm : n ≤ m) :
     (1 - r⁻¹) * ∑ j ∈ Finset.Ioc n m, r ^ j = r ^ m - r ^ n := by
-  induction m, hnm using Int.le_induction with
+  induction m, hnm using Int.leInduction with
   | base => simp
   | succ k hk ih =>
       have hins : Finset.Ioc n (k + 1) = insert (k + 1) (Finset.Ioc n k) := by

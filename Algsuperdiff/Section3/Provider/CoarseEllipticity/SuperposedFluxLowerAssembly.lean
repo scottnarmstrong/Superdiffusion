@@ -202,7 +202,7 @@ theorem superposedFlux_coarse_ellipticity_lower_large_scale
         (-((superposedFluxLowerConst d)⁻¹ * ((E : ℝ)⁻¹) ^ 2 *
           M.gamma⁻¹))) := by
   have hd : 2 ≤ d := M.shellPrefix.dimension
-  letI : NeZero d := ⟨by omega⟩
+  let : NeZero d := ⟨by omega⟩
   have hdet16 := sharpDet_le_superposedFluxLowerConst d
   have hdet8 : 8 * superposedFluxSharpDetConst d ≤
       superposedFluxLowerConst d := by

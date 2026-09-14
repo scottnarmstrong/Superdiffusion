@@ -94,7 +94,7 @@ private theorem fromOriginWitness_solution (M : ABKModel d) (n : ℤ) (y : Vec d
     0 n u g).1 hu
   rw [originPullback_zero] at hu'
   rw [coefficientCutoff_add_eq_translateCutoffSample]
-  simpa [add_comm] using hu'
+  simpa [add_comm] using! hu'
 
 private theorem eLpNorm_sub_toOrigin_eq (n : ℤ) (y : Vec d)
     (u v : H1Function (cubeSetAt y n)) :
@@ -108,9 +108,9 @@ private theorem eLpNorm_sub_toOrigin_eq (n : ℤ) (y : Vec d)
     by
       have hu := u.memL2.aestronglyMeasurable
       have hv := v.memL2.aestronglyMeasurable
-      simpa only [cubeSetAt_eq_translateSet, Pi.sub_apply] using hu.sub hv
+      simpa only [cubeSetAt_eq_translateSet, Pi.sub_apply] using! hu.sub hv
   simpa only [Function.comp_apply, cubeSetAt_zero, cubeSetAt_eq_translateSet,
-    translateSet_zero, add_comm] using
+    translateSet_zero, add_comm] using!
     (eLpNorm_comp_measurePreserving hmeas
       (measurePreserving_addRight_restrict_translateSet y
         (openCubeSet (originCube d n))) :
@@ -131,9 +131,9 @@ private theorem eLpNorm_sub_fromOrigin_eq (n : ℤ) (y : Vec d)
     by
       have hu := u.memL2.aestronglyMeasurable
       have hv := v.memL2.aestronglyMeasurable
-      simpa only [cubeSetAt_zero, Pi.sub_apply] using hu.sub hv
+      simpa only [cubeSetAt_zero, Pi.sub_apply] using! hu.sub hv
   simpa only [Function.comp_apply, cubeSetAt_zero, cubeSetAt_eq_translateSet,
-    translateSet_zero] using
+    translateSet_zero] using!
     (eLpNorm_comp_measurePreserving hmeas
       (measurePreserving_subRight_restrict_translateSet y
         (openCubeSet (originCube d n))) :

@@ -131,8 +131,8 @@ theorem measure_exitTime_le_canonicalChain_of_percolation_crossing_streamProcess
   have hqB : ∀ z, Good z → omega.1 ∈ qEvent M Creg CevB n (rescaledLatticePoint n z) ep :=
     fun z hz =>
       qEvent_antitone_const M Creg hCevB (le_max_right _ _) n _ hepnn ((hGood z).1 hz)
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   have hjoint : ∀ j : Fin (goodSites ((m - n).toNat + 1) Good).card,
       IsCubeExitTimeSolutionDataStream M n omega (OnePoint (Vec d))
         (streamWholeSpaceResolvent M omega).onePointKernelSemigroup

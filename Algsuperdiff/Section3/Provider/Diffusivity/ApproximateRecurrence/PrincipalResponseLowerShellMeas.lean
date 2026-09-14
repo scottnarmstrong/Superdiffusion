@@ -147,7 +147,7 @@ private theorem measurable_cutoffSampleLocal_blockMatEntry_coarseBlockMatrix
         blockMatEntry
           (coarseBlockMatrix (cubeSet R)
             (coefficientCutoff M.nu lowScale omega).toFun) alpha beta := by
-  letI : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M lowScale U
+  let : MeasurableSpace (CutoffSample d) := cutoffSampleLocalSigma M lowScale U
   cases alpha with
   | inl i =>
     cases beta with

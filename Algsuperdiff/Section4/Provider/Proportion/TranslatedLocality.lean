@@ -204,7 +204,7 @@ theorem measurable_cgExcess_annulusRegion_local (M : ABKModel d) (Ccg : ℝ) {n 
     (hv : v ∈ Support.latticeAnnulusSet d j n (n - 1)) :
     Measurable[Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)]
       (fun omega => Localize.cgExcess M Ccg j (Support.triadicLatticePoint j v) omega) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) :=
+  let : MeasurableSpace (Cutoff.CutoffSample d) :=
     Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)
   have hlit := measurable_cutoffLowerEllipticityInvLiteral_translate_cutoffSampleLocal
     M j j (n - 2) v (cubeSet_latticeCube_subset_annulusRegion (by omega) hv) hj
@@ -252,7 +252,7 @@ theorem measurable_Ycal_local_of_annulusFinset (M : ABKModel d) (Ccg sprime : �
           (Support.triadicLatticePoint (k - 2) v) omega)) :
     Measurable[Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)]
       (Ycal M Ccg sprime n) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) :=
+  let : MeasurableSpace (Cutoff.CutoffSample d) :=
     Cutoff.cutoffSampleLocalSigma M (n - 2) (annulusRegion d n)
   refine measurable_wsum fun j => ?_
   exact measurable_fmax_of_mem _ fun v hv => hatomloc (n - (j : ℤ)) (by omega) v hv

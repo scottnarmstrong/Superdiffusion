@@ -238,10 +238,10 @@ theorem oscillation_clipBall_le_of_subset {c : Vec d} {Rm r R kappa : ℝ}
     hf.mono_measure (Measure.restrict_mono (clipBall_subset_ambient c Rm z R) le_rfl)
   have hmemInner : MemLp f 2 (volume.restrict (clipBall c Rm x r)) :=
     hf.mono_measure (Measure.restrict_mono (clipBall_subset_ambient c Rm x r) le_rfl)
-  letI finiteVolumeInner : IsFiniteMeasure (volume.restrict (clipBall c Rm x r)) := ⟨by
+  let finiteVolumeInner : IsFiniteMeasure (volume.restrict (clipBall c Rm x r)) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 (volume_clipBall_ne_top c Rm x hr)⟩
-  letI finiteVolumeOuter : IsFiniteMeasure (volume.restrict (clipBall c Rm z R)) := ⟨by
+  let finiteVolumeOuter : IsFiniteMeasure (volume.restrict (clipBall c Rm z R)) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 (volume_clipBall_ne_top c Rm z hR)⟩
   have hmin := normalizedL2On_sub_average_le_sub_const
@@ -274,10 +274,10 @@ theorem abs_volumeAverage_clipBall_sub_le {c : Vec d} {Rm r R kappa : ℝ}
     hf.mono_measure (Measure.restrict_mono (clipBall_subset_ambient c Rm z R) le_rfl)
   have hmemInner : MemLp f 2 (volume.restrict (clipBall c Rm x r)) :=
     hf.mono_measure (Measure.restrict_mono (clipBall_subset_ambient c Rm x r) le_rfl)
-  letI finiteVolumeInner : IsFiniteMeasure (volume.restrict (clipBall c Rm x r)) := ⟨by
+  let finiteVolumeInner : IsFiniteMeasure (volume.restrict (clipBall c Rm x r)) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 (volume_clipBall_ne_top c Rm x hr)⟩
-  letI finiteVolumeOuter : IsFiniteMeasure (volume.restrict (clipBall c Rm z R)) := ⟨by
+  let finiteVolumeOuter : IsFiniteMeasure (volume.restrict (clipBall c Rm z R)) := ⟨by
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 (volume_clipBall_ne_top c Rm z hR)⟩
   have hdiffOuter : MemLp (fun y => f y - volumeAverage (clipBall c Rm z R) f) 2
@@ -308,7 +308,7 @@ theorem eventually_clipBall_eq_ball {c : Vec d} {Rm : ℝ} (R : ℝ) {x : Vec d}
       tendsto_const_nhds.mul
         (tendsto_pow_atTop_nhds_zero_of_lt_one (𝕜 := ℝ) (r := (1 / 3 : ℝ))
           (by norm_num) (by norm_num))
-    simpa only [triadicRadius, mul_zero] using h
+    simpa only [triadicRadius, mul_zero] using! h
   have hev := htend.eventually_lt_const (by linarith only [hnorm] : (0 : ℝ) < Rm - ‖x - c‖)
   filter_upwards [hev] with k hk
   refine clipBall_eq_ball (Metric.ball_subset_ball' ?_)

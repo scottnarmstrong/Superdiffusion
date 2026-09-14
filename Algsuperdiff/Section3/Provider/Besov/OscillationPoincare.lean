@@ -178,14 +178,14 @@ theorem normalizedL2SqOnSet_openCubeSet_centred_eq_cubeBesovOscillation_sq
     normalizedL2SqOnSet (openCubeSet Q)
         (fun x => u.toFun x - cubeAverage Q (fun x => u.toFun x)) =
       cubeBesovOscillation Q (2 : ℝ≥0∞) (fun x => u.toFun x) ^ 2 := by
-  letI : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
+  let : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
     ⟨normalizedCubeMeasure_apply_univ Q⟩
   have hmem := u.memL2_normalizedCubeMeasure
   have hfluc :
       MemLp (fun x => u.toFun x - cubeAverage Q (fun x => u.toFun x)) (2 : ℝ≥0∞)
         (normalizedCubeMeasure Q) :=
     hmem.sub (memLp_const _)
-  simpa [cubeBesovOscillation, cubeFluctuation] using
+  simpa [cubeBesovOscillation, cubeFluctuation] using!
     normalizedL2SqOnSet_openCubeSet_eq_cubeLpNorm_two_sq Q _ hfluc
 
 /-- **The Caccioppoli right-hand side in multiscale form.**  The parent-cube

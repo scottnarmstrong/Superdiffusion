@@ -215,7 +215,7 @@ theorem integrable_of_eq_zero_of_abs_le (ha : Continuous a)
   refine ha.integrable_of_hasCompactSupport
     (HasCompactSupport.intro (K := Set.Icc (-T) T) isCompact_Icc fun s hs => ?_)
   rw [Set.mem_Icc] at hs
-  push_neg at hs
+  push Not at hs
   rcases le_or_gt (-T) s with hle | hlt
   · exact haT s (le_trans (hs hle).le (le_abs_self s))
   · exact haT s (le_trans (by linarith : T ≤ -s) (neg_le_abs s))
@@ -241,7 +241,7 @@ theorem kernelPrimitive_eq_zero_of_le (ha : Continuous a) (hb : Continuous b)
         intro s hs
         by_contra hmem
         rw [Set.mem_Ioc] at hmem
-        push_neg at hmem
+        push Not at hmem
         rcases lt_or_ge (-T) s with hlt | hge
         · exact hs (hzero s (le_trans (hmem hlt).le (le_abs_self s)))
         · exact hs (hzero s (le_trans (by linarith : T ≤ -s) (neg_le_abs s)))
@@ -328,7 +328,7 @@ theorem divKernel_apply_eq_zero_of_le (ha : Continuous a) (hb : Continuous b)
   classical
   have hex : ∃ i : Fin d, T ≤ |x i| := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hlt : ‖x‖ < T := (pi_norm_lt_iff hT).2 fun i => by
       rw [Real.norm_eq_abs]
       exact hcon i
@@ -352,7 +352,7 @@ theorem hasCompactSupport_divKernel_apply (ha : Continuous a) (hb : Continuous b
     HasCompactSupport fun x : Vec d => divKernel a b T x k := by
   refine HasCompactSupport.intro (isCompact_closedBall (0 : Vec d) T) fun x hx => ?_
   rw [Metric.mem_closedBall, dist_zero_right] at hx
-  push_neg at hx
+  push Not at hx
   exact divKernel_apply_eq_zero_of_le ha hb haT hbT ha1 hb1 hT hx.le k
 
 /-! ### The telescoping divergence identity -/

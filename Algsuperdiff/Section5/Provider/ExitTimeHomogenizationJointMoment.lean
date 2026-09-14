@@ -61,7 +61,7 @@ theorem expectedExitTime_le_of_le_on (P : SubMarkovKernelSemigroup alpha)
   by_cases hz : z ∈ U
   · exact hbound z hz
   · rw [expectedExitTime_eq_zero_of_notMem P hP hKreg hz]
-    exact zero_le _
+    exact zero_le
 
 /-- **The normalized exponential moment of the exit time.**  If the expected
 exit time from the open set `U` is at most `T` from every point of `U`, then

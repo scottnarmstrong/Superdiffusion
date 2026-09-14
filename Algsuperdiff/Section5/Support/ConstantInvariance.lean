@@ -58,7 +58,7 @@ theorem setIntegral_fderiv_eq_zero {U : Set (Vec d)} (i : Fin d) {psi : Vec d �
 theorem setIntegral_grad_H10_eq_zero {U : Set (Vec d)} (hUfin : volume U ≠ ⊤)
     (phi : H10Function U) (i : Fin d) :
     ∫ x in U, phi.toH1Function.grad x i ∂volume = 0 := by
-  haveI : IsFiniteMeasure (volume.restrict U) := by
+  have : IsFiniteMeasure (volume.restrict U) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hUfin
@@ -102,7 +102,7 @@ theorem setIntegral_grad_H10_eq_zero {U : Set (Vec d)} (hUfin : volume U ≠ ⊤
     have h1 : Tendsto (fun k : ℕ =>
         (eLpNorm (fun x => (fderiv ℝ (phi.approx k) x) (basisVec i) -
           phi.toH1Function.grad x i) 2 (volume.restrict U)).toReal) atTop (𝓝 0) := by
-      simpa using (ENNReal.tendsto_toReal (by simp)).comp h0
+      simpa using! (ENNReal.tendsto_toReal (by simp)).comp h0
     simpa using h1.const_mul (Real.sqrt (volume.real U))
   have hconv : Tendsto (fun k : ℕ =>
       (∫ x in U, (fderiv ℝ (phi.approx k) x) (basisVec i) ∂volume) -
@@ -118,7 +118,7 @@ theorem setIntegral_grad_H10_eq_zero {U : Set (Vec d)} (hUfin : volume U ≠ ⊤
 theorem setIntegral_vecDot_const_H10_eq_zero {U : Set (Vec d)} (hUfin : volume U ≠ ⊤)
     (phi : H10Function U) (c : Vec d) :
     ∫ x in U, vecDot c (phi.toH1Function.grad x) ∂volume = 0 := by
-  haveI : IsFiniteMeasure (volume.restrict U) := by
+  have : IsFiniteMeasure (volume.restrict U) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hUfin
@@ -127,7 +127,7 @@ theorem setIntegral_vecDot_const_H10_eq_zero {U : Set (Vec d)} (hUfin : volume U
     fun i => ((phi.toH1Function.gradMemL2 i).integrable one_le_two).const_mul (c i)
   have hrw : ∫ x in U, vecDot c (phi.toH1Function.grad x) ∂volume =
       ∑ i : Fin d, ∫ x in U, c i * phi.toH1Function.grad x i ∂volume := by
-    rw [← integral_finset_sum _ fun i _ => hint i]
+    rw [← integral_finsetSum _ fun i _ => hint i]
     rfl
   rw [hrw]
   refine Finset.sum_eq_zero fun i _ => ?_
@@ -139,7 +139,7 @@ theorem isDivFormWeakSolutionOn_add_const {W : Set (Vec d)} (hWfin : volume W �
     {a : CoeffField d} {u : H1Function W} {g : Vec d → Vec d}
     (hgL2 : MemVectorL2 W g) (c : Vec d) (h : IsDivFormWeakSolutionOn a W u g) :
     IsDivFormWeakSolutionOn a W u fun x => g x + c := by
-  haveI : IsFiniteMeasure (volume.restrict W) := by
+  have : IsFiniteMeasure (volume.restrict W) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hWfin

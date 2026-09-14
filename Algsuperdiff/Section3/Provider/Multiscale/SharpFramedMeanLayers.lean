@@ -347,8 +347,8 @@ theorem probe_sum_ofReal_goodCellForm_layer_le_framedMeanFourth_ae
   refine hsum.trans ?_
   dsimp only [probeFramedGoodLayerMeanRhs, probeFramedLayerWaveFactor,
     probeMeanLayerFrame, B, C, j] at hagg ⊢
-  convert hagg using 1
-  all_goals ring_nf
+  convert hagg using 2
+  all_goals first | rfl | ring
 
 /-- Internal conditional aggregation of the framed potential majorant over a
 collar Whitney layer. -/
@@ -453,8 +453,8 @@ theorem probe_sum_ofReal_collarCellForm_layer_le_framedMeanFourth_ae
   refine hsum.trans ?_
   dsimp only [probeFramedCollarLayerMeanRhs, probeFramedLayerWaveFactor,
     probeMeanLayerFrame, A, B, C, j] at hagg ⊢
-  convert hagg using 1
-  all_goals ring_nf
+  convert hagg using 2
+  all_goals first | rfl | ring
 
 end
 

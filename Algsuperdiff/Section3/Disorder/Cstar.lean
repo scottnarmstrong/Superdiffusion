@@ -177,7 +177,7 @@ private theorem norm_sq_zeroShellPotentialCorrector_le_norm_sq_zeroShellForcingL
     ‖Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector
         P hstationary e hmem‖ ^ 2 ≤
       ‖Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellForcingL2 P e hmem‖ ^ 2 := by
-  letI := Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_vaddInvariant P hstationary
+  let := Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_vaddInvariant P hstationary
   have hnorm :=
     Submodule.norm_starProjection_apply_le
       (Algsuperdiff.Probability.Stationary.stationaryPotentialSubspace
@@ -189,7 +189,7 @@ private theorem norm_sq_zeroShellPotentialCorrector_le_norm_sq_zeroShellForcingL
   simpa only [Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector,
     Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellProjectedForcing,
     Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialSubspace,
-    norm_neg] using hsq
+    norm_neg] using! hsq
 
 private theorem norm_sq_zeroShellForcingL2_eq_raw_integral
     (P : ProbabilityMeasure
@@ -335,7 +335,7 @@ private theorem sum_standardBasis_directionalEnergy_eq_originFrobeniusMass
     (∑ i : Fin d, ∫ F : ℤ → Algsuperdiff.Frozen.Assumptions.ShellField d,
       vecNormSq (matVecMul ((F 0) 0) (Pi.single i 1 : Vec d)) ∂M.P.toMeasure) =
         originFrobeniusMass M := by
-  rw [← integral_finset_sum]
+  rw [← integral_finsetSum]
   · unfold originFrobeniusMass
     apply integral_congr_ae
     filter_upwards with F

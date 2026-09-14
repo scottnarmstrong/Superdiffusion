@@ -56,8 +56,8 @@ theorem killedResolvent_one_eq_cubeExitResolvent_stream
         (fun _ => 1) z =
       (streamWholeSpaceAnalyticData M omega).cubeExitResolvent v lam z := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   obtain ⟨x, hx, rfl⟩ := hz
   set P : WholeSpaceBarrierData A := A.cubeOneBarrierData v ⟨lam, hlam⟩ with hPdef
   have hcrux : IsConservative.killedResolvent R.onePointKernelSemigroup
@@ -76,11 +76,12 @@ theorem killedResolvent_one_eq_cubeExitResolvent_stream
     rw [PositiveC0ContractiveResolvent.onePointLiveExtension_coe]
     show (1 : ℝ≥0∞) = ENNReal.ofReal (cubeOneDatum d v y)
     rw [cubeOneDatum_of_mem hy, ENNReal.ofReal_one]
-  rw [killedResolvent_congr_of_eqOn _ _ _ _ lam hobs (x : OnePoint (Vec d)), hcrux,
-    A.cubeExitResolvent_coe v hlam x]
-  exact congrArg ENNReal.ofReal
+  refine ((killedResolvent_congr_of_eqOn _ _ _ _ lam hobs
+      (x : OnePoint (Vec d))).trans hcrux).trans ?_
+  exact (congrArg ENNReal.ofReal
     (eq_analyticCubeResolvent_of_isRepresentative A P.hV P.lam P.hf P.hfD
-      P.hutildeCont P.hutildeRep v rfl hx)
+      P.hutildeCont P.hutildeRep v rfl hx)).trans
+      (A.cubeExitResolvent_coe v hlam x).symm
 
 /-- The expected exit time from a centered exhaustion cube is its analytic
 zero-shift Dirichlet limit. -/
@@ -104,8 +105,8 @@ theorem lintegral_exitTime_eq_cubeExitFunction_stream
       (streamWholeSpaceAnalyticData M omega
         ).cubeExitFunction v (x : OnePoint (Vec d)) := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   exact IsConservative.lintegral_exitTime_eq_of_killedResolvent_eq
     R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
     (A.cubeExitResolvent v) (A.cubeExitFunction v)
@@ -135,8 +136,8 @@ theorem lintegral_exitTime_lt_top_stream
         ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
           R.isConservative_onePointKernelSemigroup (x : OnePoint (Vec d))) < ⊤ := by
   let A := streamWholeSpaceAnalyticData M omega
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   rw [lintegral_exitTime_eq_cubeExitFunction_stream R hreg hcons hid hT v hx,
     A.cubeExitFunction_coe_eq v x]
   exact ENNReal.ofReal_lt_top

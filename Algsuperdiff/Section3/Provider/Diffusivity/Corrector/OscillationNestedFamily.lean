@@ -105,7 +105,7 @@ theorem sqrt_meanSquareOscillationVecOn_le_sqrt_meanSquareDeviationVecOn_of_memV
   have hint2 : ∀ i : Fin d, IntegrableOn (fun x => (f x i) ^ 2) V volume := by
     intro i
     have hcoord : MemScalarL2 V (fun x => f x i) := memScalarL2_coord_of_memVectorL2 hf i
-    simpa [pow_two] using hcoord.integrable_mul hcoord
+    simpa [pow_two] using! hcoord.integrable_mul hcoord
   exact Real.sqrt_le_sqrt
     (meanSquareOscillationVecOn_le_meanSquareDeviationVecOn hfin hpos c hint hint2)
 

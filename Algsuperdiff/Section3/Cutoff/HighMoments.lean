@@ -84,7 +84,7 @@ theorem hasGammaMomentGrowthWith_localCubeControl_zero (M : ABKModel d) (q : ℤ
       (ShellField.zeroShellLaw M.P).toMeasure (IndependentSums.gammaSigma 2)
       ShellField.unitCubeValueNorm 1 := by
     exact Algsuperdiff.Probability.isBigOWith_gammaSigma_two_of_gaussian_tail
-      (by simpa only [one_mul, ← Real.rpow_natCast] using
+      (by simpa only [one_mul, ← Real.rpow_natCast] using!
         zeroShell_unitCubeValueNorm_gaussian_tail M)
   have htail : IndependentSums.IsBigOWith
       (ShellField.zeroShellLaw M.P).toMeasure (IndependentSums.gammaSigma 2)
@@ -130,13 +130,13 @@ theorem hasGammaMomentGrowthWith_localCubeControl_zero (M : ABKModel d) (q : ℤ
           (X R) 1 := by
         intro R _
         exact Algsuperdiff.Probability.isBigOWith_gammaSigma_two_of_gaussian_tail
-          (by simpa only [one_mul, ← Real.rpow_natCast, X] using
+          (by simpa only [one_mul, ← Real.rpow_natCast, X] using!
             zeroShell_translatedUnitCubeControl_gaussian_tail M (triadicCubeShift R))
       have htail_max : IndependentSums.IsBigOWith
           (ShellField.zeroShellLaw M.P).toMeasure (IndependentSums.gammaSigma 2)
           (originCubeUnitControlMax q hq0)
           ((3 * Real.log (S.card : ℝ)) ^ ((2 : ℝ)⁻¹)) := by
-        simpa only [originCubeUnitControlMax, S, X, hS, mul_one] using
+        simpa only [originCubeUnitControlMax, S, X, hS, mul_one] using!
           IndependentSums.isBigOWith_gammaSigma_finset_sup'
             (μ := (ShellField.zeroShellLaw M.P).toMeasure) S hS
             (X := X) (A := 1) (σ := 2) (by norm_num) hcard_two htail_X
@@ -202,12 +202,12 @@ private theorem isBigOWith_gammaSigma_of_map_eq
     μ.real {omega | A * t < X omega} = (Measure.map X μ).real E := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := μ) hX.aemeasurable hE)
-      simpa only [E, Set.preimage_setOf_eq] using h.symm
+      simpa only [E, Set.preimage_ofPred_eq] using! h.symm
     _ = (Measure.map Y μ').real E := by rw [hmap]
     _ = μ'.real {omega | A * t < Y omega} := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := μ') hY.aemeasurable hE)
-      simpa only [E, Set.preimage_setOf_eq] using h
+      simpa only [E, Set.preimage_ofPred_eq] using! h
     _ ≤ Real.exp (-(t ^ σ)) := hYtail ht
 
 /-- Countable `Γ_σ` aggregation for an everywhere convergent family.  The
@@ -283,13 +283,13 @@ private theorem isBigO_gammaSigma_tsum_of_hasSum
           filter_upwards [hEventually] with N hN
           exact le_of_eq hN.symm
     · rw [Set.indicator_of_notMem hmem]
-      exact zero_le _
+      exact zero_le
   have hmeasure : μ (IndependentSums.absTailEvent S c) ≤
       Filter.liminf (fun N => μ (E N)) Filter.atTop := by
     calc
       μ (IndependentSums.absTailEvent S c) = ∫⁻ omega,
           (IndependentSums.absTailEvent S c).indicator (fun _ => (1 : ℝ≥0∞)) omega ∂μ := by
-        simpa only [one_mul] using
+        simpa only [one_mul] using!
           (lintegral_indicator_const
             (μ := μ) (measurableSet_lt measurable_const
               (continuous_abs.measurable.comp hSmeas)) (1 : ℝ≥0∞)).symm
@@ -308,7 +308,7 @@ private theorem isBigO_gammaSigma_tsum_of_hasSum
     · have hEzero : E 0 = ∅ := by
         ext omega
         simp only [E, P, IndependentSums.absTailEvent, IndependentSums.upperTailEvent,
-          Finset.range_zero, Finset.sum_empty, abs_zero, Set.mem_setOf_eq,
+          Finset.range_zero, Finset.sum_empty, abs_zero, Set.mem_ofPred_eq,
           Set.mem_empty_iff_false, iff_false, not_lt]
         exact hcpos.le
       rw [hEzero]
@@ -431,7 +431,7 @@ private theorem isBigOWith_gammaSigma_cutoffSample_lowerShell (M : ABKModel d)
     calc
       Measure.map F (cutoffSampleLaw M).toMeasure =
           Measure.map f (Measure.map Subtype.val (cutoffSampleLaw M).toMeasure) := by
-        simpa only [F, f, Function.comp_apply] using
+        simpa only [F, f, Function.comp_apply] using!
           (Measure.map_map hf
             (MeasurableEmbedding.subtype_coe (measurableSet_lowerTailGoodSet d)).measurable).symm
       _ = Measure.map f M.P.toMeasure := by rw [map_cutoffSampleLaw_val]
@@ -467,7 +467,7 @@ theorem isBigO_gammaSigma_cutoffLocalControl (M : ABKModel d) (ell m : ℤ) :
       isBigOWith_gammaSigma_cutoffSample_lowerShell M m ell r
   have hsum : ∀ omega, HasSum (fun r => X r omega) (cutoffLocalControl ell m omega) := by
     intro omega
-    simpa only [X] using (summable_cutoffLocalControl ell m omega).hasSum
+    simpa only [X] using! (summable_cutoffLocalControl ell m omega).hasSum
   simpa only [a] using isBigO_gammaSigma_tsum_of_hasSum
     (μ := (cutoffSampleLaw M).toMeasure) (X := X) (a := a) (S := cutoffLocalControl ell m)
     (σ := 2) (by norm_num) ha hasum hX hXm hsum
@@ -484,7 +484,7 @@ theorem measurable_cutoffLocalControl (ell m : ℤ) :
         (MeasurableEmbedding.subtype_coe (measurableSet_lowerTailGoodSet d)).measurable)
   have hsum : ∀ omega, HasSum (fun r => X r omega) (cutoffLocalControl ell m omega) := by
     intro omega
-    simpa only [X] using (summable_cutoffLocalControl ell m omega).hasSum
+    simpa only [X] using! (summable_cutoffLocalControl ell m omega).hasSum
   exact measurable_of_tendsto_metrizable
     (fun N => Finset.measurable_sum (Finset.range N) (fun r _ => hXm r))
     (tendsto_pi_nhds.2 fun omega => (hsum omega).tendsto_sum_nat)

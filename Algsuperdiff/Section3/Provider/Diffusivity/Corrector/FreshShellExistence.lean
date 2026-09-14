@@ -152,7 +152,7 @@ theorem exists_isMeanZeroNeumannRhsWeakSolution_openCubeSet_of_continuous
       IsMeanZeroNeumannRhsWeakSolution
         (fun _ : Vec d => (1 : Matrix (Fin d) (Fin d) ℝ))
         (openCubeSet Q) wN g := by
-  letI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  let : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   exact exists_isMeanZeroNeumannRhsWeakSolution_of_h1CoerciveEstimate
     (lam := 1) (Lam := 1)

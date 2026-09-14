@@ -54,7 +54,7 @@ theorem tendsto_randomHsepAllLWavePrice_limitSequence
   have hxexp : Tendsto
       (fun j : ℕ => ((j : ℝ) + 1) * Real.exp (-((j : ℝ) + 1)))
       atTop (𝓝 0) := by
-    simpa only [pow_one] using
+    simpa only [pow_one] using!
       (Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero 1).comp hx
   have hexp : Tendsto (fun j : ℕ => Real.exp (-((j : ℝ) + 1)))
       atTop (𝓝 0) := Real.tendsto_exp_neg_atTop_nhds_zero.comp hx
@@ -84,7 +84,7 @@ theorem tendsto_randomHsepAllLWavePrice_limitSequence
     have hlogTop := halphaTop.const_mul_atTop
       (lt_trans zero_lt_one one_lt_log_three)
     have h := Real.tendsto_exp_atTop.comp hlogTop
-    simpa only [Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 3)] using h
+    simpa only [Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 3)] using! h
   have htail : Tendsto
       (fun j : ℕ => hsepTailConst sigma b *
         Real.exp (-((3 : ℝ) ^ ((1 - sigma) * b * ((j : ℝ) + 1)))))

@@ -31,7 +31,7 @@ private theorem memScalarL2_coord_of_memVectorL2
     {f : Vec d → Vec d} (hf : MemVectorL2 U f) (i : Fin d) :
     MemScalarL2 U (fun x => f x i) := by
   let pi : Vec d →L[ℝ] ℝ := ContinuousLinearMap.proj i
-  simpa [MemScalarL2, MemVectorL2, volumeMeasureOn] using pi.comp_memLp' hf
+  simpa [MemScalarL2, MemVectorL2, volumeMeasureOn] using! pi.comp_memLp' hf
 
 private theorem integrableOn_vecDot
     {f g : Vec d → Vec d} (hf : MemVectorL2 U f) (hg : MemVectorL2 U g) :
@@ -39,7 +39,7 @@ private theorem integrableOn_vecDot
   have hsum :
       MeasureTheory.IntegrableOn (fun x => ∑ i, f x i * g x i) U := by
     simpa [MeasureTheory.IntegrableOn, volumeMeasureOn] using
-      (MeasureTheory.integrable_finset_sum
+      (MeasureTheory.integrable_finsetSum
         (μ := volumeMeasureOn U) Finset.univ
         (fun i _ =>
           (memScalarL2_coord_of_memVectorL2 hf i).integrable_mul
@@ -167,8 +167,8 @@ theorem shiftedBilin_apply
     shiftedBilin hEll alpha u v =
       alpha * inner ℝ (toL2 u) (toL2 v) +
         coefficientPairing a U (gradient u) (gradient v) := by
-  simp only [shiftedBilin, ContinuousLinearMap.add_apply,
-    ContinuousLinearMap.smul_apply, smul_eq_mul, massBilin_apply,
+  simp only [shiftedBilin, add_apply,
+    smul_apply, smul_eq_mul, massBilin_apply,
     coefficientBilin_apply]
   rw [inner_operator_eq_pairing hEll]
 
@@ -365,7 +365,7 @@ theorem alphaShiftedSolution_resolvent_identity
         (shiftedBilin_apply hEll α _ _).symm
       _ = shiftedBilin hEll α (alphaShiftedSolution a hα hlam hEll f) v -
           shiftedBilin hEll α (alphaShiftedSolution a hβ hlam hEll f) v := by
-        rw [map_sub, ContinuousLinearMap.sub_apply]
+        rw [map_sub, sub_apply]
       _ = inner ℝ f (toL2 v) -
           (α * inner ℝ
               (toL2 (alphaShiftedSolution a hβ hlam hEll f)) (toL2 v) +
@@ -402,7 +402,7 @@ theorem alphaShiftedResolvent_resolvent_identity
         (alphaShiftedResolvent a hβ hlam hEll)) := by
   apply ContinuousLinearMap.ext
   intro f
-  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
+  simp only [sub_apply, smul_apply,
     ContinuousLinearMap.comp_apply, alphaShiftedResolvent_apply]
   rw [← map_sub,
     alphaShiftedSolution_resolvent_identity a hα hβ hlam hEll f, map_smul]

@@ -101,7 +101,7 @@ theorem inductionState_mono_E {M : ABKModel d} {m0 : ℤ}
 
 /-- **From a base scale and a one-scale step to every integer scale.**
 
-Above the base scale this is `Int.le_induction`; below it the conclusion is
+Above the base scale this is `Int.leInduction`; below it the conclusion is
 already contained in the base case, because both clauses of the frozen
 definition are `forall m <= m0` (the proved
 `...ApproximateRecurrence.Closure.inductionState_mono`). -/
@@ -113,7 +113,7 @@ theorem inductionState_of_base_of_step {M : ABKModel d} {mb : ℤ}
     ∀ m : ℤ, Algsuperdiff.Frozen.Section3.inductionState M m E := by
   have hclimb : ∀ n : ℤ, mb ≤ n →
       Algsuperdiff.Frozen.Section3.inductionState M n E := by
-    refine Int.le_induction base ?_
+    refine Int.leInduction base ?_
     intro n _ hPn
     have hstep := step (n + 1)
     rw [add_sub_cancel_right] at hstep

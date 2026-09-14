@@ -503,7 +503,7 @@ theorem exists_gamma0_integrable_freshShellDirichlet_meshEnergyCell_rpow_four
                   Integrable (fun omega : Cutoff.ShellSeq d =>
                     meshEnergyCell ell (wD omega).toH1Function.grad R ^ (4 : ℝ))
                     M.P.toMeasure := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hleg⟩ :=
     exists_freshShell_cubeEuclideanL8_leg_bound d hd
   refine ⟨gamma0, hg0pos, hg0quarter, ?_⟩
@@ -561,7 +561,7 @@ theorem exists_gamma0_integrable_freshShellNeumann_meshEnergyCell_rpow_four
                   Integrable (fun omega : Cutoff.ShellSeq d =>
                     meshEnergyCell ell (wN omega).toH1Function.grad R ^ (4 : ℝ))
                     M.P.toMeasure := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Chead, hCheadpos, gamma0, hg0pos, hg0quarter, hleg⟩ :=
     exists_freshShell_cubeEuclideanL8_leg_bound d hd
   refine ⟨gamma0, hg0pos, hg0quarter, ?_⟩

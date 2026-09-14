@@ -29,7 +29,7 @@ theorem memVectorL2_matVecMul_of_lInfMatrixFieldOn
   have hsum :
       MemLp (fun x : Vec d => ∑ j : Fin d, h.1 x i j * f x j) 2
         (volumeMeasureOn (U : Set (Vec d))) := by
-    refine memLp_finset_sum (s := Finset.univ)
+    refine memLp_finsetSum (s := Finset.univ)
       (f := fun j => fun x : Vec d => h.1 x i j * f x j) ?_
     intro j _
     exact ((memLp_pi_iff.mp hf) j).mul' (h.2 i j)

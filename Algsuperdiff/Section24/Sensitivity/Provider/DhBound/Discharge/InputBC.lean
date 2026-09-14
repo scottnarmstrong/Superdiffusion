@@ -77,7 +77,7 @@ theorem derivRep_lipschitz (h : UnitCubeSkewW2Infinity d) (k i j : Fin d)
     (x y : Vec d) :
     |derivRep h k i j x - derivRep h k i j y| ≤
       (d : ℝ) * h.gradientW1Infinity * ‖x - y‖ := by
-  simpa [Real.norm_eq_abs] using
+  simpa [Real.norm_eq_abs] using!
     (exists_lipschitz_ae_eq_cubeSet_unitCubeSkewW2Infinity_firstDeriv h k i j).choose_spec.1
       x y
 
@@ -154,7 +154,7 @@ theorem memLp_matWeakDiv_component (h : UnitCubeSkewW2Infinity d) (j : Fin d)
   classical
   have : MemLp (fun x => ∑ i : Fin d, h.firstDeriv x (basisVec i) i j) r
       (normalizedCubeMeasure (originCube d 0)) :=
-    memLp_finset_sum (s := Finset.univ)
+    memLp_finsetSum (s := Finset.univ)
       (f := fun i => fun x => h.firstDeriv x (basisVec i) i j)
       fun i _ => memLp_firstDeriv_entry h i i j r
   simpa [matWeakDiv_unitCubeDerivData_apply] using this

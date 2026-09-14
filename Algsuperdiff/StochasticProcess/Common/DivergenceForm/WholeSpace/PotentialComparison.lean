@@ -69,7 +69,7 @@ theorem potentialWeakSubsolution_le_weakSupersolution_ae [NeZero d]
       potentialBilin (α := α) hEll q hq z p =
           potentialBilin (α := α) hEll q hq u p -
             potentialBilin (α := α) hEll q hq v p := by
-        simp only [z, map_sub, ContinuousLinearMap.sub_apply]
+        simp only [z, map_sub, sub_apply]
       _ ≤ inner ℝ f (ZeroTraceSobolev.toL2 p) -
           inner ℝ g (ZeroTraceSobolev.toL2 p) := by
         have hup : potentialBilin (α := α) hEll q hq u p ≤

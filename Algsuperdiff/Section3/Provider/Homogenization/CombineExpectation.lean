@@ -90,7 +90,7 @@ theorem integrable_cutoffResponseJ_of_isBigOWith_errorSq (M : ABKModel d) (n L :
             (Annealed.sigmaBar M L) omega ^ 2) theta →
       Integrable (Observable.cutoffResponseJ M n L e)
         (cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   intro hcov
   have hmeas : Measurable fun omega =>
@@ -142,7 +142,7 @@ theorem integrable_cutoffResponseJ_of_precedingError (M : ABKModel d) (m L : ℤ
     {e : Vec d} (he : Ch02.vecNorm e = 1) (n : ℤ) (hLn : L ≤ n) (hnm : n ≤ m) :
     Integrable (Observable.cutoffResponseJ M n L e)
       (cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   rcases eq_or_lt_of_le hLn with hEq | hLt
   · subst hEq
@@ -247,7 +247,7 @@ theorem integrable_descendantsAverage_restrictionResponseJ (M : ABKModel d)
   have hsum : Integrable (fun omega =>
       ∑ R ∈ descendantsAtDepth (originCube d m) (m - n).toNat,
         siteResponseJ M L n R.index e omega) (cutoffSampleLaw M).toMeasure :=
-    integrable_finset_sum _ fun R _ =>
+    integrable_finsetSum _ fun R _ =>
       integrable_siteResponseJ_of_integrable_cutoffResponseJ M L n R.index hint
   refine Integrable.congr
     (hsum.const_mul
@@ -273,7 +273,7 @@ theorem integral_descendantsAverage_restrictionResponseJ_eq (M : ABKModel d)
         ∂(cutoffSampleLaw M).toMeasure := by
   rw [integral_congr_ae (ae_descendantsAverage_eq_gridSum M m n L hnm e),
     integral_const_mul,
-    integral_finset_sum _ fun R _ =>
+    integral_finsetSum _ fun R _ =>
       integrable_siteResponseJ_of_integrable_cutoffResponseJ M L n R.index hint]
   simp only [integral_siteResponseJ_eq_integral_cutoffResponseJ M L n _ e]
   rw [Finset.sum_const, nsmul_eq_mul, ← mul_assoc,
@@ -364,7 +364,7 @@ theorem integral_cutoffResponseJ_le_integral_cutoffResponseJ_pred (M : ABKModel 
         ∂(cutoffSampleLaw M).toMeasure ≤
       ∫ omega, Observable.cutoffResponseJ M (m - 1) L e omega
         ∂(cutoffSampleLaw M).toMeasure := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hval := integral_responseDefectAverageAtScale_eq_sub M m (m - 1) L
     (by omega) hintpred hintm
@@ -418,7 +418,7 @@ def coarseScaleSeparationBlock (M : ABKModel d) (m L : ℤ) (e : Vec d)
 each corridor summand (`e.subaddJ.nosymm`). -/
 theorem responseDefectBlock_nonneg (M : ABKModel d) (m L : ℤ) (e : Vec d)
     (omega : CutoffSample d) : 0 ≤ responseDefectBlock M m L e omega := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   refine Finset.sum_nonneg fun n _ => mul_nonneg (Real.rpow_nonneg (by norm_num) _) ?_
   exact
@@ -433,7 +433,7 @@ theorem integrable_responseDefectBlock (M : ABKModel d) (m L : ℤ) (hLm : L ≤
     (hJ : ∀ n : ℤ, L ≤ n → n ≤ m →
       Integrable (Observable.cutoffResponseJ M n L e) (cutoffSampleLaw M).toMeasure) :
     Integrable (responseDefectBlock M m L e) (cutoffSampleLaw M).toMeasure := by
-  refine integrable_finset_sum _ fun n hn => Integrable.const_mul ?_ _
+  refine integrable_finsetSum _ fun n hn => Integrable.const_mul ?_ _
   rw [Finset.mem_Icc] at hn
   exact integrable_responseDefectAverageAtScale M m n L hn.2 (hJ n hn.1 hn.2)
     (hJ m hLm le_rfl)
@@ -461,7 +461,7 @@ theorem integral_responseDefectBlock_eq (M : ABKModel d) (m L : ℤ) (hLm : L �
     exact (integrable_responseDefectAverageAtScale M m n L hn.2 (hJ n hn.1 hn.2)
       (hJ m hLm le_rfl)).const_mul _
   simp only [responseDefectBlock]
-  rw [integral_finset_sum _ hterm]
+  rw [integral_finsetSum _ hterm]
   refine Finset.sum_congr rfl fun n hn => ?_
   rw [Finset.mem_Icc] at hn
   rw [integral_const_mul,

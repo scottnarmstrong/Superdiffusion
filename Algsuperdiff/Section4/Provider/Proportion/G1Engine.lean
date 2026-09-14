@@ -75,7 +75,8 @@ theorem measurable_rowGE {G : ℤ → ℤ → Cutoff.CutoffSample d → ℝ}
   have hrw : rowGE G sprime m = fun omega =>
       ∑' j : ℤ, ENNReal.ofReal (wt sprime m j * G m j omega) := rfl
   rw [hrw]
-  exact Measurable.ennreal_tsum fun j => ((hGm m j).const_mul _).ennreal_ofReal
+  exact Measurable.tsum (L := SummationFilter.unconditional ℤ) fun j =>
+    ((hGm m j).const_mul _).ennreal_ofReal
 
 /-- **The row has a finite first moment.**  Tonelli over the `ℤ`-row against the
 uniform `Γ_σ` tail of the entries and the summable geometric weights. -/
@@ -147,7 +148,7 @@ private theorem measure_rowGE_top (M : ABKModel d)
   have h := ae_lt_top (μ := (Cutoff.cutoffSampleLaw M).toMeasure) hf hfin
   rw [MeasureTheory.ae_iff] at h
   refine measure_mono_null (fun omega homega => ?_) h
-  rw [Set.mem_setOf_eq] at homega ⊢
+  rw [Set.mem_ofPred_eq] at homega ⊢
   rw [homega]
   exact lt_irrefl _
 
@@ -163,7 +164,7 @@ theorem measure_compl_goodRowG (M : ABKModel d)
   have hcompl : (goodRowG G sprime)ᶜ =
       ⋃ m : ℤ, {omega | rowGE G sprime m omega = ⊤} := by
     ext omega
-    simp only [goodRowG, Set.mem_compl_iff, Set.mem_setOf_eq, Set.mem_iUnion,
+    simp only [goodRowG, Set.mem_compl_iff, Set.mem_ofPred_eq, Set.mem_iUnion,
       not_forall, not_not]
   rw [hcompl]
   refine measure_iUnion_null fun m => ?_

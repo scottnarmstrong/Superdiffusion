@@ -940,7 +940,7 @@ private theorem sum_cubeBesovCircNorm_maximizerGradient_nonneg (a : RegCoeffFiel
     0 ≤ ∑ i : Fin d,
       cubeBesovCircNorm (originCube d m) 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞)
         (fun x => (canonicalCubeMaximizerSolution a ha (originCube d m) p q).toH1.grad x i) := by
-  letI : IsProbabilityMeasure (normalizedCubeMeasure (originCube d m)) :=
+  let : IsProbabilityMeasure (normalizedCubeMeasure (originCube d m)) :=
     ⟨normalizedCubeMeasure_apply_univ (originCube d m)⟩
   refine Finset.sum_nonneg fun i _ => ?_
   refine cubeBesovCircNorm_nonneg (originCube d m) 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) _ ?_

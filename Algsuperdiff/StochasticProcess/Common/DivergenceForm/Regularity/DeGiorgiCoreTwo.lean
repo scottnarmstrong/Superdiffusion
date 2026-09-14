@@ -86,12 +86,12 @@ theorem cube_sobolev_embedding_two :
       (by rw [fourThirds_toReal]; norm_num)
   refine ⟨C, hC, ?_⟩
   intro z L hL u
-  haveI : IsFiniteMeasure (volumeMeasureOn (axisCube z L)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (axisCube z L)) :=
     (isOpenBoundedConvexDomain_axisCube z L).isFiniteMeasure_restrict_volume
   have h := hEmb four four_sobolev_relation z L hL
     (u.toW1pOfExponentLETwo fourThirds fourThirds_le_two)
   simpa only [four, fourThirds, H1Function.toW1pOfExponentLETwo_toFun,
-    H1Function.toW1pOfExponentLETwo_grad] using h
+    H1Function.toW1pOfExponentLETwo_grad] using! h
 
 /-- The two-dimensional matched-pair Sobolev inequality.  The scale factor is
 written as the exact finite-measure downgrade factor `|U|^(1/4)`; on a square
@@ -117,7 +117,7 @@ theorem matchedPair_sobolev_two :
                 ∑ i : Fin 2,
                   (eLpNorm (fun x => g.grad x i) 2
                     (volumeMeasureOn (axisCube z L))).toReal) := by
-  letI : NeZero 2 := ⟨by omega⟩
+  let : NeZero 2 := ⟨by omega⟩
   obtain ⟨CE, hCEpos, hEmb⟩ := cube_sobolev_embedding_two
   let C : ℝ := (CE : ℝ) * (1 + matchedPairPoincareConst 2)
   have hC : 0 ≤ C := by
@@ -126,7 +126,7 @@ theorem matchedPair_sobolev_two :
       (matchedPairPoincareConst_nonneg 2))
   refine ⟨C, hC, ?_⟩
   intro z L hL f g hfm hgm hfg hzero
-  haveI : IsFiniteMeasure (volumeMeasureOn (axisCube z L)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (axisCube z L)) :=
     (isOpenBoundedConvexDomain_axisCube z L).isFiniteMeasure_restrict_volume
   let F : ℝ :=
     ((volumeMeasureOn (axisCube z L)) Set.univ ^

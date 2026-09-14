@@ -131,7 +131,12 @@ theorem analyticPenalizedCubeResolvent_eq_parts {V : Set (Vec d)}
         (hfp.add (measurable_const.mul hfn)) hsumD m x :=
     A.analyticPenalizedCubeResolvent_congr hV n mu hsplit.symm hf
       (hfp.add (measurable_const.mul hfn)) hfD hsumD m x
-  rw [hstart, hadd]
+  have hadd' : A.analyticPenalizedCubeResolvent hV n mu
+      (fun y ↦ fp y + (-1 : ℝ) * fn y) (hfp.add (measurable_const.mul hfn)) hsumD m x =
+      A.analyticPenalizedCubeResolvent hV n mu fp hfp hfpD m x +
+        A.analyticPenalizedCubeResolvent hV n mu (fun y ↦ (-1 : ℝ) * fn y)
+          (measurable_const.mul hfn) hnegD m x := hadd
+  rw [hstart, hadd']
   have hneg : A.analyticPenalizedCubeResolvent hV n mu (fun y ↦ (-1 : ℝ) * fn y)
       (measurable_const.mul hfn) hnegD m x =
       -A.analyticPenalizedCubeResolvent hV n mu fn hfn hfnD m x := by
@@ -166,7 +171,7 @@ theorem tendsto_analyticPenalizedCubeResolvent_real {V : Set (Vec d)}
   have hn := A.tendsto_analyticPenalizedCubeResolvent hV n mu
     (measurable_analyticPositivePart hf.neg) (fun y ↦ le_max_right (-f y) 0) hD
     (abs_analyticPositivePart_le_of_bound
-      (fun y ↦ by simpa only [abs_neg] using hfD y)) x
+      (fun y ↦ by simpa only [abs_neg, Pi.neg_apply] using! hfD y)) x
   apply (hp.sub hn).congr'
   filter_upwards with m
   exact (A.analyticPenalizedCubeResolvent_eq_parts hV n mu hf hfD m x).symm
@@ -273,7 +278,7 @@ theorem measurable_analyticPenalizedResolventReal {V : Set (Vec d)}
     ((A.measurable_analyticPenalizedResolvent hV n mu
       (measurable_analyticPositivePart hf.neg)
       (abs_analyticPositivePart_le_of_bound
-        (fun y ↦ by simpa only [abs_neg] using hfD y))).ennreal_toReal)
+        (fun y ↦ by simpa only [abs_neg, Pi.neg_apply] using! hfD y))).ennreal_toReal)
 
 /-- The difference of the values on two nonnegative data is the value on
 their difference. -/

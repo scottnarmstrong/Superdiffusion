@@ -117,7 +117,7 @@ private theorem holderTriple_two_two' : ENNReal.HolderTriple (2 : ℝ≥0∞) 2 
 private theorem integrableOn_mul_of_memL2 {V : Set (Vec d)} {u v : Vec d → ℝ}
     (hu : MemLp u 2 (volume.restrict V)) (hv : MemLp v 2 (volume.restrict V)) :
     IntegrableOn (fun y => u y * v y) V volume := by
-  haveI := holderTriple_two_two'
+  have := holderTriple_two_two'
   exact hu.integrable_mul hv
 
 private theorem integrableOn_vecDot_of_memL2 {V : Set (Vec d)} {F G : Vec d → Vec d}
@@ -128,7 +128,7 @@ private theorem integrableOn_vecDot_of_memL2 {V : Set (Vec d)} {F G : Vec d → 
   have hterm : ∀ i : Fin d, IntegrableOn (fun y => F y i * G y i) V volume :=
     fun i => integrableOn_mul_of_memL2 (hF i) (hG i)
   have hsum : IntegrableOn (fun y => ∑ i : Fin d, F y i * G y i) V volume :=
-    MeasureTheory.integrable_finset_sum Finset.univ fun i _ => hterm i
+    MeasureTheory.integrable_finsetSum Finset.univ fun i _ => hterm i
   have hfun : (fun y => vecDot (F y) (G y)) =
       fun y => ∑ i : Fin d, F y i * G y i := by
     funext y
@@ -157,7 +157,7 @@ theorem exists_identityCorrector [NeZero d] {V : Set (Vec d)}
     ∃ rho : H10Function V,
       IsZeroTraceDirichletRhsWeakSolution (unitCoeffField d) V rho
         (fun y => -Φ.grad y) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn V) := hV.isFiniteMeasure_restrict_volume
   have hgrad : MemVectorL2 V Φ.grad := Φ.grad_memVectorL2
   have hg : MemVectorL2 V (fun y => -Φ.grad y) := hgrad.neg
   have hrealize :
@@ -248,7 +248,7 @@ private theorem volumeAverage_vecNormSq_eq_sum {V : Set (Vec d)} {G : Vec d → 
     show vecDot (G y) (G y) = _
     simp only [vecDot, pow_two]
   unfold volumeAverage
-  rw [hfun, integral_finset_sum Finset.univ fun i _ => hterm i, Finset.mul_sum]
+  rw [hfun, integral_finsetSum Finset.univ fun i _ => hterm i, Finset.mul_sum]
 
 /-- **The componentwise Dirichlet principle.**
 
@@ -335,9 +335,9 @@ theorem normalizedL2On_h10_translatedCube_le [NeZero d] (c : Vec d) (j : ℤ)
       volume_toReal_openCubeSet_originCube d j
     have hpos : (0 : ℝ) < ((3 : ℝ) ^ j) ^ d := by positivity
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have h0 : volume (openCubeSet (originCube d j)) = 0 :=
-      le_antisymm hcon (zero_le _)
+      le_antisymm hcon zero_le
     rw [h0] at htr
     simp only [ENNReal.toReal_zero] at htr
     exact absurd htr.symm (ne_of_gt hpos)

@@ -28,35 +28,98 @@ into a single step.  Every cache below is literally the instance Lean would
 otherwise rediscover.
 -/
 
+-- The `NormedSpace` instance is cached *first*, from the bare `inferInstance`
+-- term (the same single-level recipe as the sibling `Basic.lean` fix, whose
+-- `NormedAddCommGroup`/`NormedSpace` caches for this exact carrier this file
+-- inherits via import).  Every algebraic class below it is then a *direct
+-- projection* off this one instance (`.toModule`, `.toDistribMulAction`, …)
+-- rather than a second, independent `inferInstance` search.  Two independent
+-- blind searches for the same class can land on different (though defeq)
+-- instance terms for a `ContinuousLinearMap` carrier in this mathlib version
+-- — e.g. a `Module` found by unifying straight from `NormedSpace.toModule`
+-- versus one found some other way — and that mismatch is enough to make
+-- `compL`/`flip` applications fail with an instance-path diamond even though
+-- both sides are propositionally equal.  Projecting everything from one root
+-- instance keeps the whole file on a single, consistent path.
+private noncomputable instance instNormedSpaceDerivCarrier (d : ℕ) :
+    NormedSpace ℝ (Vec d →L[ℝ] Mat d) := inferInstance
+
 private noncomputable instance instTopDerivCarrier (d : ℕ) :
     TopologicalSpace (Vec d →L[ℝ] Mat d) := inferInstance
-
-private noncomputable instance instTopHessianCarrier (d : ℕ) :
-    TopologicalSpace (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
 
 private noncomputable instance instAddCommMonoidDerivCarrier (d : ℕ) :
     AddCommMonoid (Vec d →L[ℝ] Mat d) := inferInstance
 
+private noncomputable instance instModuleDerivCarrier (d : ℕ) :
+    Module ℝ (Vec d →L[ℝ] Mat d) :=
+  (instNormedSpaceDerivCarrier d).toModule
+
+-- `DistribMulAction` is deliberately a plain `def`, not a registered
+-- `instance`: once it is a global instance, blind searches elsewhere for
+-- `Module`/`Semiring`-adjacent classes on the *Hessian* carrier (which
+-- itself needs `DistribMulAction`/`Module` on this deriv carrier as an
+-- internal subgoal) gain an extra candidate to explore and the bare `c • H`
+-- notation search for the Hessian type times out at default heartbeats.
+-- Kept as a named `def` purely so the explicit `@HasFDerivAt.const_smul`
+-- applications below can still pass it in directly.
+set_option warn.classDefReducibility false in
+private noncomputable def instDistribMulActionDerivCarrier (d : ℕ) :
+    DistribMulAction ℝ (Vec d →L[ℝ] Mat d) :=
+  (instModuleDerivCarrier d).toDistribMulAction
+
+private noncomputable instance instMulActionDerivCarrier (d : ℕ) :
+    MulAction ℝ (Vec d →L[ℝ] Mat d) :=
+  (instModuleDerivCarrier d).toDistribMulAction.toMulAction
+
+private noncomputable instance instSMulCommClassDerivCarrier (d : ℕ) :
+    SMulCommClass ℝ ℝ (Vec d →L[ℝ] Mat d) :=
+  @smulCommClass_self ℝ (Vec d →L[ℝ] Mat d) _ (instMulActionDerivCarrier d)
+
+private noncomputable instance instIsBoundedSMulDerivCarrier (d : ℕ) :
+    IsBoundedSMul ℝ (Vec d →L[ℝ] Mat d) :=
+  NormedSpace.toIsBoundedSMul
+
+private noncomputable instance instContinuousConstSMulDerivCarrier (d : ℕ) :
+    ContinuousConstSMul ℝ (Vec d →L[ℝ] Mat d) := inferInstance
+
+-- Same recipe one level up: the Hessian's `NormedAddCommGroup`/`NormedSpace`
+-- instances are the direct terms `ContinuousLinearMap.toNormedAddCommGroup` /
+-- `.toNormedSpace` (needing exactly the `SMulCommClass` cached above), and
+-- `Module` is a projection off the cached `NormedSpace`, not a fresh search.
+private noncomputable instance instNormedAddCommGroupHessianCarrier (d : ℕ) :
+    NormedAddCommGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.toNormedAddCommGroup
+
+private noncomputable instance instNormedSpaceHessianCarrier (d : ℕ) :
+    NormedSpace ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.toNormedSpace
+
+private noncomputable instance instTopHessianCarrier (d : ℕ) :
+    TopologicalSpace (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
+
 private noncomputable instance instAddCommMonoidHessianCarrier (d : ℕ) :
     AddCommMonoid (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
 
-private noncomputable instance instSMulDerivCarrier (d : ℕ) :
-    SMul ℝ (Vec d →L[ℝ] Mat d) := inferInstance
-
-private noncomputable instance instSMulHessianCarrier (d : ℕ) :
-    SMul ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
-
-private noncomputable instance instModuleDerivCarrier (d : ℕ) :
-    Module ℝ (Vec d →L[ℝ] Mat d) := inferInstance
-
 private noncomputable instance instModuleHessianCarrier (d : ℕ) :
-    Module ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
+    Module ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  (instNormedSpaceHessianCarrier d).toModule
 
-private noncomputable instance instNormedSpaceDerivCarrier (d : ℕ) :
-    NormedSpace ℝ (Vec d →L[ℝ] Mat d) := inferInstance
+private noncomputable instance instIsBoundedSMulHessianCarrier (d : ℕ) :
+    IsBoundedSMul ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  @NormedSpace.toIsBoundedSMul ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) _
+    (instNormedAddCommGroupHessianCarrier d).toSeminormedAddCommGroup
+    (instNormedSpaceHessianCarrier d)
 
-private noncomputable instance instNormedSpaceHessianCarrier (d : ℕ) :
-    NormedSpace ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) := inferInstance
+-- `ContinuousLinearMap` carries its own native `SMul` instance
+-- (`ContinuousLinearMap.instSMul`); deriving this from `instModuleHessianCarrier`
+-- via `.toDistribMulAction.toMulAction.toSMul` produces a second, different
+-- (though defeq) `SMul` term and the same instance-path diamond as before.
+-- Leaving the `SMul` slots as `_` lets blind search land on the native one.
+private noncomputable instance instContinuousConstSMulHessianCarrier (d : ℕ) :
+    ContinuousConstSMul ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  @ContinuousSMul.continuousConstSMul ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) _ _ _
+    (@IsBoundedSMul.continuousSMul ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) _ _ _ _ _
+      (instIsBoundedSMulHessianCarrier d))
 
 private noncomputable instance instNormedSpaceEndoCarrier (d : ℕ) :
     NormedSpace ℝ (Vec d →L[ℝ] Vec d) := inferInstance
@@ -99,11 +162,24 @@ def scale (c : ℝ) (j : ShellField d) : ShellField d :=
     refine ⟨?_, ?_, ?_⟩
     · intro x
       simpa only [scaleAmbient, valueScaleMap, derivScaleMap,
-        ContinuousMap.comp_apply] using (j.hasFDerivAt x).const_smul c
+        ContinuousMap.comp_apply] using! (j.hasFDerivAt x).const_smul c
     · intro x
+      have hderiv : HasFDerivAt (⇑(deriv j)) (secondDeriv j x) x :=
+        j.deriv_hasFDerivAt x
+      -- `HasFDerivAt.const_smul`'s blind instance search does not resolve
+      -- `DistribMulAction`/`SMulCommClass`/`ContinuousConstSMul` for this
+      -- project carrier under this mathlib version (it leaves them as
+      -- unassigned metavariables no candidate — including our own cache —
+      -- can unify against); passing the three cached instances explicitly
+      -- sidesteps the search entirely.
+      have h :=
+        @HasFDerivAt.const_smul ℝ _ (Vec d) _ _ (Vec d →L[ℝ] Mat d) _ _
+          _ _ _ ℝ _ (instDistribMulActionDerivCarrier d)
+          (instSMulCommClassDerivCarrier d)
+          (instContinuousConstSMulDerivCarrier d) hderiv c
       simpa only [scaleAmbient, derivScaleMap, secondDerivScaleMap,
-        ContinuousMap.comp_apply] using
-        (j.deriv_hasFDerivAt x).const_smul c
+        ContinuousMap.comp_apply, ContinuousMap.coe_mk,
+        ContinuousMap.coe_comp, Function.comp_def] using! h
     · intro x i k
       change c * j x i k = -(c * j x k i)
       rw [j.skew_entry x i k]
@@ -154,15 +230,15 @@ def translate (z : Vec d) (j : ShellField d) : ShellField d :=
     refine ⟨?_, ?_, ?_⟩
     · intro x
       simpa only [translateAmbient, translateMap, ContinuousMap.comp_apply,
-        Function.comp_def] using
+        Function.comp_def] using!
         (j.hasFDerivAt (x + z)).comp x ((hasFDerivAt_id x).add_const z)
     · intro x
       simpa only [translateAmbient, translateMap, ContinuousMap.comp_apply,
-        Function.comp_def] using
+        Function.comp_def] using!
         (j.deriv_hasFDerivAt (x + z)).comp x
           ((hasFDerivAt_id x).add_const z)
     · intro x i k
-      simpa only [translateAmbient, translateMap, ContinuousMap.comp_apply] using
+      simpa only [translateAmbient, translateMap, ContinuousMap.comp_apply] using!
         j.skew_entry (x + z) i k⟩
 
 @[simp]
@@ -208,7 +284,7 @@ private def spatialSecondDerivativeMap (r : ℝ) :
       (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))).comp
     ((ContinuousLinearMap.compL ℝ (Vec d) (Vec d)
       (Vec d →L[ℝ] Mat d)).flip
-        (r • ContinuousLinearMap.id ℝ (Vec d)))
+        (r • ContinuousLinearMap.id ℝ (Vec d) : Vec d →L[ℝ] Vec d))
 
 private def spatialSecondDerivativeContinuousMap (r : ℝ) :
     C(Vec d →L[ℝ] (Vec d →L[ℝ] Mat d),
@@ -248,20 +324,28 @@ def spatialScale (r : ℝ) (j : ShellField d) : ShellField d :=
   ⟨spatialScaleAmbient r j.1, by
     refine ⟨?_, ?_, ?_⟩
     · intro x
+      have h := (j.hasFDerivAt (r • x)).comp x
+        ((hasFDerivAt_id x).const_smul r)
+      have heq : (j.deriv (r • x)).comp (r • ContinuousLinearMap.id ℝ (Vec d)) =
+          r • j.deriv (r • x) := by
+        ext v
+        simp only [ContinuousLinearMap.comp_apply, smul_apply,
+          ContinuousLinearMap.id_apply, (j.deriv (r • x)).map_smul]
       simpa only [spatialScaleAmbient, spatialMap, derivScaleMap,
         ContinuousMap.comp_apply, ContinuousMap.coe_mk, ContinuousMap.coe_comp,
-        ContinuousLinearMap.comp_smul, ContinuousLinearMap.comp_id,
-        Function.comp_def] using
-        (j.hasFDerivAt (r • x)).comp x ((hasFDerivAt_id x).const_smul r)
+        Function.comp_def] using! heq ▸ h
     · intro x
       have hinner := (j.deriv_hasFDerivAt (r • x)).comp x
         ((hasFDerivAt_id x).const_smul r)
-      have houter := hinner.const_smul r
+      have houter := @HasFDerivAt.const_smul ℝ _ (Vec d) _ _
+        (Vec d →L[ℝ] Mat d) _ _ _ _ _ ℝ _ (instDistribMulActionDerivCarrier d)
+        (instSMulCommClassDerivCarrier d)
+        (instContinuousConstSMulDerivCarrier d) hinner r
       simpa only [spatialScaleAmbient, spatialMap, derivScaleMap,
         spatialSecondDerivativeContinuousMap, spatialSecondDerivativeMap,
-        ContinuousMap.comp_apply, Function.comp_def] using houter
+        ContinuousMap.comp_apply, Function.comp_def] using! houter
     · intro x i k
-      simpa only [spatialScaleAmbient, spatialMap, ContinuousMap.comp_apply] using
+      simpa only [spatialScaleAmbient, spatialMap, ContinuousMap.comp_apply] using!
         j.skew_entry (r • x) i k⟩
 
 @[simp]
@@ -406,7 +490,7 @@ private def rotateSecondDerivativeMap (R : Mat d) :
       (rotateDerivativeMap R)).comp
     ((ContinuousLinearMap.compL ℝ (Vec d) (Vec d)
       (Vec d →L[ℝ] Mat d)).flip
-        (matVecContinuousLinearMap R))
+        (matVecContinuousLinearMap R : Vec d →L[ℝ] Vec d))
 
 private def rotateValueMap (R : Mat d) : C(Mat d, Mat d) :=
   ⟨conjugateContinuousLinearMap R, (conjugateContinuousLinearMap R).continuous⟩
@@ -457,7 +541,7 @@ def rotate (R : Mat d) (_hR : IsSignedPermutationMatrix R)
       simpa only [rotateAmbient, rotateValueMap, rotateDomainMap,
         rotateDerivativeContinuousMap, ContinuousMap.comp_apply,
         conjugateContinuousLinearMap_apply,
-        matVecContinuousLinearMap_apply, rotateDerivativeMap_apply] using houter
+        matVecContinuousLinearMap_apply, rotateDerivativeMap_apply] using! houter
     · intro x
       have hinner := (j.deriv_hasFDerivAt (matVecMul R x)).comp x
         (matVecContinuousLinearMap R).hasFDerivAt
@@ -465,7 +549,7 @@ def rotate (R : Mat d) (_hR : IsSignedPermutationMatrix R)
       simpa only [rotateAmbient, rotateDomainMap,
         rotateDerivativeContinuousMap, rotateSecondDerivativeContinuousMap,
         ContinuousMap.comp_apply, matVecContinuousLinearMap_apply,
-        rotateSecondDerivativeMap] using houter
+        rotateSecondDerivativeMap] using! houter
     · intro x i k
       have hskew : matTranspose (j (matVecMul R x)) =
           -j (matVecMul R x) :=

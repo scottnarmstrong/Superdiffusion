@@ -191,7 +191,7 @@ theorem restrictionResponseJObservableCubeSet_originCube_le_gridAverage
         ∑ u ∈ cubeFinset (d := d) (m - n).toNat,
           Ch04.restrictionResponseJObservableCubeSet (siteCube n u) p q
             (coefficientCutoff M.nu L omega) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hnn := WeakNormsMaximizer.responseDefectAverageAtScale_nonneg_of_aelocallyUniformlyEllipticField
     (coefficientCutoff M.nu L omega)

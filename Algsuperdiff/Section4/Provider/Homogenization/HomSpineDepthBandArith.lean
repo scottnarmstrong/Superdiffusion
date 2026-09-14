@@ -219,7 +219,7 @@ theorem sum_three_rpow_mul_bandStraddleWeight_le {a : ℝ} (ha0 : 0 < a) (ha : a
   · have hsplit : (∑ k ∈ Finset.range j, (3 : ℝ) ^ (a * (k : ℝ)) * bandStraddleWeight D j k) +
         (∑ k ∈ Finset.Ico j n, (3 : ℝ) ^ (a * (k : ℝ)) * bandStraddleWeight D j k) =
         ∑ k ∈ Finset.range n, (3 : ℝ) ^ (a * (k : ℝ)) * bandStraddleWeight D j k := by
-      rw [Finset.range_eq_Ico]
+      rw [Finset.range_eq_Ico, Finset.range_eq_Ico]
       exact Finset.sum_Ico_consecutive
         (fun k => (3 : ℝ) ^ (a * (k : ℝ)) * bandStraddleWeight D j k) (Nat.zero_le j) hjn
     have hnear := sum_near_bandStraddleWeight_le ha hD0 j n

@@ -155,7 +155,7 @@ private theorem clauseTwo_pointwise_of_display [NeZero d] (M : ABKModel d) (Ccg 
             (Support.fluxCorrectedErrorObservableSqSup M m s) omega :=
       Set.indicator_le_indicator_of_subset
         (goodEventBase_subset_annularEvent M Ccg m s hep.1.le hsep)
-        (fun _a => zero_le _) omega
+        (fun _a => (zero_le : (0 : ℝ≥0∞) ≤ _)) omega
     have hstep : Set.indicator (Support.goodEventBase M Ccg m s ep)
         (Support.fluxCorrectedErrorObservableSqSup M m s) omega
         ≤ ENNReal.ofReal (4 * C * ep ^ 2) :=
@@ -166,7 +166,7 @@ private theorem clauseTwo_pointwise_of_display [NeZero d] (M : ABKModel d) (Ccg 
     have hfin := indicator_observableSup_le_of_sqSup M m s hB0 hstep
     rwa [sqrt_four_mul_sq hC0 hep.1.le] at hfin
   · rw [Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 /-! ## Part C -- the packaged statement -/
 
@@ -254,7 +254,7 @@ theorem annular_decomposition_of_hpref
                   ENNReal.ofReal (C * ep)
     := by
   by_cases hd : 2 ≤ d
-  · haveI : NeZero d := ⟨by omega⟩
+  · have : NeZero d := ⟨by omega⟩
     obtain ⟨C₁, Creg, hC₁, hCreg, hpre⟩ := hpref hd
     obtain ⟨Cs, Cshom, hCs, hC6, hmain⟩ := exists_clauseOne_final_one d hd
     -- the λ-budget constant at the target's own coarse-ellipticity constant

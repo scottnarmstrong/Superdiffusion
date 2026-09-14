@@ -119,7 +119,7 @@ theorem abs_vecDot_le_vecCoordSum_mul (e x : Vec d) :
 private theorem slopeCLM_smul (c : ℝ) (A : Vec d) :
     slopeCLM (c • A) = c • slopeCLM A := by
   ext v
-  simp only [slopeCLM_apply, ContinuousLinearMap.smul_apply, smul_eq_mul, vecDot_smul_left]
+  simp only [slopeCLM_apply, smul_apply, smul_eq_mul, vecDot_smul_left]
 
 /-- **The gradient of the linear observable.** -/
 theorem hasGradientOn_affineObservable (W : Set (Vec d)) (e : Vec d) :
@@ -149,7 +149,7 @@ theorem hasGradientOn_quadraticObservable (W : Set (Vec d)) (e : Vec d) :
       slopeCLM (quadraticGradient e y) := by
     rw [show quadraticGradient e y = (2 * vecDot e y) • e from rfl, slopeCLM_smul]
     ext v
-    simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul,
+    simp only [add_apply, smul_apply, smul_eq_mul,
       slopeCLM_apply]
     ring
   rw [hder] at hprod

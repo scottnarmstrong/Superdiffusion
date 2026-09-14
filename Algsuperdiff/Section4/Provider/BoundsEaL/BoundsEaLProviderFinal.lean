@@ -331,7 +331,7 @@ theorem bounds_mathcal_E_aL_provider
                         Real.sqrt M.gamma) ^ p
     := by
   refine bounds_mathcal_E_aL_provider_of_perCubeMoments d cstar _hcstar (fun hd => ?_)
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   exact fun Cd hCd => exists_perCubeMoments d cstar _hcstar Cd hCd
 
 end

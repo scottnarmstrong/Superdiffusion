@@ -224,7 +224,7 @@ theorem bounds_mathcal_E_aL_provider_of_perCubeMoments
                         (s⁻¹ + Real.sqrt ((m : ℝ) - (n : ℝ))) *
                         Real.sqrt M.gamma) ^ p := by
   refine exists_pos_forall_model_of_two_le_dimension (fun hd => ?_)
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C0, hC0, htrans⟩ := lintegral_observableSup_rpow_le_minkowskiScaleSum d hd
   obtain ⟨K, hK, hmoment⟩ := hcube hd C0 hC0
   have hsqK : (0 : ℝ) ≤ Real.sqrt K := Real.sqrt_nonneg K

@@ -222,7 +222,7 @@ theorem three_rpow_le_two_add_indicator {x : ℝ} (hx : 0 ≤ x) :
   · rw [if_pos hcase]
     linarith
   · rw [if_neg hcase]
-    push_neg at hcase
+    push Not at hcase
     have hl2 : Real.log 3 ≤ 2 := log_three_le_two
     have hlog : Real.log 3 * x ≤ 1 / 2 := by nlinarith [hx, hcase, hl2]
     calc (3 : ℝ) ^ x = Real.exp (Real.log 3 * x) :=

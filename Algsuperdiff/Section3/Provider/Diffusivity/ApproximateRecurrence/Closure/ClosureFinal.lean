@@ -85,14 +85,20 @@ def closureUnitVec (d : ℕ) [NeZero d] : Vec d :=
 theorem vecNormSq_closureUnitVec (d : ℕ) [NeZero d] :
     vecNormSq (closureUnitVec d) = 1 := by
   classical
+  have hi : (0 : ℕ) < d := Nat.pos_of_ne_zero (NeZero.ne d)
   have hfun : ∀ i : Fin d, closureUnitVec d i * closureUnitVec d i =
-      if i = (⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩ : Fin d) then (1 : ℝ) else 0 := by
+      if i = (⟨0, hi⟩ : Fin d) then (1 : ℝ) else 0 := by
     intro i
     simp only [closureUnitVec, Pi.single_apply]
     split <;> simp
   show ∑ i, closureUnitVec d i * closureUnitVec d i = 1
   rw [Finset.sum_congr rfl fun i _ => hfun i]
-  simp
+  rw [Finset.sum_eq_single (⟨0, hi⟩ : Fin d)]
+  · simp
+  · intro b _ hb
+    simp only [if_neg hb]
+  · intro h
+    exact absurd (Finset.mem_univ _) h
 
 /-! ## The regime under which the three inputs are read
 

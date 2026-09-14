@@ -60,7 +60,7 @@ theorem setIntegral_sq_mul_exp_gradSq_layer_le {Om : Set (Vec d)}
           vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i))) ∂volume) ≤
       M ^ 2 * Ceta * Real.exp (2 * (kappa * tA)) * volLayer := by
   classical
-  haveI : IsFiniteMeasure (volumeMeasureOn Om) :=
+  have : IsFiniteMeasure (volumeMeasureOn Om) :=
     hOmBdd.isFiniteMeasure_restrict_volume
   have hchi : ContDiff ℝ (⊤ : ℕ∞) (fun y => Real.exp (kappa * psi y)) :=
     contDiff_exponentialWeight hpsi kappa
@@ -103,7 +103,7 @@ theorem setIntegral_sq_mul_exp_gradSq_layer_le {Om : Set (Vec d)}
     by_cases hzero : fderiv ℝ eta y = 0
     · have hgz : vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i)) = 0 := by
         rw [hzero]
-        simp only [ContinuousLinearMap.zero_apply, vecNormSq, vecDot,
+        simp only [zero_apply, vecNormSq, vecDot,
           mul_zero, Finset.sum_const_zero]
       rw [hgz, mul_zero, mul_zero]
       exact Set.indicator_nonneg (fun _ _ => hcnn) y
@@ -185,7 +185,7 @@ theorem setIntegral_sq_le_exp_of_agmonMass {Om : Set (Vec d)}
     refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict Om
     · exact (heta.continuous.pow 2).mul (hchi.continuous.pow 2)
     · have hetaSq : HasCompactSupport (fun y => eta y ^ 2) := by
-        simpa only [pow_two] using hetaCompact.mul_left (f := eta)
+        simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
       exact hetaSq.mul_right
   have hweightInt := integrable_sq_mul_memLpTop (u := u) hweightTop
   have hsqInt : IntegrableOn (fun y => u.toFun y ^ 2) Om := by
@@ -274,7 +274,7 @@ theorem setIntegral_gradSq_le_of_localizedBound {Om : Set (Vec d)}
       (sq_weight_smooth heta hetaCompact).2).restrict Om
   have hq : MemVectorL2 Om (fun x => (eta x ^ 2) • u.grad x) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul,
-      mul_comm] using
+      mul_comm] using!
       (MemLp.of_eval fun i : Fin d =>
         (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
   have htargetInt : Integrable (fun x => eta x ^ 2 * vecNormSq (u.grad x))

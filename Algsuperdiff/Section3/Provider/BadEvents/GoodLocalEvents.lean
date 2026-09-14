@@ -154,7 +154,7 @@ theorem goodLocalSensitivity_eq_iInter (M : ABKModel d) (Ccg : ℝ)
           sensitivityConstMax d * incrementOscGauge₂ Q n L omega ≤
             goodLocalThreshold M Ccg Q.scale n} := by
   ext omega
-  simp only [goodLocalSensitivity, Set.mem_setOf_eq, Set.mem_iInter₂, Set.mem_Ici]
+  simp only [goodLocalSensitivity, Set.mem_ofPred_eq, Set.mem_iInter₂, Set.mem_Ici]
 
 theorem measurableSet_goodLocalSensitivity (M : ABKModel d) (Ccg : ℝ)
     (Q : TriadicCube d) (n : ℤ) :
@@ -212,7 +212,7 @@ theorem compl_goodLocalSensitivity_eq (M : ABKModel d) (Ccg : ℝ)
   constructor
   · intro h
     rw [Set.mem_compl_iff, mem_goodLocalSensitivity_iff] at h
-    push_neg at h
+    push Not at h
     obtain ⟨L, hL, hlt⟩ := h
     exact Set.mem_biUnion hL hlt
   · intro h hmem

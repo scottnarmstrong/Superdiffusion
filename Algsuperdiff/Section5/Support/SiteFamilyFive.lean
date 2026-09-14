@@ -128,7 +128,7 @@ theorem mem_largeScaleEvent_iff_tsum (M : ABKModel d) (n : ℤ) (y : Vec d) (the
         Section4.Support.shellW1InfGradNorm n
           ((Cutoff.translateCutoffSample y omega).1 k.1)))
   rw [mem_largeScaleEvent_iff]
-  simp only [largeScaleEventBase, Set.mem_setOf_eq]
+  simp only [largeScaleEventBase, Set.mem_ofPred_eq]
   rw [← hre]
   rfl
 
@@ -207,7 +207,7 @@ theorem not_mem_shellExcessEvent_iff (M : ABKModel d) (C0 ep : ℝ) (n : ℤ) (L
     omega ∉ shellExcessEvent M C0 ep n L z ↔
       largeScaleShellTerm M n (n + (L : ℤ)) (rescaledLatticePoint n z) omega ≤
         shellThreshold M C0 ep L := by
-  simp only [shellExcessEvent, Set.mem_setOf_eq, not_lt]
+  simp only [shellExcessEvent, Set.mem_ofPred_eq, not_lt]
 
 /-- **The site-indexed bad events of the scale decomposition.**  At level `0`
 the good cube event at the rescaled site fails, or the shell of index `n`
@@ -360,7 +360,7 @@ theorem measurableSet_shellExcessEvent_shellLocal (M : ABKModel d) (C0 ep : ℝ)
     (hU : closedCubeAt (rescaledLatticePoint n z) n ⊆ U) :
     MeasurableSet[Provider.BadEvents.shellCoordinateLocalSigma (n + (L : ℤ)) U]
       (shellExcessEvent M C0 ep n L z) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) :=
+  let : MeasurableSpace (Cutoff.CutoffSample d) :=
     Provider.BadEvents.shellCoordinateLocalSigma (n + (L : ℤ)) U
   exact measurableSet_lt measurable_const
     (measurable_largeScaleShellTerm_shellLocal M n (n + (L : ℤ))
@@ -388,7 +388,7 @@ theorem measurableSet_siteBadEventFive_local (M : ABKModel d) (Creg C0 ep : ℝ)
     (hU : closedCubeAt (rescaledLatticePoint n z) n ⊆ U) :
     MeasurableSet[Cutoff.cutoffSampleLocalSigma M (n + (L : ℤ)) U]
       (siteBadEventFive M Creg C0 ep n L z) := by
-  letI : MeasurableSpace (Cutoff.CutoffSample d) :=
+  let : MeasurableSpace (Cutoff.CutoffSample d) :=
     Cutoff.cutoffSampleLocalSigma M (n + (L : ℤ)) U
   cases L with
   | zero =>

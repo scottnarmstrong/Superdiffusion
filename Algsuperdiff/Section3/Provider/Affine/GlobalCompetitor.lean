@@ -532,7 +532,7 @@ theorem globalCompetitorSlope_eq_cellSlope [NeZero d] {m : ℤ} {hn : ℕ → �
             (notMem_commonCoarseMesh_of_mem_cubeSet hNsub hs ⟨n, hQlayer⟩ hQN
               (hTcube (T.openCarrier_subset_carrier hx))
               (openCubeSet_subset_cubeSet _ (U.openCarrier_subset_openCubeSet hxU)))]
-      · push_neg at hex
+      · push Not at hex
         exact globalCompetitorSlope_of_forall_notMem C p hex
     refine ⟨fun x hx => (hval x hx).trans (hval _ hinner).symm, ?_, fun _ => hval _ hinner⟩
     intro hQC

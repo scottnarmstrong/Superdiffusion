@@ -64,7 +64,7 @@ theorem blockEnergyDensityAt_integrableOn {U : Book.Ch02.Domain d} (a : Book.Ch0
     (hX : MemBlockL2 (U : Set (Vec d)) fun x => ((X.potential x, X.flux x) : BlockVec d)) :
     MeasureTheory.IntegrableOn
       (fun x => Book.Ch02.blockEnergyDensityAt a (X.eval x) x) (U : Set (Vec d)) volume := by
-  haveI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (U : Set (Vec d))) :=
+  have : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (U : Set (Vec d))) :=
     U.isDomain.isFiniteMeasure_restrict_volume
   have hbInt :
       MeasureTheory.IntegrableOn
@@ -155,7 +155,7 @@ theorem doubledMu_le_finset_weighted_sum_add_remainder
             ∑ i ∈ J, ∫ x in (S i : Set (Vec d)),
               Book.Ch02.blockEnergyDensityAt a ((F x, G x) : BlockVec d) x ∂volume) := by
   classical
-  haveI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (Q : Set (Vec d))) :=
+  have : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (Q : Set (Vec d))) :=
     Q.isDomain.isFiniteMeasure_restrict_volume
   have hQopen : IsOpen (Q : Set (Vec d)) := Q.isDomain.isOpen
   have hSopen : ∀ i, IsOpen (S i : Set (Vec d)) := fun i => (S i).isDomain.isOpen
@@ -251,7 +251,7 @@ theorem doubledMu_le_finset_weighted_sum_add_remainder
         (fun x => Book.Ch02.blockEnergyDensityAt (aS i) ((X i).eval x) x)
         (S i : Set (Vec d)) volume := by
     intro i
-    haveI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (S i : Set (Vec d))) :=
+    have : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (S i : Set (Vec d))) :=
       (S i).isDomain.isFiniteMeasure_restrict_volume
     exact blockEnergyDensityAt_integrableOn (aS i) (X i)
       (memBlockL2_pair (memVectorL2_of_sub_const (c := Fc i) (hX i).1.1.1)
@@ -287,7 +287,7 @@ theorem doubledMu_le_finset_weighted_sum_add_remainder
             Book.Ch02.blockEnergyDensityAt (aS i) ((X i).eval x) x ∂volume) +
           ∫ x in (Q : Set (Vec d)) \ ⋃ i ∈ J, (S i : Set (Vec d)),
             Book.Ch02.blockEnergyDensityAt a ((F x, G x) : BlockVec d) x ∂volume := by
-    have hsplit := MeasureTheory.integral_inter_add_diff (μ := volume)
+    have hsplit := MeasureTheory.integral_inter_add_sdiff (μ := volume)
       (f := fun x => Book.Ch02.blockEnergyDensityAt a (Y.eval x) x) hAmeas hIntY
     rw [hinter] at hsplit
     rw [← hsplit]
@@ -307,7 +307,7 @@ theorem doubledMu_le_finset_weighted_sum_add_remainder
             Book.Ch02.blockEnergyDensityAt a ((F x, G x) : BlockVec d) x ∂volume) -
           ∑ i ∈ J, ∫ x in (S i : Set (Vec d)),
             Book.Ch02.blockEnergyDensityAt a ((F x, G x) : BlockVec d) x ∂volume := by
-    have hsplit := MeasureTheory.integral_inter_add_diff (μ := volume)
+    have hsplit := MeasureTheory.integral_inter_add_sdiff (μ := volume)
       (f := fun x => Book.Ch02.blockEnergyDensityAt a ((F x, G x) : BlockVec d) x) hAmeas hIntW
     rw [hinter, MeasureTheory.integral_biUnion_finset J (fun i _ => (hSopen i).measurableSet)
       hdisjJ fun i _ => hIntW.mono_set (hsub i)] at hsplit
@@ -377,7 +377,7 @@ theorem ofReal_doubledMu_le_tsum_of_dissection
         (((volume (S i : Set (Vec d))).toReal / (volume (Q : Set (Vec d))).toReal) *
           Book.Ch02.doubledMu (S i) (aS i) (Fc i, Gc i)) := by
   classical
-  haveI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (Q : Set (Vec d))) :=
+  have : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (Q : Set (Vec d))) :=
     Q.isDomain.isFiniteMeasure_restrict_volume
   have hvolQ : (0 : ℝ) < (volume (Q : Set (Vec d))).toReal :=
     Homogenization.Internal.Ch02.BookCh02.domain_volume_pos Q
@@ -394,7 +394,7 @@ theorem ofReal_doubledMu_le_tsum_of_dissection
   have haeSet : (Q : Set (Vec d)) =ᵐ[volume] ⋃ i, (S i : Set (Vec d)) := by
     refine (MeasureTheory.ae_eq_set).2 ⟨hcover, ?_⟩
     have hempty : (⋃ i, (S i : Set (Vec d))) \ (Q : Set (Vec d)) = ∅ := by
-      rw [Set.diff_eq_empty]
+      rw [Set.sdiff_eq_empty]
       exact Set.iUnion_subset hsub
     rw [hempty]
     simp

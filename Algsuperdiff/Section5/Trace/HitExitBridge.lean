@@ -36,7 +36,7 @@ theorem cubeSet_partitionCube_subset_closedPartitionCube {d : ℕ} (n : ℤ)
   intro x hx
   have hclosed := cubeSet_subset_closedBall (Q := partitionCube n z) hx
   simpa only [closedPartitionCube, partitionCube, rescaleSite, cubeCenter,
-    cubeRadius, cubeScaleFactor] using hclosed
+    cubeRadius, cubeScaleFactor] using! hclosed
 
 private def neighboringSites {d : ℕ} (v : Section5.Percolation.Site d) :
     Finset (Section5.Percolation.Site d) :=

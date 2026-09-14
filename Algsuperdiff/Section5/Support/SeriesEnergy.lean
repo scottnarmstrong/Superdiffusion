@@ -65,7 +65,7 @@ theorem integrableOn_sq_norm_of_memVectorL2 {U : Set (Vec d)} {F : Vec d → Vec
     (hF : MemVectorL2 U F) : IntegrableOn (fun x => ‖F x‖ ^ (2 : ℕ)) U := by
   have hn : MemLp (fun x => ‖F x‖) 2 (volume.restrict U) := hF.norm
   have hmul := hn.integrable_mul hn
-  simpa [Pi.mul_apply, pow_two] using hmul
+  simpa [Pi.mul_apply, pow_two] using! hmul
 
 /-- The energy integral of a field is nonnegative. -/
 theorem setIntegral_sq_norm_nonneg (U : Set (Vec d)) (F : Vec d → Vec d) :

@@ -506,7 +506,7 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
         ¬ (wellPlacedHalfGap m np <
           sigma * Support.triadicLatticePoint n (offGridLatticeIndex n x) i)) :=
       fun hall => hgate (no_overhang_iff_gate.mp hall)
-    push_neg at hnogate
+    push Not at hnogate
     obtain ⟨i, sigma, hsig, hover⟩ := hnogate
     have hover' : wellPlacedHalfGap m (np - 2 + 2) <
         sigma * Support.triadicLatticePoint n (offGridLatticeIndex n x) i := by

@@ -89,8 +89,8 @@ theorem sq_integral_eval_exitTimeTrunc_onePointRealExtension_le_cubeSetAt_stream
         ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
           R.isConservative_onePointKernelSemigroup (y : OnePoint (Vec d))))
       ^ (2 : ℕ) ≤ 4 * K ^ (2 : ℕ) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hmean :=
     hasExitMeanValueOn_onePointRealExtension_of_contDiffBoundaryDatum_cubeSetAt_stream R hreg
     hcons hid hT y n hbd hbdCompact hu hN hoff hucont Y hY hharm htrace
@@ -136,8 +136,8 @@ theorem abs_integral_eval_exitTimeTrunc_onePointRealExtension_sub_mul_le_cubeSet
         (IsConservative.continuousProcess R.onePointKernelSemigroup
             R.isConservative_onePointKernelSemigroup (y : OnePoint (Vec d))
           (survivalEvent (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) t)ᶜ).toReal) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hmean :=
     hasExitMeanValueOn_onePointRealExtension_of_contDiffBoundaryDatum_cubeSetAt_stream R hreg
     hcons hid hT y n hbd hbdCompact hwmeas hN hoff hwcont Y hY hharm htrace

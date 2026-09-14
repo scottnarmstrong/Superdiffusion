@@ -68,12 +68,12 @@ private theorem isBigOWith_of_map_eq
     mu.real (upperTailEvent f (A * t)) = (Measure.map f mu).real E := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := mu) hf.aemeasurable hE)
-      simpa [E, upperTailEvent] using h.symm
+      simpa [E, upperTailEvent] using! h.symm
     _ = (Measure.map g mu').real E := by rw [hmap]
     _ = mu'.real (upperTailEvent g (A * t)) := by
       have h := congrArg ENNReal.toReal
         (Measure.map_apply_of_aemeasurable (μ := mu') hg.aemeasurable hE)
-      simpa [E, upperTailEvent] using h
+      simpa [E, upperTailEvent] using! h
     _ ≤ (Psi t)⁻¹ := hg_tail ht
 
 private theorem isBigOWith_comp_of_map
@@ -99,7 +99,7 @@ private theorem integrable_of_map_eq
     Integrable f mu := by
   have hint_map_g : Integrable id (Measure.map g mu) := by
     refine (integrable_map_measure aestronglyMeasurable_id hg.aemeasurable).mpr ?_
-    simpa only [Function.comp_apply] using hg_int
+    simpa only [Function.comp_apply] using! hg_int
   have hint_map_f : Integrable id (Measure.map f mu) := by
     rw [hmap]
     exact hint_map_g
@@ -134,11 +134,11 @@ private theorem map_abs_sq_eq_of_map_eq
   calc
     Measure.map (fun omega => |f omega| ^ (2 : ℕ)) mu =
         Measure.map phi (Measure.map f mu) := by
-          simpa [phi, Function.comp_apply] using
+          simpa [phi, Function.comp_apply] using!
             (Measure.map_map hphi hf (μ := mu)).symm
     _ = Measure.map phi (Measure.map g mu) := by rw [hmap]
     _ = Measure.map (fun omega => |g omega| ^ (2 : ℕ)) mu := by
-          simpa [phi, Function.comp_apply] using Measure.map_map hphi hg (μ := mu)
+          simpa [phi, Function.comp_apply] using! Measure.map_map hphi hg (μ := mu)
 
 /-! ## The actual centered local variable -/
 
@@ -246,7 +246,7 @@ theorem isBigOWith_normalizedCenteredLpMassRep_origin_momentBoosted
       (show Measurable F by
         exact measurable_partitionIncrementField (d := d) n m) hmeas
       (by rw [hcomp]; exact hraw)
-    simpa [P, F] using h
+    simpa [P, F] using! h
   have hscaled := hPraw.const_mul (inv_nonneg.mpr hV.le)
   have hfun : (fun a : RegCoeffField d =>
       V⁻¹ * (regFieldLpMassRep p (cubeSet (originCube d 0)) a - mu0)) =
@@ -306,9 +306,11 @@ theorem normalizedCenteredLpMassRep_origin_moments
     rw [hZcomp]
     exact hZshell_int
   have hZmean : (∫ a, Z a ∂P) = 0 := by
-    rw [show P = Measure.map F M.P.toMeasure by rfl,
-      integral_map (measurable_partitionIncrementField (d := d) n m).aemeasurable
-        ((measurable_regFieldLpMassRep p _).sub measurable_const).aestronglyMeasurable]
+    have hZmean_map : (∫ a, Z a ∂P) = ∫ omega, Z (F omega) ∂M.P.toMeasure := by
+      rw [show P = Measure.map F M.P.toMeasure by rfl]
+      exact integral_map (measurable_partitionIncrementField (d := d) n m).aemeasurable
+        ((measurable_regFieldLpMassRep p _).sub measurable_const).aestronglyMeasurable
+    rw [hZmean_map]
     change (∫ omega, Z (F omega) ∂M.P.toMeasure) = 0
     rw [hZcomp]
     change (∫ omega, streamIncrementLpMass p
@@ -334,9 +336,11 @@ theorem normalizedCenteredLpMassRep_origin_moments
     rw [hZsqcomp]
     exact hsecond.1
   have hZsq : (∫ a, Z a ^ (2 : ℕ) ∂P) ≤ V ^ (2 : ℕ) := by
-    rw [show P = Measure.map F M.P.toMeasure by rfl,
-      integral_map (measurable_partitionIncrementField (d := d) n m).aemeasurable
-        (((measurable_regFieldLpMassRep p _).sub measurable_const).pow_const 2 |>.aestronglyMeasurable)]
+    have hZsq_map : (∫ a, Z a ^ (2 : ℕ) ∂P) = ∫ omega, Z (F omega) ^ (2 : ℕ) ∂M.P.toMeasure := by
+      rw [show P = Measure.map F M.P.toMeasure by rfl]
+      exact integral_map (measurable_partitionIncrementField (d := d) n m).aemeasurable
+        (((measurable_regFieldLpMassRep p _).sub measurable_const).pow_const 2 |>.aestronglyMeasurable)
+    rw [hZsq_map]
     change (∫ omega, Z (F omega) ^ (2 : ℕ) ∂M.P.toMeasure) ≤ V ^ (2 : ℕ)
     rw [hZsqcomp]
     exact hsecond.2
@@ -362,7 +366,7 @@ theorem normalizedCenteredLpMassRep_origin_moments
         mul_le_mul_of_nonneg_left hZsq (pow_nonneg (inv_nonneg.mpr hV.le) _)
       _ = 1 := by field_simp [hV.ne']
   refine ⟨?_, ?_, ?_, hYsq⟩
-  · simpa [normalizedCenteredLpMassRep, P, V, mu0, Z, Y] using hY_int
+  · simpa [normalizedCenteredLpMassRep, P, V, mu0, Z, Y] using! hY_int
   · simpa [normalizedCenteredLpMassRep, P, V, mu0, Z, Y] using hYsq_int
   · simpa [normalizedCenteredLpMassRep, P, V, mu0, Z, Y] using hYmean
 
@@ -536,7 +540,7 @@ theorem isBigOWith_gammaSigma_streamIncrementLpMass_sub_originMean_momentBoosted
     (mu := M.P.toMeasure) (F := F)
     (show Measurable F by
       exact measurable_partitionIncrementField (d := d) n m) hmeas
-    (by simpa [P, sigma, V, j] using hmain)
+    (by simpa [P, sigma, V, j] using! hmain)
   have hfun : (fun omega : ShellSeq d =>
       Book.Ch04.restrictionCenteredDescendantAverage P 0 j (regFieldLpMassRep p)
         (F omega)) =

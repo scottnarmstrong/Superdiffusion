@@ -172,7 +172,7 @@ theorem homGapAbsorbAt {M : Section3.ABKModel d} (hlog : 4 ≤ |Real.log M.gamma
     linarith only [h]
   have hs2pos : 0 < s2 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have : 10 * s2 * Real.log 3 ≤ 0 :=
       mul_nonpos_of_nonpos_of_nonneg (by linarith only [hcon]) hlog3.le
     linarith only [this, hs2]

@@ -207,7 +207,7 @@ theorem exists_oddReflection_weakSolution_chain
         isOpen_partialReflectedBallSector x₀ r S sigma T
       have hPTmeas : MeasurableSet (partialReflectedBallSector x₀ r S sigma T) :=
         hPTopen.measurableSet
-      haveI hPTfinite : IsFiniteMeasure
+      have hPTfinite : IsFiniteMeasure
           (volume.restrict (partialReflectedBallSector x₀ r S sigma T)) :=
         (isOpenBoundedConvexDomain_partialReflectedBallSector x₀ hr S sigma
           T).isFiniteMeasure_restrict_volume
@@ -358,7 +358,7 @@ theorem exists_oddReflection_weakSolution_chain
           (hOddScalarL2.restrict _) ?_
         intro φ hφ hφc hφPI
         have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection (x₀ i) i z) := by
-          simpa [Function.comp] using hφ.comp (contDiff_coordFaceReflection (x₀ i) i)
+          simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection (x₀ i) i)
         have hφrc : HasCompactSupport fun z => φ (coordFaceReflection (x₀ i) i z) :=
           hasCompactSupport_comp_coordFaceReflection hφc (x₀ i) i
         have hφrPI : tsupport (fun z => φ (coordFaceReflection (x₀ i) i z)) ⊆

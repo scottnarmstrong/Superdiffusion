@@ -718,7 +718,7 @@ private theorem constantBlockMatrix_sigmaBar_blockMatLoewnerLE_scalarAnnealed_in
         (Book.Ch02.constantBlockMatrix
           (Observable.isotropicComparatorMatrix sigma))
         (Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct 0) := by
-      simpa only [hP, hStruct, sigma] using hbase
+      simpa only [hP, hStruct, sigma] using! hbase
     exact hbase'.trans hmono
 
 private theorem relativeMeanDefect_nonneg_and_le_originMean
@@ -1146,8 +1146,8 @@ private theorem relativeMeanDefect_sq_le_secondBudget_sq
     positivity
   have hrhsNonneg : 0 ≤ 2 * dotProduct q q * secondBudget := by positivity
   have hsq := (sq_le_sq₀ hsign.1 hrhsNonneg).2 hmeanLe
-  convert hsq using 1
-  ring
+  calc meanDefect ^ (2 : ℕ) ≤ (2 * dotProduct q q * secondBudget) ^ (2 : ℕ) := hsq
+    _ = 4 * (dotProduct q q) ^ (2 : ℕ) * secondBudget ^ (2 : ℕ) := by ring
 
 /-- Second-moment control of an arbitrary quadratic probe of the actual
 relative descendant-average fluctuation matrix. -/

@@ -44,7 +44,7 @@ theorem fderiv_apply_eq_zero_of_notMem_tsupport {φ : Vec d → ℝ} {x : Vec d}
     ((isClosed_tsupport (f := φ)).isOpen_compl.eventually_mem hx).mono
       fun z hz => image_eq_zero_of_notMem_tsupport hz
   rw [hzero.fderiv_eq]
-  simp only [fderiv_zero, Pi.zero_apply, ContinuousLinearMap.zero_apply]
+  simp only [fderiv_zero, Pi.zero_apply, zero_apply]
 
 /-- A global weak-gradient graph restricts to every set: the test functions of
 the smaller set are test functions of the ambient space, and both integrands
@@ -144,25 +144,25 @@ theorem volume_le_three_mul_slab {A : Set (Vec d)} {g : Vec d → ℝ} {e : Vec 
     obtain ⟨hlo, hhi⟩ := hrange y hy
     by_cases h0 : a ≤ g y
     · refine Or.inl (Or.inl ?_)
-      simp only [Set.mem_preimage, hSdef, Set.mem_inter_iff, Set.mem_setOf_eq,
+      simp only [Set.mem_preimage, hSdef, Set.mem_inter_iff, Set.mem_ofPred_eq,
         zero_smul, add_zero]
       exact ⟨hy, h0⟩
-    · push_neg at h0
+    · push Not at h0
       by_cases h1 : a - t ≤ g y
       · refine Or.inl (Or.inr ?_)
         have hmemA : y + t • e ∈ A := by
           refine hshift y hy t ?_ ?_
           · linarith only [hlo, ht]
           · simp only [htdef]; linarith only [h0]
-        simp only [Set.mem_preimage, hSdef, Set.mem_inter_iff, Set.mem_setOf_eq]
+        simp only [Set.mem_preimage, hSdef, Set.mem_inter_iff, Set.mem_ofPred_eq]
         exact ⟨hmemA, by rw [hg y t]; linarith only [h1]⟩
-      · push_neg at h1
+      · push Not at h1
         refine Or.inr ?_
         have hmemA : y + (2 * t) • e ∈ A := by
           refine hshift y hy (2 * t) ?_ ?_
           · linarith only [hlo, ht]
           · simp only [htdef]; linarith only [h1]
-        simp only [Set.mem_preimage, hSdef, Set.mem_inter_iff, Set.mem_setOf_eq]
+        simp only [Set.mem_preimage, hSdef, Set.mem_inter_iff, Set.mem_ofPred_eq]
         refine ⟨hmemA, ?_⟩
         rw [hg y (2 * t)]
         have : a - 2 * t ≤ lo := by simp only [htdef]; linarith only [halo]

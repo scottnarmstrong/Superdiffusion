@@ -149,7 +149,7 @@ theorem inv_unitCubeLambda_twoGamma_nonneg (M : ABKModel d) (R : TriadicCube d)
     (omega : Cutoff.CutoffSample d) :
     0 ≤ (Algsuperdiff.Frozen.Section24.unitCubeLambda (2 * M.gamma) (.finite 2)
       (unitRescaledCutoffCoeff M R (R.scale - 2) omega))⁻¹ := by
-  haveI : NeZero d :=
+  have : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   exact Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.unitCubeLambda_inv_nonneg
@@ -163,7 +163,7 @@ theorem measurable_inv_unitCubeLambda_twoGamma (M : ABKModel d) (R : TriadicCube
     Measurable fun omega : Cutoff.CutoffSample d =>
       (Algsuperdiff.Frozen.Section24.unitCubeLambda (2 * M.gamma) (.finite 2)
         (unitRescaledCutoffCoeff M R (R.scale - 2) omega))⁻¹ := by
-  haveI : NeZero d :=
+  have : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   have hg0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   exact measurable_unitCubeLambda_inv_unitRescaledCutoffCoeff M R (by linarith only [hg0])

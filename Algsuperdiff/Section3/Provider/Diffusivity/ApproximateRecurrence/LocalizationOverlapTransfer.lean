@@ -99,7 +99,7 @@ theorem sum_setIntegral_openCubeAtScale_le {K n : ℤ} {N : ℕ}
   have hint : ∀ R ∈ I, Integrable (Set.indicator (W R) f) (volume.restrict U) :=
     fun R _ => hf.indicator (hWmeas R)
   have hsumint : Integrable (fun x => ∑ R ∈ I, Set.indicator (W R) f x)
-      (volume.restrict U) := integrable_finset_sum I hint
+      (volume.restrict U) := integrable_finsetSum I hint
   have hconstint : Integrable (fun x => ((3 : ℝ) ^ N) ^ d * f x) (volume.restrict U) :=
     hf.const_mul _
   have hptw : ∀ x : Vec d, ∑ R ∈ I, Set.indicator (W R) f x ≤ ((3 : ℝ) ^ N) ^ d * f x := by
@@ -115,7 +115,7 @@ theorem sum_setIntegral_openCubeAtScale_le {K n : ℤ} {N : ℕ}
   calc ∑ R ∈ I, ∫ x in W R, f x ∂volume
       = ∑ R ∈ I, ∫ x in U, Set.indicator (W R) f x ∂volume := Finset.sum_congr rfl hstep
     _ = ∫ x in U, ∑ R ∈ I, Set.indicator (W R) f x ∂volume :=
-        (integral_finset_sum I hint).symm
+        (integral_finsetSum I hint).symm
     _ ≤ ∫ x in U, ((3 : ℝ) ^ N) ^ d * f x ∂volume := integral_mono hsumint hconstint hptw
     _ = ((3 : ℝ) ^ N) ^ d * ∫ x in U, f x ∂volume := integral_const_mul _ _
 

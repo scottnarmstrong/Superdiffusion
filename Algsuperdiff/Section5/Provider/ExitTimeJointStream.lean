@@ -247,8 +247,8 @@ theorem isCubeExitTimeSolutionDataStream_onePoint_of_chain (M : ABKModel d) (n :
       R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
       ((↑) : Vec d → OnePoint (Vec d)) i y := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   refine ⟨w, wRep, hdata, OnePoint.isOpen_image_coe.mpr (isOpen_cubeSetAt y n), ?_, ?_⟩
   · rintro _ ⟨x, hx, rfl⟩
     exact ⟨x, hx, rfl⟩

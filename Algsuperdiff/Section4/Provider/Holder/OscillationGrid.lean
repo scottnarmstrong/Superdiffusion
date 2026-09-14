@@ -65,7 +65,7 @@ theorem openCubeAtScale_eq_ball [NeZero d] (x : Vec d) (k : ℤ) :
   have hrpow : Real.rpow (3 : ℝ) ((k : ℤ) : ℝ) = (3 : ℝ) ^ k :=
     Real.rpow_intCast (3 : ℝ) k
   ext y
-  simp only [openCubeAtScale, Set.mem_setOf_eq, Metric.mem_ball, hrpow]
+  simp only [openCubeAtScale, Set.mem_ofPred_eq, Metric.mem_ball, hrpow]
   rw [dist_pi_lt_iff hr]
   exact ⟨fun h i => by simpa [Real.dist_eq] using h i,
     fun h i => by simpa [Real.dist_eq] using h i⟩

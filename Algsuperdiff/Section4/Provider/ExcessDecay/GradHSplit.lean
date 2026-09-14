@@ -73,14 +73,14 @@ theorem ofReal_norm_volumeAverageVec_le_eLpNorm_two {W : Set (Vec d)}
     (hf : Integrable f (volume.restrict W)) :
     ENNReal.ofReal ‖volumeAverageVec W f‖ ≤
       eLpNorm f 2 (normalizedVolumeMeasureOn W) := by
-  haveI hprob : IsProbabilityMeasure (normalizedVolumeMeasureOn W) :=
+  have hprob : IsProbabilityMeasure (normalizedVolumeMeasureOn W) :=
     isProbabilityMeasure_normalizedVolumeMeasureOn h0 htop
   have hint : Integrable f (normalizedVolumeMeasureOn W) := by
     rw [normalizedVolumeMeasureOn_def]
     exact hf.smul_measure (ENNReal.inv_ne_top.mpr h0)
   have hav : volumeAverageVec W f = ∫ y, f y ∂(normalizedVolumeMeasureOn W) :=
     (Regularity.integral_normalizedVolumeMeasureOn_eq_volumeAverageVec hf).symm
-  rw [hav, ofReal_norm_eq_enorm]
+  rw [hav, ofReal_norm]
   calc ‖∫ y, f y ∂(normalizedVolumeMeasureOn W)‖ₑ
       ≤ ∫⁻ y, ‖f y‖ₑ ∂(normalizedVolumeMeasureOn W) := enorm_integral_le_lintegral_enorm _
     _ = eLpNorm f 1 (normalizedVolumeMeasureOn W) := eLpNorm_one_eq_lintegral_enorm.symm
@@ -92,9 +92,9 @@ theorem volumeAverageVec_sub_const {W : Set (Vec d)} {f : Vec d → Vec d} (c : 
     (h0 : volume W ≠ 0) (htop : volume W ≠ ⊤)
     (hf : Integrable f (volume.restrict W)) :
     volumeAverageVec W (fun y => f y - c) = volumeAverageVec W f - c := by
-  haveI hprob : IsProbabilityMeasure (normalizedVolumeMeasureOn W) :=
+  have hprob : IsProbabilityMeasure (normalizedVolumeMeasureOn W) :=
     isProbabilityMeasure_normalizedVolumeMeasureOn h0 htop
-  haveI hfin : IsFiniteMeasure (volume.restrict W) :=
+  have hfin : IsFiniteMeasure (volume.restrict W) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact lt_top_iff_ne_top.mpr htop⟩
   have hint : Integrable f (normalizedVolumeMeasureOn W) := by
     rw [normalizedVolumeMeasureOn_def]
@@ -219,9 +219,9 @@ theorem eLpNorm_windowThree_le_volumeAverageVec_windowTwo_add_gagliardo
   have hW3ne : volume W3 ≠ 0 := by
     intro h0
     exact volume_anchorWindowInner_ne_zero hgeom
-      (le_antisymm (h0 ▸ measure_mono (anchorWindow_two_subset_three n m z)) (zero_le _))
+      (le_antisymm (h0 ▸ measure_mono (anchorWindow_two_subset_three n m z)) zero_le)
   have hW3top : volume W3 ≠ ⊤ := volume_anchorWindow_ne_top (n + 3) m z
-  haveI hprob : IsProbabilityMeasure (normalizedVolumeMeasureOn W3) :=
+  have hprob : IsProbabilityMeasure (normalizedVolumeMeasureOn W3) :=
     isProbabilityMeasure_normalizedVolumeMeasureOn hW3ne hW3top
   set c : Vec d := volumeAverageVec W3 f with hc
   set P : ℝ≥0∞ := normalizedGagliardoESeminormOn W3 s f with hP
@@ -236,7 +236,7 @@ theorem eLpNorm_windowThree_le_volumeAverageVec_windowTwo_add_gagliardo
     exact h
   -- the mean move `W₃ → W₂`
   have hfc : Integrable (fun y => f y - c) (volume.restrict W3) := by
-    haveI hfin : IsFiniteMeasure (volume.restrict W3) :=
+    have hfin : IsFiniteMeasure (volume.restrict W3) :=
       ⟨by rw [Measure.restrict_apply_univ]; exact lt_top_iff_ne_top.mpr hW3top⟩
     exact hf.sub (integrable_const c)
   have hmove : ENNReal.ofReal ‖volumeAverageVec W2 f - c‖ ≤
@@ -254,7 +254,7 @@ theorem eLpNorm_windowThree_le_volumeAverageVec_windowTwo_add_gagliardo
       ENNReal.ofReal ‖c‖ := by
     rw [eLpNorm_const _ (by norm_num)
       (IsProbabilityMeasure.ne_zero (normalizedVolumeMeasureOn W3)), measure_univ,
-      ENNReal.one_rpow, mul_one, ofReal_norm_eq_enorm]
+      ENNReal.one_rpow, mul_one, ofReal_norm]
   -- the triangle inequality `f = (f - c) + c`
   have hintc : Integrable (fun y => f y - c) (normalizedVolumeMeasureOn W3) := by
     rw [normalizedVolumeMeasureOn_def]

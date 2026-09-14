@@ -93,7 +93,7 @@ theorem isBigOWith_gammaSigma_one_cutoffFrobeniusMassMaximum
       (cutoffFrobeniusMassFiniteConst d * descendantMassFactor d n *
         M.gamma⁻¹ * (3 : ℝ) ^ (2 * (M.gamma * (m : ℝ)))) := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simpa [cutoffFrobeniusMassMaximum, descendantMassFactor] using
+  · simpa [cutoffFrobeniusMassMaximum, descendantMassFactor] using!
       isBigOWith_gammaSigma_one_cutoffFrobeniusMass M m Q
   · let S : Finset (TriadicCube d) := descendantsAtDepth Q n
     let hS : S.Nonempty := descendantsAtDepth_nonempty Q n
@@ -146,7 +146,7 @@ theorem isBigOWith_gammaSigma_one_cutoffFrobeniusMassMaximum
     have hscaled := htail.mono_scale
       (mul_le_mul_of_nonneg_right hpenalty hbase_nonneg)
     simpa only [cutoffFrobeniusMassMaximum, S, hS, mul_assoc, mul_left_comm,
-      mul_comm] using hscaled
+      mul_comm] using! hscaled
 
 end
 

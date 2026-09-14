@@ -69,7 +69,7 @@ private theorem integrable_approx_deriv {U : Set (Vec d)} (φ : H10Function U)
     Integrable (fun y => (fderiv ℝ (φ.approx n) y) (basisVec i))
       (volume.restrict U) := by
   have hcont : Continuous fun y => (fderiv ℝ (φ.approx n) y) (basisVec i) :=
-    ((φ.approx_smooth n).continuous_fderiv (by exact_mod_cast le_top)).clm_apply
+    ((φ.approx_smooth n).continuous_fderiv (by simp)).clm_apply
       continuous_const
   have hcs0 : HasCompactSupport (fderiv ℝ (φ.approx n)) :=
     (φ.approx_hasCompactSupport n).fderiv ℝ
@@ -126,8 +126,8 @@ theorem integral_grad_coord_h10_eq_zero {U : Set (Vec d)}
     exact h
   have hL1 : Tendsto (fun n => ∫⁻ y, ‖F n y - f y‖ₑ ∂(volume.restrict U)) atTop (𝓝 0) :=
     tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hmul
-      (fun n => zero_le _) hbound
-  have htend := tendsto_integral_of_L1 (μ := volume.restrict U) f hfi
+      (fun n => zero_le) hbound
+  have htend := tendsto_integral_of_L1 (μ := volume.restrict U) f hfi.aestronglyMeasurable
     (Eventually.of_forall hFi) hL1
   have hconst : Tendsto (fun n => ∫ y in U, F n y ∂volume) atTop (𝓝 (0 : ℝ)) := by
     simp only [hzero]
@@ -159,7 +159,7 @@ theorem isWeaklyHarmonicOn_of_grad_const {V : Set (Vec d)}
         = ∫ y in V, ∑ i : Fin d, A i * φ.toH1Function.grad y i ∂volume := by
           exact integral_congr_ae (Eventually.of_forall fun y => hrw y)
     _ = ∑ i : Fin d, ∫ y in V, A i * φ.toH1Function.grad y i ∂volume :=
-          integral_finset_sum _ fun i _ => hint i
+          integral_finsetSum _ fun i _ => hint i
     _ = 0 := by
           refine Finset.sum_eq_zero fun i _ => ?_
           rw [integral_const_mul, integral_grad_coord_h10_eq_zero φ i, mul_zero]
@@ -182,7 +182,7 @@ theorem integrableOn_vecDot_grad {V : Set (Vec d)} (u φ : H1Function V) :
     funext y
     rw [vecDot]
   rw [IntegrableOn, hsum]
-  refine integrable_finset_sum _ fun i _ => ?_
+  refine integrable_finsetSum _ fun i _ => ?_
   exact (u.gradMemL2 i).integrable_mul (φ.gradMemL2 i)
 
 theorem isWeaklyHarmonicOn_sub {V : Set (Vec d)} {u v : H1Function V}

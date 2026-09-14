@@ -296,8 +296,10 @@ private theorem badEventMultiscaleGates
     have hdiv : (d : ℝ) * (h : ℝ) * Real.log 3 ≤
         (E ^ (8 : ℕ)) / (8 * Ccg) := by
       rw [le_div_iff₀ (mul_pos (by norm_num) hCcgPos)]
-      convert hEntropyE8 using 1
-      ring
+      have hcomm : (d : ℝ) * (h : ℝ) * Real.log 3 * (8 * Ccg) =
+          8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) := by ring
+      rw [hcomm]
+      exact hEntropyE8
     calc
       (d : ℝ) * (h : ℝ) * Real.log 3 ≤
           (E ^ (8 : ℕ)) / (8 * Ccg) := hdiv

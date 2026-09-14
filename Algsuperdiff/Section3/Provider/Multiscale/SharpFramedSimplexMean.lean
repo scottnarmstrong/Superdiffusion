@@ -117,7 +117,7 @@ theorem probe_responseJ_simplexDomain_normalized_flux_le_framed_ae
                       (-(M.gamma * ((i - Q.scale : ℤ) : ℝ))) *
                     (incrementUnitCube₂ Q Q.scale L omega).w1Infinity ^ 2) *
                 vecNormSq p := by
-  letI : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
+  let : NeZero d := ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) hd)⟩
   filter_upwards [LambdaSq_quarter_le_of_notMem_bad_ae hd M hS Q hm,
     LambdaSq_quarter_le_ten_mul_sigmaBar_of_notMem_badLoc_ae M Q,
     lambdaSq_quarter_inv_le_ten_mul_inv_sigmaBar_of_notMem_badLoc_ae M Q]

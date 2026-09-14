@@ -198,7 +198,7 @@ theorem ae_forall_cutoffResponseJ_eq_bookResponseJ (M : ABKModel d)
             (Observable.inverseSqrtLoad
               (Annealed.sigmaBar M coefficientScale) x)
             (Observable.sqrtLoad (Annealed.sigmaBar M coefficientScale) x) := by
-  letI : NeZero d :=
+  let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   filter_upwards
     [Observable.ae_forall_coefficientScale_cutoffResponseJ_eq_literal M

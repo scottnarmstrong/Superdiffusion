@@ -125,7 +125,7 @@ theorem ball_subset_singleton_union_triadicAnnulus (x : Vec d) {R : ℝ} (hR : 0
     | 0 => rw [annulusRadius_zero]; exact hlt
     | (k + 1) =>
       have hk := hmin k (by omega)
-      push_neg at hk
+      push Not at hk
       exact hk
   exact Set.mem_iUnion.mpr
     ⟨Nat.find hex, Nat.find_spec hex, key _ fun k hk => Nat.find_min hex hk⟩
@@ -260,7 +260,7 @@ theorem lintegral_ball_dist_rpow_neg_le {x : Vec d} {R beta : ℝ} (hR : 0 < R)
       intro y hy
       rw [show y = x from hy, dist_self, Real.zero_rpow (by linarith only [hbeta] : -beta ≠ 0),
         ENNReal.ofReal_zero]
-    refine le_antisymm ?_ (zero_le _)
+    refine le_antisymm ?_ zero_le
     calc ∫⁻ y in ({x} : Set (Vec d)), ENNReal.ofReal (dist x y ^ (-beta)) ∂volume
         ≤ ∫⁻ _ in ({x} : Set (Vec d)), (0 : ℝ≥0∞) ∂volume :=
           setLIntegral_mono' (measurableSet_singleton x) hpt
@@ -338,7 +338,7 @@ theorem lintegral_enorm_sub_rpow_neg_le_of_subset_ball {x : Vec d} {R beta : ℝ
     have hne : y ≠ x := hy.2
     have hpos : 0 < dist x y := dist_pos.mpr (Ne.symm hne)
     have henorm : ‖x - y‖ₑ = ENNReal.ofReal (dist x y) := by
-      rw [dist_eq_norm, ← ofReal_norm_eq_enorm]
+      rw [dist_eq_norm, ← ofReal_norm]
     rw [henorm, ENNReal.ofReal_rpow_of_pos hpos]
   have hcover : Metric.ball x R ⊆
       (Metric.ball x R \ ({x} : Set (Vec d))) ∪ ({x} : Set (Vec d)) := by
@@ -357,7 +357,7 @@ theorem lintegral_enorm_sub_rpow_neg_le_of_subset_ball {x : Vec d} {R beta : ℝ
     _ ≤ ∫⁻ y in Metric.ball x R \ ({x} : Set (Vec d)),
           ENNReal.ofReal (dist x y ^ (-beta)) ∂volume := setLIntegral_mono' hmeasdiff hpt
     _ ≤ ∫⁻ y in Metric.ball x R, ENNReal.ofReal (dist x y ^ (-beta)) ∂volume :=
-        lintegral_mono_set Set.diff_subset
+        lintegral_mono_set Set.sdiff_subset
     _ ≤ ENNReal.ofReal (radialKernelConst d beta * (R ^ d * R ^ (-beta))) :=
         lintegral_ball_dist_rpow_neg_le hR hbeta hbd
 

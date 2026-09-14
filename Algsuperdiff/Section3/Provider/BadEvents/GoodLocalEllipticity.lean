@@ -119,7 +119,7 @@ theorem cubeLowerEllipticityInvLiteral_pos (M : ABKModel d) (Q : TriadicCube d)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent)
     (omega : CutoffSample d) :
     0 < cubeLowerEllipticityInvLiteral M Q cutoffScale s q omega := by
-  letI : NeZero d := neZero_of_abkModel M
+  let : NeZero d := neZero_of_abkModel M
   obtain ⟨qe, hqe⟩ := q
   unfold cubeLowerEllipticityInvLiteral
   refine inv_pos.mpr ?_
@@ -272,11 +272,11 @@ theorem notMem_goodLocalEllipticity_iff (M : ABKModel d) {Ccg : ℝ}
   -- membership, unfolded
   have hmem : (omega ∉ goodLocalEllipticity M Ccg Q n) ↔
       A * X⁻¹ < (1 / 2 : ℝ) * Ccg⁻¹ * (A * A) * sig := by
-    rw [goodLocalEllipticity, Set.mem_setOf_eq, not_le, goodLocalThreshold,
+    rw [goodLocalEllipticity, Set.mem_ofPred_eq, not_le, goodLocalThreshold,
       cubeLowerEllipticity, ← hp, ← hA, ← hX, ← hsigdef, hAsq]
   have hfail : (omega ∈ coarseEllipticityFailure M Ccg Q n) ↔
       2 * A⁻¹ * Ccg < X * sig := by
-    rw [coarseEllipticityFailure, Set.mem_setOf_eq, ← hp, ← hX, ← hsigdef, hAinv]
+    rw [coarseEllipticityFailure, Set.mem_ofPred_eq, ← hp, ← hX, ← hsigdef, hAinv]
   rw [hmem, hfail]
   -- multiply both sides of the first inequality by `2 * Ccg * X > 0`
   have hleft : A * X⁻¹ * (2 * Ccg * X) = 2 * A * Ccg := by
@@ -303,10 +303,9 @@ theorem compl_goodLocalEllipticity_ae_eq (M : ABKModel d) {Ccg : ℝ}
     (goodLocalEllipticity M Ccg Q n)ᶜ
         =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
       coarseEllipticityFailure M Ccg Q n := by
-  rw [Filter.eventuallyEq_set]
+  refine Filter.eventuallyEq_set.mpr ?_
   filter_upwards [cubeLowerEllipticityInv_pos_ae M Q n (1 / 8) (by norm_num)
     exponentTwo] with omega homega
-  rw [Set.mem_compl_iff]
   exact notMem_goodLocalEllipticity_iff M hCcg Q n homega
 
 /-- **The first reduction in the proof of `l.bad.event.lemma`** (ABK26): the

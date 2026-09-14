@@ -86,7 +86,7 @@ theorem coefficientEnergyDensity_coefficientCutoff (M : ABKModel d) (L : ℤ)
 theorem eLpNorm_two_sqrt_vecNormSq (mu : Measure (Vec d)) (f : Vec d → Vec d) :
     eLpNorm (fun y => Real.sqrt (vecNormSq (f y))) 2 mu =
       (∫⁻ x, ENNReal.ofReal (vecNormSq (f x)) ∂mu) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
   simp only [ENNReal.toReal_ofNat]
   congr 1
   refine lintegral_congr fun x => ?_

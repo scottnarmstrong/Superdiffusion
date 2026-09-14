@@ -194,12 +194,12 @@ theorem matrixDerivativeNorm_add_le (D E : MatrixDerivative d) :
     refine ⟨o, ?_⟩
     cases o <;>
       simp only [matrixDerivativeNormValue, matrixOperatorNorm,
-        ContinuousLinearMap.neg_apply, map_neg, norm_neg]
+        neg_apply, map_neg, norm_neg]
   · rintro ⟨o, rfl⟩
     refine ⟨o, ?_⟩
     cases o <;>
       simp only [matrixDerivativeNormValue, matrixOperatorNorm,
-        ContinuousLinearMap.neg_apply, map_neg, norm_neg]
+        neg_apply, map_neg, norm_neg]
 
 theorem norm_matrixDerivativeNorm_sub_le_sq_mul_norm (D E : MatrixDerivative d) :
     ‖matrixDerivativeNorm D - matrixDerivativeNorm E‖ ≤
@@ -233,7 +233,7 @@ theorem matrixDerivativeNorm_lipschitz :
   apply LipschitzWith.of_dist_le_mul
   intro D E
   rw [dist_eq_norm, dist_eq_norm]
-  simpa only [Real.coe_toNNReal _ (sq_nonneg (d : ℝ))] using
+  simpa only [Real.coe_toNNReal _ (sq_nonneg (d : ℝ))] using!
     norm_matrixDerivativeNorm_sub_le_sq_mul_norm D E
 
 theorem matrixDerivativeNorm_continuous :
@@ -244,6 +244,14 @@ theorem matrixDerivativeNorm_continuous :
 in the first derivative direction with values in `MatrixDerivative d`. -/
 abbrev MatrixSecondDerivative (d : ℕ) :=
   Vec d →L[ℝ] MatrixDerivative d
+
+/-- Migration cache (mathlib v4.33.1): blind instance search no longer reaches the
+`ContinuousLinearMap` normed-group instance on the nested `Vec d →L[ℝ] MatrixDerivative d`
+carrier, so `‖H‖`, `H.le_opNorm` and `dist_eq_norm` below would fail; name the direct
+term once here. -/
+private instance matrixSecondDerivativeNormedAddCommGroup (d : ℕ) :
+    NormedAddCommGroup (Vec d →L[ℝ] MatrixDerivative d) :=
+  ContinuousLinearMap.toNormedAddCommGroup
 
 /-- Values used for the exact twice-induced Euclidean norm.  The `none`
 branch records zero explicitly, including in dimension zero. -/
@@ -379,7 +387,8 @@ theorem norm_matrixSecondDerivativeNorm_sub_le_sq_mul_norm
           matrixSecondDerivativeNorm H + (d : ℝ) ^ 2 * ‖K - H‖ :=
         matrixSecondDerivativeNorm_le_add_norm_sub K H
       _ = matrixSecondDerivativeNorm H + (d : ℝ) ^ 2 * ‖H - K‖ := by
-        rw [norm_sub_rev K H]
+        have h : ‖K - H‖ = ‖H - K‖ := norm_sub_rev K H
+        rw [h]
   · rw [sub_le_iff_le_add]
     simpa only [add_comm] using matrixSecondDerivativeNorm_le_add_norm_sub H K
 
@@ -388,10 +397,8 @@ theorem matrixSecondDerivativeNorm_lipschitz :
       (matrixSecondDerivativeNorm : MatrixSecondDerivative d → ℝ) := by
   apply LipschitzWith.of_dist_le_mul
   intro H K
-  rw [dist_eq_norm]
-  change ‖matrixSecondDerivativeNorm H - matrixSecondDerivativeNorm K‖ ≤
-    (Real.toNNReal ((d : ℝ) ^ 2) : ℝ) * ‖H - K‖
-  simpa only [Real.coe_toNNReal _ (sq_nonneg (d : ℝ))] using
+  rw [dist_eq_norm, dist_eq_norm]
+  simpa only [Real.coe_toNNReal _ (sq_nonneg (d : ℝ))] using!
     norm_matrixSecondDerivativeNorm_sub_le_sq_mul_norm H K
 
 theorem matrixSecondDerivativeNorm_continuous :
@@ -626,21 +633,21 @@ theorem unitCubeValueNorm_lowerSemicontinuous :
   have h := lowerSemicontinuous_ciSup
     (fun j : ShellField d => unitCubeValueAtIndex_range_bddAbove j)
     (fun o => (unitCubeValueAtIndex_continuous o).lowerSemicontinuous)
-  simpa only [unitCubeValueNorm, iSup] using h
+  simpa only [unitCubeValueNorm, iSup] using! h
 
 theorem unitCubeDerivNorm_lowerSemicontinuous :
     LowerSemicontinuous (unitCubeDerivNorm : ShellField d → ℝ) := by
   have h := lowerSemicontinuous_ciSup
     (fun j : ShellField d => unitCubeDerivAtIndex_range_bddAbove j)
     (fun o => (unitCubeDerivAtIndex_continuous o).lowerSemicontinuous)
-  simpa only [unitCubeDerivNorm, iSup] using h
+  simpa only [unitCubeDerivNorm, iSup] using! h
 
 theorem unitCubeSecondDerivNorm_lowerSemicontinuous :
     LowerSemicontinuous (unitCubeSecondDerivNorm : ShellField d → ℝ) := by
   have h := lowerSemicontinuous_ciSup
     (fun j : ShellField d => unitCubeSecondDerivAtIndex_range_bddAbove j)
     (fun o => (unitCubeSecondDerivAtIndex_continuous o).lowerSemicontinuous)
-  simpa only [unitCubeSecondDerivNorm, iSup] using h
+  simpa only [unitCubeSecondDerivNorm, iSup] using! h
 
 theorem unitCubeValueNorm_measurable :
     Measurable (unitCubeValueNorm : ShellField d → ℝ) :=

@@ -263,11 +263,19 @@ theorem penalizedComparisonFamily_perturbation {V : Set (Vec d)}
         ((measurable_wholeSpacePenalizationPotential hV n).mul
           (A.measurable_analyticPenalizedResolventReal hV n ⟨lam, hlam⟩ hFm hFb))
         (D := (n : ℝ) * (E / lam)) (fun y ↦ by
-          rw [abs_mul,
+          rw [Pi.mul_apply, abs_mul,
             abs_of_nonneg (wholeSpacePenalizationPotential_nonneg V n y)]
           exact mul_le_mul (wholeSpacePenalizationPotential_le V n y)
             (A.abs_analyticPenalizedResolventReal_le hV n ⟨lam, hlam⟩ hFm hFb y)
             (abs_nonneg _) (Nat.cast_nonneg n)) x
+      have h2' : R.kernelSemigroup.kernelResolventReal lam
+          (fun y : Vec d ↦ wholeSpacePenalizationPotential V n y *
+            A.analyticPenalizedResolventReal hV n ⟨lam, hlam⟩
+              (fun y ↦ F (y : OnePoint (Vec d))) hFm hFb y) x =
+          A.analyticMinimalResolventReal ⟨lam, hlam⟩
+            (fun y : Vec d ↦ wholeSpacePenalizationPotential V n y *
+              A.analyticPenalizedResolventReal hV n ⟨lam, hlam⟩
+                (fun y ↦ F (y : OnePoint (Vec d))) hFm hFb y) _ _ x := h2
       rw [onePointKernelResolventReal_coe R hcons lam hF x,
         onePointKernelResolventReal_coe R hcons lam hload x]
       show A.penalizedComparisonFamily hV n R lam F (x : OnePoint (Vec d)) =
@@ -279,7 +287,7 @@ theorem penalizedComparisonFamily_perturbation {V : Set (Vec d)}
                   A.penalizedComparisonFamily hV n R lam F
                     (y : OnePoint (Vec d))) x
       rw [hload2, A.penalizedComparisonFamily_coe hV n R hlam hF hFE x, hstep,
-        ← h1, ← h2]
+        ← h1, ← h2']
 
 end WholeSpaceAnalyticData
 

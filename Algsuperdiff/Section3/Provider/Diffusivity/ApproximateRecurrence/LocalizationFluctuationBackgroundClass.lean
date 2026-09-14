@@ -235,11 +235,11 @@ theorem measurable_toHilbertVectorL2OfVecField_neumannFluxField
       (neumannFluxField sigma omega n m e' (wN omega))) :
     Measurable fun omega : ShellSeq d =>
       toHilbertVectorL2OfVecField (hmem omega) := by
-  letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
-  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+  let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
-  haveI : SecondCountableTopology (HilbertVectorL2 (openCubeSet Q)) := inferInstance
+  have : SecondCountableTopology (HilbertVectorL2 (openCubeSet Q)) := inferInstance
   have hrw : (fun omega : ShellSeq d => toHilbertVectorL2OfVecField (hmem omega))
       = fun omega : ShellSeq d =>
         (wN omega).toH1Function.gradToHilbertVectorL2 -
@@ -313,7 +313,7 @@ theorem memVectorL2_localizationBackgroundLeg (Q : TriadicCube d)
         (fun x => inverseSqrtLoad sigma (e' + wD.toH1Function.grad x)) ∧
       MemVectorL2 (openCubeSet Q)
         (fun x => sqrtLoad sigma (e + neumannFluxField sigma omega n m e' wN x)) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hD : MemVectorL2 (openCubeSet Q) (fun x => e' + wD.toH1Function.grad x) :=
     (memLp_const e').add wD.toH1Function.grad_memVectorL2
@@ -404,12 +404,12 @@ theorem measurable_toHilbertBlockL2OfBlockField_localizationBackground [NeZero d
         (fun x => sqrtLoad sigma
           (e + neumannFluxField sigma omega n m e' (wN omega) x)))) :
     Measurable fun omega : ShellSeq d => toHilbertBlockL2OfBlockField (hmem omega) := by
-  letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
-  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+  let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
-  haveI : SecondCountableTopology (HilbertVectorL2 (openCubeSet Q)) := inferInstance
-  haveI : SecondCountableTopology (HilbertBlockL2 (openCubeSet Q)) := inferInstance
+  have : SecondCountableTopology (HilbertVectorL2 (openCubeSet Q)) := inferInstance
+  have : SecondCountableTopology (HilbertBlockL2 (openCubeSet Q)) := inferInstance
   -- the two unscaled legs
   have hgD : ∀ omega : ShellSeq d,
       MemVectorL2 (openCubeSet Q) (wD omega).toH1Function.grad :=

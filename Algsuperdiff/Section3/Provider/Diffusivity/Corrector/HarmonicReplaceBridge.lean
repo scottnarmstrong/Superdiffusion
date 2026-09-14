@@ -119,14 +119,14 @@ theorem isWeaklyHarmonicOn_of_forall_contDiff_integral_vecDot_grad_eq_zero
       intro x
       rw [euclideanCoordLaplacian, Finset.mul_sum]
     simp only [hpt]
-    exact integral_finset_sum Finset.univ fun i _ => hintL i
+    exact integral_finsetSum Finset.univ fun i _ => hintL i
   have hsplitR :
       ∫ x in U, vecDot (h.grad x) (euclideanGradient ψ x) ∂volume =
         ∑ i : Fin d, ∫ x in U, h.grad x i * euclideanCoordDeriv i ψ x ∂volume := by
     have hpt : ∀ x : Vec d, vecDot (h.grad x) (euclideanGradient ψ x) =
         ∑ i : Fin d, h.grad x i * euclideanCoordDeriv i ψ x := fun _ => rfl
     simp only [hpt]
-    exact integral_finset_sum Finset.univ fun i _ => hintR i
+    exact integral_finsetSum Finset.univ fun i _ => hintR i
   calc ∫ x in U, h.toFun x * euclideanCoordLaplacian ψ x ∂volume
       = ∑ i : Fin d, ∫ x in U, h.toFun x * euclideanCoordSecondDeriv i i ψ x ∂volume :=
         hsplitL

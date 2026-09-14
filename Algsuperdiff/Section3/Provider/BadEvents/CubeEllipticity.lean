@@ -88,7 +88,7 @@ theorem measurable_cubeLowerEllipticityInvLiteral (M : ABKModel d)
     (Q : TriadicCube d) (cutoffScale : ℤ) {s : ℝ} (hs : 0 < s)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent) :
     Measurable (cubeLowerEllipticityInvLiteral M Q cutoffScale s q) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   exact measurable_comp_lambdaSqCoeffField_inv
     (Cutoff.measurable_coefficientCutoff M.nu cutoffScale)
     (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale) Q hs q.1 q.2
@@ -99,7 +99,7 @@ theorem measurable_cubeUpperEllipticityLiteral (M : ABKModel d)
     (Q : TriadicCube d) (cutoffScale : ℤ) {s : ℝ} (hs : 0 < s)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent) :
     Measurable (cubeUpperEllipticityLiteral M Q cutoffScale s q) := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   exact measurable_comp_LambdaSqCoeffField
     (Cutoff.measurable_coefficientCutoff M.nu cutoffScale)
     (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale) Q hs q.1 q.2
@@ -109,7 +109,7 @@ private theorem cubeLowerEllipticityInvLiteral_nonneg (M : ABKModel d)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent)
     (omega : CutoffSample d) :
     0 ≤ cubeLowerEllipticityInvLiteral M Q cutoffScale s q omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   unfold cubeLowerEllipticityInvLiteral
   exact inv_nonneg.mpr <| by
     rw [Ch04.lambdaSqCoeffField]
@@ -126,7 +126,7 @@ private theorem cubeUpperEllipticityLiteral_nonneg (M : ABKModel d)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent)
     (omega : CutoffSample d) :
     0 ≤ cubeUpperEllipticityLiteral M Q cutoffScale s q omega := by
-  letI : NeZero d := neZero_of_model M
+  let : NeZero d := neZero_of_model M
   unfold cubeUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
   simp only [dif_pos

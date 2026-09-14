@@ -49,7 +49,7 @@ theorem integral_vecDot_grad_eq_zero_of_weak_div_free
     (w : H1Function U) :
     ∫ x in U, vecDot (t x) (w.grad x) ∂MeasureTheory.volume = 0 := by
   classical
-  haveI : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isFiniteMeasure_restrict_volume
   -- a smooth cutoff equal to one on a neighborhood of the support of `t`
   obtain ⟨δ, hδpos, hδsub⟩ := hK.exists_cthickening_subset_open hU.isOpen hKU
   have hK₁ : IsCompact (Metric.cthickening δ K) := hK.cthickening
@@ -84,7 +84,7 @@ theorem integral_vecDot_grad_eq_zero_of_weak_div_free
   have hεtend : Tendsto ε atTop (nhds 0) := by
     have hcomp :=
       tendsto_unitConvexApproxScale_zero.comp (tendsto_add_atTop_nat 1)
-    simpa [hε_def, Function.comp] using hcomp
+    simpa [hε_def, Function.comp] using! hcomp
   -- L² data for the target function and its gradient
   have hw2 : MemLpOn U 2 w.toFun := w.memL2
   have hg2 : ∀ j, MemLpOn U 2 (fun x => w.grad x j) := fun j => w.gradMemL2 j
@@ -193,7 +193,7 @@ theorem integral_vecDot_grad_eq_zero_of_weak_div_free
       Tendsto (fun n => ∑ j, ∫ x in U, t x j * G n j x ∂MeasureTheory.volume)
         atTop
         (nhds (∑ j, ∫ x in U, t x j * w.grad x j ∂MeasureTheory.volume)) :=
-    tendsto_finset_sum _ fun j _ => hlim j
+    tendsto_finsetSum _ fun j _ => hlim j
   have hsum_zero :
       (∑ j, ∫ x in U, t x j * w.grad x j ∂MeasureTheory.volume) = 0 := by
     have hfun :
@@ -211,7 +211,7 @@ theorem integral_vecDot_grad_eq_zero_of_weak_div_free
           refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
           rfl
     _ = ∑ j, ∫ x in U, t x j * w.grad x j ∂MeasureTheory.volume :=
-          integral_finset_sum _ fun j _ => hint j
+          integral_finsetSum _ fun j _ => hint j
     _ = 0 := hsum_zero
 
 end

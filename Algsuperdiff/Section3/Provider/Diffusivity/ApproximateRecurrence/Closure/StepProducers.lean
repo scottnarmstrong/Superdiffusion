@@ -155,7 +155,7 @@ theorem cubeAverage_le_of_mem_descendantsAtDepth {Q R : TriadicCube d} {j : ℕ}
   have hR0 : (0 : ℝ) < cubeVolume R := cubeVolume_pos R
   have hmono : ∫ x in cubeSet R, f x ≤ ∫ x in cubeSet Q, f x :=
     setIntegral_mono_set hint (Filter.Eventually.of_forall hf0)
-      (HasSubset.Subset.eventuallyLE hsub)
+      (LE.le.eventuallyLE hsub)
   have hstep : (cubeVolume R)⁻¹ * ∫ x in cubeSet R, f x ≤
       (cubeVolume R)⁻¹ * ∫ x in cubeSet Q, f x :=
     mul_le_mul_of_nonneg_left hmono (inv_nonneg.2 hR0.le)
@@ -222,7 +222,7 @@ theorem continuous_cubeAverageVec_closureNeumannFamily (c : ℝ) (e : Vec d) (K 
     Continuous fun f : C(Vec d, Mat d) =>
       cubeAverageVec R
         (fun x => (closureNeumannFamily c e K f).toH1Function.grad x) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet _
   refine continuous_pi fun i => ?_
   have hEq : (fun f : C(Vec d, Mat d) =>
@@ -259,7 +259,7 @@ theorem integrable_cubeAverage_closureNeumannEnergy_path (M : ABKModel d) (c : �
         (fun x => vecDot ((closureNeumannFamily c e K f).toH1Function.grad x)
           ((closureNeumannFamily c e K f).toH1Function.grad x)))
       (shellSumValuePathLaw M.P n m).toMeasure := by
-  haveI := isFiniteMeasure_volumeMeasureOn_openCubeSet (originCube d (K : ℤ))
+  have := isFiniteMeasure_volumeMeasureOn_openCubeSet (originCube d (K : ℤ))
   have hmem : ∀ f : C(Vec d, Mat d),
       MemVectorL2 (openCubeSet (originCube d (K : ℤ)))
         (fun x => (realize (valuePathForcing (c • e)) f x).toVec) := fun f =>
@@ -304,7 +304,7 @@ theorem continuous_vecNormSq_cubeAverageVec_closureNeumannFamily (c : ℝ) (e : 
   show Continuous fun f : C(Vec d, Mat d) => ∑ i : Fin d,
       cubeAverageVec R (fun x => (closureNeumannFamily c e K f).toH1Function.grad x) i *
         cubeAverageVec R (fun x => (closureNeumannFamily c e K f).toH1Function.grad x) i
-  exact continuous_finset_sum _ fun i _ =>
+  exact continuous_finsetSum _ fun i _ =>
     ((continuous_apply i).comp hc).mul ((continuous_apply i).comp hc)
 
 open Algsuperdiff.Section3.Provider.Corrector (shellSumValuePathLaw) in
@@ -382,7 +382,7 @@ theorem integrable_cubeAverage_closureDirichletEnergy_path [NeZero d] (M : ABKMo
         (fun x => vecDot ((closureDirichletFamily c e K f).toH1Function.grad x)
           ((closureDirichletFamily c e K f).toH1Function.grad x)))
       (shellSumValuePathLaw M.P n m).toMeasure := by
-  haveI := isFiniteMeasure_volumeMeasureOn_openCubeSet (originCube d (K : ℤ))
+  have := isFiniteMeasure_volumeMeasureOn_openCubeSet (originCube d (K : ℤ))
   have hmem : ∀ f : C(Vec d, Mat d),
       MemVectorL2 (openCubeSet (originCube d (K : ℤ)))
         (fun x => (realize (valuePathForcing (c • e)) f x).toVec) := fun f =>
@@ -421,7 +421,7 @@ theorem continuous_cubeAverageVec_closureDirichletFamily [NeZero d] (c : ℝ) (e
     Continuous fun f : C(Vec d, Mat d) =>
       cubeAverageVec R
         (fun x => (closureDirichletFamily c e K f).toH1Function.grad x) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d (K : ℤ)))) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet _
   refine continuous_pi fun i => ?_
   have hEq : (fun f : C(Vec d, Mat d) =>
@@ -452,7 +452,7 @@ theorem continuous_vecNormSq_cubeAverageVec_closureDirichletFamily [NeZero d] (c
       cubeAverageVec R (fun x => (closureDirichletFamily c e K f).toH1Function.grad x) i *
         cubeAverageVec R
           (fun x => (closureDirichletFamily c e K f).toH1Function.grad x) i
-  exact continuous_finset_sum _ fun i _ =>
+  exact continuous_finsetSum _ fun i _ =>
     ((continuous_apply i).comp hc).mul ((continuous_apply i).comp hc)
 
 open Algsuperdiff.Section3.Provider.Corrector (shellSumValuePathLaw) in

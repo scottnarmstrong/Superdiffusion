@@ -86,7 +86,7 @@ theorem ae_summable_of_isBigOWith_gammaSigma
       ∫⁻ omega, ∑' n, ‖X n omega‖ₑ ∂mu ≠ (⊤ : ENNReal) := by
     rw [lintegral_tsum henorm_meas]
     exact hlintegral_sum
-  refine (ae_lt_top' (AEMeasurable.ennreal_tsum henorm_meas)
+  refine (ae_lt_top' (AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) henorm_meas)
     htotal_lintegral).mono ?_
   intro omega homega
   have hnorm_summable : Summable fun n => ‖X n omega‖ := by

@@ -68,7 +68,7 @@ private theorem measurableSet_preimage_isOpen_of_closedBall {Omega X : Type*}
     (hF : ∀ (c : X) (r : ℝ), MeasurableSet[mOmega] (F ⁻¹' Metric.closedBall c r))
     {V : Set X} (hV : IsOpen V) : MeasurableSet[mOmega] (F ⁻¹' V) := by
   obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense X
-  haveI := hDc.to_subtype
+  have := hDc.to_subtype
   have hEq : F ⁻¹' V =
       ⋃ (c : ↥D) (q : ℚ) (_ : Metric.closedBall (c : X) (q : ℝ) ⊆ V),
         F ⁻¹' Metric.closedBall (c : X) (q : ℝ) := by
@@ -113,7 +113,7 @@ private theorem measurable_continuousMap_of_eval {Omega : Type*}
     {F : Omega → C(↥K, Mat d)}
     (hF : ∀ z : ↥K, (z : Vec d) ∈ P → Measurable[mOmega] fun w => F w z) :
     Measurable[mOmega] F := by
-  haveI : SecondCountableTopology C(↥K, Mat d) := inferInstance
+  have : SecondCountableTopology C(↥K, Mat d) := inferInstance
   have hEc : ((Subtype.val : ↥K → Vec d) ⁻¹' P).Countable :=
     hPc.preimage Subtype.val_injective
   have himg : (Subtype.val : ↥K → Vec d) '' ((Subtype.val : ↥K → Vec d) ⁻¹' P) = P := by
@@ -132,7 +132,7 @@ private theorem measurable_continuousMap_of_eval {Omega : Type*}
   · have hEqset : F ⁻¹' Metric.closedBall g r =
         ⋂ z ∈ (Subtype.val : ↥K → Vec d) ⁻¹' P, {w | dist (F w z) (g z) ≤ r} := by
       ext w
-      simp only [Set.mem_preimage, Metric.mem_closedBall, Set.mem_iInter, Set.mem_setOf_eq]
+      simp only [Set.mem_preimage, Metric.mem_closedBall, Set.mem_iInter, Set.mem_ofPred_eq]
       constructor
       · intro h z _
         exact (ContinuousMap.dist_le hr).1 h z
@@ -219,8 +219,8 @@ theorem measurable_coefficientCutoff_apply_local (M : ABKModel d) (m : ℤ) (U :
     {z : Vec d} {rho : ℝ} (hrho : 0 < rho) (hball : Metric.closedBall z rho ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M m U]
       fun omega : Cutoff.CutoffSample d => Cutoff.coefficientCutoff M.nu m omega z := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
-  letI mLoc : MeasurableSpace (Cutoff.CutoffSample d) :=
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
+  let mLoc : MeasurableSpace (Cutoff.CutoffSample d) :=
     Cutoff.cutoffSampleLocalSigma M m U
   set r : ℕ → ℝ := fun k => rho * (1 / (k + 1 : ℝ)) with hrdef
   have hrpos : ∀ k, 0 < r k := fun k => by rw [hrdef]; positivity

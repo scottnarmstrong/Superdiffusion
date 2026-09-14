@@ -138,7 +138,7 @@ theorem measure_scaleProp_goodEventBase_le_shift (M : ABKModel d) (Ccg : ℝ)
         ∪ {omega | theta / 4 <
             scaleProp (fun k => (Support.eventG2 M (m0 + k) s ep)ᶜ) n omega} := by
     intro omega homega
-    simp only [Set.mem_setOf_eq] at homega
+    simp only [Set.mem_ofPred_eq] at homega
     have hcompl := scaleProp_add_scaleProp_compl
       (fun k => Support.goodEventBase M Ccg (m0 + k) s ep) n omega
     have hbad : theta ≤ scaleProp
@@ -150,7 +150,7 @@ theorem measure_scaleProp_goodEventBase_le_shift (M : ABKModel d) (Ccg : ℝ)
       (fun k => Support.eventG2 M (m0 + k) s ep) n omega
     simp only [← hbase] at hsplit
     by_contra hc
-    simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_lt] at hc
+    simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_lt] at hc
     linarith only [htheta0, hbad, hsplit, hc.1.1, hc.1.2, hc.2]
   have hnn : (0 : ℝ) ≤ Real.exp (-c1 * (n : ℝ)) / 3 := by positivity
   have hsum : ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) +

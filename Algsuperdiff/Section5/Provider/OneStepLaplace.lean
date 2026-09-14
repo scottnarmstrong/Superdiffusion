@@ -54,7 +54,7 @@ private theorem contraction_algebra {p q e : ℝ≥0∞}
   have hprod : p * (1 - e) ≤ 1 := by
     calc
       p * (1 - e) ≤ 1 * (1 - e) :=
-        mul_le_mul_of_nonneg_right hp (zero_le _)
+        mul_le_mul_of_nonneg_right hp zero_le
       _ ≤ 1 := by simpa only [one_mul] using (tsub_le_self : 1 - e ≤ 1)
   apply (ENNReal.toReal_le_toReal hleftTop hrightTop).mp
   rw [ENNReal.toReal_add (ENNReal.mul_ne_top heTop hqTop)
@@ -136,7 +136,7 @@ theorem lintegral_discountedExitTime_le_oneStepLaplaceContraction
           _ = -(clow : ℝ) / (2 * Cup) := by rw [hscale]; ring
       · rw [Algsuperdiff.Process.ContinuousPath.discountedStoppingWeight, Set.indicator_of_notMem
           (show eta ∉ {omega | ContinuousPath.exitTime U omega < ⊤} by exact hfinite)]
-        exact zero_le _
+        exact zero_le
     · rw [Set.indicator_of_notMem hetaA, Set.indicator_of_mem
         (show eta ∈ Aᶜ by simpa only [Set.mem_compl_iff])]
       simp only [zero_add]
@@ -149,7 +149,7 @@ theorem lintegral_discountedExitTime_le_oneStepLaplaceContraction
           (mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hlam.le) ENNReal.toReal_nonneg))
       · rw [Set.indicator_of_notMem
           (show eta ∉ {omega | ContinuousPath.exitTime U omega < ⊤} by exact hfinite)]
-        exact zero_le _
+        exact zero_le
   have hq : Q A ≤ 1 := by
     calc
       Q A ≤ Q Set.univ := measure_mono (Set.subset_univ A)

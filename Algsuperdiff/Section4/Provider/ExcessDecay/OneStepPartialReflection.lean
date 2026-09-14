@@ -126,7 +126,7 @@ def metSet (x : Vec d) (m k : ℤ) : Finset (Fin d) :=
 
 theorem mem_metSet_iff {x : Vec d} {m k : ℤ} {i : Fin d} :
     i ∈ metSet x m k ↔ MeetsUpperFace x m k i ∨ MeetsLowerFace x m k i := by
-  letI : DecidablePred fun i : Fin d =>
+  let : DecidablePred fun i : Fin d =>
       MeetsUpperFace x m k i ∨ MeetsLowerFace x m k i := Classical.decPred _
   unfold metSet
   exact ⟨fun h => (Finset.mem_filter.1 h).2,

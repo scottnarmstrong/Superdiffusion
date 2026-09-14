@@ -124,7 +124,7 @@ theorem productDensity_eq_zero_of_le (d : ℕ) (hr : 0 < r) {x : Vec d} (hx : r 
   have hall : ∀ i : Fin d, ‖x i‖ < r := by
     intro i
     by_contra hi
-    push_neg at hi
+    push Not at hi
     refine hne (Finset.prod_eq_zero (Finset.mem_univ i) ?_)
     exact scaledBump_eq_zero hr (by rwa [Real.norm_eq_abs] at hi)
   have hlt : ‖x‖ < r := (pi_norm_lt_iff hr).2 hall
@@ -135,14 +135,14 @@ theorem support_productDensity_subset (d : ℕ) (hr : 0 < r) :
   intro x hx
   rw [Metric.mem_ball, dist_zero_right]
   by_contra hle
-  push_neg at hle
+  push Not at hle
   exact hx (productDensity_eq_zero_of_le d hr hle)
 
 theorem hasCompactSupport_productDensity (d : ℕ) (hr : 0 < r) :
     HasCompactSupport (productDensity d hr) := by
   refine HasCompactSupport.intro (isCompact_closedBall (0 : Vec d) r) fun x hx => ?_
   rw [Metric.mem_closedBall, dist_zero_right] at hx
-  push_neg at hx
+  push Not at hx
   exact productDensity_eq_zero_of_le d hr hx.le
 
 theorem integrable_productDensity (d : ℕ) (hr : 0 < r) :

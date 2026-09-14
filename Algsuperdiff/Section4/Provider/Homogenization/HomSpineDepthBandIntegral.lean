@@ -124,9 +124,9 @@ theorem lintegral_lintegral_straddleBand_snd_eq (Q : TriadicCube d) (j k : ℕ)
         (fun z : Vec d × Vec d => ‖euclideanNorm (gridDualDepthTest Q j v z.1)‖ₑ ^ r) (x, y)
         ∂(cubeMeasure Q) ∂(cubeMeasure Q) := by
   classical
-  haveI : IsFiniteMeasure (cubeMeasure Q) :=
+  have : IsFiniteMeasure (cubeMeasure Q) :=
     ⟨lt_top_iff_ne_top.2 (cubeMeasure_apply_univ_ne_top Q)⟩
-  haveI : SFinite (cubeMeasure Q) := by
+  have : SFinite (cubeMeasure Q) := by
     unfold cubeMeasure
     infer_instance
   have hmeas : AEMeasurable
@@ -159,9 +159,9 @@ theorem lintegral_lintegral_straddleBand_pair_le (Q : TriadicCube d) (j k : ℕ)
           ENNReal.ofReal (bandStraddleWeight ((d : ℝ) + 1) j k) *
           ∫⁻ x, ‖euclideanNorm (gridDualDepthTest Q j v x)‖ₑ ^ r ∂(cubeMeasure Q)) := by
   classical
-  haveI : IsFiniteMeasure (cubeMeasure Q) :=
+  have : IsFiniteMeasure (cubeMeasure Q) :=
     ⟨lt_top_iff_ne_top.2 (cubeMeasure_apply_univ_ne_top Q)⟩
-  haveI : SFinite (cubeMeasure Q) := by
+  have : SFinite (cubeMeasure Q) := by
     unfold cubeMeasure
     infer_instance
   have hmeas1 : Measurable (fun z : Vec d × Vec d => (straddleBand Q j k v).indicator

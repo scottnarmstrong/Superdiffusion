@@ -22,7 +22,7 @@ private theorem tendsto_eLpNorm_restrict_of_tendsto_global
     (h : Tendsto (fun n => eLpNorm (f n) p volume) atTop (nhds 0)) :
     Tendsto (fun n => eLpNorm (f n) p (volume.restrict W)) atTop (nhds 0) := by
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h
-    (Filter.Eventually.of_forall fun _ => zero_le _)
+    (Filter.Eventually.of_forall fun _ => zero_le)
     (Filter.Eventually.of_forall fun n =>
       eLpNorm_mono_measure (f n) Measure.restrict_le_self)
 
@@ -110,10 +110,8 @@ private noncomputable def supportedH10Representative
     dsimp only [g, supportedRepresentative]
     filter_upwards [hzero] with x hx
     by_cases hxV : x ∈ V
-    · change V.indicator w.toH1Function.toFun x = w.toH1Function.toFun x
-      exact Set.indicator_of_mem (f := w.toH1Function.toFun) hxV
-    · change V.indicator w.toH1Function.toFun x = w.toH1Function.toFun x
-      rw [Set.indicator_of_notMem hxV, hx hxV]
+    · exact Set.indicator_of_mem (f := w.toH1Function.toFun) hxV
+    · rw [Set.indicator_of_notMem hxV, hx hxV]
   exact
     { toH1Function := g
       approx := w.approx

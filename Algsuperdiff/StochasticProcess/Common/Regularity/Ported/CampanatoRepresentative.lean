@@ -36,7 +36,7 @@ theorem smallContrastValueIndicator_of_mem
 theorem integrable_smallContrastValueIndicator
     (u : H1Function (smallContrastUnitBall d)) :
     Integrable (smallContrastValueIndicator u) volume := by
-  letI : IsFiniteMeasure (volume.restrict (smallContrastUnitBall d)) :=
+  let : IsFiniteMeasure (volume.restrict (smallContrastUnitBall d)) :=
     ⟨by
       rw [Measure.restrict_apply_univ]
       exact lt_top_iff_ne_top.2

@@ -71,7 +71,8 @@ variable {d : ℕ}
 private theorem integrableOn_sq_norm {U : Set (Vec d)} {F : Vec d → Vec d}
     (hF : MemVectorL2 U F) : IntegrableOn (fun x => ‖F x‖ ^ (2 : ℕ)) U := by
   have hn : MemLp (fun x => ‖F x‖) 2 (volume.restrict U) := hF.norm
-  simpa [Pi.mul_apply, pow_two] using hn.integrable_mul hn
+  have h : Integrable (fun x => ‖F x‖ * ‖F x‖) (volume.restrict U) := hn.integrable_mul hn
+  simpa only [pow_two] using! h
 
 /-- **The Dirichlet energy is continuous in the gradient.**  Two square-integrable fields
 have energies differing by at most the Cauchy--Schwarz modulus of their difference: expanding
@@ -162,7 +163,7 @@ theorem tendsto_sqrt_energy_grad_cutoff_of_h10Diff (M : ABKModel d)
     Tendsto (fun L : ℤ =>
         Real.sqrt (∫ x in cubeSetAt y n, ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) ∂volume))
       atTop (𝓝 0) := by
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   obtain ⟨C, hC⟩ := fullTailGood_sharp omega.2
   obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
   have hgamma : M.gamma < 1 := by
@@ -239,7 +240,7 @@ theorem clauses_stream_of_cutoff (M : ABKModel d) (omega : FullSample d M.gamma)
       |volumeAverage V (fun y => M.nu * vecNormSq (u.grad y)) -
           volumeAverage V (fun y => sigmaBarM * vecNormSq (v.grad y))| ≤ BE := by
   subst hV
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   have hUmeas : MeasurableSet (cubeSetAt (0 : Vec d) m) := measurableSet_cubeSetAt 0 m
   have hUdom : IsOpenBoundedConvexDomain (cubeSetAt (0 : Vec d) m) :=
     isOpenBoundedConvexDomain_cubeSetAt 0 m
@@ -434,7 +435,7 @@ theorem generator_renormalization_provider
   refine ⟨gamma0, C, hgamma0, hC, ?_⟩
   intro M hcs hgam m
   obtain ⟨sigmaBarM, hsigpos, hclose, EB, hEBnn, hEBmeas, hEBmom, hEBae⟩ := hmain M hcs hgam m
-  haveI : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
   have hd0 : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
   refine ⟨sigmaBarM, hsigpos, hclose, fun omega => EB omega.1, fun omega => hEBnn _,
     hEBmeas.comp measurable_subtype_coe, ?_, ?_⟩

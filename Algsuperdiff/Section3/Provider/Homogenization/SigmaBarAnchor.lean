@@ -65,7 +65,7 @@ theorem tendsto_annealedSigmaStarInvScalarAtScale (M : ABKModel d) (L : ℤ) :
   have h1 := (tendsto_pi_nhds.mp hlim) (Sum.inr (0 : Fin d))
   have h2 := (tendsto_pi_nhds.mp h1) (Sum.inr (0 : Fin d))
   simpa [toFullBlockMat, Ch02.blockDiag, Matrix.one_apply,
-    annealedSigmaStarInvScalarAtScale] using h2
+    annealedSigmaStarInvScalarAtScale] using! h2
 
 /-- `(shom_L shom_{L,*}^{-1}(cu_m) - 1)^2 <= 4 delta_1^2`.
 

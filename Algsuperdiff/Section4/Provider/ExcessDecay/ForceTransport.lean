@@ -75,8 +75,8 @@ private theorem eLpNorm_comp_measurableEquiv {alpha beta : Type*}
     (he : MeasurePreserving (fun x => e x) mu nu) {p : ℝ≥0∞} (hp0 : p ≠ 0)
     (hpt : p ≠ ∞) (f : beta → E) :
     eLpNorm f p nu = eLpNorm (fun x => f (e x)) p mu := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm hp0 hpt,
-    eLpNorm_eq_lintegral_rpow_enorm hp0 hpt]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt,
+    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt]
   congr 1
   exact MeasurePreserving.lintegral_map_equiv (fun a => ‖f a‖ₑ ^ p.toReal) e he
 
@@ -129,8 +129,8 @@ theorem normalizedGagliardoMeasureOn_translateSet (z : Vec d) (A : Set (Vec d)) 
     Support.normalizedGagliardoMeasureOn (translateSet z A) =
       Measure.map (Prod.map (fun x : Vec d => x + z) (fun x : Vec d => x + z))
         (Support.normalizedGagliardoMeasureOn A) := by
-  haveI : SFinite (volume.restrict A) := inferInstance
-  haveI : SFinite (volume.restrict (translateSet z A)) := inferInstance
+  have : SFinite (volume.restrict A) := inferInstance
+  have : SFinite (volume.restrict (translateSet z A)) := inferInstance
   have hmeas : Measurable (fun x : Vec d => x + z) := measurable_id.add_const z
   rw [Support.normalizedGagliardoMeasureOn_def, Support.normalizedGagliardoMeasureOn_def,
     Support.normalizedVolumeMeasureOn_def, Support.normalizedVolumeMeasureOn_def,

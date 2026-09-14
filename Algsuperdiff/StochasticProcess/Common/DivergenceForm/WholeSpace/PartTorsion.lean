@@ -90,11 +90,14 @@ theorem partC0Resolvent_le_analyticCubeResolvent {V : Set (Vec d)}
   have hval : ZeroTraceSobolev.toL2 uV z =
       alphaShiftedResolvent A.a lam.property A.hnu (partEllipticity A hV)
         (partDatumL2 hV hf hfD) z := by
-    rw [hpart, alphaShiftedResolvent_apply]
+    have happly := alphaShiftedResolvent_apply A.a lam.property A.hnu (partEllipticity A hV)
+      (partDatumL2 hV hf hfD)
+    rw [hpart, happly]
   rw [hval] at h3
   have hrval : ZeroTraceSobolev.toL2 rU z =
       alphaShiftedResolvent A.a lam.property A.hnu (A.cubeEllipticity m) F z := by
-    rw [hrUdef, alphaShiftedResolvent_apply]
+    have happly := alphaShiftedResolvent_apply A.a lam.property A.hnu (A.cubeEllipticity m) F
+    rw [hrUdef, happly]
   rw [hrval] at h3
   linarith only [h3]
 

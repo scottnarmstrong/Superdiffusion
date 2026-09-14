@@ -310,7 +310,7 @@ theorem measurable_analyticPenalizedCubeResolvent {V : Set (Vec d)}
       (A.skewContinuousOnCube m) A.hd
       (wholeSpacePenalizationPotential V n)
       (wholeSpacePenalizationPotential_isBounded hV n m) mu
-      (hf.comp measurable_subtype_coe) (fun z ↦ hfD z)).restrict).measurable
+      (hf.comp measurable_subtype_coe) (fun z ↦ hfD z)).domRestrict).measurable
   have heq : A.analyticPenalizedCubeResolvent hV n mu f hf hfD m =
       domainExtension v := by
     funext x

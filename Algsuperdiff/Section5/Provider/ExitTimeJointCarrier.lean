@@ -59,7 +59,7 @@ theorem exists_isScalarForcedWeakSolution_of_isDirichletSolutionAt
         IsScalarForcedWeakSolution a (cubeSetAt y n) (fun _ => (1 : ℝ))
           w.toH1Function := by
   obtain ⟨⟨w, hval, hgrad⟩, hweak⟩ := (isDirichletSolutionAt_linearAxisDatum_iff i).1 hu
-  haveI : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (cubeSetAt y n)) :=
     (isOpenBoundedConvexDomain_cubeSetAt y n).isFiniteMeasure_restrict_volume
   refine ⟨w, hval, memLp_const (1 : ℝ), fun phi => ?_⟩
   have hphi := hweak phi

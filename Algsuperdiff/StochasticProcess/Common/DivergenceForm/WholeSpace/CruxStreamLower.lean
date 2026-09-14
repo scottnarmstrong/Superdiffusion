@@ -131,8 +131,8 @@ theorem killedResolvent_ge_partResolvent_wholeSpace_of_c0Barrier
         (OnePoint.isOpen_image_coe.mpr P.hV.isOpen) (P.lam : ℝ)
         (PositiveC0ContractiveResolvent.onePointLiveExtension
           (fun y ↦ ENNReal.ofReal (P.f y))) (x : OnePoint (Vec d)) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let _ := hreg.metricSpace
+  let _ := hreg.completeSpace
   let K := R.onePointKernelSemigroup
   let hKcons := R.isConservative_onePointKernelSemigroup
   let U : Set (OnePoint (Vec d)) := ((↑) : Vec d → OnePoint (Vec d)) '' P.V
@@ -179,10 +179,19 @@ theorem killedResolvent_ge_partResolvent_wholeSpace_of_c0Barrier
     filter_upwards [IsConservative.ae_eval_zero_eq hKcons hKol
       (x : OnePoint (Vec d))] with omega hzero
     by_cases hfin : ContinuousPath.exitTime U omega < ⊤
-    · rw [Set.indicator_of_mem (show omega ∈
-        {omega | ContinuousPath.exitTime U omega < ⊤} from hfin)]
-      rw [Set.indicator_of_mem (show omega ∈
-        {omega | ContinuousPath.exitTime U omega < ⊤} from hfin)]
+    · have hmem : omega ∈ {omega | ContinuousPath.exitTime U omega < ⊤} := hfin
+      have hind₁ := Set.indicator_of_mem hmem
+        (fun omega ↦ ENNReal.ofReal
+            (Real.exp (-(P.lam : ℝ) * (ContinuousPath.exitTime U omega).toReal)) *
+          K.kernelResolvent (P.lam : ℝ) F
+            (omega ((ContinuousPath.exitTime U omega).untopD 0)))
+      have hind₂ := Set.indicator_of_mem hmem
+        (fun omega ↦ ENNReal.ofReal
+          (Real.exp (-(P.lam : ℝ) * (ContinuousPath.exitTime U omega).toReal) *
+            PositiveC0ContractiveResolvent.onePointAssemble
+              (P.barrierC0OfData B) 0
+              (omega ((ContinuousPath.exitTime U omega).untopD 0))))
+      refine hind₁.trans (Eq.trans ?_ hind₂.symm)
       have hfront := ContinuousPath.coordinate_exitTime_mem_frontier U hU omega
         (hzero ▸ ⟨x, hx, rfl⟩) (ne_top_of_lt hfin)
       obtain ⟨y, hy, heq⟩ :=
@@ -208,11 +217,20 @@ theorem killedResolvent_ge_partResolvent_wholeSpace_of_c0Barrier
             ((abs_nonneg (P.f 0)).trans (P.hfD 0)) P.hfD y),
         ← ENNReal.ofReal_mul (Real.exp_pos _).le,
         ENNReal.toReal_ofReal ENNReal.toReal_nonneg, add_zero]
-    · rw [Set.indicator_of_notMem (show omega ∉
-        {omega | ContinuousPath.exitTime U omega < ⊤} from hfin)]
-      rw [Set.indicator_of_notMem (show omega ∉
-        {omega | ContinuousPath.exitTime U omega < ⊤} from hfin)]
-  rw [hrestart] at hdecomp
+    · have hnmem : omega ∉ {omega | ContinuousPath.exitTime U omega < ⊤} := hfin
+      have hind₁ := Set.indicator_of_notMem hnmem
+        (fun omega ↦ ENNReal.ofReal
+            (Real.exp (-(P.lam : ℝ) * (ContinuousPath.exitTime U omega).toReal)) *
+          K.kernelResolvent (P.lam : ℝ) F
+            (omega ((ContinuousPath.exitTime U omega).untopD 0)))
+      have hind₂ := Set.indicator_of_notMem hnmem
+        (fun omega ↦ ENNReal.ofReal
+          (Real.exp (-(P.lam : ℝ) * (ContinuousPath.exitTime U omega).toReal) *
+            PositiveC0ContractiveResolvent.onePointAssemble
+              (P.barrierC0OfData B) 0
+              (omega ((ContinuousPath.exitTime U omega).untopD 0))))
+      exact hind₁.trans hind₂.symm
+  replace hdecomp := hdecomp.trans (congrArg (HAdd.hAdd _) hrestart)
   have hexcessive :=
     P.isLambdaExcessive_onePointAssemble_barrierC0OfData B R hT
   have hstop := hexcessive.lintegral_ofReal_discountedValue_exitTime_le
@@ -245,8 +263,14 @@ theorem killedResolvent_ge_partResolvent_wholeSpace_of_c0Barrier
     ENNReal.add_ne_top.mp (hsum ▸ hambFin)
   have hrestartReal : restart.toReal ≤ P.barrierC0OfData B x := by
     have hreal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hstop
-    simpa only [restart, K, PositiveC0ContractiveResolvent.onePointAssemble_coe,
-      add_zero, ENNReal.toReal_ofReal (P.barrierC0OfData_nonneg B x)] using hreal
+    have hrhs : (ENNReal.ofReal (PositiveC0ContractiveResolvent.onePointAssemble
+        (P.barrierC0OfData B) 0 (x : OnePoint (Vec d)))).toReal =
+          P.barrierC0OfData B x := by
+      have h0 : PositiveC0ContractiveResolvent.onePointAssemble
+          (P.barrierC0OfData B) 0 (x : OnePoint (Vec d)) =
+            P.barrierC0OfData B x + 0 := rfl
+      rw [h0, add_zero, ENNReal.toReal_ofReal (P.barrierC0OfData_nonneg B x)]
+    exact le_trans hreal (le_of_eq hrhs)
   have hrealSum :
       (A.analyticMinimalResolvent P.lam P.f P.hf P.hfD x).toReal =
         killed.toReal + restart.toReal := by

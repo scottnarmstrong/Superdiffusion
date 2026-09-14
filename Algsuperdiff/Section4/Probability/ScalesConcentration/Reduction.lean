@@ -55,7 +55,7 @@ lemma summable_wt_half {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) (k : ℤ) :
     rw [hpow]; exact summable_pow_natAbs hq0 hq1
   have := ((Equiv.subLeft k).summable_iff
     (f := fun ℓ : ℤ => (3 : ℝ) ^ (-((s / 2) * (ℓ.natAbs : ℝ))))).2 hbase
-  convert this using 2 with j
+  simpa only [Function.comp_def, Equiv.subLeft_apply] using this
 
 /-- The half-weight sum bound: `∑_j 3^{-(s/2)|k-j|} ≤ 6/s` for `s ∈ (0,1]`. -/
 lemma sum_wt_half_le {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) (k : ℤ) :
@@ -131,7 +131,7 @@ lemma exists_exceed_of_Yk_gt {s lam : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
     (hY : 3 * lam / s < Yk X s k ω) :
     ∃ j, thr s lam k j < X k j ω := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact absurd (Yk_le_of_pointwise hs hs1 X k ω hlam hXnn h) (not_le.2 hY)
 
 open Classical in

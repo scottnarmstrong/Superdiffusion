@@ -163,7 +163,7 @@ theorem norm_valuePathPotentialCorrector_eq (M : ABKModel d) {e : Vec d}
       = ‖ShellField.zeroShellPotentialCorrector M.P
           (ShellField.zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
             M.P M.J1.stationary) e hmem‖ := by
-  haveI : VAddInvariantMeasure (Vec d) (RegCoeffField d)
+  have : VAddInvariantMeasure (Vec d) (RegCoeffField d)
       (ShellField.zeroShellRegLaw M.P).toMeasure :=
     vaddInvariantMeasure_zeroShellRegLaw M
   have hproj := norm_stationaryPotentialProjection_carrierTransport

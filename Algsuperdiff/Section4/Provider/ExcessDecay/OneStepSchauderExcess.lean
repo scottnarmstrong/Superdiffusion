@@ -104,7 +104,7 @@ def vecDotCLM (g : Vec d) : Vec d →L[ℝ] ℝ :=
   (dotCLM g).comp (toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d)).toContinuousLinearMap
 
 @[simp] theorem vecDotCLM_apply (g x : Vec d) : vecDotCLM g x = vecDot g x := by
-  simp only [vecDotCLM, ContinuousLinearMap.coe_comp', Function.comp_apply,
+  simp only [vecDotCLM, ContinuousLinearMap.coe_comp, Function.comp_apply,
     ContinuousLinearEquiv.coe_coe, dotCLM_apply, ContinuousLinearEquiv.symm_apply_apply]
 
 /-- The affine function `affineEval c g` has derivative `vecDot g` everywhere. -/
@@ -242,7 +242,7 @@ theorem norm_gradField_sub_le (v : Vec d → ℝ) (x y : Vec d) :
   refine (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => ?_
   have hcomp : (gradField v x - gradField v y) i
       = (fderiv ℝ v x - fderiv ℝ v y) (basisVec i) := by
-    simp only [Pi.sub_apply, gradField_apply, ContinuousLinearMap.sub_apply]
+    simp only [Pi.sub_apply, gradField_apply, sub_apply]
   rw [hcomp]
   calc ‖(fderiv ℝ v x - fderiv ℝ v y) (basisVec i)‖
       ≤ ‖fderiv ℝ v x - fderiv ℝ v y‖ * ‖basisVec (d := d) i‖ :=

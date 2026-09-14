@@ -82,7 +82,7 @@ theorem cubeFrobeniusMassReg_finiteShellIncrement_le
   have hleft : IntegrableOn
       (fun x => matrixFrobeniusNormSq (finiteShellIncrement omega n m x))
       (cubeSet Q) volume :=
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (continuous_finiteShellIncrement_entry omega n m i j).pow 2).continuousOn
       |>.integrableOn_compact
         (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)) |>.mono_set
@@ -268,7 +268,7 @@ theorem frozenFineCellPairing_isBigO
       (measurable_fineNormalizedSingleShellField _ _)
       (continuous_abs.measurable.comp (measurable_frozenFineCellPairing a R)) hcomp
   rw [partitionStreamIncrementLaw_eq_map]
-  simpa only [F, c, fineNormalizedSingleShellField_eq_partitionField] using hmap
+  simpa only [F, c, fineNormalizedSingleShellField_eq_partitionField] using! hmap
 
 /-- Negating the shell sequence negates every normalized single shell. -/
 theorem fineNormalizedSingleShellField_negateSequence (s k : ℤ)
@@ -364,7 +364,7 @@ theorem integral_frozenFineCellPairing_eq_zero
           (fineNormalizedSingleShellField
             (k' + (incrementPartitionShift d : ℤ)) k' omega) x i j := by
       intro i j
-      simpa only [Algsuperdiff.Probability.negReg_apply, Matrix.neg_apply] using
+      simpa only [Algsuperdiff.Probability.negReg_apply, Matrix.neg_apply] using!
         (hFcont i j).neg
     dsimp only [Y]
     change frozenFineCellPairing a R

@@ -149,7 +149,7 @@ theorem index_mem_latticeAnnulusSet_of_mem_descendantsAtScale {n m : ℤ}
       rw [h2]; norm_num
     obtain ⟨i, hi⟩ : ∃ i, v i ≠ 0 := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hv0 (funext hcon)
     have h1 := two_abs_lt_iff'.mp (hbox2 i)
     rw [hpow] at h1

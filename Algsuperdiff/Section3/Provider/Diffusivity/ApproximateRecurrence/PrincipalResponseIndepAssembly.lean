@@ -787,7 +787,7 @@ theorem exists_gamma0_integrable_toFullBlockVec_gaugedPrincipalLoadShell_mul
   refine ⟨gamma0, hg0pos, hg0quarter, ?_⟩
   intro M hMgamma m0 Eind hstate m K hgap hhpos hm hh hK e e' he he' jd R hR wD wN
     hwD hwN alpha beta
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hgamma : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hnm : m - (hgap : ℤ) < m := by omega
   have hmK : m ≤ K := by
@@ -858,7 +858,6 @@ theorem exists_gamma0_integrable_toFullBlockVec_gaugedPrincipalLoadShell_mul
     exact hkappa omega (wD omega) (wN omega) (hDmem omega) (hNmem omega) alpha beta
   · have h1 := hTflbd omega (wD omega) (hwD omega) (wN omega) (hwN omega)
     have h2 := hTbd omega
-    simp only
     linarith only [h1, h2]
 
 end

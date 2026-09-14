@@ -1,5 +1,5 @@
 import Algsuperdiff.Section3.Provider.Percolation.ClusterEvent
-import Mathlib.Data.Nat.Lattice
+import Mathlib.Order.Lattice.Nat
 
 /-!
 # Tuple bookkeeping for the scale-iteration inequality

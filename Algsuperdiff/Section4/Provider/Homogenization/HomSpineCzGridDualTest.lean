@@ -116,7 +116,7 @@ theorem exists_vecSupDual (a : Vec d) :
     have ha : a = 0 := funext fun i => (hd.false i).elim
     rw [ha]
     simp
-  · haveI := hd
+  · have := hd
     obtain ⟨i, -, hi⟩ := Finset.exists_max_image (Finset.univ : Finset (Fin d))
       (fun i => |a i|) Finset.univ_nonempty
     have hnorm : ‖a‖ = |a i| := by
@@ -211,7 +211,7 @@ measure.  (`normalizedCubeMeasure Q` is a positive finite rescaling of
 theorem integrableOn_component_cubeSet {Q : TriadicCube d}
     (F : CubeEuclideanLpField Q FiniteLpExponent.two) (i : Fin d) :
     IntegrableOn (fun x => F.toField x i) (cubeSet Q) volume := by
-  haveI : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
+  have : IsProbabilityMeasure (normalizedCubeMeasure Q) :=
     ⟨normalizedCubeMeasure_apply_univ Q⟩
   have hmem : MemLp (fun x => F.toField x i) 2 (normalizedCubeMeasure Q) := by
     simpa only [FiniteLpExponent.two_exponent, HilbertVec.ofVec, PiLp.toLp_apply] using
@@ -229,7 +229,7 @@ theorem integrableOn_vecDot_const {Q : TriadicCube d} (Fv : Vec d → Vec d) (w 
     (hF : ∀ i : Fin d, IntegrableOn (fun x => Fv x i) (cubeSet Q) volume) :
     IntegrableOn (fun x => vecDot (Fv x) w) (cubeSet Q) volume := by
   simp only [vecDot]
-  refine integrable_finset_sum Finset.univ fun i _ => ?_
+  refine integrable_finsetSum Finset.univ fun i _ => ?_
   exact (hF i).mul_const (w i)
 
 /-- The cube average of the pairing against a constant vector is the pairing of
@@ -240,7 +240,7 @@ theorem cubeAverage_vecDot_const {Q : TriadicCube d} (Fv : Vec d → Vec d) (w :
   have hsum : ∫ x in cubeSet Q, vecDot (Fv x) w ∂volume =
       ∑ i : Fin d, (∫ x in cubeSet Q, Fv x i ∂volume) * w i := by
     simp only [vecDot]
-    rw [integral_finset_sum Finset.univ fun i _ => (hF i).mul_const (w i)]
+    rw [integral_finsetSum Finset.univ fun i _ => (hF i).mul_const (w i)]
     exact Finset.sum_congr rfl fun i _ => integral_mul_const _ _
   show (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, vecDot (Fv x) w ∂volume = _
   rw [hsum]
@@ -279,7 +279,7 @@ theorem cubeAverage_vecDot_gridDualDepthTest (Q : TriadicCube d) (j : ℕ)
       funext x
       exact vecDot_gridDualDepthTest Q j v F.toField x
     rw [hrw]
-    refine integrable_finset_sum (descendantsAtDepth Q j) fun R _ => ?_
+    refine integrable_finsetSum (descendantsAtDepth Q j) fun R _ => ?_
     exact (integrableOn_vecDot_const F.toField (v R) hFi).indicator (measurableSet_cubeSet R)
   rw [cubeAverage_eq_descendantsAverage_cubeAverage_of_integrableOn Q j _ hint]
   refine descendantsAverage_congr Q j fun R hR => ?_

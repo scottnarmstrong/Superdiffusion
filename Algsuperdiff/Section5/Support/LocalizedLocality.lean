@@ -169,7 +169,7 @@ theorem fieldLocalizedRegularity_eq_iSup (M : ABKModel d) (n : ℤ) (y : Vec d)
         ENNReal.ofReal ((Annealed.sigmaBar M n : ℝ) * Real.rpow 3 (-(n : ℝ) / 2)) *
           ballAverageHolderOn (cubeSetAt y n) D
             (solutionOfField M y n (rpow_three_neg_half_nonneg n) hg A).toFun := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M n : ℝ) := Provider.Orlicz.sigmaBar_pos M n
   have hKn : (0 : ℝ) < Real.rpow 3 (-(n : ℝ) / 2) := Real.rpow_pos_of_pos (by norm_num) _
   have hcX : ENNReal.ofReal ((Annealed.sigmaBar M n : ℝ) * Real.rpow 3 (-(n : ℝ) / 2)) ≠ 0 := by
@@ -201,7 +201,7 @@ theorem fieldLocalizedError_eq_iSup (M : ABKModel d) (n : ℤ) (y : Vec d)
           ballAverageSupNormOn (cubeSetAt y n) D
             (fun x => (solutionOfField M y n (rpow_three_neg_half_nonneg n) hg A).toFun x -
               v.toFun x) := by
-  haveI : NeZero d := Provider.Orlicz.neZero_of_model M
+  have : NeZero d := Provider.Orlicz.neZero_of_model M
   obtain ⟨Lam, hEll⟩ := exists_isEllipticFieldOn_extendCoeff M.nu_pos y n A.2
   refine iSup_congr fun g => iSup_congr fun hg => ?_
   refine le_antisymm (iSup_le fun u => iSup_le fun hu => iSup_le fun v => iSup_le fun hv => ?_) ?_
@@ -362,7 +362,7 @@ theorem measurableSet_goodCubeEvent_local (M : ABKModel d) (Creg : ℝ) (n : ℤ
     (ep : ℝ) :
     MeasurableSet[Cutoff.cutoffSampleLocalSigma M n (closedCubeAt y n)]
       (goodCubeEvent M Creg n y ep) := by
-  letI mLoc : MeasurableSpace (Cutoff.CutoffSample d) :=
+  let mLoc : MeasurableSpace (Cutoff.CutoffSample d) :=
     Cutoff.cutoffSampleLocalSigma M n (closedCubeAt y n)
   exact (measurableSet_le (measurable_localizedError_local M n y) measurable_const).inter
     (measurableSet_le (measurable_localizedRegularity_local M n y) measurable_const)

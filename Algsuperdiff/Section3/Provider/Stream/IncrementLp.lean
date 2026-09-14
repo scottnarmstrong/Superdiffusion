@@ -152,7 +152,7 @@ private theorem continuous_finiteShellIncrement_apply (omega : ShellSeq d) (n m 
     rw [finiteShellIncrement_apply]
     rfl
   rw [h]
-  exact continuous_finset_sum _ fun k _ => (omega k).1.1.continuous
+  exact continuous_finsetSum _ fun k _ => (omega k).1.1.continuous
 
 /-- The `L^p` density is continuous in the point. -/
 theorem continuous_streamIncrementLpDensity {p : ℝ} (hp : 0 < p) (n m : ℤ)
@@ -231,9 +231,9 @@ theorem streamIncrementLpMass_rpow_le {p r : ℝ} (hp : 0 < p) (hr : 1 ≤ r)
     (l n m : ℤ) (omega : ShellSeq d) :
     streamIncrementLpMass p l n m omega ^ r ≤
       streamIncrementLpMass (p * r) l n m omega := by
-  letI : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
+  let : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
     ⟨volume_openCubeSet_lt_top _⟩
-  haveI : NeZero (volume.restrict (openCubeSet (originCube d l))) :=
+  have : NeZero (volume.restrict (openCubeSet (originCube d l))) :=
     ⟨fun h => volume_openCubeSet_ne_zero (originCube d l)
       (Measure.restrict_eq_zero.1 h)⟩
   have hpr : 0 < p * r := mul_pos hp (lt_of_lt_of_le zero_lt_one hr)
@@ -326,7 +326,7 @@ private theorem prod_integrable_density (M : ABKModel d) {q : ℝ} (hq : 1 ≤ q
     Integrable (Function.uncurry (fun (x : Vec d) (omega : ShellSeq d) =>
         streamIncrementLpDensity q n m omega x))
       ((volume.restrict (openCubeSet (originCube d l))).prod M.P.toMeasure) := by
-  letI : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
+  let : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
     ⟨volume_openCubeSet_lt_top _⟩
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
   have hjoint := measurable_uncurry_streamIncrementLpDensity (d := d) hq0 n m
@@ -376,7 +376,7 @@ theorem integral_streamIncrementLpMass_le (M : ABKModel d) {q : ℝ} (hq : 1 ≤
     ∫ omega : ShellSeq d, streamIncrementLpMass q l n m omega ∂M.P.toMeasure ≤
       (IndependentSums.gammaMomentConst 2 * streamPointScale M n m *
         q ^ ((2 : ℝ)⁻¹)) ^ q := by
-  letI : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
+  let : Fact (volume (openCubeSet (originCube d l)) < ⊤) :=
     ⟨volume_openCubeSet_lt_top _⟩
   have hVpos : (0 : ℝ) < (volume (openCubeSet (originCube d l))).toReal := by
     rw [volume_openCubeSet_toReal]

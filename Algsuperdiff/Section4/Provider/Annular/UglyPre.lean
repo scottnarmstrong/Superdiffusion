@@ -207,7 +207,7 @@ theorem exists_responseJ_ugly_pre (d : ℕ) (dimension : 2 ≤ d) :
             C * (((Annealed.sigmaBar M m : ℝ)⁻¹ +
                   (unitCubeLambda (2 * M.gamma) (.finite 2) a)⁻¹) *
                 h.gradientW1Infinity) ^ 2 := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C, hC, hpre⟩ := exists_responseJ_ugly_pre_terms d dimension
   refine ⟨C, hC, ?_⟩
   intro M m n a h s e hs0 hs1 hgam1 he

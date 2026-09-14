@@ -74,7 +74,7 @@ theorem vecFieldDiv_vecDot_smul (e x : Vec d) :
       simp only [Pi.smul_apply, smul_eq_mul, slopeCLM_apply]
     have h1 : HasFDerivAt (fun z : Vec d => (slopeCLM e) z * e i) (e i • slopeCLM e) x :=
       (slopeCLM e).hasFDerivAt.mul_const (e i)
-    rw [hshape, h1.fderiv, ContinuousLinearMap.smul_apply, slopeCLM_apply, vecDot_basisVec_right,
+    rw [hshape, h1.fderiv, smul_apply, slopeCLM_apply, vecDot_basisVec_right,
       smul_eq_mul]
   simp only [hterm]
   rfl
@@ -292,8 +292,8 @@ theorem exists_cutoffQuadraticObservable_stream (m : ℤ) {sigmaBarM EBm : ℝ}
             (expectedExitTime R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
               (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt (0 : Vec d) m) z).toReal)| ≤
           ((3 : ℝ) ^ m) ^ (2 : ℕ) * (5 * EBm * (‖e‖ * vecCoordSum e)) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hU := isOpenBoundedConvexDomain_cubeSetAt (0 : Vec d) m
   have hne := cubeSetAt_nonempty (0 : Vec d) m
   obtain ⟨Lam, hEll⟩ := exists_isEllipticFieldOn_streamCoefficient M.nu_pos omega 0 m

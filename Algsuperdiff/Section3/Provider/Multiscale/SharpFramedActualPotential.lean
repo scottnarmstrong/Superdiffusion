@@ -100,7 +100,7 @@ theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
               (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p
               (superposedGradConst d) b) := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hsigma : 0 < (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ) :=
     (Algsuperdiff.Section3.Annealed.sigmaBar_characterization M i).1
   have hsqrt : 0 < Real.sqrt
@@ -296,7 +296,7 @@ theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
               (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p
               (superposedGradConst d) b) := by
       rw [hdivzero]
-      simpa [whitneyScale, inv_smul_smul₀ hsne] using hc
+      simpa [whitneyScale, inv_smul_smul₀ hsne] using! hc
     have hcolrestrict :
         (∑ Q ∈ whitneyLayer (d := d) m
             (whitneyScale M m (E : ℝ) b k₀ omega) n,

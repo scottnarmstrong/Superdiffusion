@@ -405,7 +405,7 @@ theorem exists_envelope_responseJ_descendant_epsSq
                       (Observable.inverseSqrtLoad (Annealed.sigmaBar M L) e)
                       (Observable.sqrtLoad (Annealed.sigmaBar M L) e) ≤
                     Y omega + Z omega := by
-  letI : NeZero d := _root_.Algsuperdiff.Section3.Provider.Localization.neZero_of_abkModel M
+  let : NeZero d := _root_.Algsuperdiff.Section3.Provider.Localization.neZero_of_abkModel M
   obtain ⟨Y, Z, -, -, -, -, -, hYm, hZm, hdom, hYt, hZt⟩ :=
     isCommonEventTwoTermBigOWith_cutoffResponseJ_translate_epsSq M l (triadicCubeShift R) E
       hE hgammaE hstate epsilon hepsilon hgate

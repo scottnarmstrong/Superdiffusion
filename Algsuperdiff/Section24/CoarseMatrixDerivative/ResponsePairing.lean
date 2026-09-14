@@ -161,7 +161,7 @@ theorem pairing_smul_left (U : Domain d) (a : CoeffOn U)
     filter_upwards [adjointResponseGradient_smul U a c X] with x hx
     simp only [hx, vecDot_smul_left, smul_eq_mul]
   rw [volumeAverage_congr_ae hcongr]
-  simpa [smul_eq_mul] using
+  simpa [smul_eq_mul] using!
     (volumeAverage_smul (U : Set (Vec d)) c (fun x =>
       vecDot (adjointResponseGradient U a X x)
         (matVecMul (h.1 x) (primalResponseGradient U a Y x))))
@@ -196,7 +196,7 @@ theorem pairing_smul_right (U : Domain d) (a : CoeffOn U)
     filter_upwards [primalResponseGradient_smul U a c Y] with x hx
     simp only [hx, matVecMul_smul, vecDot_smul_right, smul_eq_mul]
   rw [volumeAverage_congr_ae hcongr]
-  simpa [smul_eq_mul] using
+  simpa [smul_eq_mul] using!
     (volumeAverage_smul (U : Set (Vec d)) c (fun x =>
       vecDot (adjointResponseGradient U a X x)
         (matVecMul (h.1 x) (primalResponseGradient U a Y x))))

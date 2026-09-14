@@ -72,7 +72,7 @@ affine-split lane stay here. -/
 
 theorem slopeCLM_sub (A B : Vec d) : slopeCLM A - slopeCLM B = slopeCLM (A - B) := by
   ext v
-  simp only [ContinuousLinearMap.sub_apply, slopeCLM_apply, vecDot, Pi.sub_apply]
+  simp only [sub_apply, slopeCLM_apply, vecDot, Pi.sub_apply]
   rw [← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl fun i _ => by ring
 
@@ -204,7 +204,7 @@ theorem norm_volumeAverageVec_sub_le {W : Set (Vec d)} {G : Vec d → Vec d}
     ENNReal.toReal_pos (ne_of_gt hvolpos) (ne_of_lt hvoltop)
   refine (pi_norm_le_iff_of_nonneg hK).2 fun i => ?_
   have hIA : IntegrableOn (fun _ : Vec d => A i) W volume := by
-    haveI : IsFiniteMeasure (volume.restrict W) :=
+    have : IsFiniteMeasure (volume.restrict W) :=
       ⟨by rw [Measure.restrict_apply_univ]; exact hvoltop⟩
     exact integrable_const _
   have hsplit : ∫ y in W, (G y i - A i) ∂volume =

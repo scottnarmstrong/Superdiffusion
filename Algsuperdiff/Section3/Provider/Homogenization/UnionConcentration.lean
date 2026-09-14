@@ -204,7 +204,7 @@ theorem isBigO_gammaSigma_siteSum_of_cubeLocal_centered
       (fun omega => ∑ u ∈ S, X u omega)
       (Ch04.gammaSigmaIndependentSumConst sig * Real.sqrt (S.card : ℝ) * K) := by
   classical
-  haveI hne : Nonempty {x : Fin d → ℤ // x ∈ S} := ⟨⟨hS.choose, hS.choose_spec⟩⟩
+  have hne : Nonempty {x : Fin d → ℤ // x ∈ S} := ⟨⟨hS.choose, hS.choose_spec⟩⟩
   have hindepFun :
       iIndepFun (fun i : {x : Fin d → ℤ // x ∈ S} => X i.val)
         (cutoffSampleLaw M).toMeasure :=

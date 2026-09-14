@@ -53,7 +53,7 @@ theorem integral_cubeAverage_vecDot_realize (Q : TriadicCube d)
     (hX : MemLp X 2 μ) (hY : MemLp Y 2 μ) :
     ∫ ω, cubeAverage Q (fun x => vecDot (realize X ω x).toVec (realize Y ω x).toVec) ∂μ
       = ∫ ω, vecDot (X ω).toVec (Y ω).toVec ∂μ := by
-  haveI := isFiniteMeasure_volume_restrict_cubeSet (d := d) Q
+  have := isFiniteMeasure_volume_restrict_cubeSet (d := d) Q
   have hswap :
       ∫ ω, (∫ x, vecDot (realize X ω x).toVec (realize Y ω x).toVec
             ∂volume.restrict (cubeSet Q)) ∂μ

@@ -92,7 +92,7 @@ theorem descendantBound_of_supGauge {m : ℤ} {s p A : ℝ} (hp : 0 < p) {F : Ve
   refine (hnorm.trans hcell).trans (le_of_eq ?_)
   have hscale : R.scale = m - (j : ℤ) := by
     have h := scale_eq_sub_of_mem_descendantsAtDepth hR
-    simpa using h
+    simpa using! h
   have hexp : (s + (d : ℝ) / p) * (j : ℝ) =
       (s + (d : ℝ) / p) * (m : ℝ) + -((s + (d : ℝ) / p) * (((m - (j : ℤ)) : ℤ) : ℝ)) := by
     push_cast

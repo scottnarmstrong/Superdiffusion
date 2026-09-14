@@ -1,5 +1,5 @@
 import Algsuperdiff.Section3.Provider.Percolation.Lattice
-import Mathlib.Data.Nat.Lattice
+import Mathlib.Order.Lattice.Nat
 
 /-!
 # Distance-two lattice paths: geometry and separated selection
@@ -209,14 +209,14 @@ theorem exists_shell_indices₂ {x : ℕ → Fin d → ℤ} {N s M : ℕ}
     fun m hm => ⟨N, hmemN m hm⟩
   refine ⟨fun m => sInf {j | m * s ≤ latDist (x 0) (x j)}, ?_, ?_, ?_, ?_⟩
   · have hzero : (0 : ℕ) ∈ {j | 0 * s ≤ latDist (x 0) (x j)} := by
-      simp only [Set.mem_setOf_eq, Nat.zero_mul]
+      simp only [Set.mem_ofPred_eq, Nat.zero_mul]
       exact Nat.zero_le _
     exact Nat.le_zero.mp (Nat.sInf_le hzero)
   · exact fun m hm => Nat.sInf_le (hmemN m hm)
   · intro m m' hmm' hm'
     refine Nat.sInf_le ?_
     have hmem := Nat.sInf_mem (hne m' hm')
-    simp only [Set.mem_setOf_eq] at hmem ⊢
+    simp only [Set.mem_ofPred_eq] at hmem ⊢
     exact le_trans (Nat.mul_le_mul hmm' (le_refl s)) hmem
   · intro m hm
     show m * s ≤ latDist (x 0) (x (sInf {j | m * s ≤ latDist (x 0) (x j)})) ∧

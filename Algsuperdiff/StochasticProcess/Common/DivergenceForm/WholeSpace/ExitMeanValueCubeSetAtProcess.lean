@@ -90,8 +90,8 @@ theorem hasExitMeanValueOn_onePointRealExtension_of_forall_approx_cubeSetAt
       R.isConservative_onePointKernelSemigroup
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
       (onePointRealExtension h) := by
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   have hM0 : 0 ≤ M := (abs_nonneg (h 0)).trans (hM 0)
   refine hasExitMeanValueOn_of_forall_approx R.onePointKernelSemigroup
     R.isConservative_onePointKernelSemigroup

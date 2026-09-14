@@ -348,7 +348,7 @@ private theorem abs_scaled_streamResolvent_sub_lt_of_amp_eq
       c * (A.analyticMinimalResolvent mu
         ((Metric.ball x r)ᶜ.indicator fun _ ↦ (1 : ℝ))
         (measurable_complBall x r) (abs_complBall_le_one x r) x).toReal := by
-    exact hvDomRaw.trans_eq (by simpa only [w] using hwResolvent)
+    exact hvDomRaw.trans_eq (by simpa only [w] using! hwResolvent)
   have htailAt := mul_toReal_streamAnalyticMinimalResolvent_complBall_le_envelope
     M omega mu hmu x hr hamp hcut
   have hvScaled : (mu : ℝ) *
@@ -399,7 +399,7 @@ private theorem abs_scaled_streamResolvent_sub_lt_of_amp_eq
         measurable_const (D := |f x|) (fun _ ↦ by rw [abs_neg]) x =
         -f x * A.analyticMinimalResolventReal mu (fun _ : Vec d ↦ (1 : ℝ))
           measurable_const (D := 1) (fun _ ↦ by norm_num) x := by
-      simpa only [mul_one] using hconst
+      simpa only [mul_one] using! hconst
     calc
       (mu : ℝ) * A.analyticMinimalResolventReal mu g _ hgBound x =
           (mu : ℝ) * A.analyticMinimalResolventReal mu
@@ -487,7 +487,7 @@ private theorem abs_scaled_streamResolvent_le_envelope_of_zero_on_amp
       (A.analyticMinimalResolvent mu
         ((Metric.ball x ar)ᶜ.indicator fun _ ↦ (1 : ℝ))
         (measurable_complBall x ar) (abs_complBall_le_one x ar) x).toReal :=
-    hdom.trans_eq (by simpa only [w] using hwResolvent)
+    hdom.trans_eq (by simpa only [w] using! hwResolvent)
   have htail := mul_toReal_streamAnalyticMinimalResolvent_compl_amp_le_envelope
     M omega mu hmu x hr hcut
   calc
@@ -657,7 +657,7 @@ theorem tendsto_smul_streamAnalyticMinimalC0Resolvent
   have hclosePoint : ∀ y, |f y - g0 y| ≤ delta := by
     intro y
     have hp := abs_le_norm_dense (g0 - f) y
-    have hp' : |g0 y - f y| ≤ ‖g0 - f‖ := by simpa only using hp
+    have hp' : |g0 y - f y| ≤ ‖g0 - f‖ := by simpa only using! hp
     simpa only [abs_sub_comm] using hp'.trans (le_of_lt (by simpa only [g0] using hgclose))
   let A := streamWholeSpaceAnalyticData M omega
   let uf : ℝ := A.analyticMinimalResolventReal mu f f.continuous.measurable
@@ -670,7 +670,7 @@ theorem tendsto_smul_streamAnalyticMinimalC0Resolvent
   have hstableScaled : (mu : ℝ) * |uf - ug| ≤ delta := by
     calc
       (mu : ℝ) * |uf - ug| ≤ (mu : ℝ) * (delta / (mu : ℝ)) :=
-        mul_le_mul_of_nonneg_left (by simpa only [uf, ug] using hstable) mu.property.le
+        mul_le_mul_of_nonneg_left (by simpa only [uf, ug] using! hstable) mu.property.le
       _ = delta := by
         rw [← mul_div_assoc, mul_div_cancel_left₀ _ (ne_of_gt mu.property)]
   have hgApprox : |(mu : ℝ) * ug - g0 x| < eps / 4 := by

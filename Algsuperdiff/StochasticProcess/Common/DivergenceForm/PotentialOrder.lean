@@ -57,7 +57,7 @@ theorem potentialResolvent_nonneg_ae [NeZero d]
     filter_upwards [hv'.1, MeasureTheory.Lp.coeFn_neg
       (ZeroTraceSobolev.toL2 u)] with x hx hneg
     rw [hneg] at hx
-    simpa only [sub_zero] using hx
+    simpa only [sub_zero] using! hx
   have hvnonneg : ∀ᵐ x ∂volumeMeasureOn U,
       0 ≤ ZeroTraceSobolev.toL2 v x := by
     filter_upwards [hvvalue] with x hx
@@ -71,7 +71,7 @@ theorem potentialResolvent_nonneg_ae [NeZero d]
       (ZeroTraceSobolev.toL2 u), MeasureTheory.Lp.coeFn_neg
       (ZeroTraceSobolev.gradient u)] with x hx hnegValue hnegGradient
     rw [Set.indicator_apply] at hx ⊢
-    simpa only [Set.mem_setOf_eq, hnegValue, hnegGradient, Pi.neg_apply,
+    simpa only [Set.mem_ofPred_eq, hnegValue, hnegGradient, Pi.neg_apply,
       neg_pos] using hx
   have hpair : coefficientPairing a U
       (ZeroTraceSobolev.gradient u) (ZeroTraceSobolev.gradient v) ≤ 0 :=
@@ -230,7 +230,7 @@ theorem alpha_mul_potentialResolvent_le_one_ae [NeZero d]
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ 1) :
     ∀ᵐ x ∂volumeMeasureOn U,
       α * potentialResolvent a hα hlam hEll q hq f x ≤ 1 := by
-  letI : IsFiniteMeasure (volumeMeasureOn U) := by
+  let : IsFiniteMeasure (volumeMeasureOn U) := by
     simpa only [volumeMeasureOn] using hU.isFiniteMeasure_restrict_volume
   let u : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q hq f
   obtain ⟨v, ⟨hvvalue, hvgradient⟩, _⟩ :=

@@ -83,7 +83,7 @@ theorem measurable_freshShellDirichletGradL2 [NeZero d] (Q : TriadicCube d)
         (openCubeSet Q) (wD omega)
         (fun x => -streamForcing sigmaInv omega n m e x)) :
     Measurable fun omega => (wD omega).toH1Function.gradToHilbertVectorL2 := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hEq : (fun omega => (wD omega).toH1Function.gradToHilbertVectorL2) =
       (dirichletGradientOfForcingClass
@@ -113,7 +113,7 @@ theorem measurable_freshShellNeumannGradL2 (Q : TriadicCube d)
         (openCubeSet Q) (wN omega)
         (fun x => -streamForcing sigmaInv omega n m e x)) :
     Measurable fun omega => (wN omega).gradToHilbertVectorL2 := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hEq : (fun omega => (wN omega).gradToHilbertVectorL2) =
       (neumannGradientOfForcingClass (U := openCubeSet Q)
@@ -149,7 +149,7 @@ theorem measurable_shellIndexSigma_freshShellDirichletGradL2 [NeZero d] (Q : Tri
     @Measurable (Cutoff.ShellSeq d) (HilbertVectorL2 (openCubeSet Q))
       (Cutoff.shellIndexSigma (Set.Ioc n m)) inferInstance
       (fun omega => (wD omega).toH1Function.gradToHilbertVectorL2) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hEq : (fun omega => (wD omega).toH1Function.gradToHilbertVectorL2) =
       (dirichletGradientOfForcingClass
@@ -181,7 +181,7 @@ theorem measurable_shellIndexSigma_freshShellNeumannGradL2 (Q : TriadicCube d)
     @Measurable (Cutoff.ShellSeq d) (HilbertVectorL2 (openCubeSet Q))
       (Cutoff.shellIndexSigma (Set.Ioc n m)) inferInstance
       (fun omega => (wN omega).gradToHilbertVectorL2) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hEq : (fun omega => (wN omega).gradToHilbertVectorL2) =
       (neumannGradientOfForcingClass (U := openCubeSet Q)
@@ -210,7 +210,7 @@ theorem measurable_setIntegral_gradCoordL2 (Q : TriadicCube d) {Omega : Type*}
     {F : Omega → HilbertVectorL2 (openCubeSet Q)} (hF : Measurable F) :
     Measurable fun omega =>
       ∫ x in S, (F omega) x i ∂(volumeMeasureOn (openCubeSet Q)) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hEq : (fun omega =>
       ∫ x in S, (F omega) x i ∂(volumeMeasureOn (openCubeSet Q))) =

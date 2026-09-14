@@ -86,7 +86,7 @@ omit [NeZero d] in
 private theorem memL2On_of_bound {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {g : Vec d → ℝ} (hg : Measurable g) {C : ℝ} (hgC : ∀ x, |g x| ≤ C) :
     MemL2On U g := by
-  letI := hU.isBoundedDomain.isFiniteMeasure_restrict_volume
+  let := hU.isBoundedDomain.isFiniteMeasure_restrict_volume
   refine MemLp.of_bound hg.aestronglyMeasurable C ?_
   filter_upwards with x
   rw [Real.norm_eq_abs]
@@ -173,7 +173,7 @@ private theorem integrable_analyticCubeResolvent_sub_sq (v : ℕ) (mu : Positive
     Integrable (fun x ↦ (A.analyticCubeResolvent mu f hf hfD k x -
       A.analyticMinimalResolventReal mu f hf hfD x) ^ 2)
       (volumeMeasureOn (wholeSpaceCube d v)) := by
-  letI := (isOpenBoundedConvexDomain_wholeSpaceCube d
+  let := (isOpenBoundedConvexDomain_wholeSpaceCube d
     v).isBoundedDomain.isFiniteMeasure_restrict_volume
   refine Integrable.mono' (integrable_const ((2 * (D / (mu : ℝ))) ^ 2))
     (((A.measurable_analyticCubeResolvent mu hf hfD k).sub
@@ -285,7 +285,7 @@ theorem exists_h1Function_analyticMinimalResolventReal (v : ℕ) (mu : PositiveS
       z.toFun = A.analyticMinimalResolventReal mu f hf hfD ∧
         IsScalarForcedWeakSolution A.a (wholeSpaceCube d v)
           (A.wholeSpaceResidual mu hf hfD) z := by
-  letI := (isOpenBoundedConvexDomain_wholeSpaceCube d
+  let := (isOpenBoundedConvexDomain_wholeSpaceCube d
     v).isBoundedDomain.isFiniteMeasure_restrict_volume
   have hEll := A.cubeEllipticity v
   have hpsiL2 := A.memL2On_analyticMinimalResolventReal v mu hf hfD

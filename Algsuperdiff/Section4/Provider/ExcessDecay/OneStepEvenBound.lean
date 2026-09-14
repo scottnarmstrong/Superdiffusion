@@ -97,7 +97,7 @@ theorem toEuc_smul_basisVec (t : ℝ) (i : Fin d) :
 /-- The length of a normal displacement. -/
 theorem norm_toEuc_smul_basisVec (t : ℝ) (i : Fin d) :
     ‖(toEuc : Vec d → EuclideanSpace ℝ (Fin d)) (t • (basisVec i : Vec d))‖ = |t| := by
-  rw [toEuc_smul_basisVec, norm_smul, EuclideanSpace.norm_single, Real.norm_eq_abs]
+  rw [toEuc_smul_basisVec, norm_smul, PiLp.norm_single, Real.norm_eq_abs]
   norm_num
 
 /-! ## 2. The pointwise estimate on the core slab -/

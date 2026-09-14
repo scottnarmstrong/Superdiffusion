@@ -236,7 +236,7 @@ theorem cubeFamilyAverage_integral_pow_four_oscMajorant_le_family
         Integrable (g i R') mu := fun i hi R' hR' => hint i hi R hR R' hR'
     have hGint : Integrable (fun w => ∑ i ∈ Finset.range (N + 1),
         c i * descendantsAverage R i (fun R' => g i R' w)) mu := by
-      refine integrable_finset_sum _ fun i hi => ?_
+      refine integrable_finsetSum _ fun i hi => ?_
       exact (integrable_descendantsAverage mu R i (g i) (hsub i hi)).const_mul _
     have hptw : ∀ w : Omega,
         oscMajorant nbase s N (U w) R ^ (4 : ℕ) ≤
@@ -250,7 +250,7 @@ theorem cubeFamilyAverage_integral_pow_four_oscMajorant_le_family
         (Filter.Eventually.of_forall fun w => by positivity) hGint
         (Filter.Eventually.of_forall hptw)
     refine hstep.trans_eq ?_
-    rw [integral_finset_sum _ fun i hi =>
+    rw [integral_finsetSum _ fun i hi =>
       (integrable_descendantsAverage mu R i (g i) (hsub i hi)).const_mul _]
     refine Finset.sum_congr rfl fun i hi => ?_
     rw [integral_const_mul, integral_descendantsAverage mu R i (g i) (hsub i hi)]
@@ -278,7 +278,7 @@ theorem integrable_pow_four_oscMajorant_family (mu : Measure Omega) (nbase : ℤ
   have hGint : Integrable (fun w => ∑ i ∈ Finset.range (N + 1),
       (2 : ℝ) ^ (i + 1) * (Real.rpow (3 : ℝ) (s * (i : ℝ))) ^ (4 : ℕ) *
         descendantsAverage R i (fun R' => g i R' w)) mu := by
-    refine integrable_finset_sum _ fun i _ => ?_
+    refine integrable_finsetSum _ fun i _ => ?_
     exact (integrable_descendantsAverage mu R i (g i) (hintcell i)).const_mul _
   have hmeas : Measurable fun w => oscMajorant nbase s N (U w) R :=
     measurable_oscMajorant _ s N R U fun i _ R' hR' => hmeascell i R' hR'

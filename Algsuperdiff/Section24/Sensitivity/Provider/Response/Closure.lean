@@ -326,7 +326,7 @@ theorem responseJ_sensitivity_of_cube_dhFluxForm_bound {d : ℕ} (dimension : 2 
             |vecDot p q| * h.gradientW1Infinity ^ 2 *
               (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹ ^ 2) := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨C₁, hC₁pos, hDh⟩ := DhBound.coarseMatrixDerivative_bound dimension
   refine ⟨8 * K₀ + 4 * C₁ + 4 * C₁ ^ 2, by positivity, ?_⟩
   intro a h hgate p q δ hδ hδ'
@@ -445,7 +445,7 @@ theorem responseJ_sensitivity {d : ℕ} (dimension : 2 ≤ d) :
               (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹ +
             |vecDot p q| * h.gradientW1Infinity ^ 2 *
               (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹ ^ 2) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   exact responseJ_sensitivity_of_cube_dhFluxForm_bound dimension
     (fluxSpineConst_pos d)
     (fun a h F hF _k hk _R hR τ w => abs_dhFluxForm_le_root_gauge a h F hF hk hR τ w)

@@ -34,7 +34,7 @@ theorem isTwoTermBigOWith_of_isOneSidedOrlicz {Omega : Type*} [MeasurableSpace O
   have hpos : 0 < A2 * t := mul_pos hA2 (lt_of_lt_of_le zero_lt_one ht)
   have hempty : {omega : Omega | A2 * t < (0 : ℝ)} = (∅ : Set Omega) := by
     ext omega
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_lt]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
     exact hpos.le
   show mu.real (Homogenization.IndependentSums.upperTailEvent (fun _ => (0 : ℝ)) (A2 * t))
     ≤ _

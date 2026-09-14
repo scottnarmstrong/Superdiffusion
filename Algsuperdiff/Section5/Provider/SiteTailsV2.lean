@@ -400,7 +400,7 @@ theorem measureReal_shiftedSiteBadEventFive_le_v2 (M : ABKModel d)
   · rw [shiftedSiteBadEventFive_of_lt M Creg (siteThresholdConst Cinj) ep n hlq z,
       measureReal_empty]
     exact (Real.exp_pos _).le
-  · push_neg at hlq
+  · push Not at hlq
     rw [shiftedSiteBadEventFive_of_le M Creg (siteThresholdConst Cinj) ep n hlq z]
     refine (measureReal_siteBadEventFive_le_v2 M hc hC hcreg hCreg hCinj hep hep4
       hcal hrange hc_reg hc_shell hfloor hmomE hmomX hp1 hlog3 hthr n

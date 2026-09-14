@@ -102,9 +102,10 @@ theorem measurable_homMinimalScaleFactor (c : ℝ) {X : Omega → ℕ∞} (hX : 
 turns `Y^{2p}` into the same object at `c ↦ 2pc`. -/
 theorem enatThreeRpow_rpow {c r : ℝ} (hr : 0 < r) (n : ℕ∞) :
     enatThreeRpow c n ^ r = enatThreeRpow (c * r) n := by
-  induction n using WithTop.recTopCoe with
-  | top => rw [enatThreeRpow_top, enatThreeRpow_top, ENNReal.top_rpow_of_pos hr]
-  | coe k =>
+  rcases eq_or_ne n ⊤ with htop | hfin
+  · rw [htop, enatThreeRpow_top, enatThreeRpow_top, ENNReal.top_rpow_of_pos hr]
+  · obtain ⟨k, hk⟩ := WithTop.ne_top_iff_exists.mp hfin
+    rw [← hk]
     show ENNReal.ofReal ((3 : ℝ) ^ (c * (k : ℝ))) ^ r =
       ENNReal.ofReal ((3 : ℝ) ^ (c * r * (k : ℝ)))
     rw [ENNReal.ofReal_rpow_of_pos (Real.rpow_pos_of_pos (by norm_num) _),
@@ -142,7 +143,7 @@ theorem homMinimalScaleFactor_le_trunc_add_tsum {c : ℝ} (hc : 0 ≤ c) (N0 : �
           (fun _ => ENNReal.ofReal ((3 : ℝ) ^ (c * ((N0 + 1 + N : ℕ) : ℝ)))) omega := by
       intro N
       have hmem : omega ∈ {w : Omega | ((N0 + 1 + N : ℕ) : ℕ∞) ≤ X w} := by
-        rw [Set.mem_setOf_eq, htop]
+        rw [Set.mem_ofPred_eq, htop]
         exact le_top
       rw [Set.indicator_of_mem hmem, ← ENNReal.ofReal_one]
       refine ENNReal.ofReal_le_ofReal ?_
@@ -173,7 +174,7 @@ theorem homMinimalScaleFactor_le_trunc_add_tsum {c : ℝ} (hc : 0 ≤ c) (N0 : �
       have hkeq : (N0 + 1 + (k - (N0 + 1)) : ℕ) = k := by omega
       have hmem : omega ∈
           {w : Omega | ((N0 + 1 + (k - (N0 + 1)) : ℕ) : ℕ∞) ≤ X w} := by
-        rw [Set.mem_setOf_eq, ← hk, hkeq]
+        rw [Set.mem_ofPred_eq, ← hk, hkeq]
         exact le_rfl
       calc ENNReal.ofReal ((3 : ℝ) ^ (c * (k : ℝ)))
           = Set.indicator {w : Omega | ((N0 + 1 + (k - (N0 + 1)) : ℕ) : ℕ∞) ≤ X w}

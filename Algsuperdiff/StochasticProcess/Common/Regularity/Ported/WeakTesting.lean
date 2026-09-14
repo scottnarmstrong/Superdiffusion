@@ -56,7 +56,7 @@ theorem abs_integral_vecDot_le_sqrt_energy_mul_sqrt_energy
   have hXY : IntegrableOn (fun x => X x * Y x) W := by
     have hmem : MemLp (fun x => X x * Y x) 1 (volume.restrict W) := by
       have h := hY.mul (r := 1) hX
-      simpa only [Pi.mul_apply] using h
+      simpa only [Pi.mul_apply] using! h
     exact hmem.integrable (by norm_num)
   have habs :
       |∫ x in W, vecDot (F x) (G x) ∂volume| ≤

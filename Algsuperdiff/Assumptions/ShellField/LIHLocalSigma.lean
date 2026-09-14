@@ -20,6 +20,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+set_option warn.classDefReducibility false in
 /-- The shell-field pullback of CoarseGraining's local integral sigma-field. -/
 def lihLocalSigma (U : Set (Vec d)) : MeasurableSpace (ShellField d) :=
   MeasurableSpace.comap (forgetShell (d := d)) (LocalSigmaR U)

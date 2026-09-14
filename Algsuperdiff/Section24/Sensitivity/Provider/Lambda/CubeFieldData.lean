@@ -73,7 +73,7 @@ theorem fluxDerivRep_lipschitz (h : UnitCubeSkewW2Infinity d) (k i j : Fin d)
     (x y : Vec d) :
     |fluxDerivRep h k i j x - fluxDerivRep h k i j y| ≤
       (d : ℝ) * h.gradientW1Infinity * ‖x - y‖ := by
-  simpa [Real.norm_eq_abs] using
+  simpa [Real.norm_eq_abs] using!
     (exists_lipschitz_ae_eq_unitCubeSkewW2Infinity_firstDeriv h k i j).choose_spec.1 x y
 
 theorem fluxDerivRep_ae_eq (h : UnitCubeSkewW2Infinity d) (k i j : Fin d) :
@@ -232,7 +232,7 @@ theorem memLp_matWeakDiv_cube (h : UnitCubeSkewW2Infinity d) (R : TriadicCube d)
   refine memLp_vec_of_components fun j => ?_
   have : MemLp (fun x => ∑ i : Fin d, unitCubeDerivData h i x i j) r
       (normalizedCubeMeasure R) :=
-    memLp_finset_sum (s := Finset.univ)
+    memLp_finsetSum (s := Finset.univ)
       (f := fun i => fun x => unitCubeDerivData h i x i j)
       fun i _ => memLp_unitCubeDerivData_cube h R hsub i i j r
   simpa [matWeakDiv_unitCubeDerivData_apply'] using this

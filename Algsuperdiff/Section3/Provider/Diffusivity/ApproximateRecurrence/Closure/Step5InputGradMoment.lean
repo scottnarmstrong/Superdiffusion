@@ -124,9 +124,9 @@ theorem gridFourthMoment_le_integral_of_cubeFamilyAverage_le {Omega : Type*}
   classical
   have hswap : ∑ R ∈ I, (∫ omega, F R omega ^ (4 : ℝ) ∂mu) =
       ∫ omega, ∑ R ∈ I, F R omega ^ (4 : ℝ) ∂mu :=
-    (integral_finset_sum I hFint).symm
+    (integral_finsetSum I hFint).symm
   have hsumint : Integrable (fun omega => ∑ R ∈ I, F R omega ^ (4 : ℝ)) mu :=
-    integrable_finset_sum I hFint
+    integrable_finsetSum I hFint
   have hcmp : Integrable (fun omega => ((I.card : ℝ))⁻¹ *
       ∑ R ∈ I, F R omega ^ (4 : ℝ)) mu := hsumint.const_mul _
   have hmono : (∫ omega, ((I.card : ℝ))⁻¹ * ∑ R ∈ I, F R omega ^ (4 : ℝ) ∂mu) ≤
@@ -337,7 +337,7 @@ theorem exists_step5GradMomentConst (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
           C2 * (((Annealed.sigmaBar M n : ℝ)) ^ 2)⁻¹ * (h : ℝ) *
             (3 : ℝ) ^ (2 * M.gamma * ((n + (h : ℤ) : ℤ) : ℝ)) := by
   classical
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨Ccz, hCczpos, hCZ⟩ := Corrector.exists_cubeEuclideanL8_gradient_sq_sum_le (d := d) hd
   obtain ⟨Ckm, hCkmpos, hkm⟩ := exists_integral_streamIncrementLpNorm_eight_pow_four_le d
   refine ⟨(32 * Ccz ^ (2 : ℕ) * Ckm) ^ ((2 : ℝ)⁻¹),

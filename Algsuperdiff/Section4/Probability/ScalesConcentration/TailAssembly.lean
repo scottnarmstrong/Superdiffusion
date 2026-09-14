@@ -121,7 +121,7 @@ lemma Zj_tail {X : ℤ → ℤ → Ω → ℝ} {s p lam : ℝ} (hs : 0 < s) (hp 
   have hincl : {ω | n ≤ Zcount X s lam m j ω}
       ⊆ ⋃ k ∈ K, {ω | thr s lam k j < X k j ω} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω
+    simp only [Set.mem_ofPred_eq] at hω
     set E := (Finset.Icc (0 : ℤ) (m : ℤ)).filter (fun k => thr s lam k j < X k j ω) with hE
     have hZcard : Zcount X s lam m j ω = E.card := by
       rw [Zcount, hE, Finset.card_filter]
@@ -199,11 +199,11 @@ lemma Zj_tail {X : ℤ → ℤ → Ω → ℝ} {s p lam : ℝ} (hs : 0 < s) (hp 
             rw [max_eq_left]; linarith
           rw [hmax]
           have hAr : (2 * dj + n : ℝ) ≤ 2 * (k₀ - j).natAbs + 2 := by exact_mod_cast hk₀filt
-          push_cast at hAr ⊢; linarith
+          linarith
         · have hmax : max ((n : ℝ) - 2) 0 = 0 := by rw [max_eq_right]; linarith
           rw [hmax]
           have hBr : (dj : ℝ) ≤ (k₀ - j).natAbs := by exact_mod_cast hk₀dj
-          push_cast at hBr ⊢; linarith
+          linarith
       -- q^{L₀} ≤ 3^{-(sp/2)dj} 3^{-(sp/4)(n-2)₊}.
       have hqL : q ^ L₀ ≤ (3 : ℝ) ^ (-(s * p / 2 * (dj : ℝ)))
           * (3 : ℝ) ^ (-(s * p / 4 * (max ((n : ℝ) - 2) 0))) := by

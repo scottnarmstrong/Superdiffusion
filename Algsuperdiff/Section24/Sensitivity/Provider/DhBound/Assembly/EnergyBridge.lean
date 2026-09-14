@@ -68,8 +68,9 @@ theorem solutionEnergyNorm_le_two_mul_sqrt_responseJ (Q : TriadicCube d)
   rw [solutionEnergyNorm_eq_sqrt_two_mul_sqrt_responseJ Q F hv]
   have h2 : Real.sqrt 2 ≤ 2 := by
     have : Real.sqrt 2 ≤ Real.sqrt 4 := Real.sqrt_le_sqrt (by norm_num)
-    simpa [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 2)]
-      using this
+    rw [show (4 : ℝ) = 2 ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)] at this
+    exact this
   exact mul_le_mul_of_nonneg_right h2 (Real.sqrt_nonneg _)
 
 end

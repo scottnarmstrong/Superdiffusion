@@ -86,7 +86,7 @@ theorem denseRange_compactSupportCoreToC0 [R1Space X] [LocallyCompactSpace X] :
     simp only [Pi.one_apply, one_mul, sub_self, norm_zero]
     exact hhalf.le
   · have hfx : ‖f x‖ < ε / 2 := by
-      simpa only [Real.dist_eq, sub_zero, Real.norm_eq_abs] using hK hx
+      simpa only [Real.dist_eq, sub_zero, Real.norm_eq_abs] using! hK hx
     rw [show f x - φ x * f x = (1 - φ x) * f x by ring]
     rw [norm_mul, Real.norm_eq_abs,
       abs_of_nonneg (sub_nonneg.mpr (hφrange x).2)]

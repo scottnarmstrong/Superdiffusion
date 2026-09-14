@@ -45,7 +45,7 @@ theorem tendsto_streamUniformExhaustionEnvelope_atTop
   have hmain : Tendsto (fun s : ℝ ↦ streamTailAmplitudeConst M omega *
       Real.exp (-(streamUniformExhaustionRate M omega * s ^ (1 / 3 : ℝ))))
       atTop (nhds 0) := by
-    simpa only [mul_zero] using
+    simpa only [mul_zero] using!
       (Real.tendsto_exp_neg_atTop_nhds_zero.comp hscale).const_mul
         (streamTailAmplitudeConst M omega)
   apply hmain.congr'
@@ -322,7 +322,7 @@ theorem hasVanishing_streamAnalyticMinimalResolvent
     intro y
     have hpoint : |(g0 - f) y| ≤ ‖g0 - f‖ := abs_le_norm_streamC0 (g0 - f) y
     have hpoint' : |g0 y - f y| ≤ ‖g0 - f‖ := by
-      simpa only using hpoint
+      simpa only using! hpoint
     simpa only [abs_sub_comm] using
       hpoint'.trans (le_of_lt (by simpa only [g0] using hgclose))
   have hgcompact : HasCompactSupport g0 := mem_compactlySupported.mp g.property

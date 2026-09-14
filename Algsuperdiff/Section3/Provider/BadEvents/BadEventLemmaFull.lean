@@ -138,7 +138,7 @@ theorem one_le_badEventOscFullRate_of_admissible (M : ABKModel d) {Ccg : ℝ}
   -- `E >= 2`
   have hE2 : (2 : ℝ) ≤ E := by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have hmul : E * Algsuperdiff.Section3.Disorder.cstar M <
         2 * Algsuperdiff.Section3.Disorder.cstar M :=
       mul_lt_mul_of_pos_right hlt hc

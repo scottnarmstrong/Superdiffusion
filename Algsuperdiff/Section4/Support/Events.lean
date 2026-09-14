@@ -213,7 +213,7 @@ theorem measurableSet_eventG1 (M : ABKModel d) (m : ℤ) (s T : ℝ) :
       ∑' k : {k : ℤ // m ≤ k},
         ENNReal.ofReal (Real.rpow (3 : ℝ) ((2 - M.gamma) * (m : ℝ)) *
           shellW1InfGradNorm m (omega.1 k.1)) := by
-    refine Measurable.ennreal_tsum fun k => ?_
+    refine Measurable.tsum (L := SummationFilter.unconditional {k : ℤ // m ≤ k}) fun k => ?_
     exact ((measurable_shellW1InfGradNorm m).comp (measurable_shellAt k.1)).const_mul
       _ |>.ennreal_ofReal
   have h2 : Measurable fun omega : Cutoff.CutoffSample d =>
@@ -225,7 +225,8 @@ theorem measurableSet_eventG1 (M : ABKModel d) (m : ℤ) (s T : ℝ) :
                 ⨆ v : ↥(latticeCubeSet d k m),
                   ENNReal.ofReal
                     (shellW2InfNormAt (triadicLatticePoint k v.1) k (omega.1 k))) ^ 2 := by
-    refine Measurable.ennreal_tsum fun n => Measurable.const_mul ?_ _
+    refine Measurable.tsum (L := SummationFilter.unconditional {n : ℤ // n ≤ m})
+      fun n => Measurable.const_mul ?_ _
     refine Finset.measurable_sum _ fun k _ => Measurable.pow_const ?_ 2
     refine Measurable.const_mul (Measurable.iSup fun v => ?_) _
     exact ((measurable_shellW2InfNormAt (triadicLatticePoint k v.1) k).comp
@@ -289,7 +290,8 @@ theorem measurableSet_eventG2 (M : ABKModel d) (m : ℤ) (s : {s : ℝ // 0 < s}
                   (Cutoff.translateCutoffSample (triadicLatticePoint n.1 v.1)
                     omega) ^ 2) := by
     refine Measurable.const_mul ?_ _
-    refine Measurable.ennreal_tsum fun j => Measurable.ennreal_tsum fun n => ?_
+    refine Measurable.tsum (L := SummationFilter.unconditional {j : ℤ // j ≤ m}) fun j =>
+      Measurable.tsum (L := SummationFilter.unconditional {n : ℤ // n ≤ j.1 - 1}) fun n => ?_
     refine Measurable.const_mul (Measurable.iSup fun v => ?_) _
     exact (((measurable_annularErrorObservable M n.1 s).comp
       (Cutoff.measurable_translateCutoffSample

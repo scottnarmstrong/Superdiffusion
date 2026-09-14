@@ -154,7 +154,7 @@ theorem integrableOn_grad_apply {m : ℤ} (u : H1Function (openCubeSet (originCu
     IntegrableOn (fun y => u.grad y i) (openCubeSet (originCube d m)) volume := by
   have hUdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
-  haveI : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
+  have : IsFiniteMeasure (volume.restrict (openCubeSet (originCube d m))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact hUdom.volume_lt_top
@@ -288,7 +288,7 @@ theorem abs_windowSlope_sub_grad_le (hd : d ≠ 0) {m j : ℤ} {x : Vec d}
     field_simp
   -- the second right-hand term
   have hfint : Integrable (gradIndicator m u i) volume := integrable_gradIndicator u i
-  haveI : IsFiniteMeasure (volume.restrict (Metric.closedBall x ((3 : ℝ) ^ j / 2))) := by
+  have : IsFiniteMeasure (volume.restrict (Metric.closedBall x ((3 : ℝ) ^ j / 2))) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 (volume_closedBall_ne_top x hr.le)
@@ -306,7 +306,7 @@ theorem abs_windowSlope_sub_grad_le (hd : d ≠ 0) {m j : ℤ} {x : Vec d}
       ≤ ∫ y in Metric.closedBall x ((3 : ℝ) ^ j / 2),
         |gradIndicator m u i y - gradIndicator m u i x| ∂volume :=
     setIntegral_mono_set hballint (Eventually.of_forall fun y => abs_nonneg _)
-      (HasSubset.Subset.eventuallyLE (truncatedWindow_subset_closedBall x m j))
+      (LE.le.eventuallyLE (truncatedWindow_subset_closedBall x m j))
   have havg : ∫ y in Metric.closedBall x ((3 : ℝ) ^ j / 2),
         |gradIndicator m u i y - gradIndicator m u i x| ∂volume
       = ((3 : ℝ) ^ j) ^ d
@@ -400,7 +400,7 @@ theorem ae_campanatoSlopeLimit_eq_grad (hd : 0 < d) {m : ℤ}
   -- the majorant converges to zero
   have hsqrt : Tendsto (fun n : ℕ => Real.sqrt ((3 : ℝ) ^ (m + 1 - (n : ℤ)))) atTop (𝓝 0) := by
     have h := (Real.continuous_sqrt.tendsto 0).comp (tendsto_zpow_sub_natCast_zero (m + 1))
-    simpa using h
+    simpa using! h
   have havg : Tendsto (fun n : ℕ => ⨍ y in Metric.closedBall x ((3 : ℝ) ^ (m + 1 - (n : ℤ)) / 2),
       |gradIndicator m u i y - gradIndicator m u i x| ∂volume) atTop (𝓝 0) := by
     have h := (hxleb i).comp (tendsto_zpow_half_nhdsWithin_zero (m + 1))

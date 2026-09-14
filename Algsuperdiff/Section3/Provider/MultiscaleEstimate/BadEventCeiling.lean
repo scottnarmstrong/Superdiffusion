@@ -475,7 +475,7 @@ theorem indicatorAverage_rpow_isBigOWith_gammaOne_of_two_exp [IsFiniteMeasure μ
     have hsplit : ∫ omega, (F.card : ℝ)⁻¹ * ∑ z ∈ F,
         (B z).indicator (fun _ => (1 : ℝ)) omega ∂μ
         = (F.card : ℝ)⁻¹ * ∑ z ∈ F, μ.real (B z) := by
-      rw [integral_const_mul, integral_finset_sum F hintInd]
+      rw [integral_const_mul, integral_finsetSum F hintInd]
       congr 1
       refine Finset.sum_congr rfl fun z hz => ?_
       rw [integral_indicator (hBmeas z hz), setIntegral_const, smul_eq_mul,

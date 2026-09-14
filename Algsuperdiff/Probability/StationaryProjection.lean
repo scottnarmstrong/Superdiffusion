@@ -72,19 +72,30 @@ theorem HasHorizontalGradient.add {φ ψ : ScalarL2 μ} {F G : VectorL2 d μ}
     (hψ : HasHorizontalGradient (μ := μ) ψ G) :
     HasHorizontalGradient (μ := μ) (φ + ψ) (F + G) := by
   intro i
-  convert (hφ i).add (hψ i) using 1
-  · funext t
+  have hfun : (fun t : ℝ ↦ koopman (μ := μ) (t • (Pi.single i 1 : Vec d)) (φ + ψ))
+      = fun t : ℝ ↦ koopman (μ := μ) (t • (Pi.single i 1 : Vec d)) φ
+          + koopman (μ := μ) (t • (Pi.single i 1 : Vec d)) ψ := by
+    funext t
     exact map_add (koopman (μ := μ) (t • (Pi.single i 1 : Vec d))) φ ψ
-  · exact (vectorL2Coord (μ := μ) i).map_add F G
+  have hcoord : vectorL2Coord (μ := μ) i (F + G)
+      = vectorL2Coord (μ := μ) i F + vectorL2Coord (μ := μ) i G :=
+    ContinuousLinearMap.map_add (vectorL2Coord (μ := μ) i) F G
+  rw [hfun, hcoord]
+  exact (hφ i).add (hψ i)
 
 theorem HasHorizontalGradient.smul (c : ℝ) {φ : ScalarL2 μ}
     {F : VectorL2 d μ} (hφ : HasHorizontalGradient (μ := μ) φ F) :
     HasHorizontalGradient (μ := μ) (c • φ) (c • F) := by
   intro i
-  convert (hφ i).const_smul c using 1
-  · funext t
+  have hfun : (fun t : ℝ ↦ koopman (μ := μ) (t • (Pi.single i 1 : Vec d)) (c • φ))
+      = fun t : ℝ ↦ c • koopman (μ := μ) (t • (Pi.single i 1 : Vec d)) φ := by
+    funext t
     exact map_smul (koopman (μ := μ) (t • (Pi.single i 1 : Vec d))) c φ
-  · exact (vectorL2Coord (μ := μ) i).map_smul c F
+  have hcoord : vectorL2Coord (μ := μ) i (c • F)
+      = c • vectorL2Coord (μ := μ) i F :=
+    ContinuousLinearMap.map_smul (vectorL2Coord (μ := μ) i) c F
+  rw [hfun, hcoord]
+  exact (hφ i).const_smul c
 
 /-- The linear range of all full strong horizontal gradients. -/
 def horizontalGradientRange : Submodule ℝ (VectorL2 d μ) where
@@ -107,7 +118,7 @@ def stationarySolenoidalSubspace : Submodule ℝ (VectorL2 d μ) :=
 
 instance stationaryPotentialSubspace_hasOrthogonalProjection :
     (stationaryPotentialSubspace (μ := μ) (d := d)).HasOrthogonalProjection := by
-  letI : CompleteSpace (stationaryPotentialSubspace (μ := μ) (d := d)) := by
+  let : CompleteSpace (stationaryPotentialSubspace (μ := μ) (d := d)) := by
     change CompleteSpace
       (horizontalGradientRange (μ := μ) (d := d)).topologicalClosure
     infer_instance
@@ -148,7 +159,7 @@ variable [IsLocallyFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
 hypotheses on the probability carrier and its real translation action. -/
 theorem continuous_koopman_orbit (f : Lp E 2 μ) :
     Continuous (fun x : Vec d ↦ koopman (μ := μ) x f) := by
-  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
   change Continuous (fun x : Vec d ↦ DomAddAct.mk x +ᵥ f)
   exact DomAddAct.continuous_mk.vadd continuous_const
 

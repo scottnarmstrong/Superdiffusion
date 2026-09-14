@@ -379,7 +379,7 @@ private theorem lambdaSqUpper_eq_cutoffUpperEllipticity (M : ABKModel d) (k L : 
     Ch02.LambdaSq (originCube d k) s q.1
         (coefficientCutoffTriadicCoeffFamily M L omega) =
       Observable.cutoffUpperEllipticity M k L s hs q omega := by
-  letI : NeZero d := Algsuperdiff.Section3.Provider.BadEvents.neZeroOfModel M
+  let : NeZero d := Algsuperdiff.Section3.Provider.BadEvents.neZeroOfModel M
   rw [congrFun (Observable.cutoffUpperEllipticity_eq_literal M k L s hs q) omega]
   change _ = Ch04.LambdaSqCoeffField (originCube d k) s q.1
       (Cutoff.coefficientCutoff M.nu L omega)
@@ -694,7 +694,7 @@ private theorem exists_const_integral_switchCubeEnergy_mul_principalBadEvent_ind
   refine ⟨Cbase, c, Cout, hCbase, hCbased, hc, hCout0, ?_⟩
   intro M E m h a R P hstate hh0 ha hRscale hEexp hEadm hEgamma hwindow hgamma hh
     hXm hVm hVint
-  letI : NeZero d := Algsuperdiff.Section3.Provider.BadEvents.neZeroOfModel M
+  let : NeZero d := Algsuperdiff.Section3.Provider.BadEvents.neZeroOfModel M
   have hgpos : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hcstar0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
   -- the enlarged exported constant, read back at the envelope constant

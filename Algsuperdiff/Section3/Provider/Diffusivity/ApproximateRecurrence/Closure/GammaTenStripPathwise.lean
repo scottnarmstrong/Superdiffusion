@@ -188,7 +188,7 @@ private theorem originCubeFourthEnergy_shift_le {d : ℕ} (K : ℤ) (c : Vec d)
     (hb : cubeEuclideanLpNorm (originCube d K) 8 u ≤ b) :
     originCubeFourthEnergy K (fun x => c + u x) ≤
       8 * (a ^ (4 : ℕ) + b ^ (4 : ℕ)) := by
-  haveI : IsProbabilityMeasure (normalizedCubeMeasure (originCube d K)) :=
+  have : IsProbabilityMeasure (normalizedCubeMeasure (originCube d K)) :=
     ⟨by simp [normalizedCubeMeasure_apply_univ (originCube d K)]⟩
   have hcm : MemLp (fun _ : Vec d => c) (8 : ℝ≥0∞)
       (normalizedCubeMeasure (originCube d K)) := memLp_const c

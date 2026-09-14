@@ -79,7 +79,7 @@ theorem continuous_matVecMul_right (f : C(Vec d, Mat d)) (e : Vec d) :
     Continuous fun x => matVecMul (f x) e := by
   refine continuous_pi fun i => ?_
   simp only [matVecMul]
-  exact continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun j _ =>
     (((continuous_apply j).comp ((continuous_apply i).comp f.continuous)).mul continuous_const)
 
 /-- Unconditional: the matrix-vector product is homogeneous in the direction. -/
@@ -150,7 +150,7 @@ theorem toHilbertVectorL2OfVecField_finsetSum {iota : Type*} [DecidableEq iota]
       simpa using toHilbertVectorL2OfVecField_eq_zero hG (by simpa using hGeq)
   | @insert a s ha ih =>
       have hH : MemVectorL2 U (fun x => ∑ i ∈ s, F i x) :=
-        memLp_finset_sum s fun i _ => hF i
+        memLp_finsetSum s fun i _ => hF i
       have hsplit : G = fun x => F a x + ∑ i ∈ s, F i x :=
         funext fun x => by rw [hGeq x, Finset.sum_insert ha]
       calc toHilbertVectorL2OfVecField hG
@@ -236,7 +236,7 @@ theorem continuous_contMatrixFieldL2 (Q : TriadicCube d) (e : Vec d) :
     simp only [Metric.mem_closedBall, dist_zero_right]
     exact (pi_norm_le_iff_of_nonneg hR.le).2 fun i => by
       simpa [Real.norm_eq_abs] using hball x hx i
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   set A : ℝ := ((volumeMeasureOn (openCubeSet Q)) Set.univ).toReal ^ ((2 : ℝ)⁻¹) *
     ((d : ℝ) * ((d : ℝ) * ‖e‖)) with hAdef
@@ -295,7 +295,7 @@ theorem freshShellForcingL2_eq_finsetSum (Q : TriadicCube d) (sigmaInv : ℝ) (n
     (e : Vec d) (omega : Cutoff.ShellSeq d) :
     freshShellForcingL2 Q sigmaInv n m e omega =
       ∑ k ∈ Finset.Ioc n m, contMatrixFieldL2 Q ((-sigmaInv) • e) ((omega k).1.1) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   classical
   refine toHilbertVectorL2OfVecField_finsetSum
@@ -339,8 +339,8 @@ measurable coordinates of the sample by construction, and the passage to the
 theorem measurable_freshShellForcingL2 (Q : TriadicCube d) (sigmaInv : ℝ) (n m : ℤ)
     (e : Vec d) :
     Measurable (freshShellForcingL2 Q sigmaInv n m e) := by
-  haveI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hEq : freshShellForcingL2 Q sigmaInv n m e =
       fun omega : Cutoff.ShellSeq d =>
@@ -358,8 +358,8 @@ theorem measurable_freshShellForcingL2_shellIndexSigma (Q : TriadicCube d) (sigm
     @Measurable (Cutoff.ShellSeq d) (HilbertVectorL2 (openCubeSet Q))
       (Cutoff.shellIndexSigma (Set.Ioc n m)) inferInstance
       (freshShellForcingL2 Q sigmaInv n m e) := by
-  haveI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by simp⟩
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   have hshell : ∀ k ∈ Finset.Ioc n m,
       @Measurable (Cutoff.ShellSeq d) (HilbertVectorL2 (openCubeSet Q))

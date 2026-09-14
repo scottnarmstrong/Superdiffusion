@@ -183,7 +183,7 @@ private theorem memScalarL2_matVecMul_const {U : Set (Vec d)} (C : Mat d)
   have hEq : (fun x : Vec d => matVecMul C (u.grad x) i) =
       fun x : Vec d => ∑ j : Fin d, C i j * u.grad x j := rfl
   rw [hEq]
-  exact memLp_finset_sum Finset.univ
+  exact memLp_finsetSum Finset.univ
     fun j _ => (u.gradMemL2 j).const_mul (C i j)
 
 /-- The skew pairing against a smooth compactly supported test vanishes. -/
@@ -195,7 +195,7 @@ private theorem integral_vecDot_matVecMul_skew_smooth {U : Set (Vec d)} {C : Mat
   have hCentry : ∀ i j : Fin d, C j i = -C i j := by
     intro i j
     simpa only [Matrix.transpose_apply, Matrix.neg_apply]
-      using congrFun (congrFun hC i) j
+      using! congrFun (congrFun hC i) j
   have hpsiL2 : ∀ i : Fin d, MemScalarL2 U (euclideanCoordDeriv i psi) := by
     intro i
     have hcont : Continuous (euclideanCoordDeriv i psi) :=
@@ -211,7 +211,7 @@ private theorem integral_vecDot_matVecMul_skew_smooth {U : Set (Vec d)} {C : Mat
     have hmul : Integrable
         (fun x : Vec d => u.grad x j * euclideanCoordDeriv i psi x)
         (volume.restrict U) := by
-      simpa only [Pi.mul_apply] using (u.gradMemL2 j).integrable_mul (hpsiL2 i)
+      simpa only [Pi.mul_apply] using! (u.gradMemL2 j).integrable_mul (hpsiL2 i)
     exact hmul.const_mul (C i j)
   have hstep : ∫ x in U, vecDot (matVecMul C (u.grad x)) (euclideanGradient psi x) ∂volume =
       ∑ i : Fin d, ∑ j : Fin d,
@@ -227,10 +227,10 @@ private theorem integral_vecDot_matVecMul_skew_smooth {U : Set (Vec d)} {C : Mat
           vecDot (matVecMul C (u.grad x)) (euclideanGradient psi x)) =
         fun x : Vec d => ∑ i : Fin d, ∑ j : Fin d,
           C i j * (u.grad x j * euclideanCoordDeriv i psi x) from funext hpt]
-    rw [integral_finset_sum Finset.univ
-      fun i _ => integrable_finset_sum Finset.univ fun j _ => hint i j]
+    rw [integral_finsetSum Finset.univ
+      fun i _ => integrable_finsetSum Finset.univ fun j _ => hint i j]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [integral_finset_sum Finset.univ fun j _ => hint i j]
+    rw [integral_finsetSum Finset.univ fun j _ => hint i j]
     exact Finset.sum_congr rfl fun j _ => integral_const_mul (C i j) _
   rw [hstep]
   exact sum_sum_mul_eq_zero_of_skew_of_symm hCentry
@@ -247,8 +247,8 @@ private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {F G : Vec d → 
       ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
   rw [show (fun x : Vec d => vecDot (F x) (G x)) =
       fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  refine integral_finset_sum Finset.univ fun i _ => ?_
-  simpa only [Pi.mul_apply] using (hF i).integrable_mul (hG i)
+  refine integral_finsetSum Finset.univ fun i _ => ?_
+  simpa only [Pi.mul_apply] using! (hF i).integrable_mul (hG i)
 
 /-- **The skew-divergence integration by parts on an arbitrary set.**
 
@@ -288,7 +288,7 @@ theorem integral_vecDot_matVecMul_skew_h10 {U : Set (Vec d)} {C : Mat d}
   have hsum : Tendsto
       (fun n => ∑ i : Fin d, ∫ x in U, F x i * Dn n x i ∂volume) atTop
       (nhds (∑ i : Fin d, ∫ x in U, F x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finset_sum Finset.univ fun i _ => hpair i
+    tendsto_finsetSum Finset.univ fun i _ => hpair i
   have hzero : ∀ n : ℕ, (∑ i : Fin d, ∫ x in U, F x i * Dn n x i ∂volume) = 0 := by
     intro n
     rw [← integral_vecDot_eq_sum_coord hF (fun i => hDn n i)]
@@ -312,8 +312,8 @@ private theorem integrable_vecDot_matVecMul_const {U : Set (Vec d)} (C : Mat d)
       fun x : Vec d => ∑ i : Fin d,
         matVecMul C (u.grad x) i * phi.toH1Function.grad x i := funext fun _ => rfl
   rw [hEq]
-  refine integrable_finset_sum Finset.univ fun i _ => ?_
-  simpa only [Pi.mul_apply] using
+  refine integrable_finsetSum Finset.univ fun i _ => ?_
+  simpa only [Pi.mul_apply] using!
     (memScalarL2_matVecMul_const C u i).integrable_mul
       (phi.toH1Function.gradMemL2 i)
 
@@ -407,7 +407,7 @@ theorem vecDot_matVecMul_self_eq_zero_of_skew {C : Mat d}
   have hCentry : ∀ i j : Fin d, C j i = -C i j := by
     intro i j
     simpa only [Matrix.transpose_apply, Matrix.neg_apply]
-      using congrFun (congrFun hC i) j
+      using! congrFun (congrFun hC i) j
   rw [vecDot_matVecMul_expand C v v]
   exact sum_sum_mul_eq_zero_of_skew_of_symm hCentry fun i j => by ring
 
@@ -417,7 +417,7 @@ theorem symmPart_sub_const_of_skew {C : Mat d} (hC : matTranspose C = -C)
   have hCentry : ∀ i j : Fin d, C j i = -C i j := by
     intro i j
     simpa only [Matrix.transpose_apply, Matrix.neg_apply]
-      using congrFun (congrFun hC i) j
+      using! congrFun (congrFun hC i) j
   ext i j
   have hC' := hCentry i j
   simp only [symmPart, Matrix.sub_apply]

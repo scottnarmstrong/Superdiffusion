@@ -62,7 +62,7 @@ private theorem geometricWeight_eq_geometricRatio_pow (s : ℝ) (n : ℕ) :
 private theorem summable_geometricWeight_two {s : ℝ} (hs : 0 < s) :
     Summable (Ch02.geometricWeight s 2) := by
   have hs2 : 0 < s * (2 : ℝ) := mul_pos hs (by norm_num)
-  simpa only [geometricWeight_eq_foundation] using
+  simpa only [geometricWeight_eq_foundation] using!
     (Homogenization.summable_geometricWeight (s := s) (q := 2) hs2)
 
 private theorem tsum_geometricWeight_two_eq_one {s : ℝ} (hs : 0 < s) :

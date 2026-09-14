@@ -233,14 +233,14 @@ theorem setIntegral_coordBox_centered_mul {lo hi : Fin d → ℝ} (hlt : ∀ i, 
 private theorem integrableOn_coordBox_coordSum (lo hi : Fin d → ℝ) (a : Fin d → ℝ) :
     IntegrableOn (fun x : Vec d => ∑ i, a i * (x i - boxCenter lo hi i)) (coordBox lo hi) :=
   integrableOn_coordBox_of_continuous
-    (continuous_finset_sum _ fun i _ =>
+    (continuous_finsetSum _ fun i _ =>
       continuous_const.mul ((continuous_apply i).sub continuous_const)) lo hi
 
 private theorem integrableOn_coordBox_coordQuad (lo hi : Fin d → ℝ) (g : Vec d) :
     IntegrableOn (fun x : Vec d => ∑ i, ∑ j, (g i * g j)
         * ((x i - boxCenter lo hi i) * (x j - boxCenter lo hi j))) (coordBox lo hi) :=
   integrableOn_coordBox_of_continuous
-    (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       continuous_const.mul (((continuous_apply i).sub continuous_const).mul
         ((continuous_apply j).sub continuous_const))) lo hi
 
@@ -248,9 +248,12 @@ private theorem integrableOn_coordBox_coordQuad (lo hi : Fin d → ℝ) (g : Vec
 theorem setIntegral_coordBox_coordSum {lo hi : Fin d → ℝ} (hlt : ∀ i, lo i < hi i)
     (a : Fin d → ℝ) :
     (∫ x in coordBox lo hi, ∑ i, a i * (x i - boxCenter lo hi i)) = 0 := by
-  rw [MeasureTheory.integral_finset_sum _ (fun i _ =>
-    integrableOn_coordBox_of_continuous
-      (continuous_const.mul ((continuous_apply i).sub continuous_const)) lo hi)]
+  have hsum : (∫ x in coordBox lo hi, ∑ i, a i * (x i - boxCenter lo hi i))
+      = ∑ i, ∫ x in coordBox lo hi, a i * (x i - boxCenter lo hi i) :=
+    MeasureTheory.integral_finsetSum _ (fun i _ =>
+      integrableOn_coordBox_of_continuous
+        (continuous_const.mul ((continuous_apply i).sub continuous_const)) lo hi)
+  rw [hsum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [MeasureTheory.integral_const_mul, setIntegral_coordBox_centered hlt i, mul_zero]
 
@@ -267,15 +270,15 @@ theorem setIntegral_coordBox_coordQuad {lo hi : Fin d → ℝ} (hlt : ∀ i, lo 
   have hinner : ∀ i : Fin d, IntegrableOn (fun x : Vec d => ∑ j, (g i * g j)
       * ((x i - boxCenter lo hi i) * (x j - boxCenter lo hi j))) (coordBox lo hi) :=
     fun i => integrableOn_coordBox_of_continuous
-      (continuous_finset_sum _ fun j _ => continuous_const.mul
+      (continuous_finsetSum _ fun j _ => continuous_const.mul
         (((continuous_apply i).sub continuous_const).mul
           ((continuous_apply j).sub continuous_const))) lo hi
-  rw [MeasureTheory.integral_finset_sum _ (fun i _ => hinner i)]
+  rw [MeasureTheory.integral_finsetSum _ (fun i _ => hinner i)]
   have hstep : ∀ i : Fin d, (∫ x in coordBox lo hi, ∑ j, (g i * g j)
       * ((x i - boxCenter lo hi i) * (x j - boxCenter lo hi j)))
       = g i ^ 2 * ((hi i - lo i) ^ 2 / 12) * ∏ k, (hi k - lo k) := by
     intro i
-    rw [MeasureTheory.integral_finset_sum _ (fun j _ => hint i j)]
+    rw [MeasureTheory.integral_finsetSum _ (fun j _ => hint i j)]
     have hj : ∀ j : Fin d, (∫ x in coordBox lo hi, (g i * g j)
         * ((x i - boxCenter lo hi i) * (x j - boxCenter lo hi j)))
         = if j = i then g i ^ 2 * ((hi i - lo i) ^ 2 / 12) * ∏ k, (hi k - lo k) else 0 := by
@@ -332,7 +335,7 @@ theorem volumeAverage_coordBox_affineEval_sq {lo hi : Fin d → ℝ} (hlt : ∀ 
       + ∑ i, (2 * affineEval c g (boxCenter lo hi) * g i) * (x i - boxCenter lo hi i))
       (coordBox lo hi) :=
     integrableOn_coordBox_of_continuous
-      (continuous_const.add (continuous_finset_sum _ fun i _ =>
+      (continuous_const.add (continuous_finsetSum _ fun i _ =>
         continuous_const.mul ((continuous_apply i).sub continuous_const))) lo hi
   rw [hcongr, MeasureTheory.integral_add hint12 (integrableOn_coordBox_coordQuad lo hi g),
     MeasureTheory.integral_add (integrableOn_coordBox_of_continuous continuous_const lo hi)

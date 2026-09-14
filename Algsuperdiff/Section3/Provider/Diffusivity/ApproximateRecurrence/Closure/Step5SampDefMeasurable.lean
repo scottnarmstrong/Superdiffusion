@@ -154,7 +154,7 @@ theorem vecDot_step5CrossWeightVec (e : Vec d) (A : Mat d) (v : Vec d) :
 theorem continuous_step5CrossWeightVec_finiteShellIncrement (e : Vec d) (n m : ℤ)
     (omega : ShellSeq d) :
     Continuous fun x : Vec d => step5CrossWeightVec e (finiteShellIncrement omega n m x) :=
-  continuous_pi fun j => continuous_finset_sum _ fun i _ =>
+  continuous_pi fun j => continuous_finsetSum _ fun i _ =>
     continuous_const.mul (continuous_finiteShellIncrement_entry omega n m i j)
 
 /-! ## The localized weight field -/
@@ -177,7 +177,7 @@ closed cube --- so it is `L^2` on any localization cube. -/
 theorem memVectorL2_step5CrossWeightField (Q R : TriadicCube d) (e : Vec d) (n m : ℤ)
     (omega : ShellSeq d) :
     MemVectorL2 (openCubeSet Q) (step5CrossWeightField R e n m omega) := by
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
   obtain ⟨C, hC⟩ :=
     (isCompact_closedBall (cubeCenter R) (cubeRadius R)).exists_bound_of_continuousOn
@@ -341,11 +341,11 @@ theorem measurable_cubeAverage_vecDot_matVecMul_freshShellDirichletGrad [NeZero 
     Measurable fun omega : ShellSeq d =>
       cubeAverage R (fun x => vecDot e (matVecMul (finiteShellIncrement omega n m x)
         ((wD omega).toH1Function.grad x))) := by
-  letI : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
-  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
-  haveI : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+  let : Fact ((1 : ENNReal) ≤ (2 : ENNReal)) := ⟨by norm_num⟩
+  let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
     isFiniteMeasure_volumeMeasureOn_openCubeSet Q
-  haveI : SecondCountableTopology (HilbertVectorL2 (openCubeSet Q)) := inferInstance
+  have : SecondCountableTopology (HilbertVectorL2 (openCubeSet Q)) := inferInstance
   have hjoint : Measurable (Function.uncurry
       (fun (xi : HilbertVectorL2 (openCubeSet Q)) (omega : ShellSeq d) =>
         step5CrossPairing Q R e n m omega xi)) :=

@@ -949,7 +949,7 @@ theorem multiscale_estimate_of_mStarStar (d : ℕ) :
   · refine ⟨1, one_pos, ?_⟩
     intro M
     exact absurd (Provider.Orlicz.dim_pos_of_model M) (by omega)
-  · haveI : NeZero d := ⟨hd⟩
+  · have : NeZero d := ⟨hd⟩
     obtain ⟨Cms, Ktot, Ltot, hCms0, hCms4, hKtot0, hLtot0, hsqK, hsqL, henv⟩ :=
       exists_absorbed_envelope d
     refine ⟨Cms, hCms0, ?_⟩

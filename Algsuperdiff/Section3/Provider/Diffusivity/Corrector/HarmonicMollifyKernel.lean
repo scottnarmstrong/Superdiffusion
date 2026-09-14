@@ -216,7 +216,7 @@ theorem radialMoment_sub {m : ℕ} {k₁ k₂ : ℝ → ℝ} (hk₁ : Continuous
     (t : ℝ) :
     radialMoment m (fun s => k₁ s - k₂ s) t = radialMoment m k₁ t - radialMoment m k₂ t := by
   have h := radialMoment_linear (m := m) hk₁ hk₂ 1 (-1) t
-  simpa using h
+  simpa using! h
 
 /-- **The normalized smooth radial density at scale `δ`.**  It is smooth,
 nonnegative, supported in the annulus `(δ/2, δ)`, and has radial moment `1`. -/

@@ -175,8 +175,8 @@ theorem measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_wit
           ENNReal.ofReal (Real.exp (-c *
             displacementMinScale M.nu cstar M.gamma t k)) := by
     filter_upwards [hexitk] with omega hmexit
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+    let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+    let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
     intro k hk3
     have hk : confinementScale S L omega.1 ≤ k :=
       (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 3)).1 hk3
@@ -198,8 +198,8 @@ theorem measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_wit
           Real.exp (-c * (((3 : ℝ) ^ k /
             (3 : ℝ) ^ (confinementScale S L omega.1)) ^ (2 : ℕ))) := by
     filter_upwards [hconf, hdispk] with omega hmconf hmdisp
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+    let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+    let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
     intro k hk3
     have hRm : intrinsicScale M.nu cstar M.gamma t ≤
         (3 : ℝ) ^ (confinementScale S L omega.1) :=
@@ -250,8 +250,8 @@ theorem measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_wit
           Real.exp (-cbar * (((3 : ℝ) ^ k /
             (3 : ℝ) ^ (confinementScale S L omega.1)) ^ (2 : ℕ))) := by
     filter_upwards [hdispR] with omega hmR
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-    letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+    let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+    let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
     intro k hk3
     refine le_trans (hmR k hk3) (Real.exp_le_exp.2 ?_)
     have hX : (0 : ℝ) ≤ ((3 : ℝ) ^ k /

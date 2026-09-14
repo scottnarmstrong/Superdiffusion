@@ -371,7 +371,7 @@ theorem mem_badFamilyLayer_iff {M : ABKModel d} {m : ℤ} {hn : ℕ → ℕ} {n 
     {omega : CutoffSample d} {Q : TriadicCube d} :
     Q ∈ badFamilyLayer M m hn n omega ↔
       Q ∈ whitneyLayer m hn n ∧ omega ∈ BadEvents.bad M Q := by
-  letI : DecidablePred fun Q : TriadicCube d => omega ∈ BadEvents.bad M Q :=
+  let : DecidablePred fun Q : TriadicCube d => omega ∈ BadEvents.bad M Q :=
     Classical.decPred _
   unfold badFamilyLayer
   rw [Finset.mem_filter]

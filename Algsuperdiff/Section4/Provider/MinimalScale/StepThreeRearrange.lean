@@ -483,7 +483,7 @@ theorem ae_sum_hessInner_le (M : ABKModel d) {alpha : ℝ} (halpha : 0 < alpha) 
     intro k hk
     refine ne_top_of_le_ne_top hRne (le_trans ?_ hle)
     exact Finset.single_le_sum (f := fun k => hessInnerE M alpha k omega)
-      (fun j _ => zero_le _) hk
+      (fun j _ => (zero_le : (0 : ℝ≥0∞) ≤ hessInnerE M alpha j omega)) hk
   have htoReal : ∑ k ∈ Finset.Icc n m, hessInner M alpha k omega
       = (∑ k ∈ Finset.Icc n m, hessInnerE M alpha k omega).toReal := by
     rw [ENNReal.toReal_sum hkne]

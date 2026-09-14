@@ -66,7 +66,7 @@ private theorem holderTriple_two_two'' : ENNReal.HolderTriple (2 : ℝ≥0∞) 2
 private theorem integrableOn_mul_of_memL2' {V : Set (Vec d)} {u v : Vec d → ℝ}
     (hu : MemLp u 2 (volume.restrict V)) (hv : MemLp v 2 (volume.restrict V)) :
     IntegrableOn (fun y => u y * v y) V volume := by
-  haveI := holderTriple_two_two''
+  have := holderTriple_two_two''
   exact hu.integrable_mul hv
 
 private theorem integrableOn_vecDot_of_memL2' {V : Set (Vec d)}
@@ -78,7 +78,7 @@ private theorem integrableOn_vecDot_of_memL2' {V : Set (Vec d)}
   have hterm : ∀ i : Fin d, IntegrableOn (fun y => F y i * G y i) V volume :=
     fun i => integrableOn_mul_of_memL2' (hF i) (hG i)
   have hsum : IntegrableOn (fun y => ∑ i : Fin d, F y i * G y i) V volume :=
-    MeasureTheory.integrable_finset_sum Finset.univ fun i _ => hterm i
+    MeasureTheory.integrable_finsetSum Finset.univ fun i _ => hterm i
   have hfun : (fun y => vecDot (F y) (G y)) =
       fun y => ∑ i : Fin d, F y i * G y i := by
     funext y

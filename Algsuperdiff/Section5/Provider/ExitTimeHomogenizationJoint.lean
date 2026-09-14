@@ -112,7 +112,7 @@ theorem exit_time_bounds_on_good_cube (d : ℕ) (hdim : 2 ≤ d) (cstar : ℝ)
     have h4 : 2 * C2 ≤ C := le_max_right _ _
     have hvpos : 0 < vRep x := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       nlinarith only [h3, hTpos, hC2, hcon]
     have hinv : C⁻¹ * exitTimeScale M n ≤ (1 / 2 : ℝ) * vRep x := by
       rw [inv_mul_eq_div, div_le_iff₀ hCpos]

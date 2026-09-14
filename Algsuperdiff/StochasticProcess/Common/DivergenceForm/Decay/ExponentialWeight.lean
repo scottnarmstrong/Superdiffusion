@@ -45,7 +45,7 @@ theorem hasCompactSupport_gradSq {f : Vec d → ℝ}
   refine HasCompactSupport.intro hf.isCompact ?_
   intro x hx
   rw [fderiv_of_notMem_tsupport ℝ hx]
-  simp only [ContinuousLinearMap.zero_apply, vecNormSq, vecDot, mul_zero,
+  simp only [zero_apply, vecNormSq, vecDot, mul_zero,
     Finset.sum_const_zero]
 
 /-- The squared coordinate gradient of a smooth function is continuous. -/
@@ -57,7 +57,7 @@ theorem continuous_gradSq {f : Vec d → ℝ}
     intro i
     exact (hf.continuous_fderiv (by simp)).clm_apply continuous_const
   simp only [vecNormSq, vecDot]
-  exact continuous_finset_sum _ fun i _ => (hcoord i).mul (hcoord i)
+  exact continuous_finsetSum _ fun i _ => (hcoord i).mul (hcoord i)
 
 section Localized
 
@@ -116,7 +116,7 @@ theorem exponentialWeight_gradient_le (hpsi : ContDiff ℝ (⊤ : ℕ∞) psi)
         fun i => (fderiv ℝ psi x) (basisVec i) := by
     funext i
     rw [hfd]
-    simp only [ContinuousLinearMap.smul_apply, smul_eq_mul, Pi.smul_apply]
+    simp only [smul_apply, smul_eq_mul, Pi.smul_apply]
     ring
   rw [hshape, vecNormSq_smul]
   have hnn : (0 : ℝ) ≤ (Real.exp (kappa * psi x) * kappa) ^ 2 := sq_nonneg _

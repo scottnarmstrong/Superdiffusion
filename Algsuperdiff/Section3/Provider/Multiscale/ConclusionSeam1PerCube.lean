@@ -224,7 +224,7 @@ private theorem continuous_matrixFrobeniusNormSq_finiteShellIncrement (n m : ℤ
     (omega : ShellSeq d) :
     Continuous fun x : Vec d =>
       Book.Ch02.matrixFrobeniusNormSq (finiteShellIncrement omega n m x) :=
-  continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     (continuous_finiteShellIncrement_entry omega n m i j).pow 2
 
 private theorem integrableOn_openCarrier_frobeniusNormSq (T : KuhnCell d) (n m : ℤ)
@@ -345,7 +345,7 @@ theorem matrixOperatorNorm_simplexIncrementValue_pow_four_le (T : KuhnCell d) (n
     (volumeAverage_sum (U := T.openCarrier) Finset.univ
       (fun i x => ∑ j : Fin d, finiteShellIncrement omega n m x i j ^ 2)
       fun i _ => by
-        refine MeasureTheory.integrable_finset_sum _ fun j _ => ?_
+        refine MeasureTheory.integrable_finsetSum _ fun j _ => ?_
         exact integrableOn_openCarrier_entry_sq T n m omega i j).symm
   -- The squared step.
   have hsq : Book.Ch02.matrixOperatorNorm (simplexIncrementValue n m omega T) ^ 2
@@ -435,7 +435,7 @@ private theorem iUnion_openCarrier_ae_eq_cubeSet {m : ℤ} {hn : ℕ → ℕ} {k
     rw [htile]
     exact Set.iUnion₂_mono fun T _ => T.openCarrier_subset_carrier
   refine MeasureTheory.ae_eq_set.2 ⟨?_, ?_⟩
-  · rw [Set.diff_eq_empty.2 hsub]
+  · rw [Set.sdiff_eq_empty.2 hsub]
     exact measure_empty
   · refine measure_mono_null ?_
       (measure_biUnion_null_iff (Set.to_countable

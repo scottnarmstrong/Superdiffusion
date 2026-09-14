@@ -126,6 +126,6 @@ theorem stepThreeBadSet_card_le_sum_Icc (M : ABKModel d) (delta : ℝ) (n m : �
   refine Finset.sum_le_sum_of_subset_of_nonneg
     (Finset.Icc_subset_Icc_right (by linarith only [] : m - 1 ≤ m)) ?_
   intro j _ _
-  exact zero_le _
+  exact zero_le
 
 end Algsuperdiff.Section4.Provider.Regularity

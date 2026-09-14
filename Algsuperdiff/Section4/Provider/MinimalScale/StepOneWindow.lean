@@ -89,7 +89,7 @@ theorem iSup_ofReal_annularErrorObservable_eq (M : ABKModel d) (s : {s : ℝ // 
       ((mem_latticeAnnulusFinset_iff (d := d) hn).2 v.2)
   · rcases Finset.eq_empty_or_nonempty (latticeAnnulusFinset d n j (j - 1)) with hE | hE
     · rw [kickAnnMax, hE, fmax_empty, ENNReal.ofReal_zero]
-      exact zero_le _
+      exact zero_le
     · obtain ⟨v, hv, hveq⟩ :=
         exists_mem_eq_fmax (f := fun w : Fin d → ℤ =>
           kickAtom M n s (triadicLatticePoint n w) omega) hE
@@ -339,7 +339,7 @@ theorem dOne_le_ofReal_windowKickSum (M : ABKModel d) (s : {s : ℝ // 0 < s}) (
     rw [dOne, Set.indicator_of_mem hmem, ENNReal.ofReal_mul hsq0.le]
     exact mul_le_mul_right hchain _
   · rw [dOne, Set.indicator_of_notMem hmem]
-    exact zero_le _
+    exact zero_le
 
 /-- **`D₁(k)` is finite at every sample**, so it may be read in `ℝ` without a
 junk-value hazard.  This is what lets the final Cesàro assembly move between `ℝ≥0∞`

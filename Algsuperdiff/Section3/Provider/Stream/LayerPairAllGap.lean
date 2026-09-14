@@ -218,7 +218,7 @@ theorem cubeFrobeniusPairingReg_singleShell_isBigO_allGap
         layerPairAllGapConst d *
           (3 : ℝ) ^ (M.gamma * ((k : ℝ) + (k' : ℝ))) *
           (3 : ℝ) ^ (-((d : ℝ) / 2) * ((l : ℝ) - (k' : ℝ))) := by
-      simpa only [mul_assoc] using
+      simpa only [mul_assoc] using!
         mul_le_mul_of_nonneg_right (le_max_right _ _) hgeom
     exact hraw.mono_scale hscale
   · have hraw := cubeFrobeniusPairingReg_singleShell_isBigO_shortGap
@@ -233,7 +233,7 @@ theorem cubeFrobeniusPairingReg_singleShell_isBigO_allGap
         layerPairAllGapConst d *
           (3 : ℝ) ^ (M.gamma * ((k : ℝ) + (k' : ℝ))) *
           (3 : ℝ) ^ (-((d : ℝ) / 2) * ((l : ℝ) - (k' : ℝ))) := by
-      simpa only [mul_assoc] using
+      simpa only [mul_assoc] using!
         mul_le_mul_of_nonneg_right (le_max_left _ _) hgeom
     exact hraw.mono_scale hscale
 

@@ -143,7 +143,7 @@ theorem memLp_affineEval_of_sandwich {W : Set (Vec d)} {zout : Vec d} {Lout : �
     (c : ℝ) (g : Vec d) :
     MemLp (affineEval c g) 2 (volume.restrict W) := by
   have hfin : volume W ≠ ⊤ := volume_ne_top_of_sandwich hout
-  haveI : IsFiniteMeasure (volume.restrict W) := by
+  have : IsFiniteMeasure (volume.restrict W) := by
     constructor
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hfin

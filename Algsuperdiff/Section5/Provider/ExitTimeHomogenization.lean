@@ -142,7 +142,7 @@ theorem exit_time_homogenization_on_good_cube (d : ℕ) (hdim : 2 ≤ d) (cstar 
   -- a continuous representative of the rough-field solution exists
   have hrepex : ∃ uRep : Vec d → ℝ, IsCubeRepresentative y n u uRep := by
     by_contra hno
-    push_neg at hno
+    push Not at hno
     have hTop : (⨅ uRep : Vec d → ℝ, ⨅ _ : IsCubeRepresentative y n u uRep,
         ENNReal.ofReal ((Annealed.sigmaBar M n : ℝ) * Real.rpow 3 (-(n : ℝ) / 2)) *
           holderSeminormOn (cubeSetAt y n) (1 / 2) uRep) = ⊤ :=
@@ -196,7 +196,7 @@ theorem exit_time_homogenization_on_good_cube (d : ℕ) (hdim : 2 ≤ d) (cstar 
     have h2 := hvinf x hx
     have hvpos : 0 < vRep x := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have : T ≤ C2 * vRep x := h2
       nlinarith only [this, hTpos, hC2, hcon]
     have hsmall : Cinj * ep * T ≤ (1 / 2 : ℝ) * vRep x := by

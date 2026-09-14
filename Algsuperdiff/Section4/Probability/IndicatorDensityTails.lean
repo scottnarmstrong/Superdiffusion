@@ -78,7 +78,7 @@ theorem measure_badProp_le_of_concEvent (P : Measure Ω) (X : ℤ → ℤ → Ω
   classical
   refine measure_mono ?_
   intro ω hω
-  simp only [Set.mem_setOf_eq, scaleProp, concEvent] at hω ⊢
+  simp only [Set.mem_ofPred_eq, scaleProp, concEvent] at hω ⊢
   refine lt_of_lt_of_le hω ?_
   have hnn : (0 : ℝ) ≤ 1 / ((M : ℝ) + 1) := by positivity
   refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun m hm => ?_)) hnn
@@ -104,7 +104,7 @@ theorem measure_compl_le_of_concEvent (P : Measure Ω) (X : ℤ → ℤ → Ω �
   classical
   refine measure_mono ?_
   intro ω hω
-  simp only [Set.mem_setOf_eq, concEvent]
+  simp only [Set.mem_ofPred_eq, concEvent]
   have hrpos : (0 : ℝ) < (r : ℝ) + 1 := by positivity
   have hθlt : θ < 1 / ((r : ℝ) + 1) := by
     rw [lt_div_iff₀ hrpos]; exact hθr
@@ -117,7 +117,7 @@ theorem measure_compl_le_of_concEvent (P : Measure Ω) (X : ℤ → ℤ → Ω �
             (if 9 * s'⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s' j ω then (1 : ℝ) else 0) :=
       Finset.single_le_sum (f := fun j =>
         (if 9 * s'⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s' j ω then (1 : ℝ) else 0))
-        (fun j _ => by dsimp only; split_ifs <;> norm_num) hmemk
+        (fun j _ => by split_ifs <;> norm_num) hmemk
     rw [if_pos hexc] at hterm
     exact hterm
   calc θ < 1 / ((r : ℝ) + 1) := hθlt
@@ -240,7 +240,7 @@ theorem ratioTail_of_concentration (P : Measure Ω) (X : ℤ → ℤ → Ω → 
       have hzero : scaleProp (fun k => (Ev k)ᶜ) n ω = 0 := by
         simp only [scaleProp]
         exact mul_eq_zero_of_right _ (Finset.sum_eq_zero (fun k hk => if_neg (hc k hk)))
-      rw [Set.mem_setOf_eq, hzero] at hω
+      rw [Set.mem_ofPred_eq, hzero] at hω
       exact absurd hω (not_lt.2 hθ0.le)
     have hcard : (Finset.Icc (0 : ℤ) (n : ℤ)).card = n + 1 := by
       rw [Int.card_Icc]; omega

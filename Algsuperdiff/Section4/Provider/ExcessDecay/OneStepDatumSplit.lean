@@ -112,7 +112,7 @@ theorem integrableOn_coord_of_holderSeminormBoundOn {U : Set (Vec d)}
     (continuous_apply i).comp_continuousOn hcont
   have hmeas : AEStronglyMeasurable (fun p => G p i) (volume.restrict U) :=
     hcoord.aestronglyMeasurable hU
-  haveI : IsFiniteMeasure (volume.restrict U) := by
+  have : IsFiniteMeasure (volume.restrict U) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact hUtop.lt_top

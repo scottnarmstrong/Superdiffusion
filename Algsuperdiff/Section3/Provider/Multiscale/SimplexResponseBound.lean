@@ -210,7 +210,7 @@ theorem sum_cubeVolume_simplexDissection_le [NeZero d] (T : KuhnCell d) (t : ℕ
     have hRt := hFt R hR
     obtain ⟨y, hyC, hyU⟩ : ∃ y, y ∈ cubeSet (parentCube R) ∧ y ∉ T.openCarrier := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hRsel.2.2 fun z hz => hcon z hz
     have hone : 1 ≤ t := one_le_depth_of_mem_whitneyInnerCubes
       (not_cubeSet_supportCube_subset_openCarrier T) hRsel hRt
@@ -270,7 +270,7 @@ theorem sum_cubeVolume_simplexDissection_le [NeZero d] (T : KuhnCell d) (t : ℕ
     refine hfinal.trans (le_of_eq ?_)
     field_simp
   · -- the shallow case: the stated bound already exceeds the total volume
-    push_neg at hcase
+    push Not at hcase
     have hV : ∀ R ∈ F, Disjoint (cubeSet R) (∅ : Set (Vec d)) := fun _ _ => by simp
     have hmain := sum_cubeVolume_add_le_of_disjoint hUtop (Set.empty_subset T.openCarrier)
       hsubU hdisjF hV
