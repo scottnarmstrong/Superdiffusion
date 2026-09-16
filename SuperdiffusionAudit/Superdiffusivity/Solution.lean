@@ -2,7 +2,7 @@ import Mathlib
 import Algsuperdiff.MainTheorems
 import SuperdiffusionAudit.Superdiffusivity.SolutionBasic
 import SuperdiffusionAudit.Support.SuperdiffusivityBridge
-import SuperdiffusionAudit.Support.SuperdiffusivityMarginal
+import SuperdiffusionAudit.Support.SuperdiffusivityIntegrability
 
 /-!
 # Solution: Superdiffusivity
@@ -21,6 +21,7 @@ namespace Superdiffusivity
 open SuperdiffusionAudit.Support.SDBridge
 open SuperdiffusionAudit.Support.SDLiveLaw
 open SuperdiffusionAudit.Support.SDMarginal
+open SuperdiffusionAudit.Support.SDIntegrability
 open MeasureTheory
 open scoped ENNReal NNReal Matrix.Norms.Elementwise
 
@@ -51,6 +52,9 @@ theorem superdiffusivity
         ∀ Q : FullSample d M.gamma → Vec d → Measure C(ℝ≥0, Vec d),
           (∀ omega, IsDiffusionOf (streamCoefficient M.nu omega) (Q omega)) →
           ∀ t : ℝ, 0 < t →
+          (∀ᵐ omega ∂fullSampleMeasure M.gamma M.P,
+            Integrable (fun path => path t.toNNReal) (Q omega 0) ∧
+            Integrable (fun path => vecNormSq (path t.toNNReal)) (Q omega 0)) ∧
           ∀ p : ℝ, 1 ≤ p →
             p ≤ C⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) →
             (∫⁻ omega : FullSample d M.gamma,
@@ -68,21 +72,31 @@ theorem superdiffusivity
               ENNReal.ofReal (C * (p + |Real.log M.gamma|) * M.gamma *
                   |Real.log M.gamma| ^ (7 : ℕ) *
                   intrinsicScale M.nu cstar M.gamma t ^ 2) ^ p := by
-  rcases Nat.eq_zero_or_pos d with hd | hd
-  · subst hd
-    refine ⟨1, 1, one_pos, one_pos, ?_⟩
+  by_cases hd : 2 ≤ d
+  swap
+  · refine ⟨1, 1, one_pos, one_pos, ?_⟩
     intro M
     exact absurd M.dimension (by omega)
-  have : NeZero d := ⟨hd.ne'⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨gamma0, C, hgamma0, hC, hmain⟩ :=
     _root_.Algsuperdiff.superdiffusivity d cstar _hcstar
-  refine ⟨gamma0, C, hgamma0, hC, ?_⟩
+  obtain ⟨gammaI, hgammaI, hfinite⟩ :=
+    exists_ae_integrable_streamProcess_norm_rpow d hd cstar _hcstar
+  refine ⟨min gamma0 gammaI, C, lt_min hgamma0 hgammaI, hC, ?_⟩
   intro M hreal hgamma
   have hcs : _root_.Algsuperdiff.Section3.Disorder.cstar (toABKModel M) = cstar :=
     (realizesCstar_iff_cstar_eq (toABKModel M) _hcstar).mp hreal
   refine ⟨fun om => ⟨liveLaw (toABKModel M) om, isDiffusionOf_liveLaw (toABKModel M) om⟩, ?_⟩
-  intro Q hQ t ht p hp1 hp2
-  obtain ⟨hone, htwo⟩ := hmain (toABKModel M) hcs hgamma t ht p hp1 hp2
+  intro Q hQ t ht
+  constructor
+  · have hfiniteM := hfinite (toABKModel M) hcs (hgamma.trans (min_le_right _ _)) t ht
+    change ∀ᵐ omega ∂(_root_.Algsuperdiff.Section5.Field.fullSampleLaw (toABKModel M)).toMeasure, _
+    filter_upwards [hfiniteM] with omega homega
+    exact integrable_displacement_of_streamProcess (toABKModel M) omega
+      (Q omega) (hQ omega) ht homega
+  intro p hp1 hp2
+  obtain ⟨hone, htwo⟩ := hmain (toABKModel M) hcs
+    (hgamma.trans (min_le_left _ _)) t ht p hp1 hp2
   have hsq : ∀ om : _root_.Algsuperdiff.Section5.Field.FullSample d (toABKModel M).gamma,
       (∫ path, vecNormSq (path t.toNNReal) ∂Q om 0) =
         letI := (SuperdiffusionAudit.Support.SDLiveLaw.streamReg (toABKModel M) om).metricSpace

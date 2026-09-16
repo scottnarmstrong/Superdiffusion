@@ -30,7 +30,8 @@ along the cubic exhaustion of the whole space, of the zero-trace Dirichlet
 resolvents, each pinned as the continuous representative on the open cube of
 the weak `H¹₀` solution of `lam u - ∇·a∇u = f`, extended by zero.  The theorem
 asserts that for every sample some family is the diffusion of its field, and
-that every family that is satisfies the two displays.
+that every family that is has integrable displacement and squared displacement
+for almost every sample at every fixed positive time, and satisfies the two displays.
 
 Only definitions needed to read that assertion occur below.  The vocabulary is
 a statement-level copy of the repository's, with its upstream
@@ -739,7 +740,10 @@ stream field, and every such diffusion, started at the origin, has quenched
 mean square displacement at time `t` within the stated amplitude of
 `2 d R(t)²` and quenched mean displacement of the stated squared size, in
 every moment `p` of the stated range over the disorder.  The constants are
-chosen before the model and before the time, depending only on `d`, `cstar`. -/
+chosen before the model and before the time, depending only on `d`, `cstar`.
+At each positive time, displacement and squared displacement are integrable
+for almost every sample, independently of the range of `p`. Thus the inner
+Bochner integrals in the displays represent finite expectations almost surely. -/
 theorem superdiffusivity
     (d : ℕ) (cstar : ℝ) (_hcstar : 0 < cstar) :
     ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
@@ -750,6 +754,9 @@ theorem superdiffusivity
         ∀ Q : FullSample d M.gamma → Vec d → Measure C(ℝ≥0, Vec d),
           (∀ omega, IsDiffusionOf (streamCoefficient M.nu omega) (Q omega)) →
           ∀ t : ℝ, 0 < t →
+          (∀ᵐ omega ∂fullSampleMeasure M.gamma M.P,
+            Integrable (fun path => path t.toNNReal) (Q omega 0) ∧
+            Integrable (fun path => vecNormSq (path t.toNNReal)) (Q omega 0)) ∧
           ∀ p : ℝ, 1 ≤ p →
             p ≤ C⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) →
             (∫⁻ omega : FullSample d M.gamma,
