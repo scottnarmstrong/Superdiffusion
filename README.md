@@ -26,17 +26,18 @@ main results, formalized here as stated in the introduction, are:
 
 - **Theorem A, superdiffusivity.** For every time `t > 0` and every moment
   `p ∈ [1, C⁻¹ γ⁻¹ |log γ|⁻⁶]`, the deviation of the quenched mean square
-  displacement at time `t` from `2 d R̃(t)²` has `p`-th moment over the
+  displacement at time `t` from `2 d R̃(t)²` has `Lᵖ` norm over the
   disorder bounded by `C (√p + √|log γ|) √γ |log γ|⁴ R̃(t)²`, and the squared
-  quenched mean displacement has `p`-th moment bounded by
+  quenched mean displacement has `Lᵖ` norm over the disorder bounded by
   `C (p + |log γ|) γ |log γ|⁷ R̃(t)²`. Here
   `R̃(t) = ((ν t)^{2−γ} + c⋆ γ⁻¹ t²)^{1/(2(2−γ))}` is the intrinsic length
-  scale: the particle spreads like `R̃(t)`, superdiffusively beyond the
-  crossover time, and does not drift.
+  scale. Equivalently, the raw `p`-th absolute moments are bounded by the
+  respective displayed amplitudes raised to `p`. The particle spreads like
+  `R̃(t)`, superdiffusively beyond the crossover time, and does not drift.
 - **Theorem B, renormalization of the generator.** At every scale `m` there
   are an effective diffusivity `σ̄_m`, within relative error `C √γ |log γ|` of
   the profile `(ν² + c⋆ γ⁻¹ 3^{2γm})^{1/2}`, and a random error `E_B` with
-  `p`-th moments bounded by `C (√p + √|log γ|) √γ |log γ|³` for
+  `Lᵖ` norm over the disorder bounded by `C (√p + √|log γ|) √γ |log γ|³` for
   `p ∈ [1, C⁻¹ γ⁻¹ |log γ|⁻¹]`, such that almost surely the Dirichlet problem
   for the random operator on the cube `□_m` is comparable, in `L^∞` and in
   energy, to the homogenized problem with constant coefficient `σ̄_m` and the

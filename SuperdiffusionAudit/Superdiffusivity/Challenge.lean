@@ -28,7 +28,10 @@ a probability law starting at `x`, and the Laplace transform in time of its
 one-point marginals is the minimal resolvent of `∇·a∇`: the increasing limit,
 along the cubic exhaustion of the whole space, of the zero-trace Dirichlet
 resolvents, each pinned as the continuous representative on the open cube of
-the weak `H¹₀` solution of `lam u - ∇·a∇u = f`, extended by zero.  The theorem
+the weak `H¹₀` solution of `lam u - ∇·a∇u = f`, extended by zero.  Existence of
+such a cube-resolvent family is required for every positive `lam` and every
+test function, and the transform equality holds for every such family; hence
+the characterization cannot hold vacuously.  The theorem
 asserts that for every sample some family is the diffusion of its field, and
 that every family that is has integrable displacement and squared displacement
 for almost every sample at every fixed positive time, and satisfies the two displays.
@@ -117,13 +120,15 @@ proves the statement for the canonical ones.  Exhaustively:
    statement; the existence conjunct is what the library proves for its
    process.
 13. **Cube resolvents.**  Library: the minimal resolvent is the supremum of the
-   constructed cube resolvents.  Challenge: `IsDiffusionOf` quantifies over
-   every family `v` with the characterizing property `IsCubeResolvent` —
+   constructed cube resolvents.  Challenge: for every positive `lam` and test
+   function, `IsDiffusionOf` requires that a family `v` with the characterizing
+   property `IsCubeResolvent` exists, and requires the transform equality for
+   every such family —
    continuous on the open cube, zero outside it, a.e. equal on the cube to a
    zero-trace weak solution of `lam u - ∇·a∇u = f` (`IsResolventSolutionOn`).
    Uniqueness of the zero-trace weak solution and continuity on the open cube
-   pin `v m` outright, so the universal form is equivalent to naming the
-   constructed one; as an antecedent it is a priori weaker.
+   pin `v m` outright, so existence plus the universal equality is equivalent
+   to naming the constructed family and cannot be satisfied vacuously.
 14. **Test class.**  The resolvent clause is tested against the nonnegative
    continuous compactly supported functions (`IsResolventTest`); the library's
    identification of the process resolvent with the minimal resolvent is
@@ -715,17 +720,19 @@ is a probability law on continuous paths in `ℝ^d` that starts at `x`, and whos
 resolvent — the Laplace transform in time of its one-point marginals — is the
 minimal resolvent of the divergence-form operator: the increasing limit, along
 the cubic exhaustion, of the zero-trace Dirichlet resolvents.  The paths are
-continuous and live in `ℝ^d`, so the process is non-explosive, and the two
-clauses determine every one-dimensional marginal of `Q`. -/
+continuous and live in `ℝ^d`, so the process is non-explosive.  Existence of a
+cube-resolvent family and the equation for every such family prevent vacuity
+and determine every one-dimensional marginal of `Q`. -/
 def IsDiffusionOf {d : ℕ} (a : Vec d → Mat d)
     (Q : Vec d → Measure C(ℝ≥0, Vec d)) : Prop :=
   (∀ x, IsProbabilityMeasure (Q x)) ∧
     (∀ x, Q x {path : C(ℝ≥0, Vec d) | path 0 = x} = 1) ∧
     ∀ lam : ℝ, 0 < lam → ∀ f : Vec d → ℝ, IsResolventTest f →
-      ∀ v : ℕ → Vec d → ℝ, (∀ m, IsCubeResolvent a lam f m (v m)) →
-        ∀ x : Vec d,
-          (∫ s in Set.Ioi (0 : ℝ), Real.exp (-lam * s) *
-              ∫ path, f (path s.toNNReal) ∂Q x) = ⨆ m, v m x
+      (∃ v : ℕ → Vec d → ℝ, ∀ m, IsCubeResolvent a lam f m (v m)) ∧
+        ∀ v : ℕ → Vec d → ℝ, (∀ m, IsCubeResolvent a lam f m (v m)) →
+          ∀ x : Vec d,
+            (∫ s in Set.Ioi (0 : ℝ), Real.exp (-lam * s) *
+                ∫ path, f (path s.toNNReal) ∂Q x) = ⨆ m, v m x
 
 /-! ## 15. The intrinsic length scale -/
 /-- `R(t) = ((ν t)^{2-γ} + c⋆ γ⁻¹ t²)^{1/(2(2-γ))}`, the intrinsic length scale

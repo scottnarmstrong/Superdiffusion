@@ -49,13 +49,16 @@ cutoff `L ≥ m`, uniform in `L`, stay part of the public surface as
   origin has quenched mean square displacement at time `t` within
   `C (√p + √|log γ|) √γ |log γ|⁴ R(t)²` of `2 d R(t)²`, and quenched mean
   displacement of squared size at most `C (p + |log γ|) γ |log γ|⁷ R(t)²`,
-  both in the `p`-th moment over the disorder; `R(t)` is the intrinsic length
-  scale.  The process is not constructed in the challenge but characterized:
+  both as `Lᵖ`-norm bounds over the disorder (the raw `p`-th moments
+  are bounded by the displayed amplitudes raised to `p`); `R(t)` is the
+  intrinsic length scale.  The process is not constructed in the challenge but characterized:
   a family of laws on continuous paths in `ℝ^d`, one per starting point, is
   *the* diffusion of a coefficient field when each law is a probability law
   starting where it is told and the Laplace transform in time of its one-point
   marginals is the minimal resolvent of `∇·a∇` — the increasing limit, along
-  the cubic exhaustion, of the zero-trace Dirichlet resolvents.
+  the cubic exhaustion, of the zero-trace Dirichlet resolvents. The
+  characterization explicitly requires such a resolvent family to exist for
+  every positive Laplace parameter and every admissible test function.
 - **`GeneratorRenormalization`** (Theorem B): for `gamma ≤ gamma0` and every
   scale `m` there are a scalar `sigmaBarM > 0` tracking the superdiffusive
   profile `sqrt (ν² + cstar·γ⁻¹·3^{2γm})` up to relative error

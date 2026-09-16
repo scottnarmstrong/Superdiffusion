@@ -3,8 +3,9 @@ import Mathlib
 /-!
 # Statement-level audit vocabulary for the `Superdiffusivity` comparator
 
-Verbatim copy of the vocabulary of `SuperdiffusionAudit/Superdiffusivity/Challenge.lean`
-(challenge lines 143--697), Mathlib-only; a mechanical copy, not hand-edited.
+Verbatim copy of sections 1--15 of the vocabulary in
+`SuperdiffusionAudit/Superdiffusivity/Challenge.lean`, Mathlib-only; a mechanical
+copy, not hand-edited.
 -/
 
 namespace Algsuperdiff
@@ -581,17 +582,19 @@ is a probability law on continuous paths in `ℝ^d` that starts at `x`, and whos
 resolvent — the Laplace transform in time of its one-point marginals — is the
 minimal resolvent of the divergence-form operator: the increasing limit, along
 the cubic exhaustion, of the zero-trace Dirichlet resolvents.  The paths are
-continuous and live in `ℝ^d`, so the process is non-explosive, and the two
-clauses determine every one-dimensional marginal of `Q`. -/
+continuous and live in `ℝ^d`, so the process is non-explosive.  Existence of a
+cube-resolvent family and the equation for every such family prevent vacuity
+and determine every one-dimensional marginal of `Q`. -/
 def IsDiffusionOf {d : ℕ} (a : Vec d → Mat d)
     (Q : Vec d → Measure C(ℝ≥0, Vec d)) : Prop :=
   (∀ x, IsProbabilityMeasure (Q x)) ∧
     (∀ x, Q x {path : C(ℝ≥0, Vec d) | path 0 = x} = 1) ∧
     ∀ lam : ℝ, 0 < lam → ∀ f : Vec d → ℝ, IsResolventTest f →
-      ∀ v : ℕ → Vec d → ℝ, (∀ m, IsCubeResolvent a lam f m (v m)) →
-        ∀ x : Vec d,
-          (∫ s in Set.Ioi (0 : ℝ), Real.exp (-lam * s) *
-              ∫ path, f (path s.toNNReal) ∂Q x) = ⨆ m, v m x
+      (∃ v : ℕ → Vec d → ℝ, ∀ m, IsCubeResolvent a lam f m (v m)) ∧
+        ∀ v : ℕ → Vec d → ℝ, (∀ m, IsCubeResolvent a lam f m (v m)) →
+          ∀ x : Vec d,
+            (∫ s in Set.Ioi (0 : ℝ), Real.exp (-lam * s) *
+                ∫ path, f (path s.toNNReal) ∂Q x) = ⨆ m, v m x
 
 /-! ## 15. The intrinsic length scale -/
 /-- `R(t) = ((ν t)^{2-γ} + c⋆ γ⁻¹ t²)^{1/(2(2-γ))}`, the intrinsic length scale

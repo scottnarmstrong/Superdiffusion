@@ -298,7 +298,12 @@ theorem isDiffusionOf_liveLaw :
     IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega)
       (liveLaw M omega) := by
   refine ⟨fun x => inferInstance, fun x => liveLaw_start M omega x, ?_⟩
-  intro lam hlam f hf v hv x
+  intro lam hlam f hf
+  obtain ⟨C, -, hC⟩ := exists_bound_isResolventTest hf
+  let A := streamWholeSpaceAnalyticData M omega
+  refine ⟨⟨fun m => A.analyticCubeResolvent ⟨lam, hlam⟩ f hf.1.measurable hC m,
+    fun m => isCubeResolvent_analyticCubeResolvent A hlam hf.1.measurable hC m⟩, ?_⟩
+  intro v hv x
   exact (iSup_eq_integral_exp_neg_mul_liveLaw M omega hlam hf hv x).symm
 
 /-! ## 4. The one-point marginals are pinned -/
@@ -319,7 +324,7 @@ private theorem integral_exp_neg_mul_eq_of_isDiffusionOf
       lam f m
       (A.analyticCubeResolvent ⟨lam, hlam⟩ f hf.1.measurable hC m) := fun m =>
     isCubeResolvent_analyticCubeResolvent A hlam hf.1.measurable hC m
-  rw [hQ.2.2 lam hlam f hf _ hv x,
+  rw [(hQ.2.2 lam hlam f hf).2 _ hv x,
     iSup_eq_integral_exp_neg_mul_liveLaw M omega hlam hf hv x]
 
 /-- The one-point integrals of a test function agree at every positive time. -/
