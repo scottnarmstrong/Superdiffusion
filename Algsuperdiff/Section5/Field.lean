@@ -40,21 +40,13 @@ import Algsuperdiff.Section5.Field.StreamProcess
 This facade exports the whole construction of the normalized stream matrix
 `k(x) = Σ_{n ∈ ℤ} (j_n(x) - j_n(0))`: the deterministic tail gauges, their
 first moments, the almost-sure tail event, the sample carrier and its law, the
-field itself, its continuity, its measurability in the sample, its linear
-growth, its localized log-subexponential resolvent-tail profile, and the
+field itself, its continuity, its linear growth, its localized
+log-subexponential resolvent-tail profile, and the
 identification of the ascending condition with the Section 5.1 large-scale
 event.
 
-It also exports the quenched law of the field as a measurable family: the
-whole-space processes of the samples form one kernel from the sample and the
-starting point to path space, so quenched expectations may be integrated
-against the sample law.  That family is unconditional: the coefficient field on
-each exhaustion cube is a measurable parameter, the cube resolvent is continuous
-in that parameter, and the two combine into measurability in the sample of the
-value of the cube resolvent at each point.
-
-Section 5 is not part of the default build root yet, so this module is built as
-the explicit target `Algsuperdiff.Section5.Field`.  The tree has several
-maximal modules (`Growth`, `LargeScaleBridge`, `Measurability`,
-`ParameterizedProcess`), so no single one of them covers it.
+It also exports the conservative whole-space process for each sample, built
+on the one-point compactification with the sample's exhaustion metric. The
+process is a kernel in its starting point. Measurable dependence on the sample
+is a separate assertion from this samplewise construction.
 -/

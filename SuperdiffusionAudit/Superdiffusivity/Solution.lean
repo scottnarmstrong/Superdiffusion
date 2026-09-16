@@ -3,6 +3,7 @@ import Algsuperdiff.MainTheorems
 import SuperdiffusionAudit.Superdiffusivity.SolutionBasic
 import SuperdiffusionAudit.Support.SuperdiffusivityBridge
 import SuperdiffusionAudit.Support.SuperdiffusivityIntegrability
+import SuperdiffusionAudit.Support.SuperdiffusivityMeasurability
 
 /-!
 # Solution: Superdiffusivity
@@ -42,6 +43,8 @@ private theorem lintegral_fullSampleMeasure {d : ℕ} (m : Model d)
       ∫⁻ om : _root_.Algsuperdiff.Section5.Field.FullSample d (toABKModel m).gamma, F om
         ∂(_root_.Algsuperdiff.Section5.Field.fullSampleLaw (toABKModel m)).toMeasure := rfl
 
+-- Use the same canonical product measurable space as the Mathlib-only statement.
+attribute [-instance] Homogenization.instMeasurableSpaceVec in
 theorem superdiffusivity
     (d : ℕ) (cstar : ℝ) (_hcstar : 0 < cstar) :
     ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
@@ -55,6 +58,8 @@ theorem superdiffusivity
           (∀ᵐ omega ∂fullSampleMeasure M.gamma M.P,
             Integrable (fun path => path t.toNNReal) (Q omega 0) ∧
             Integrable (fun path => vecNormSq (path t.toNNReal)) (Q omega 0)) ∧
+          Measurable (fun omega => ∫ path, path t.toNNReal ∂Q omega 0) ∧
+          Measurable (fun omega => ∫ path, vecNormSq (path t.toNNReal) ∂Q omega 0) ∧
           ∀ p : ℝ, 1 ≤ p →
             p ≤ C⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) →
             (∫⁻ omega : FullSample d M.gamma,
@@ -94,6 +99,11 @@ theorem superdiffusivity
     filter_upwards [hfiniteM] with omega homega
     exact integrable_displacement_of_streamProcess (toABKModel M) omega
       (Q omega) (hQ omega) ht homega
+  refine ⟨?_, ?_, ?_⟩
+  · exact SuperdiffusionAudit.Support.SDMeasurability.measurable_integral_eval
+      (toABKModel M) Q hQ 0 ht continuous_id
+  · exact SuperdiffusionAudit.Support.SDMeasurability.measurable_integral_eval
+      (toABKModel M) Q hQ 0 ht (continuous_vecNormSq d)
   intro p hp1 hp2
   obtain ⟨hone, htwo⟩ := hmain (toABKModel M) hcs
     (hgamma.trans (min_le_left _ _)) t ht p hp1 hp2

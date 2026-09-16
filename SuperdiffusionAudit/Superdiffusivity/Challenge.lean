@@ -743,7 +743,9 @@ every moment `p` of the stated range over the disorder.  The constants are
 chosen before the model and before the time, depending only on `d`, `cstar`.
 At each positive time, displacement and squared displacement are integrable
 for almost every sample, independently of the range of `p`. Thus the inner
-Bochner integrals in the displays represent finite expectations almost surely. -/
+Bochner integrals in the displays represent finite expectations almost surely.
+Both expectations are measurable functions of the sample; hence the displayed
+lower integrals are the ordinary nonnegative disorder moments. -/
 theorem superdiffusivity
     (d : ℕ) (cstar : ℝ) (_hcstar : 0 < cstar) :
     ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
@@ -757,6 +759,8 @@ theorem superdiffusivity
           (∀ᵐ omega ∂fullSampleMeasure M.gamma M.P,
             Integrable (fun path => path t.toNNReal) (Q omega 0) ∧
             Integrable (fun path => vecNormSq (path t.toNNReal)) (Q omega 0)) ∧
+          Measurable (fun omega => ∫ path, path t.toNNReal ∂Q omega 0) ∧
+          Measurable (fun omega => ∫ path, vecNormSq (path t.toNNReal) ∂Q omega 0) ∧
           ∀ p : ℝ, 1 ≤ p →
             p ≤ C⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) →
             (∫⁻ omega : FullSample d M.gamma,
