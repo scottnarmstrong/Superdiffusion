@@ -58,7 +58,10 @@ cutoff `L ≥ m`, uniform in `L`, stay part of the public surface as
   marginals is the minimal resolvent of `∇·a∇` — the increasing limit, along
   the cubic exhaustion, of the zero-trace Dirichlet resolvents. The
   characterization explicitly requires such a resolvent family to exist for
-  every positive Laplace parameter and every admissible test function.
+  every positive Laplace parameter and every admissible test function. It also
+  requires a measurable family of path laws, the Markov restart identity
+  conditional on every past event, and strongly continuous Feller transition
+  operators. These clauses constrain the full temporal law.
 - **`GeneratorRenormalization`** (Theorem B): for `gamma ≤ gamma0` and every
   scale `m` there are a scalar `sigmaBarM > 0` tracking the superdiffusive
   profile `sqrt (ν² + cstar·γ⁻¹·3^{2γm})` up to relative error

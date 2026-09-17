@@ -25,7 +25,7 @@ variable {d : ℕ} [NeZero d] (M : ABKModel d)
 theorem integral_eval_eq_transition {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
+    (hQ : HasDiffusionMarginals (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
     (x : Vec d) {t : ℝ} (ht : 0 < t) {G : Vec d → E} (hG : Continuous G) :
     (∫ path, G (path t.toNNReal) ∂Q x) =
       ∫ y, G y ∂(streamWholeSpaceResolvent M omega).kernelSemigroup t.toNNReal x := by
@@ -61,7 +61,7 @@ theorem measurable_integral_eval_of_measurable_transition
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (Q : Algsuperdiff.Section5.Field.FullSample d M.gamma →
       Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : ∀ omega, IsDiffusionOf
+    (hQ : ∀ omega, HasDiffusionMarginals
       (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) (Q omega))
     (x : Vec d) {t : ℝ} (ht : 0 < t)
     (htransition : Measurable fun omega : Algsuperdiff.Section5.Field.FullSample d M.gamma =>

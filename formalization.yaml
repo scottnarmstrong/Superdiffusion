@@ -36,7 +36,7 @@ sources:
       - "Tuomo Kuusi"
     id: "arXiv:2601.22142"
     url: "https://arxiv.org/abs/2601.22142"
-    type: "manuscript"
+    type: "paper"
     relationship: "formalizes"
     note: >-
       The paper under formalization. Theorems A, B and C of the introduction

@@ -60,7 +60,7 @@ theorem integrable_eval_of_streamProcess
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : Algsuperdiff.StatementAudit.Superdiffusivity.IsDiffusionOf
+    (hQ : Algsuperdiff.StatementAudit.Superdiffusivity.HasDiffusionMarginals
       (streamCoefficient M.nu omega) Q)
     (x : Vec d) {t : ℝ} (ht : 0 < t) {G : Vec d → E} (hG : Continuous G) :
     let := (streamReg M omega).metricSpace
@@ -91,7 +91,7 @@ finite whenever the constructed process has finite norm moments. -/
 theorem integrable_displacement_of_streamProcess
     {d : ℕ} [NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma)
     (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : Algsuperdiff.StatementAudit.Superdiffusivity.IsDiffusionOf
+    (hQ : Algsuperdiff.StatementAudit.Superdiffusivity.HasDiffusionMarginals
       (streamCoefficient M.nu omega) Q)
     {t : ℝ} (ht : 0 < t) :
     (let := (streamReg M omega).metricSpace

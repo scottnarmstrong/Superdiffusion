@@ -35,7 +35,7 @@ theorem measurable_integral_eval {E : Type*} [NormedAddCommGroup E] [NormedSpace
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (Q : Algsuperdiff.Section5.Field.FullSample d M.gamma →
       Homogenization.Vec d → Measure (ContinuousPath (Homogenization.Vec d)))
-    (hQ : ∀ omega, IsDiffusionOf
+    (hQ : ∀ omega, HasDiffusionMarginals
       (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) (Q omega))
     (x : Homogenization.Vec d) {t : ℝ} (ht : 0 < t)
     {G : Homogenization.Vec d → E} (hG : Continuous G) :

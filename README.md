@@ -33,7 +33,7 @@ main results, formalized here as stated in the introduction, are:
   `R̃(t) = ((ν t)^{2−γ} + c⋆ γ⁻¹ t²)^{1/(2(2−γ))}` is the intrinsic length
   scale. Equivalently, the raw `p`-th absolute moments are bounded by the
   respective displayed amplitudes raised to `p`. The particle spreads like
-  `R̃(t)`, superdiffusively beyond the crossover time, and does not drift.
+  `R̃(t)`, superdiffusively beyond the crossover time, and has a controlled quenched mean displacement.
 - **Theorem B, renormalization of the generator.** At every scale `m` there
   are an effective diffusivity `σ̄_m`, within relative error `C √γ |log γ|` of
   the profile `(ν² + c⋆ γ⁻¹ 3^{2γm})^{1/2}`, and a random error `E_B` with

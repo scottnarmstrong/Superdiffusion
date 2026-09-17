@@ -75,7 +75,8 @@ open scoped ENNReal NNReal
 range `p ≤ C⁻¹ γ⁻¹ |log γ|⁻⁶`, the annealed `p`-th moments of the deviation of
 the quenched second moment of the displacement at time `t` from `2 d R̃(t)²`,
 and of the squared quenched mean displacement, are bounded by
-`C (√p + √|log γ|) √γ |log γ|⁴ R̃(t)²` and `C (p + |log γ|) γ |log γ|⁷ R̃(t)²`
+`(C (√p + √|log γ|) √γ |log γ|⁴ R̃(t)²)^p` and
+`(C (p + |log γ|) γ |log γ|⁷ R̃(t)²)^p`
 respectively, where `R̃(t)` is the intrinsic length scale of the paper
 (`intrinsicScale`).  The displacement is read through the compactified
 process, on which the retraction `onePointRetract` sends the added point to

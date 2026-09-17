@@ -4,6 +4,7 @@ import SuperdiffusionAudit.Superdiffusivity.SolutionBasic
 import SuperdiffusionAudit.Support.SuperdiffusivityBridge
 import SuperdiffusionAudit.Support.SuperdiffusivityIntegrability
 import SuperdiffusionAudit.Support.SuperdiffusivityMeasurability
+import SuperdiffusionAudit.Support.SuperdiffusivityProcess
 
 /-!
 # Solution: Superdiffusivity
@@ -22,6 +23,7 @@ namespace Superdiffusivity
 open SuperdiffusionAudit.Support.SDBridge
 open SuperdiffusionAudit.Support.SDLiveLaw
 open SuperdiffusionAudit.Support.SDMarginal
+open SuperdiffusionAudit.Support.SDProcess
 open SuperdiffusionAudit.Support.SDIntegrability
 open MeasureTheory
 open scoped ENNReal NNReal Matrix.Norms.Elementwise
@@ -93,17 +95,18 @@ theorem superdiffusivity
     (realizesCstar_iff_cstar_eq (toABKModel M) _hcstar).mp hreal
   refine ⟨fun om => ⟨liveLaw (toABKModel M) om, isDiffusionOf_liveLaw (toABKModel M) om⟩, ?_⟩
   intro Q hQ t ht
+  have hQm := fun omega => (hQ omega).1
   constructor
   · have hfiniteM := hfinite (toABKModel M) hcs (hgamma.trans (min_le_right _ _)) t ht
     change ∀ᵐ omega ∂(_root_.Algsuperdiff.Section5.Field.fullSampleLaw (toABKModel M)).toMeasure, _
     filter_upwards [hfiniteM] with omega homega
     exact integrable_displacement_of_streamProcess (toABKModel M) omega
-      (Q omega) (hQ omega) ht homega
+      (Q omega) (hQm omega) ht homega
   refine ⟨?_, ?_, ?_⟩
   · exact SuperdiffusionAudit.Support.SDMeasurability.measurable_integral_eval
-      (toABKModel M) Q hQ 0 ht continuous_id
+      (toABKModel M) Q hQm 0 ht continuous_id
   · exact SuperdiffusionAudit.Support.SDMeasurability.measurable_integral_eval
-      (toABKModel M) Q hQ 0 ht (continuous_vecNormSq d)
+      (toABKModel M) Q hQm 0 ht (continuous_vecNormSq d)
   intro p hp1 hp2
   obtain ⟨hone, htwo⟩ := hmain (toABKModel M) hcs
     (hgamma.trans (min_le_left _ _)) t ht p hp1 hp2
@@ -115,7 +118,7 @@ theorem superdiffusivity
             (path t.toNNReal))
           ∂((_root_.Algsuperdiff.Section5.Field.streamExhaustionTailInput (toABKModel M) om
             ).wholeSpaceProcess ((0 : Vec d) : OnePoint (Vec d))) := fun om =>
-    integral_eval_eq_streamProcess (toABKModel M) om (Q om) (hQ om) 0 ht (continuous_vecNormSq d)
+    integral_eval_eq_streamProcess (toABKModel M) om (Q om) (hQm om) 0 ht (continuous_vecNormSq d)
   have hpos : ∀ om : _root_.Algsuperdiff.Section5.Field.FullSample d (toABKModel M).gamma,
       (∫ path, path t.toNNReal ∂Q om 0) =
         letI := (SuperdiffusionAudit.Support.SDLiveLaw.streamReg (toABKModel M) om).metricSpace
@@ -123,7 +126,7 @@ theorem superdiffusivity
         ∫ path, DivergenceFormProcess.Form.onePointRetract (0 : Vec d) (path t.toNNReal)
           ∂((_root_.Algsuperdiff.Section5.Field.streamExhaustionTailInput (toABKModel M) om
             ).wholeSpaceProcess ((0 : Vec d) : OnePoint (Vec d))) := fun om =>
-    integral_eval_eq_streamProcess (toABKModel M) om (Q om) (hQ om) 0 ht continuous_id
+    integral_eval_eq_streamProcess (toABKModel M) om (Q om) (hQm om) 0 ht continuous_id
   constructor
   · rw [lintegral_fullSampleMeasure M]
     refine le_trans (le_of_eq (lintegral_congr fun om => ?_)) hone

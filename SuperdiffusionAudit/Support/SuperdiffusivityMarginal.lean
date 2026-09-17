@@ -19,8 +19,8 @@ of the live semigroup
 the killing does nothing because the process a.s. never leaves the live space.
 The stream field's kernel resolvent is the analytic minimal resolvent
 (`kernelResolventIdentifiesAnalyticMinimal_stream`), and that is the supremum
-of the cube resolvents, so the live law is a diffusion of the stream field in
-the challenge's sense (`isDiffusionOf_liveLaw`).
+of the cube resolvents, so the live law satisfies the marginal part of the
+challenge's characterization (`hasDiffusionMarginals_liveLaw`).
 
 Conversely, the characterization pins the one-point marginals: the time
 integrand is bounded and continuous, so the equality of Laplace transforms
@@ -228,7 +228,7 @@ theorem integral_exp_neg_mul_liveLaw :
 
 end Laplace
 
-/-! ## 3. The live law is a diffusion of the stream field -/
+/-! ## 3. The live law has the stream-field diffusion marginals -/
 
 /-- The supremum of any cube-resolvent family is the Laplace transform of the
 live law: the family is the analytic one, and the general datum is reduced to a
@@ -292,10 +292,10 @@ theorem iSup_eq_integral_exp_neg_mul_liveLaw {lam : ℝ} (hlam : 0 < lam)
         ∫ path, f (path s.toNNReal) ∂liveLaw M omega x) from funext fun s => by ring,
     integral_const_mul, ← mul_assoc, mul_inv_cancel₀ hC0.ne', one_mul]
 
-/-- **Work item E.**  The live stream law is a diffusion of the stream field in
-the challenge's sense. -/
-theorem isDiffusionOf_liveLaw :
-    IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega)
+/-- The live stream law satisfies the probability, starting-point, and
+PDE-resolvent clauses of the challenge's characterization. -/
+theorem hasDiffusionMarginals_liveLaw :
+    HasDiffusionMarginals (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega)
       (liveLaw M omega) := by
   refine ⟨fun x => inferInstance, fun x => liveLaw_start M omega x, ?_⟩
   intro lam hlam f hf
@@ -312,7 +312,7 @@ theorem isDiffusionOf_liveLaw :
 shift. -/
 private theorem integral_exp_neg_mul_eq_of_isDiffusionOf
     (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
+    (hQ : HasDiffusionMarginals (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
     {f : Vec d → ℝ}
     (hf : IsResolventTest f) (x : Vec d) {lam : ℝ} (hlam : 0 < lam) :
     (∫ s in Set.Ioi (0 : ℝ), Real.exp (-lam * s) * ∫ path, f (path s.toNNReal) ∂Q x) =
@@ -329,7 +329,7 @@ private theorem integral_exp_neg_mul_eq_of_isDiffusionOf
 
 /-- The one-point integrals of a test function agree at every positive time. -/
 theorem integral_eval_eq_of_isDiffusionOf (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
+    (hQ : HasDiffusionMarginals (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
     {f : Vec d → ℝ}
     (hf : IsResolventTest f) (x : Vec d) {t : ℝ} (ht : 0 < t) :
     (∫ path, f (path t.toNNReal) ∂Q x) = ∫ path, f (path t.toNNReal) ∂liveLaw M omega x := by
@@ -348,7 +348,7 @@ field is the time-`t` marginal of the live stream law: the two agree on the
 nonnegative continuous compactly supported functions, hence on all of them,
 hence as measures. -/
 theorem map_eval_eq_liveLaw (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
+    (hQ : HasDiffusionMarginals (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
     (x : Vec d) {t : ℝ} (ht : 0 < t) :
     Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal) (Q x) =
       Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal)
@@ -417,7 +417,7 @@ through the compactified process of the repository. -/
 theorem integral_eval_eq_streamProcess {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (Q : Vec d → Measure (ContinuousPath (Vec d)))
-    (hQ : IsDiffusionOf (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
+    (hQ : HasDiffusionMarginals (Algsuperdiff.Section5.Field.streamCoefficient M.nu omega) Q)
     (x : Vec d) {t : ℝ} (ht : 0 < t) {G : Vec d → E} (hG : Continuous G) :
     letI := (streamReg M omega).metricSpace
     letI := (streamReg M omega).completeSpace
