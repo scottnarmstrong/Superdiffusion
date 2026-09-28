@@ -88,27 +88,27 @@ def foldSignCoord (x : Vec d) (m k : ℤ) (i : Fin d) (t : ℝ) : ℝ :=
 theorem foldCoord_of_meetsUpperFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (h : MeetsUpperFace x m k i) (t : ℝ) :
     foldCoord x m k i t = min t ((3 : ℝ) ^ m - t) :=
-  if_pos h
+  ite_eq_left h
 
 theorem foldCoord_of_meetsLowerFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (hup : ¬ MeetsUpperFace x m k i) (h : MeetsLowerFace x m k i) (t : ℝ) :
     foldCoord x m k i t = max t (-(3 : ℝ) ^ m - t) := by
   have h1 : ¬ ((1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ x i + (1 / 2 : ℝ) * (3 : ℝ) ^ k) := hup
   have h2 : x i - (1 / 2 : ℝ) * (3 : ℝ) ^ k ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m := h
-  rw [foldCoord, if_neg h1, if_pos h2]
+  rw [foldCoord, ite_eq_right h1, ite_eq_left h2]
 
 theorem foldCoord_of_unmet {x : Vec d} {m k : ℤ} {i : Fin d}
     (hup : ¬ MeetsUpperFace x m k i) (hlow : ¬ MeetsLowerFace x m k i) (t : ℝ) :
     foldCoord x m k i t = t := by
   have h1 : ¬ ((1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ x i + (1 / 2 : ℝ) * (3 : ℝ) ^ k) := hup
   have h2 : ¬ (x i - (1 / 2 : ℝ) * (3 : ℝ) ^ k ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m) := hlow
-  rw [foldCoord, if_neg h1, if_neg h2]
+  rw [foldCoord, ite_eq_right h1, ite_eq_right h2]
 
 theorem foldSignCoord_of_meetsUpperFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (h : MeetsUpperFace x m k i) (t : ℝ) :
     foldSignCoord x m k i t =
       (if (1 / 2 : ℝ) * (3 : ℝ) ^ m < t then -1 else 1) :=
-  if_pos h
+  ite_eq_left h
 
 theorem foldSignCoord_of_meetsLowerFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (hup : ¬ MeetsUpperFace x m k i) (h : MeetsLowerFace x m k i) (t : ℝ) :
@@ -116,14 +116,14 @@ theorem foldSignCoord_of_meetsLowerFace {x : Vec d} {m k : ℤ} {i : Fin d}
       (if t < -(1 / 2 : ℝ) * (3 : ℝ) ^ m then -1 else 1) := by
   have h1 : ¬ ((1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ x i + (1 / 2 : ℝ) * (3 : ℝ) ^ k) := hup
   have h2 : x i - (1 / 2 : ℝ) * (3 : ℝ) ^ k ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m := h
-  rw [foldSignCoord, if_neg h1, if_pos h2]
+  rw [foldSignCoord, ite_eq_right h1, ite_eq_left h2]
 
 theorem foldSignCoord_of_unmet {x : Vec d} {m k : ℤ} {i : Fin d}
     (hup : ¬ MeetsUpperFace x m k i) (hlow : ¬ MeetsLowerFace x m k i) (t : ℝ) :
     foldSignCoord x m k i t = 1 := by
   have h1 : ¬ ((1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ x i + (1 / 2 : ℝ) * (3 : ℝ) ^ k) := hup
   have h2 : ¬ (x i - (1 / 2 : ℝ) * (3 : ℝ) ^ k ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m) := hlow
-  rw [foldSignCoord, if_neg h1, if_neg h2]
+  rw [foldSignCoord, ite_eq_right h1, ite_eq_right h2]
 
 /-! ## 2. The fold, the global sign, and the odd extension -/
 
@@ -411,12 +411,12 @@ theorem oddExtend_affineLift {x : Vec d} {m k : ℤ} {c : ℝ} {A : Vec d}
           · rw [foldCoord_of_meetsUpperFace hu,
               min_eq_right (by linarith only [ht])]
             ring
-          · rw [foldSignCoord_of_meetsUpperFace hu, if_pos ht]
+          · rw [foldSignCoord_of_meetsUpperFace hu, ite_eq_left ht]
         · push Not at ht
           refine Or.inl ⟨?_, ?_⟩
           · rw [foldCoord_of_meetsUpperFace hu,
               min_eq_left (by linarith only [ht])]
-          · rw [foldSignCoord_of_meetsUpperFace hu, if_neg (not_lt.mpr ht)]
+          · rw [foldSignCoord_of_meetsUpperFace hu, ite_eq_right (not_lt.mpr ht)]
       · have hl : MeetsLowerFace x m k i := hi.resolve_left hu
         refine oddExtend_affineLift_single (-(1 / 2 : ℝ) * (3 : ℝ) ^ m)
           (fun w hw => hodd.2 i hl w hw) hother (fun t => ?_) y
@@ -425,12 +425,12 @@ theorem oddExtend_affineLift {x : Vec d} {m k : ℤ} {c : ℝ} {A : Vec d}
           · rw [foldCoord_of_meetsLowerFace hu hl,
               max_eq_right (by linarith only [ht])]
             ring
-          · rw [foldSignCoord_of_meetsLowerFace hu hl, if_pos ht]
+          · rw [foldSignCoord_of_meetsLowerFace hu hl, ite_eq_left ht]
         · push Not at ht
           refine Or.inl ⟨?_, ?_⟩
           · rw [foldCoord_of_meetsLowerFace hu hl,
               max_eq_left (by linarith only [ht])]
-          · rw [foldSignCoord_of_meetsLowerFace hu hl, if_neg (not_lt.mpr ht)]
+          · rw [foldSignCoord_of_meetsLowerFace hu hl, ite_eq_right (not_lt.mpr ht)]
   · have hother : ∀ j : Fin d,
         ¬ MeetsUpperFace x m k j ∧ ¬ MeetsLowerFace x m k j := fun j =>
       ⟨fun h => hS ⟨j, Or.inl h⟩, fun h => hS ⟨j, Or.inr h⟩⟩

@@ -85,9 +85,9 @@ theorem scaleProp_add_scaleProp_compl {Omega : Type*} (Ev : ℤ → Set Omega) (
   refine congrArg (fun z : ℝ => (1 : ℝ) / ((n : ℝ) + 1) * z) ?_
   refine Finset.sum_congr rfl fun m _ => ?_
   by_cases h : omega ∈ Ev m
-  · rw [if_pos h, if_neg (fun hc => hc h)]
+  · rw [ite_eq_left h, ite_eq_right (fun hc => hc h)]
     norm_num
-  · rw [if_neg h, if_pos (show omega ∈ (Ev m)ᶜ from h)]
+  · rw [ite_eq_right h, ite_eq_left (show omega ∈ (Ev m)ᶜ from h)]
     norm_num
 
 end

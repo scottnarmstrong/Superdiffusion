@@ -289,7 +289,7 @@ theorem mem_whitneyLayer_iff {m : ℤ} {hn : ℕ → ℕ} {n : ℕ} {Q : Triadic
           Q ∈ descendantsAtDepth C (hn n) := by
   classical
   by_cases hn1 : 1 ≤ n
-  · simp only [whitneyLayer, if_pos hn1, Finset.mem_biUnion, Finset.mem_filter]
+  · simp only [whitneyLayer, ite_eq_left hn1, Finset.mem_biUnion, Finset.mem_filter]
     aesop
   · have hn0 : n = 0 := by omega
     subst hn0

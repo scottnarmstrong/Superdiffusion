@@ -178,7 +178,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
     · obtain ⟨hUone, _⟩ :=
         Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UoneCube, dif_pos hR] using hUone omega
+      simpa only [UoneCube, dite_eq_left hR] using hUone omega
     · simp [UoneCube, hR]
   have hUexpCubeNonneg : ∀ (k : ℕ) (R : TriadicCube d) omega,
       0 ≤ UexpCube k R omega := by
@@ -186,7 +186,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
     · obtain ⟨_, _, hUexp, _⟩ :=
         Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UexpCube, dif_pos hR] using hUexp omega
+      simpa only [UexpCube, dite_eq_left hR] using hUexp omega
     · simp [UexpCube, hR]
   have hUoneCubeMeas : ∀ (k : ℕ) (R : TriadicCube d),
       Measurable (UoneCube k R) := by
@@ -194,7 +194,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
     · obtain ⟨_, hUone, _⟩ :=
         Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UoneCube, dif_pos hR] using hUone
+      simpa only [UoneCube, dite_eq_left hR] using hUone
     · simp [UoneCube, hR]
   have hUexpCubeMeas : ∀ (k : ℕ) (R : TriadicCube d),
       Measurable (UexpCube k R) := by
@@ -202,7 +202,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
     · obtain ⟨_, _, _, hUexp, _⟩ :=
         Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UexpCube, dif_pos hR] using hUexp
+      simpa only [UexpCube, dite_eq_left hR] using hUexp
     · simp [UexpCube, hR]
   have hUoneCubeO : ∀ (k : ℕ) (R : TriadicCube d),
       R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
@@ -212,7 +212,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     intro k R hR
     obtain ⟨_, _, _, _, _, hUone, _⟩ :=
       Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    simpa only [mu, UoneCube, dif_pos hR] using hUone
+    simpa only [mu, UoneCube, dite_eq_left hR] using hUone
   have hUexpCubeO : ∀ (k : ℕ) (R : TriadicCube d),
       R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
       IsBigOWith mu (gammaSigma sigmaExp) (UexpCube k R)
@@ -220,7 +220,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     intro k R hR
     obtain ⟨_, _, _, _, _, _, hUexp⟩ :=
       Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    simpa only [mu, UexpCube, dif_pos hR] using hUexp
+    simpa only [mu, UexpCube, dite_eq_left hR] using hUexp
   have hblock : ∀ (k : ℕ) (R : TriadicCube d),
       R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
       ∀ omega, |cutoffBBlockFamily M m scaling R omega| ≤
@@ -231,7 +231,7 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
     have hnonneg : 0 ≤ cutoffBBlockFamily M m scaling R omega :=
       mul_nonneg hscaling (coarseBNormCoeffField_nonneg R _)
     rw [abs_of_nonneg hnonneg]
-    simpa only [UoneCube, UexpCube, dif_pos hR] using hdom omega
+    simpa only [UoneCube, UexpCube, dite_eq_left hR] using hdom omega
   let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>
     blockGridSup d m k (UoneCube k)
   let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>

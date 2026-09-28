@@ -210,7 +210,7 @@ def activeShellRegion (Lidx : iota → ℤ) (U : iota → Set (Vec d)) (i : iota
 
 theorem activeShellRegion_of_le {Lidx : iota → ℤ} {U : iota → Set (Vec d)} {i : iota}
     {l : ℤ} (hl : l ≤ Lidx i) : activeShellRegion Lidx U i l = U i :=
-  if_pos hl
+  ite_eq_left hl
 
 theorem measurableSet_activeShellRegion {Lidx : iota → ℤ} {U : iota → Set (Vec d)}
     (hU : ∀ i, MeasurableSet (U i)) (i : iota) (l : ℤ) :
@@ -281,9 +281,9 @@ theorem iIndep_activeShellSigma_row (M : ABKModel d) (Lidx : iota → ℤ)
         refine le_trans hmono (hsep hij ?_ ?_)
         · rwa [activeShellRegion_of_le hi] at hx
         · rwa [activeShellRegion_of_le hj] at hy
-      · rw [activeShellRegion, if_neg hj] at hy
+      · rw [activeShellRegion, ite_eq_right hj] at hy
         exact absurd hy (Set.notMem_empty y)
-    · rw [activeShellRegion, if_neg hi] at hx
+    · rw [activeShellRegion, ite_eq_right hi] at hx
       exact absurd hx (Set.notMem_empty x)
   exact iIndep_shellLocalSigma_of_pairwise_separated M l
     (fun i => measurableSet_activeShellRegion hU i l) hsepA

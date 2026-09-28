@@ -164,10 +164,8 @@ theorem scaledStreamIncrementLaw_eq_map (M : ABKModel d) (n m : ℤ) {r : ℝ}
 
 instance scaledStreamIncrementLaw_isProbabilityMeasure (M : ABKModel d) (n m : ℤ)
     (r : ℝ) (hr : r ≠ 0) :
-    IsProbabilityMeasure (scaledStreamIncrementLaw M n m r hr) :=
-  Measure.isProbabilityMeasure_map
-    (((measurable_smulReg r hr).comp
-      (measurable_finiteShellIncrement n m))).aemeasurable
+    IsProbabilityMeasure (scaledStreamIncrementLaw M n m r hr) := by
+  unfold scaledStreamIncrementLaw; infer_instance
 
 /-- Translation commutes with spatial rescaling on the carrier. -/
 theorem translateReg_smulReg {r : ℝ} (hr : r ≠ 0) (z : Vec d)

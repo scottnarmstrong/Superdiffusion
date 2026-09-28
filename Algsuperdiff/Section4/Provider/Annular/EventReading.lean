@@ -84,11 +84,11 @@ private theorem ennreal_tsum_if_le (b : ℤ) (g : ℤ → ℝ≥0∞) :
     intro n hn
     by_cases h : n ≤ b
     · exact ⟨⟨n, h⟩, rfl⟩
-    · exact absurd (if_neg h) hn
+    · exact absurd (ite_eq_right h) hn
   have hbij := hinj.tsum_eq hsupp
   have hcong : (∑' n : {n : ℤ // n ≤ b}, (if n.1 ≤ b then g n.1 else 0))
       = ∑' n : {n : ℤ // n ≤ b}, g n.1 :=
-    tsum_congr fun n => if_pos n.2
+    tsum_congr fun n => ite_eq_left n.2
   rw [← hbij, hcong]
 
 /-- **The guarded annular family as the iterated subtype sum.**  The `ℤ × ℤ`
@@ -106,17 +106,17 @@ theorem ennreal_tsum_annFam_eq (m : ℤ) (h : ℤ → ℤ → ℝ) :
           else 0 := by
     intro j
     by_cases hj : j ≤ m
-    · rw [if_pos hj, ← ennreal_tsum_if_le (j - 1) (fun n => ENNReal.ofReal (h j n))]
+    · rw [ite_eq_left hj, ← ennreal_tsum_if_le (j - 1) (fun n => ENNReal.ofReal (h j n))]
       refine tsum_congr fun n => ?_
       rw [annFam_apply]
       by_cases hn : n ≤ j - 1
-      · rw [if_pos (⟨hj, hn⟩ : j ≤ m ∧ n ≤ j - 1), if_pos hn]
-      · rw [if_neg (fun hc : j ≤ m ∧ n ≤ j - 1 => hn hc.2), if_neg hn,
+      · rw [ite_eq_left (⟨hj, hn⟩ : j ≤ m ∧ n ≤ j - 1), ite_eq_left hn]
+      · rw [ite_eq_right (fun hc : j ≤ m ∧ n ≤ j - 1 => hn hc.2), ite_eq_right hn,
           ENNReal.ofReal_zero]
-    · rw [if_neg hj]
+    · rw [ite_eq_right hj]
       have hz : ∀ n : ℤ, ENNReal.ofReal (annFam m h (j, n)) = 0 := by
         intro n
-        rw [annFam_apply, if_neg (fun hc : j ≤ m ∧ n ≤ j - 1 => hj hc.1),
+        rw [annFam_apply, ite_eq_right (fun hc : j ≤ m ∧ n ≤ j - 1 => hj hc.1),
           ENNReal.ofReal_zero]
       rw [tsum_congr hz, tsum_zero]
   rw [tsum_congr hinner]
@@ -217,7 +217,9 @@ private theorem ofReal_shellQuarter_tsum_le (M : ABKModel d) (m : ℤ) (s : ℝ)
     _ ≤ ∑' n : {n : ℤ // n ≤ m},
           ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 4 : ℝ) * s * ((m - n.1 : ℤ) : ℝ)))
             * ∑ k ∈ Finset.Icc (n.1 - 1) m, shellBlockLatticeAtom M m omega k ^ 2 :=
-        ENNReal.tsum_comp_le_tsum_of_injective hinj _
+        ENNReal.tsum_comp_le_tsum_of_injective hinj (fun n : {n : ℤ // n ≤ m} =>
+          ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 4 : ℝ) * s * ((m - n.1 : ℤ) : ℝ)))
+            * ∑ k ∈ Finset.Icc (n.1 - 1) m, shellBlockLatticeAtom M m omega k ^ 2)
 
 /-- **The `𝒢₁ᵇ` reading, summability half**, at the A5b-pinned shell family. -/
 theorem summable_shellQuarter_of_eventG1 (M : ABKModel d) (m : ℤ) {s T : ℝ}

@@ -193,7 +193,7 @@ theorem cubeFaceSet_subset_closure_compl (Q : TriadicCube d) :
     have hval : (Function.update y i0 (y i0 + delta)) i0 = y i0 + delta :=
       Function.update_self i0 _ y
     rcases hface with hL | hR
-    · have hd : delta = -(eps / 2) := by rw [hdelta, if_pos hL]
+    · have hd : delta = -(eps / 2) := by rw [hdelta, ite_eq_left hL]
       have hbd := (hmem i0).1
       rw [hval, hd, hL] at hbd
       linarith only [hbd, heps]
@@ -205,7 +205,7 @@ theorem cubeFaceSet_subset_closure_compl (Q : TriadicCube d) :
           ring
         have hpos : (0 : ℝ) < cubeScaleFactor Q := cubeScaleFactor_pos Q
         linarith only [hcon, hgap, hpos]
-      have hd : delta = eps / 2 := by rw [hdelta, if_neg hne]
+      have hd : delta = eps / 2 := by rw [hdelta, ite_eq_right hne]
       have hbd := (hmem i0).2
       rw [hval, hd, hR] at hbd
       linarith only [hbd, heps]
@@ -220,8 +220,8 @@ theorem cubeFaceSet_subset_closure_compl (Q : TriadicCube d) :
         rw [show y j - (y j + delta) = -delta by ring, abs_neg]
       have hd2 : |delta| = eps / 2 := by
         by_cases hL : y j = ((Q.index j : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q
-        · rw [hdelta, if_pos hL, abs_neg, abs_of_pos (by linarith only [heps])]
-        · rw [hdelta, if_neg hL, abs_of_pos (by linarith only [heps])]
+        · rw [hdelta, ite_eq_left hL, abs_neg, abs_of_pos (by linarith only [heps])]
+        · rw [hdelta, ite_eq_right hL, abs_of_pos (by linarith only [heps])]
       rw [habs, hd2]
       linarith only [heps]
     · have hval : (Function.update y i0 (y i0 + delta)) j = y j := Function.update_of_ne hj _ y

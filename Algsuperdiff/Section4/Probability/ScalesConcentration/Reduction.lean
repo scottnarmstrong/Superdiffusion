@@ -154,12 +154,12 @@ lemma indicator_Yk_le_tsum {s lam : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
     (if 3 * lam / s < Yk X s k ω then (1 : ℝ≥0∞) else 0)
       ≤ ∑' j : ℤ, (if thr s lam k j < X k j ω then (1 : ℝ≥0∞) else 0) := by
   by_cases hY : 3 * lam / s < Yk X s k ω
-  · simp only [hY, if_true]
+  · simp only [hY, ite_true]
     obtain ⟨j₀, hj₀⟩ := exists_exceed_of_Yk_gt hs hs1 X k ω hlam hXnn hY
     calc (1 : ℝ≥0∞) = (if thr s lam k j₀ < X k j₀ ω then (1 : ℝ≥0∞) else 0) := by
             simp [hj₀]
       _ ≤ ∑' j : ℤ, (if thr s lam k j < X k j ω then (1 : ℝ≥0∞) else 0) :=
-            ENNReal.le_tsum j₀
+            ENNReal.le_tsum (f := fun j => if thr s lam k j < X k j ω then (1 : ℝ≥0∞) else 0) j₀
   · simp [hY]
 
 /-- Swap a finite sum and a `tsum` in `ℝ≥0∞` (both always defined). -/

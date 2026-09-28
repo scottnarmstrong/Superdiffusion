@@ -212,7 +212,7 @@ theorem measurable_cubeStreamIncrementLpTail_rpow_cutoff_probe (M : ABKModel d)
               ∫ w, streamIncrementLpMass p
                   (m + (incrementPartitionShift d : ℤ)) n m w ∂M.P.toMeasure| := by
         funext omega
-        rw [streamIncrementLpTail, if_pos hc]
+        rw [streamIncrementLpTail, ite_eq_left hc]
       rw [heq]
       exact (hmass.sub measurable_const).abs
     · have heq : (fun omega : ShellSeq d =>
@@ -222,7 +222,7 @@ theorem measurable_cubeStreamIncrementLpTail_rpow_cutoff_probe (M : ABKModel d)
             streamIncrementLpMass p Q.scale n m
               (ShellField.translateSequence (triadicCubeShift Q) omega) := by
         funext omega
-        rw [streamIncrementLpTail, if_neg hc]
+        rw [streamIncrementLpTail, ite_eq_right hc]
       rw [heq]
       exact hmass
   exact ((htail.comp measurable_subtype_coe).pow_const _)

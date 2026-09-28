@@ -103,10 +103,10 @@ theorem setOf_scalePropFrom_zero_eq_compl (Ev : ℤ → Set Ω) (m0 : ℤ) {thet
   simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, hval omega]
   constructor
   · intro h hmem
-    rw [if_pos hmem] at h
+    rw [ite_eq_left hmem] at h
     linarith only [h, htheta0]
   · intro h
-    rw [if_neg h]
+    rw [ite_eq_right h]
     linarith only [htheta1]
 
 open scoped Classical in
@@ -129,7 +129,7 @@ theorem half_le_scaleProp_one_of_mem (F : ℤ → Set Ω) (omega : Ω)
       ≤ ∑ m ∈ Finset.Icc (0 : ℤ) (((1 : ℕ) : ℤ)),
           (if omega ∈ F m then (1 : ℝ) else 0) :=
     Finset.single_le_sum (f := fun m : ℤ => (if omega ∈ F m then (1 : ℝ) else 0)) hnn hmem
-  rw [if_pos homega] at hsingle
+  rw [ite_eq_left homega] at hsingle
   have hcast : (((1 : ℕ) : ℝ) + 1) = 2 := by norm_num
   simp only [scaleProp, hcast]
   have hmul := mul_le_mul_of_nonneg_left hsingle (by norm_num : (0 : ℝ) ≤ 1 / 2)

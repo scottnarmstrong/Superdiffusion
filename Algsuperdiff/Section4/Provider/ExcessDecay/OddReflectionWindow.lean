@@ -228,22 +228,22 @@ def reflectedWindow (x : Vec d) (m k : ℤ) : Set (Vec d) :=
 theorem reflectedLo_of_meetsLowerFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (h : MeetsLowerFace x m k i) :
     reflectedLo x m k i = -(3 : ℝ) ^ m - windowHi x m k i :=
-  if_pos h
+  ite_eq_left h
 
 theorem reflectedLo_of_not_meetsLowerFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (h : ¬ MeetsLowerFace x m k i) :
     reflectedLo x m k i = windowLo x m k i :=
-  if_neg h
+  ite_eq_right h
 
 theorem reflectedHi_of_meetsUpperFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (h : MeetsUpperFace x m k i) :
     reflectedHi x m k i = (3 : ℝ) ^ m - windowLo x m k i :=
-  if_pos h
+  ite_eq_left h
 
 theorem reflectedHi_of_not_meetsUpperFace {x : Vec d} {m k : ℤ} {i : Fin d}
     (h : ¬ MeetsUpperFace x m k i) :
     reflectedHi x m k i = windowHi x m k i :=
-  if_neg h
+  ite_eq_right h
 
 theorem mem_reflectedWindow_iff {x : Vec d} {m k : ℤ} {y : Vec d} :
     y ∈ reflectedWindow x m k ↔

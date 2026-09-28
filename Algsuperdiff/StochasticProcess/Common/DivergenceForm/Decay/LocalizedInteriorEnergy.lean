@@ -75,11 +75,11 @@ theorem weightedEnergy_split_interior_le {Om : Set (Vec d)}
     simpa only [MemVectorL2, volumeMeasureOn, qf, Pi.smul_apply, smul_eq_mul,
       mul_comm] using!
       (MemLp.of_eval fun i : Fin d =>
-        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hweightTop)
+        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).fun_mul hweightTop)
   have hudZ : MemVectorL2 Om (fun y => u.toFun y • dz y) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul,
       mul_comm] using!
-      (MemLp.of_eval fun i : Fin d => u.memL2.mul' (hdzTop i))
+      (MemLp.of_eval fun i : Fin d => u.memL2.fun_mul (hdzTop i))
   have hrf : MemVectorL2 Om rf := by
     have hbase : MemVectorL2 Om (fun y => test.toH1Function.grad y - qf y) :=
       test.toH1Function.grad_memVectorL2.sub hqf

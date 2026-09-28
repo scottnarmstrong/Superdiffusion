@@ -410,7 +410,7 @@ theorem exists_goodEvent_restrictionResponseJ_centralChild_le_preVarianceSplitDi
       Ch02.lambdaSq (originCube d m) (1 / 4) (Ch02.MultiscaleExponent.finite 1)
         (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha) := by
     rw [Ch04.lambdaSqCoeffField]
-    simp only [dif_pos ha]
+    simp only [dite_eq_left ha]
   rw [hlamField] at hfour
   -- names
   set C : ℝ := 320 * C9 + 6 * (3 : ℝ) ^ d + 1 with hCdef

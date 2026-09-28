@@ -149,7 +149,9 @@ theorem exists_localizationActualCellFields (sigma : PositiveScalar)
   refine ⟨S, T, hS, fun S' hS' =>
       (doubledMuTheory (cubeDomain R) aR).minimizer_unique_ae _ S S' hS hS', hT,
     fun T' hT' => sameAE_of_isDoubledMuMinimizerField hFpot hFflux hT hT', ?_, ?_, ?_⟩
-  · have hadd := isDoubledMuMinimizerField_add hFpot hFflux hS hT
+  · have hadd := isDoubledMuMinimizerField_add (U := cubeDomain R) (a := aR)
+      (P := principalPz sigma omega lowScale highScale e e' R wD wN)
+      (F := localizationFz sigma omega lowScale highScale e' R wD wN) hFpot hFflux hS hT
     rwa [localizationBackground_eq_constantDoubledField_principalPz_add_localizationFz]
       at hadd
   · exact isDoubledResponseField_of_isDoubledMuMinimizerField hFamb hT

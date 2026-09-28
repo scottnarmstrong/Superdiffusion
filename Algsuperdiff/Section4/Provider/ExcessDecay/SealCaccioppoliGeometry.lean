@@ -231,12 +231,12 @@ theorem flushSubCentre_apply (z : Vec d) (m n : ℤ) (i : Fin d) (σ : ℝ) (r :
 theorem flushSubCentre_apply_self (z : Vec d) (m n : ℤ) (i : Fin d) (σ : ℝ) :
     flushSubCentre z m n i σ i =
       wellPlacedCentre z m (n + 2) i + σ * (((3 : ℝ) ^ (n + 2) - (3 : ℝ) ^ n) / 2) := by
-  rw [flushSubCentre_apply, if_pos (rfl : i = i)]
+  rw [flushSubCentre_apply, ite_eq_left (rfl : i = i)]
 
 theorem flushSubCentre_apply_of_ne (z : Vec d) (m n : ℤ) {i r : Fin d} (σ : ℝ)
     (hr : r ≠ i) :
     flushSubCentre z m n i σ r = wellPlacedCentre z m (n + 2) r := by
-  rw [flushSubCentre_apply, if_neg hr, add_zero]
+  rw [flushSubCentre_apply, ite_eq_right hr, add_zero]
 
 /-- The scale identity `3^{n+2} = 9·3^n`, used throughout this section. -/
 theorem three_zpow_add_two (n : ℤ) : (3 : ℝ) ^ (n + 2) = 9 * (3 : ℝ) ^ n := by
@@ -259,10 +259,10 @@ theorem flushSubCentre_mem_flushCube {n m : ℤ} (z : Vec d) (i : Fin d) {σ : �
   have h9 := three_zpow_add_two n
   have hx := flushSubCentre_apply z m n i σ r
   by_cases hr : r = i
-  · rw [if_pos hr] at hx
+  · rw [ite_eq_left hr] at hx
     rcases hσ with h | h <;> subst h <;>
       exact ⟨by linarith only [hx, hpos, h9], by linarith only [hx, hpos, h9]⟩
-  · rw [if_neg hr, add_zero] at hx
+  · rw [ite_eq_right hr, add_zero] at hx
     exact ⟨by linarith only [hx, hpos, h9], by linarith only [hx, hpos, h9]⟩
 
 /-- ** `K' ⊆ K`.**  The scale-`n` slab sits inside the scale-`(n+2)` cube: `4·3^n +
@@ -280,11 +280,11 @@ theorem flushSubCube_subset_flushCube {n m : ℤ} (z : Vec d) (i : Fin d) {σ : 
   have hpr := hp r
   have hx := flushSubCentre_apply z m n i σ r
   by_cases hr : r = i
-  · rw [if_pos hr] at hx
+  · rw [ite_eq_left hr] at hx
     rcases hσ with h | h <;> subst h <;>
       exact ⟨by linarith only [hpr.1, hpr.2, hx, hpos, h9],
         by linarith only [hpr.1, hpr.2, hx, hpos, h9]⟩
-  · rw [if_neg hr, add_zero] at hx
+  · rw [ite_eq_right hr, add_zero] at hx
     exact ⟨by linarith only [hpr.1, hpr.2, hx, hpos, h9],
       by linarith only [hpr.1, hpr.2, hx, hpos, h9]⟩
 

@@ -121,7 +121,7 @@ theorem exists_local_holder_representative_of_weakSolution_continuousCoeff
   have hsmallLocal : CoefficientIdentityDistanceLE B aLocal delta := by
     filter_upwards [hsmall, ae_restrict_mem (isOpen_euclideanBall z R).measurableSet]
       with x hx hxb
-    simpa only [aLocal, hxb, if_true] using hx
+    simpa only [aLocal, hxb, ite_true] using hx
   have hnormalizedLocal : IsMatrixDivFormWeakSolutionZerothOrderOn
       aLocal B uB (fun x ↦ nu⁻¹ * g x) 0 := by
     intro phi
@@ -135,7 +135,7 @@ theorem exists_local_holder_representative_of_weakSolution_continuousCoeff
       apply integral_congr_ae
       filter_upwards [ae_restrict_mem (isOpen_euclideanBall z R).measurableSet]
         with x hx
-      simp only [aLocal, hx, if_true]
+      simp only [aLocal, hx, ite_true]
     rw [hlhs]
     exact h
   obtain ⟨v, hvcont, hvae, hvholder⟩ :=

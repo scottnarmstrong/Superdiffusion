@@ -38,7 +38,8 @@ theorem eLpNorm_normalizedVolumeMeasureOn_eq (A : Set (Vec d)) (f : Vec d → �
     eLpNorm f 2 (Support.normalizedVolumeMeasureOn A) =
       ((volume A)⁻¹) ^ (1 / 2 : ℝ) * eLpNorm f 2 (volume.restrict A) := by
   rw [Support.normalizedVolumeMeasureOn_def,
-    eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)]
+    eLpNorm_smul_measure_of_ne_zero_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+      (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)]
   norm_num
 
 end

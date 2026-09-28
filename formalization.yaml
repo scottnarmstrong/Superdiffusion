@@ -59,7 +59,7 @@ related_formalizations:
     relationship: "builds-on"
     note: >-
       Scott Armstrong, MarkovProcess (public Lean library, pinned git
-      dependency at commit dbade0d). Superdiffusion uses it for the general
+      dependency at commit 5d4a2a7). Superdiffusion uses it for the general
       theory of continuous strong Markov processes of Feller semigroups.
 
 status:
@@ -133,12 +133,12 @@ automation:
         - "gpt-5.6-terra"
       framework: "Claude Code (Anthropic) and Codex (OpenAI) agentic coding harnesses; most code by the Claude models"
       tool_setup: >-
-        Lake builds under leanprover/lean4:v4.33.0 with Mathlib v4.33.0, the
+        Lake builds under leanprover/lean4:v4.35.0-rc2 with Mathlib v4.35.0-rc2, the
         public CoarseGraining library and the public MarkovProcess library,
         both at pinned revisions.  The public CI builds the three headline
         theorems, prints their axiom dependencies, and runs their Mathlib-only
         comparator challenge/solution pairs.  The comparator workflow pins
-        leanprover/comparator commit 5756749, lean4export v4.33.0, and landrun
+        leanprover/comparator commit 32bd61d, lean4export v4.35.0-rc2, and landrun
         commit 811cfff; its configuration is shipped under .github/workflows/.
       cost:
         wall_time: "approximately two weeks of agentic work"

@@ -63,7 +63,7 @@ theorem partShiftResolvent_of_pos {V : Set (Vec d)} (hV : IsOpenBoundedConvexDom
     {f : Vec d → ℝ} (hf : Measurable f) {D : ℝ} (hfD : ∀ x, |f x| ≤ D) {lam : ℝ}
     (hlam : 0 < lam) (x : Vec d) :
     A.partShiftResolvent hV f hf hfD lam x = A.partC0Resolvent hV ⟨lam, hlam⟩ f hf hfD x := by
-  rw [partShiftResolvent, dif_pos hlam]
+  rw [partShiftResolvent, dite_eq_left hlam]
 
 theorem abs_partShiftResolvent_le {V : Set (Vec d)} (hV : IsOpenBoundedConvexDomain V)
     {f : Vec d → ℝ} (hf : Measurable f) {D : ℝ} (hD : 0 ≤ D) (hfD : ∀ x, |f x| ≤ D)

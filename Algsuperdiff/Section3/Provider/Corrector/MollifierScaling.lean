@@ -168,7 +168,7 @@ theorem productDensity_le (d : ℕ) (hr : 0 < r) (x : Vec d) :
     productDensity d hr x ≤ 1 / r ^ d := by
   classical
   have h : ∏ i : Fin d, scaledBump hr (x i) ≤ ∏ _i : Fin d, (1 / r) :=
-    Finset.prod_le_prod (fun i _ => scaledBump_nonneg hr (x i))
+    Finset.prod_le_prod₀ (fun i _ => scaledBump_nonneg hr (x i))
       (fun i _ => scaledBump_le hr (x i))
   rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin] at h
   calc productDensity d hr x = ∏ i : Fin d, scaledBump hr (x i) := rfl

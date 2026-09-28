@@ -69,8 +69,8 @@ theorem analyticPenalizedCubeResolvent_bound_irrel {V : Set (Vec d)}
       A.analyticPenalizedCubeResolvent_ae hV n mu hf hfE m] with y h1 h2
     rw [h1, h2]
     rfl
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx]
 
 /-- Two equal data with possibly different bounds have the same local
 penalized representative. -/

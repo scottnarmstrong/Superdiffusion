@@ -482,13 +482,13 @@ theorem measurable_waveL4Tail (M : ABKModel d) (lout ell : ℤ) (h : ℕ) :
               ∫ w', streamIncrementLpMass 4 (ell + (incrementPartitionShift d : ℤ))
                 (ell - (h : ℤ)) ell w' ∂M.P.toMeasure| := by
         funext w
-        rw [streamIncrementLpTail, if_pos hsl]
+        rw [streamIncrementLpTail, ite_eq_left hsl]
       rw [hfun]
       exact (hmass.sub measurable_const).abs
     · have hfun : streamIncrementLpTail M 4 lout (ell - (h : ℤ)) ell =
           streamIncrementLpMass 4 lout (ell - (h : ℤ)) ell := by
         funext w
-        rw [streamIncrementLpTail, if_neg hsl]
+        rw [streamIncrementLpTail, ite_eq_right hsl]
       rw [hfun]
       exact hmass
   exact ((hm.comp measurable_subtype_coe).pow_const ((4 : ℝ)⁻¹))

@@ -115,7 +115,6 @@ theorem hasVanishingAnalyticMinimalResolvent_of_aboveOne
       change _ = T g x + _
       rw [← hinner]
       convert hEq using 1
-      all_goals rfl
     have hexpand : ∀ n x,
         A.analyticMinimalResolventReal mu f f.continuous.measurable
             (abs_le_norm_c0_allShifts f) x =

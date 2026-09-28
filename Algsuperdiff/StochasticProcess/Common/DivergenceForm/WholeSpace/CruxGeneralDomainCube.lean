@@ -204,7 +204,7 @@ theorem cubeSetAtExitResolvent_coe (y : Vec d) (n : ℤ) {lam : ℝ}
     (hlam : 0 < lam) (w : Vec d) :
     A.cubeSetAtExitResolvent y n lam (w : OnePoint (Vec d)) =
       ENNReal.ofReal (A.cubeSetAtOneResolvent y n ⟨lam, hlam⟩ w) := by
-  rw [cubeSetAtExitResolvent, dif_pos hlam,
+  rw [cubeSetAtExitResolvent, dite_eq_left hlam,
     PositiveC0ContractiveResolvent.onePointLiveExtension_coe]
 
 /-- **The limit of the Dirichlet resolvents of the constant datum on a

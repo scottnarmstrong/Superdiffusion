@@ -86,7 +86,7 @@ theorem mul_analyticCubeResolvent_cubeBarrier_le (m : ℕ)
     rw [h1, P.boundedMeasurableToScalarL2_cubeBarrier m hVU, h3]
     exact h2
   · have hzero := P.cubeBarrier_of_notMem m hVU hx
-    rw [WholeSpaceAnalyticData.analyticCubeResolvent, dif_neg hx, hzero,
+    rw [WholeSpaceAnalyticData.analyticCubeResolvent, dite_eq_right hx, hzero,
       mul_zero, mul_zero]
 
 end WholeSpaceBarrierData

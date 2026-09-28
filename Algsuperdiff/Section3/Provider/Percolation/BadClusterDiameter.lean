@@ -465,7 +465,7 @@ theorem measureReal_maxBadClusterDiam_le_exp_of_gates (M : ABKModel d) {m : ℤ}
         by_contra hcon
         have hz : badClusterDiam M m h omega u = 0 := by
           unfold badClusterDiam closedLatDiam
-          rw [if_neg hcon]
+          rw [ite_eq_right hcon]
         rw [hz, Nat.cast_zero] at hu
         linarith only [hu, hthree]
       have hdiam : badClusterDiam M m h omega u = latDiam (badCluster₂ M m h omega u) + 1 :=
@@ -557,7 +557,7 @@ theorem measureReal_maxBadClusterDiam_le_exp_of_gates (M : ABKModel d) {m : ℤ}
         by_contra hcon
         have hz : badClusterDiam M m h omega u = 0 := by
           unfold badClusterDiam closedLatDiam
-          rw [if_neg hcon]
+          rw [ite_eq_right hcon]
         rw [hz, Nat.cast_zero] at hu
         linarith only [hu, hone]
       have humem : u ∈ badSiteFinset M m h omega := cluster₂_nonempty_iff.mp hne

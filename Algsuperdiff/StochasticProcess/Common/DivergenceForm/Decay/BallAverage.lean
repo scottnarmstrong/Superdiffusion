@@ -152,7 +152,7 @@ theorem abs_center_le_of_holder [NeZero d]
     rw [hmudef, Measure.restrict_apply_univ]
   have hwInt : Integrable w mu := hw.integrable (by norm_num)
   have hw2Int : Integrable (fun y => w y ^ 2) mu :=
-    (memLp_two_iff_integrable_sq hw.1).1 hw
+    (memLp_two_iff_integrable_sq hw.aestronglyMeasurable).1 hw
   have hmem : ∀ᵐ y ∂mu, y ∈ B :=
     (ae_restrict_iff' hBmeas).2 (Filter.Eventually.of_forall fun _ hy => hy)
   have hstep1 : ∀ᵐ y ∂mu, |v x₀| ≤ |w y| + K * rho ^ alpha := by

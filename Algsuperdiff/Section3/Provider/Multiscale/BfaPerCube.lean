@@ -246,8 +246,8 @@ theorem slstarCollapseTerm_nonneg (M : ABKModel d) (m : ℤ) (E b gam : ℝ)
   rw [slstarCollapseTerm]
   refine mul_nonneg (Real.rpow_nonneg (by norm_num) _) ?_
   by_cases h : (81 : ℝ)⁻¹ < gam * (hsep M m E b omega : ℝ)
-  · rw [if_pos h]; norm_num
-  · rw [if_neg h]
+  · rw [ite_eq_left h]; norm_num
+  · rw [ite_eq_right h]
 
 theorem slstarPowerTerm_nonneg (M : ABKModel d) (m : ℤ) (E b gam : ℝ)
     (omega : CutoffSample d) : 0 ≤ slstarPowerTerm M m E b gam omega :=
@@ -286,9 +286,9 @@ theorem step3Payload_le_two_mul_add_bfaLane (M : ABKModel d) (m : ℤ)
     have h := three_rpow_le_two_add_indicator hx
     rw [slstarCollapseTerm]
     by_cases hcase : (81 : ℝ)⁻¹ < gam * (hsep M m E b omega : ℝ)
-    · rw [if_pos hcase] at h ⊢
+    · rw [ite_eq_left hcase] at h ⊢
       linarith
-    · rw [if_neg hcase] at h ⊢
+    · rw [ite_eq_right hcase] at h ⊢
       linarith
   have hprod : (3 : ℝ) ^ (gam * (hsep M m E b omega : ℝ)) *
       (3 : ℝ) ^ (2 * b * (hsep M m E b omega : ℝ))

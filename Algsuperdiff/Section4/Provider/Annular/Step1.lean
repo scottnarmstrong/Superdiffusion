@@ -172,7 +172,7 @@ theorem tsum_diag_le_annDouble {m : ℤ} {h : ℤ → ℤ → ℝ}
   have hHeq : ∀ p : ℕ × ℕ,
       annFam m h ((m - (p.1 : ℤ), m - (p.1 : ℤ) - 1 - (p.2 : ℤ)) : ℤ × ℤ) = H p := by
     rintro ⟨u, i⟩
-    rw [annFam_apply, if_pos ⟨by omega, by omega⟩, hHdef]
+    rw [annFam_apply, ite_eq_left ⟨by omega, by omega⟩, hHdef]
   have hHsum : Summable H := by
     refine (hsum.comp_injective (diagIdx_injective m)).congr fun p => ?_
     exact hHeq p
@@ -241,18 +241,18 @@ theorem annularDecompPre_of {s Ccov Ccen C : ℝ} {m : ℤ} {Jgrid Jcen Jcov : �
       ≤ (if n ≤ m then w n * Jcov n else 0) + (if n ≤ m then w n * Jcen n else 0) := by
     intro n
     by_cases hn : n ≤ m
-    · rw [if_pos hn, if_pos hn, if_pos hn]
+    · rw [ite_eq_left hn, ite_eq_left hn, ite_eq_left hn]
       have hwn : (0 : ℝ) ≤ w n := Real.rpow_nonneg (by norm_num) _
       have := mul_le_mul_of_nonneg_left (hgrid n hn) hwn
       linarith only [this]
-    · rw [if_neg hn, if_neg hn, if_neg hn]
+    · rw [ite_eq_right hn, ite_eq_right hn, ite_eq_right hn]
       norm_num
   have hgrid0 : ∀ n : ℤ, 0 ≤ (if n ≤ m then w n * Jgrid n else 0) := by
     intro n
     by_cases hn : n ≤ m
-    · rw [if_pos hn]
+    · rw [ite_eq_left hn]
       exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) (hJgrid0 n)
-    · rw [if_neg hn]
+    · rw [ite_eq_right hn]
   have hsumTot : Summable (fun n : ℤ =>
       (if n ≤ m then w n * Jcov n else 0) + (if n ≤ m then w n * Jcen n else 0)) :=
     hsplit.add hsplit2

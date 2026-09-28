@@ -217,7 +217,7 @@ private theorem witnessCube_spec {m : ℤ} {hn : ℕ → ℕ} {I : Set (TriadicC
       C = badComponent I (witnessCube m hn I R C) := by
   classical
   have h := exists_cubeTouch_and_eq_badComponent_of_mem_activeComponents hI hC
-  have he : witnessCube m hn I R C = h.choose := dif_pos h
+  have he : witnessCube m hn I R C = h.choose := dite_eq_left h
   rw [he]
   exact h.choose_spec
 

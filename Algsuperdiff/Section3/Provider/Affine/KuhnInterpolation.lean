@@ -159,17 +159,17 @@ theorem vertex_kuhnEdge_sub_apply (T : KuhnCell d) (r j : Fin d) :
   rw [hkv, hkpv]
   by_cases hj : j = T.order r
   · subst hj
-    rw [Equiv.symm_apply_apply, if_pos (by omega : d ≤ r.val + (d - r.val)),
-      if_neg (by omega : ¬ d ≤ r.val + (d - r.val - 1)), if_pos rfl]
+    rw [Equiv.symm_apply_apply, ite_eq_left (by omega : d ≤ r.val + (d - r.val)),
+      ite_eq_right (by omega : ¬ d ≤ r.val + (d - r.val - 1)), ite_eq_left rfl]
     ring
   · have hne : (T.order.symm j).val ≠ r.val := by
       intro h
       exact hj (by rw [← T.order.apply_symm_apply j, Fin.ext h])
-    rw [if_neg hj]
+    rw [ite_eq_right hj]
     by_cases hge : r.val ≤ (T.order.symm j).val
-    · rw [if_pos (by omega), if_pos (by omega)]
+    · rw [ite_eq_left (by omega), ite_eq_left (by omega)]
       ring
-    · rw [if_neg (by omega), if_neg (by omega)]
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
       ring
 
 /-! ## The slope of the interpolant -/
@@ -324,9 +324,9 @@ private theorem sum_range_reflect_telescope (A : ℕ → ℝ) (n K : ℕ) (hK : 
         ∑ j ∈ Finset.range K, (A (j + 1) - A j) := by
     rw [← Finset.sum_subset (Finset.range_subset_range.mpr hK)]
     · refine Finset.sum_congr rfl fun j hj => ?_
-      rw [if_pos (Finset.mem_range.mp hj), mul_one]
+      rw [ite_eq_left (Finset.mem_range.mp hj), mul_one]
     · intro x _ hx
-      rw [if_neg (by simpa using hx), mul_zero]
+      rw [ite_eq_right (by simpa using hx), mul_zero]
   rw [hres, Finset.sum_range_sub A K]
 
 private theorem kuhn_edge_telescope (a : Fin (d + 1) → ℝ) (k : Fin (d + 1)) :
@@ -383,7 +383,7 @@ theorem kuhnInterp_vertex (T : KuhnCell d) (g : Vec d → ℝ) (k : Fin (d + 1))
     intro i
     have hlt : (T.order.symm i).val < d := (T.order.symm i).isLt
     simp only [Pi.sub_apply, KuhnCell.vertex, Fin.val_zero, add_zero]
-    rw [if_neg (by omega : ¬ d ≤ (T.order.symm i).val)]
+    rw [ite_eq_right (by omega : ¬ d ≤ (T.order.symm i).val)]
     split_ifs <;> ring
   have hsum :
       vecDot (kuhnSlope T g) (T.vertex k - T.vertex 0) =

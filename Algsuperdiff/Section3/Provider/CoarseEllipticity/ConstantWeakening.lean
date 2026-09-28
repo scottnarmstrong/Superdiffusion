@@ -94,9 +94,9 @@ theorem lowerEllipticityProfile_mono_const {C C' gamma s : ℝ}
   | finite r =>
       simp only [lowerEllipticityProfile]
       by_cases hr : r < 2
-      · rw [if_pos hr, if_pos hr]
+      · rw [ite_eq_left hr, ite_eq_left hr]
         exact mul_le_mul_of_nonneg_right hC (Real.rpow_nonneg hratio _)
-      · rw [if_neg hr, if_neg hr, mul_assoc, mul_assoc]
+      · rw [ite_eq_right hr, ite_eq_right hr, mul_assoc, mul_assoc]
         exact mul_le_mul_of_nonneg_right hC
           (mul_nonneg hs (inv_nonneg.2 hgap))
   | infinity => exact hC

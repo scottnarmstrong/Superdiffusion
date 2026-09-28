@@ -95,7 +95,7 @@ theorem exists_continuousOn_representative_potentialResolvent_continuousCoeff
       _ = G := rfl
   have hsourceMem : MemScalarLInfOn U
       (fun x ↦ F x - ((mu : ℝ) + q x) * z.toH1Function.toFun x) :=
-    Decay.memScalarLInfOn_of_ae_abs_le hscalar.1.1 hsourceBound
+    Decay.memScalarLInfOn_of_ae_abs_le hscalar.1.aestronglyMeasurable hsourceBound
   obtain ⟨v, hvcont, hvae, -⟩ :=
     continuousOn_of_weakSolution_continuousCoeff hd hU.isOpen hnu hsymm hcont
       hsourceMem hscalar

@@ -98,7 +98,7 @@ theorem norm_cubeConstantOne_le (m : ℕ) :
         (fun _ : wholeSpaceCube d m ↦ (1 : ℝ)))
       (D := 1) (fun _ ↦ by norm_num)] with x hx
     simpa only [Real.norm_eq_abs, abs_one] using hx
-  have hLp := eLpNorm_le_of_ae_bound (p := (2 : ENNReal)) hbound
+  have hLp := eLpNorm_le_of_ae_bound (p := (2 : ENNReal)) (Lp.aestronglyMeasurable F) hbound
   have hLp' : eLpNorm (fun x ↦ F x) 2
         (volumeMeasureOn (wholeSpaceCube d m)) ≤
       volume (wholeSpaceCube d m) ^ (2 : ENNReal).toReal⁻¹ * ENNReal.ofReal 1 := by

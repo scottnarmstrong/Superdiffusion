@@ -194,13 +194,13 @@ def stepFourSchauderConstU (d : ℕ) : ℝ :=
   else 0
 
 theorem stepFourSchauderConstU_pos (hd : 2 ≤ d) : 0 < stepFourSchauderConstU d := by
-  rw [stepFourSchauderConstU, dif_pos hd]
+  rw [stepFourSchauderConstU, dite_eq_left hd]
   exact (Classical.choose_spec (exists_comparator_schauder_package_uniform (d := d) hd)).1
 
 theorem stepFourSchauderConstU_nonneg (d : ℕ) : 0 ≤ stepFourSchauderConstU d := by
   by_cases hd : 2 ≤ d
   · exact (stepFourSchauderConstU_pos hd).le
-  · rw [stepFourSchauderConstU, dif_neg hd]
+  · rw [stepFourSchauderConstU, dite_eq_right hd]
 
 /-- **THE `K_abs` FRAME CONDITION, CLOSED BEFORE THE MODEL.**
 

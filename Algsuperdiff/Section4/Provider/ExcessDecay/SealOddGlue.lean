@@ -84,7 +84,7 @@ theorem not_meetsFace_flushSubCentre_of_ne {n m : ℤ} (hnm : n + 2 ≤ m)
     ¬ MeetsUpperFace (flushSubCentre z m n i σ) m n j ∧
       ¬ MeetsLowerFace (flushSubCentre z m n i σ) m n j := by
   have hcentre : flushSubCentre z m n i σ j = wellPlacedCentre z m (n + 2) j := by
-    rw [flushSubCentre_apply, if_neg hj, add_zero]
+    rw [flushSubCentre_apply, ite_eq_right hj, add_zero]
   have habs := abs_wellPlacedCentre_le (by linarith only [hnm] : n + 2 ≤ m) z j
   rw [abs_le, wellPlacedHalfGap] at habs
   have h32 : (3 : ℝ) ^ n < (3 : ℝ) ^ (n + 2) :=
@@ -195,7 +195,7 @@ theorem sealDouble_flush_subset_reflectedWindow {n m : ℤ} (hnm : n + 2 ≤ m)
   by_cases hj : j = i
   · subst hj
     have hlevel := flushSubCentre_faceLevel_signed hnm hσ hover
-    rw [if_pos rfl, if_pos rfl] at hyj
+    rw [ite_eq_left rfl, ite_eq_left rfl] at hyj
     rcases hσ with h1 | h1
     · subst h1
       have hup : MeetsUpperFace (flushSubCentre z m n j 1) m n j :=
@@ -231,9 +231,9 @@ theorem sealDouble_flush_subset_reflectedWindow {n m : ℤ} (hnm : n + 2 ≤ m)
       · rw [reflectedHi_of_not_meetsUpperFace hnup, hwhi]
         linarith only [hyj.2]
   · have hnone := not_meetsFace_flushSubCentre_of_ne hnm z i σ hj
-    rw [if_neg hj, if_neg hj] at hyj
+    rw [ite_eq_right hj, ite_eq_right hj] at hyj
     have hcentre : flushSubCentre z m n i σ j = wellPlacedCentre z m (n + 2) j := by
-      rw [flushSubCentre_apply, if_neg hj, add_zero]
+      rw [flushSubCentre_apply, ite_eq_right hj, add_zero]
     have habs := abs_wellPlacedCentre_le (by linarith only [hnm] : n + 2 ≤ m) z j
     rw [abs_le, wellPlacedHalfGap] at habs
     have h32 : (3 : ℝ) ^ n < (3 : ℝ) ^ (n + 2) :=

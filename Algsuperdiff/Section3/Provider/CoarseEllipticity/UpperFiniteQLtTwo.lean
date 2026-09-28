@@ -39,7 +39,7 @@ theorem LambdaSqCoeffField_finite_eq_rpow [NeZero d] (Q : TriadicCube d)
   classical
   by_cases ha : Book.Ch04.AELocallyUniformlyEllipticField a
   · simp only [Book.Ch04.LambdaSqCoeffField,
-      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, ha, dif_pos,
+      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, ha, dite_eq_left,
       Book.Ch02.LambdaSq_finite, Book.Ch02.LambdaSqFinite]
     rfl
   · simp [Book.Ch04.LambdaSqCoeffField,

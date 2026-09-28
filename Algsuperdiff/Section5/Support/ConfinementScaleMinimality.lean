@@ -276,7 +276,7 @@ theorem isConfinementScale_confinementScale {S : ℤ → Omega → ℝ} {L : ℝ
     (h : ∃ m : ℤ, IsConfinementScale (fun n => widenedScale (fun k => S k omega) n) L m) :
     IsConfinementScale (fun n => widenedScale (fun k => S k omega) n) L
       (confinementScale S L omega) := by
-  rw [confinementScale, dif_pos h]
+  rw [confinementScale, dite_eq_left h]
   exact h.choose_spec
 
 omit [MeasurableSpace Omega] in
@@ -291,7 +291,7 @@ omit [MeasurableSpace Omega] in
 theorem confinementScale_eq_zero {S : ℤ → Omega → ℝ} {L : ℝ} {omega : Omega}
     (h : ¬ ∃ m : ℤ, IsConfinementScale (fun n => widenedScale (fun k => S k omega) n) L m) :
     confinementScale S L omega = 0 := by
-  rw [confinementScale, dif_neg h]
+  rw [confinementScale, dite_eq_right h]
 
 /-- **The chosen confinement scale is measurable.**  Each level set is the event
 that the scale is admissible intersected with countably many complements, and

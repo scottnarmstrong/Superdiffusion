@@ -207,7 +207,7 @@ theorem cubeSetAtC0Resolvent_of_pos (y : Vec d) (n : ℤ) (g : C₀(Vec d, ℝ))
       A.partC0Resolvent (isOpenBoundedConvexDomain_cubeSetAt y n) ⟨lam, hlam⟩
         (cubeSetAtC0Datum y n g) (measurable_cubeSetAtC0Datum y n g)
         (abs_cubeSetAtC0Datum_le y n g) x := by
-  rw [cubeSetAtC0Resolvent, dif_pos hlam]
+  rw [cubeSetAtC0Resolvent, dite_eq_left hlam]
 
 theorem cubeSetAtC0Resolvent_nonneg (y : Vec d) (n : ℤ) {g : C₀(Vec d, ℝ)}
     (hg0 : ∀ z, 0 ≤ g z) (lam : ℝ) (x : Vec d) :

@@ -330,7 +330,7 @@ theorem globalCompetitorSlope_of_mem_openCarrier {m s : ℤ} (hs : s ≤ m)
   have hspec := hex.choose_spec
   show (if h : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier then
     kuhnSlope h.choose (competitorVertexData C p) else p) = _
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   by_cases hne : hex.choose = T
   · rw [hne]
   · exact absurd (Set.disjoint_left.mp
@@ -345,7 +345,7 @@ theorem globalCompetitorSlope_of_forall_notMem {m s : ℤ} (C : Set (TriadicCube
   classical
   show (if h : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier then
     kuhnSlope h.choose (competitorVertexData C p) else p) = p
-  rw [dif_neg (by rintro ⟨T, hT, hxT⟩; exact hx T hT hxT)]
+  rw [dite_eq_right (by rintro ⟨T, hT, hxT⟩; exact hx T hT hxT)]
 
 /-! ## The matching with `ℓ_p` off the window -/
 

@@ -84,7 +84,7 @@ private theorem unitOpenCubeSup_eq_eLpNorm_top
     exact hpoint_le ⟨x, hx⟩
   have hE_le : E ≤ ENNReal.ofReal S := by
     dsimp only [E]
-    rw [eLpNorm_exponent_top]
+    rw [eLpNorm_exponent_top hf.aestronglyMeasurable]
     exact eLpNormEssSup_le_of_ae_bound hae_norm_le
   have hE_ne_top : E ≠ ∞ := by
     exact ne_of_lt (hE_le.trans_lt ENNReal.ofReal_lt_top)
@@ -117,7 +117,7 @@ private theorem unitOpenCubeSup_eq_eLpNorm_top
         have hae_enorm_le :
             ∀ᵐ y ∂(volume.restrict U), ‖f y‖ₑ ≤ E := by
           dsimp only [E]
-          simpa only [eLpNorm_exponent_top] using
+          simpa only [eLpNorm_exponent_top hf.aestronglyMeasurable] using!
             enorm_ae_le_eLpNormEssSup f (volume.restrict U)
         have hae_not_mem : ∀ᵐ y ∂(volume.restrict U), y ∉ V := by
           filter_upwards [hae_enorm_le] with y hy

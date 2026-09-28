@@ -90,7 +90,7 @@ private theorem lambdaSqCoeffField_nonneg (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d) {s : ℝ}
     (hs : 0 < s) {r : Ch02.MultiscaleExponent} (hr : r.IsAdmissible) :
     0 ≤ Ch04.lambdaSqCoeffField Q s r a := by
-  simp only [Ch04.lambdaSqCoeffField, dif_pos ha]
+  simp only [Ch04.lambdaSqCoeffField, dite_eq_left ha]
   exact Ch02.lambdaSq_nonneg Q _ hs hr
 
 /-- **The ellipticity weight conversion, at an arbitrary admissible exponent.**
@@ -122,7 +122,7 @@ theorem maxDescendantSigmaStarInv_le_lambdaSqCoeffField_inv (a : RegCoeffField d
     norm_num
   refine h1.trans (h2.trans ?_)
   rw [hw]
-  simp only [Ch04.lambdaSqCoeffField, dif_pos ha]
+  simp only [Ch04.lambdaSqCoeffField, dite_eq_left ha]
   exact le_rfl
 
 /-! ## The defect display -/

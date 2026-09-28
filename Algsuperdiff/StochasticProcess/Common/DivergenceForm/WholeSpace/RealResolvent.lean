@@ -45,13 +45,13 @@ theorem analyticCubeResolvent_smul (mu : PositiveShift) (c : ℝ)
     A.analyticCubeResolvent mu (fun y => c * f y) (hf.const_smul c) hcf m x =
       c * A.analyticCubeResolvent mu f hf hfD m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx]
+  · rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx]
     exact (continuousCoeffBoundedResolvent_smul A.a
       (isOpenBoundedConvexDomain_wholeSpaceCube d m) A.hnu
       A.hnu (A.cubeEllipticity m) A.hsymm
       (A.skewContinuousOnCube m) A.hd mu c
       (hf.comp measurable_subtype_coe) (fun y => hfD y) (fun y => hcf y) hx).symm
-  · rw [analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx,
+  · rw [analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx,
       mul_zero]
 
 /-- A local cube resolvent depends only on the datum restricted to that
@@ -63,7 +63,7 @@ theorem analyticCubeResolvent_eq_of_eqOn (mu : PositiveShift)
     A.analyticCubeResolvent mu f hf hfD m x =
       A.analyticCubeResolvent mu g hg hgE m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx]
+  · rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx]
     let hU := isOpenBoundedConvexDomain_wholeSpaceCube d m
     have hdatum : boundedMeasurableToScalarL2 hU
         (hf.comp measurable_subtype_coe) (fun y ↦ hfD y) =
@@ -87,7 +87,7 @@ theorem analyticCubeResolvent_eq_of_eqOn (mu : PositiveShift)
           exact continuousCoeffBoundedResolvent_ae A.a hU A.hnu A.hnu
             (A.cubeEllipticity m) A.hsymm (A.skewContinuousOnCube m) A.hd mu
             (hf.comp measurable_subtype_coe) (fun y ↦ hfD y)) hx
-  · rw [analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx]
+  · rw [analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx]
 
 private theorem analyticCubeResolvent_bound_irrel (mu : PositiveShift)
     {f : Vec d → ℝ} (hf : Measurable f) {D E : ℝ}

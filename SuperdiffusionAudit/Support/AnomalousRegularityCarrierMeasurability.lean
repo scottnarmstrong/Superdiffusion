@@ -39,12 +39,12 @@ theorem measurable_into_sup {α β : Type*} {dom : MeasurableSpace α}
 
 theorem measurable_matrix_of_entries {α : Type*} [MeasurableSpace α]
     {h : α → Mat d} (H : ∀ i j, Measurable (fun a => h a i j)) : Measurable h :=
-  measurable_pi_lambda h (fun i => measurable_pi_lambda _ (fun j => H i j))
+  Measurable.of_eval (fun i => Measurable.of_eval (fun j => H i j))
 theorem measurable_toFun_of_entries {α : Type*} [MeasurableSpace α]
     {F : α → RegCoeffField d}
     (H : ∀ (y : Vec d) (i j : Fin d), Measurable (fun a => F a y i j)) :
     @Measurable α (Vec d → Mat d) _ MeasurableSpace.pi (fun a => (F a).toFun) :=
-  measurable_pi_lambda _ (fun y => measurable_matrix_of_entries (fun i j => H y i j))
+  Measurable.of_eval (fun y => measurable_matrix_of_entries (fun i j => H y i j))
 
 theorem measurable_into_pointwiseSigmaR {α : Type*} [MeasurableSpace α]
     {F : α → RegCoeffField d}

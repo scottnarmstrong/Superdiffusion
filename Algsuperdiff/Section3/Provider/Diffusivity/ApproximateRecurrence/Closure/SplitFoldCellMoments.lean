@@ -129,9 +129,7 @@ private theorem cellWindow_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
           (mu.restrict S) := by rw [← hsplit]
     _ ≤ eLpNorm (G : alpha → E) 2 (mu.restrict S) +
           eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) :=
-        eLpNorm_add_le (Lp.aestronglyMeasurable G).restrict
-          ((Lp.aestronglyMeasurable F).sub (Lp.aestronglyMeasurable G)).restrict
-          (by norm_num)
+        eLpNorm_add_le (by norm_num)
 
 /-- **The window `L^2` functional is `1`-Lipschitz on `L^2`.**  Restriction only
 decreases the seminorm, so the ambient `L^2` distance controls the window one. -/
@@ -409,7 +407,7 @@ theorem volumeAverage_vecNormSq_streamForcing_le [NeZero d] {l : ℤ}
     exact hb.symm
   have hexp : cubeEuclideanLpNorm Q 2 sf ≤ cubeEuclideanLpNorm Q 8 sf :=
     ENNReal.toReal_mono hnorm8.eLpNorm_ne_top
-      (eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) hnorm8.aestronglyMeasurable)
+      (eLpNorm_le_eLpNorm_of_exponent_le (by norm_num))
   have hforce : cubeEuclideanLpNorm Q 8 sf ≤
       sinv * Provider.Stream.streamIncrementLpNorm 8 l n m omega :=
     cubeEuclideanLpNorm_streamForcing_le hsinv l n m omega he'

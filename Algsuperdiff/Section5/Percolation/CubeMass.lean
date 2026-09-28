@@ -129,11 +129,11 @@ theorem coe_inflatedCubeCount_eq {Ω : Type*} {d : ℕ}
       · have hvf : v ∉ s.filter (fun u => ω ∈ inflatedBadEvent B L u) := by
           intro hvf
           exact hv (Finset.mem_of_mem_filter v hvf)
-        rw [Finset.filter_insert, if_pos hω, Finset.card_insert_of_notMem hvf,
+        rw [Finset.filter_insert, ite_eq_left hω, Finset.card_insert_of_notMem hvf,
           Nat.cast_add, Nat.cast_one, ih, Finset.sum_insert hv,
           Set.indicator_of_mem hω]
         ac_rfl
-      · rw [Finset.filter_insert, if_neg hω, ih, Finset.sum_insert hv,
+      · rw [Finset.filter_insert, ite_eq_right hω, ih, Finset.sum_insert hv,
           Set.indicator_of_notMem hω, zero_add]
 
 /-- The centered indicator of one inflated cube event. -/

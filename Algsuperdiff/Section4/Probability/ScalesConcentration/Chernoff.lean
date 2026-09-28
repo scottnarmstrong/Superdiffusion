@@ -239,7 +239,7 @@ theorem full_mgf_bound
   have hmono : Monotone
       (fun (N : ℕ) ω => ∏ j ∈ Finset.Icc (-(N : ℤ)) (N : ℤ), er ^ (Zcount X s lam m j ω)) := by
     intro N₁ N₂ hN ω
-    refine Finset.prod_le_prod_of_subset_of_one_le' ?_ (fun j _ _ => one_le_pow_of_one_le' her1 _)
+    refine Finset.prod_le_prod_of_subset_of_one_le ?_ (fun j _ _ => one_le_pow_of_one_le' her1 _)
     intro x hx; rw [Finset.mem_Icc] at hx ⊢; omega
   -- per-window bound  ∫⁻ ∏ e_r^{Z_j} ≤ ofReal(exp((1/r) ∑ c_j))
   have hFN : ∀ N : ℕ, ∫⁻ ω, ∏ j ∈ Finset.Icc (-(N : ℤ)) (N : ℤ),
@@ -289,7 +289,7 @@ theorem full_mgf_bound
       calc ∏ j ∈ W.filter (fun j => g j = b),
               ∫⁻ ω, B ^ (Zcount X s lam m j ω) ∂P
           ≤ ∏ j ∈ W.filter (fun j => g j = b), ENNReal.ofReal (1 + hcoef j) := by
-            refine Finset.prod_le_prod' (fun j _ => ?_)
+            refine Finset.prod_le_prod (fun j _ => ?_)
             rw [hBdef, hcoefdef]
             exact Zj_mgf (P := P) (X := X) hs hs1 hp hsp hlam0 hXmeas hmomL m j
               (dcol m j) (fun k hk => dcol_le hk)
@@ -306,7 +306,7 @@ theorem full_mgf_bound
           field_simp
       _ ≤ ∏ b ∈ Finset.range r,
             (ENNReal.ofReal (Real.exp (∑ j ∈ W.filter (fun j => g j = b), hcoef j))) ^ ((1 : ℝ) / r) := by
-          refine Finset.prod_le_prod' (fun b _ => ?_)
+          refine Finset.prod_le_prod (fun b _ => ?_)
           exact ENNReal.rpow_le_rpow (hGbBound b) (by positivity)
       _ = ∏ b ∈ Finset.range r,
             ENNReal.ofReal (Real.exp ((1 / (r : ℝ)) * ∑ j ∈ W.filter (fun j => g j = b), hcoef j)) := by

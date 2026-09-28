@@ -82,9 +82,9 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
   set μ : Measure (Vec d) := volume.restrict U with hμ
   have hfh_int : ∀ n, Integrable (fun x => f n x * h x) μ := by
     intro n
-    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.mul' (hf n)))
+    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.fun_mul (hf n)))
   have hgh_int : Integrable (fun x => g x * h x) μ := by
-    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.mul' hg))
+    simpa [μ, mul_comm] using (memLp_one_iff_integrable.mp (hh.fun_mul hg))
   rw [← tendsto_sub_nhds_zero_iff]
   have hdiff_eq : ∀ n,
       (∫ x, f n x * h x ∂μ) - (∫ x, g x * h x ∂μ) =
@@ -98,7 +98,7 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
       eLpNorm h p.conjugate.exponent μ with hB
   have hBtend : Tendsto (fun n => (B n).toReal) atTop (nhds 0) := by
     have hprod : Tendsto B atTop (nhds (0 * eLpNorm h p.conjugate.exponent μ)) := by
-      refine ENNReal.Tendsto.mul (by simpa [μ] using htend) (Or.inr hh.2.ne)
+      refine ENNReal.Tendsto.mul (by simpa [μ] using htend) (Or.inr hh.eLpNorm_lt_top.ne)
         tendsto_const_nhds (Or.inr (by simp))
     rw [zero_mul] at hprod
     have hreal := (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ⊤)).comp hprod
@@ -112,17 +112,20 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
     have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
       (p := p.exponent) (q := p.conjugate.exponent) (r := 1)
-      ((hf n).sub hg).1 hh.1 (fun x y => x * y) 1 hbound
+      (fun x y => x * y) 1 continuous_mul ((hf n).sub hg).aestronglyMeasurable
+      hh.aestronglyMeasurable hbound
     simpa [B] using! hh'
   calc ‖∫ x, (f n x - g x) * h x ∂μ‖
       ≤ (∫⁻ x, ENNReal.ofReal ‖(f n x - g x) * h x‖ ∂μ).toReal :=
         norm_integral_le_lintegral_norm _
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm]
+        have hm : AEStronglyMeasurable (fun x => (f n x - g x) * h x) μ :=
+          ((hf n).sub hg).aestronglyMeasurable.mul hh.aestronglyMeasurable
+        rw [eLpNorm_one_eq_lintegral_enorm hm]
         simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
         refine ENNReal.toReal_mono ?_ hHolder
-        exact ENNReal.mul_ne_top ((hf n).sub hg).2.ne hh.2.ne
+        exact ENNReal.mul_ne_top ((hf n).sub hg).eLpNorm_lt_top.ne hh.eLpNorm_lt_top.ne
 
 /-- **Graph closure, one coordinate.**  Re-derivation of CoarseGraining's
 `HasWeakPartialDerivOn.of_tendsto_eLpNorm_finiteLp` (no olean upstream). -/

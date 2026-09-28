@@ -90,11 +90,11 @@ theorem exists_closedCube_representative_continuousCoeff [NeZero d] (hd : 2 ≤ 
   have hVfullQ : ∀ x ∈ axisCube z L, Vfull x = Vint x := by
     intro x hx
     rw [hVfull]
-    simp only [hx, if_true]
+    simp only [hx, ite_true]
   have hVfullZero : ∀ x : Vec d, x ∉ axisCube z L → Vfull x = 0 := by
     intro x hx
     rw [hVfull]
-    simp only [hx, if_false]
+    simp only [hx, ite_false]
   -- the local representatives compute `Vfull` on the closed cube
   have hEqLocal : ∀ x : Vec d, MemAxisCubeClosure z L x → ∀ rho : ℝ, 0 < rho →
       ∀ V : Vec d → ℝ, ContinuousOn V (euclideanBall x rho) →

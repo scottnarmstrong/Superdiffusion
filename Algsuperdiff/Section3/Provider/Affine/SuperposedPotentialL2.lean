@@ -226,10 +226,10 @@ private theorem tsum_geometric_indicator_ge {r : ℝ}
   have hz : (∑ k ∈ Finset.range N, if N ≤ k then r ^ k else 0) = 0 := by
     apply Finset.sum_eq_zero
     intro k hk
-    rw [if_neg]
+    rw [ite_eq_right]
     exact Nat.not_le_of_lt (Finset.mem_range.mp hk)
   rw [← hs.sum_add_tsum_nat_add N, hz, zero_add]
-  simp only [Nat.le_add_left, if_true, pow_add]
+  simp only [Nat.le_add_left, ite_true, pow_add]
   rw [tsum_mul_right, tsum_geometric_of_lt_one hr0 hr1]
   ring_nf
 

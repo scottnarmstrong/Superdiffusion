@@ -97,7 +97,7 @@ correspondence is in [`CORRESPONDENCE.md`](CORRESPONDENCE.md).
   checks that the restatement is proved from the library through an
   independent implementation of the Lean kernel. See
   [`SuperdiffusionAudit/README.md`](SuperdiffusionAudit/README.md).
-- **Pinned toolchain.** Lean `v4.33.0`, mathlib `v4.33.0`, and the
+- **Pinned toolchain.** Lean `v4.35.0-rc2`, mathlib `v4.35.0-rc2`, and the
   `CoarseGraining` and `MarkovProcess` libraries at fixed revisions, recorded
   in [`lake-manifest.json`](lake-manifest.json).
 

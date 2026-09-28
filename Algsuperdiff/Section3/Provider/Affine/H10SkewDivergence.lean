@@ -272,7 +272,7 @@ private instance : ENNReal.HolderTriple 2 2 1 :=
 private theorem integrable_mul_memScalarL2 {U : Set (Vec d)}
     {f g : Vec d → ℝ} (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
     Integrable (fun x => f x * g x) (volumeMeasureOn U) :=
-  memLp_one_iff_integrable.mp (hg.mul' hf)
+  memLp_one_iff_integrable.mp (hf.fun_mul hg)
 
 private theorem integral_skewGradientField_pairing_eq_zero {U : Set (Vec d)}
     (u : H10Function U) (φ : H1Function U) (a b : Fin d) :

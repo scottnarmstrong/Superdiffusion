@@ -86,11 +86,11 @@ theorem weightedEnergy_localized_le {a : CoeffField d} {g zeta : Vec d → ℝ}
     simpa only [MemVectorL2, volumeMeasureOn, qf, Pi.smul_apply, smul_eq_mul,
       mul_comm] using!
       (MemLp.of_eval fun i : Fin d =>
-        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
+        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).fun_mul hphiTop)
   have hudz : MemVectorL2 U (fun x => u.toFun x • dz x) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul,
       mul_comm] using!
-      (MemLp.of_eval fun i : Fin d => u.memL2.mul' (hdzTop i))
+      (MemLp.of_eval fun i : Fin d => u.memL2.fun_mul (hdzTop i))
   have hr : MemVectorL2 U rf := by
     have hbase : MemVectorL2 U (fun x => w.toH1Function.grad x - qf x) :=
       w.toH1Function.grad_memVectorL2.sub hq

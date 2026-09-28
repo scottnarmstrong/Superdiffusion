@@ -113,7 +113,8 @@ theorem ofReal_sqrtNu_mul_gradAverage (M : ABKModel d) {m : ℤ}
           (volumeAverage (openCubeSet (originCube d m))
             (fun y => vecNormSq (u.grad y)))) := by
     rw [ENNReal.ofReal_rpow_of_nonneg havg (by norm_num), ← Real.sqrt_eq_rpow]
-  rw [eLpNorm_two_sqrt_vecNormSq, normalizedVolumeMeasureOn_openCubeSet,
+  rw [eLpNorm_two_sqrt_vecNormSq _ _ (aestronglyMeasurable_sqrt_vecNormSq_grad u subset_rfl),
+    normalizedVolumeMeasureOn_openCubeSet,
     volumeAverage_eq_toReal_lintegral (originCube d m) (fun x => vecNormSq_nonneg _)
       (integrableOn_vecNormSq_grad_originCube u),
     hpow, ← ENNReal.ofReal_mul (Real.sqrt_nonneg _)]

@@ -130,11 +130,20 @@ theorem cubeEuclideanLpNorm_add_le (Q : TriadicCube d) {p : ℝ≥0∞} (hp : 1 
     (hg : MemLp (fun x => Book.Ch02.vecNorm (g x)) p (normalizedCubeMeasure Q)) :
     cubeEuclideanLpNorm Q p (fun x => f x + g x) ≤
       cubeEuclideanLpNorm Q p f + cubeEuclideanLpNorm Q p g := by
+  by_cases hm : AEStronglyMeasurable (fun x => Book.Ch02.vecNorm (f x + g x))
+      (normalizedCubeMeasure Q)
+  swap
+  · have h0 : cubeEuclideanLpNorm Q p (fun x => f x + g x) = 0 := by
+      show (eLpNorm (fun x => Book.Ch02.vecNorm (f x + g x)) p
+        (normalizedCubeMeasure Q)).toReal = 0
+      rw [eLpNorm_of_not_aestronglyMeasurable hm, ENNReal.toReal_top]
+    rw [h0]
+    exact add_nonneg (cubeEuclideanLpNorm_nonneg Q p f) (cubeEuclideanLpNorm_nonneg Q p g)
   have hmono : eLpNorm (fun x => Book.Ch02.vecNorm (f x + g x)) p
         (normalizedCubeMeasure Q) ≤
       eLpNorm (fun x => Book.Ch02.vecNorm (f x) + Book.Ch02.vecNorm (g x)) p
         (normalizedCubeMeasure Q) := by
-    refine eLpNorm_mono fun x => ?_
+    refine eLpNorm_mono hm fun x => ?_
     have hle := vecNorm_add_le (f x) (g x)
     have hnn : (0 : ℝ) ≤ Book.Ch02.vecNorm (f x) + Book.Ch02.vecNorm (g x) := by
       have := Book.Ch02.vecNorm_nonneg (f x)
@@ -146,7 +155,7 @@ theorem cubeEuclideanLpNorm_add_le (Q : TriadicCube d) {p : ℝ≥0∞} (hp : 1 
         (normalizedCubeMeasure Q) ≤
       eLpNorm (fun x => Book.Ch02.vecNorm (f x)) p (normalizedCubeMeasure Q) +
         eLpNorm (fun x => Book.Ch02.vecNorm (g x)) p (normalizedCubeMeasure Q) :=
-    eLpNorm_add_le hf.aestronglyMeasurable hg.aestronglyMeasurable hp
+    eLpNorm_add_le hp
   have hsum : eLpNorm (fun x => Book.Ch02.vecNorm (f x + g x)) p
         (normalizedCubeMeasure Q) ≤
       eLpNorm (fun x => Book.Ch02.vecNorm (f x)) p (normalizedCubeMeasure Q) +
@@ -154,9 +163,9 @@ theorem cubeEuclideanLpNorm_add_le (Q : TriadicCube d) {p : ℝ≥0∞} (hp : 1 
     hmono.trans htri
   have hfin : eLpNorm (fun x => Book.Ch02.vecNorm (f x)) p (normalizedCubeMeasure Q) +
       eLpNorm (fun x => Book.Ch02.vecNorm (g x)) p (normalizedCubeMeasure Q) ≠ ⊤ :=
-    ENNReal.add_ne_top.2 ⟨hf.2.ne, hg.2.ne⟩
+    ENNReal.add_ne_top.2 ⟨hf.eLpNorm_ne_top, hg.eLpNorm_ne_top⟩
   have htoReal := ENNReal.toReal_mono hfin hsum
-  rw [ENNReal.toReal_add hf.2.ne hg.2.ne] at htoReal
+  rw [ENNReal.toReal_add hf.eLpNorm_ne_top hg.eLpNorm_ne_top] at htoReal
   exact htoReal
 
 /-! ## Restriction of `MemLp` to a descendant cube -/

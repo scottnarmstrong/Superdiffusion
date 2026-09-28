@@ -104,16 +104,16 @@ theorem summable_guarded_geom {s B : ℝ} {m : ℤ} {F : ℤ → ℝ} (hs0 : 0 <
     (hF0 : ∀ n : ℤ, 0 ≤ F n) (hFB : ∀ n : ℤ, n ≤ m → F n ≤ B) :
     Summable (fun n : ℤ =>
       if n ≤ m then (3 : ℝ) ^ (-(2 * s * ((m - n : ℤ) : ℝ))) * F n else 0) := by
-  refine (summable_guarded_iff (m := m) (fun n hn => if_neg hn)).mp ?_
+  refine (summable_guarded_iff (m := m) (fun n hn => ite_eq_right hn)).mp ?_
   have hr0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(2 * s)) := Real.rpow_nonneg (by norm_num) _
   have hr1 : (3 : ℝ) ^ (-(2 * s)) < 1 :=
     Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hs0])
   have hgeo : Summable (fun u : ℕ => ((3 : ℝ) ^ (-(2 * s))) ^ u * B) :=
     (summable_geometric_of_lt_one hr0 hr1).mul_right B
   refine Summable.of_nonneg_of_le (fun u => ?_) (fun u => ?_) hgeo
-  · rw [if_pos (by omega : m - (u : ℤ) ≤ m)]
+  · rw [ite_eq_left (by omega : m - (u : ℤ) ≤ m)]
     exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) (hF0 _)
-  · rw [if_pos (by omega : m - (u : ℤ) ≤ m)]
+  · rw [ite_eq_left (by omega : m - (u : ℤ) ≤ m)]
     have hcast : ((m - (m - (u : ℤ)) : ℤ) : ℝ) = (u : ℝ) := by
       push_cast
       ring
@@ -131,21 +131,21 @@ theorem tsum_annFam_row (m : ℤ) (h : ℤ → ℤ → ℝ) (n : ℤ) :
       = if n ≤ m then ∑ j ∈ Finset.Icc (n + 1) m, h j n else 0 := by
   classical
   by_cases hn : n ≤ m
-  · rw [if_pos hn]
+  · rw [ite_eq_left hn]
     have hz : ∀ j ∉ Finset.Icc (n + 1) m, annFam m h (j, n) = 0 := by
       intro j hj
       rw [Finset.mem_Icc] at hj
       rw [annFam_apply]
-      exact if_neg fun hc => hj ⟨by omega, hc.1⟩
+      exact ite_eq_right fun hc => hj ⟨by omega, hc.1⟩
     rw [tsum_eq_sum hz]
     refine Finset.sum_congr rfl fun j hj => ?_
     rw [Finset.mem_Icc] at hj
-    rw [annFam_apply, if_pos ⟨hj.2, by omega⟩]
-  · rw [if_neg hn]
+    rw [annFam_apply, ite_eq_left ⟨hj.2, by omega⟩]
+  · rw [ite_eq_right hn]
     have hz : ∀ j : ℤ, annFam m h (j, n) = 0 := by
       intro j
       rw [annFam_apply]
-      exact if_neg fun hc => hn (by omega)
+      exact ite_eq_right fun hc => hn (by omega)
     calc ∑' j : ℤ, annFam m h (j, n) = ∑' _ : ℤ, (0 : ℝ) := tsum_congr hz
       _ = 0 := tsum_zero
 
@@ -228,11 +228,11 @@ theorem tsum_centre_le {s rho B : ℝ} {m : ℤ} {Jcen A : ℤ → ℝ}
   set t : ℤ → ℝ := fun n =>
     if n ≤ m then (3 : ℝ) ^ (-(2 * s * ((m - n : ℤ) : ℝ))) * A n else 0
   have hgpos : ∀ n : ℤ, n ≤ m →
-      g n = (3 : ℝ) ^ (-(2 * s * ((m - n : ℤ) : ℝ))) * Jcen n := fun n hn => if_pos hn
-  have hgneg : ∀ n : ℤ, ¬ n ≤ m → g n = 0 := fun n hn => if_neg hn
+      g n = (3 : ℝ) ^ (-(2 * s * ((m - n : ℤ) : ℝ))) * Jcen n := fun n hn => ite_eq_left hn
+  have hgneg : ∀ n : ℤ, ¬ n ≤ m → g n = 0 := fun n hn => ite_eq_right hn
   have htpos : ∀ n : ℤ, n ≤ m →
-      t n = (3 : ℝ) ^ (-(2 * s * ((m - n : ℤ) : ℝ))) * A n := fun n hn => if_pos hn
-  have htneg : ∀ n : ℤ, ¬ n ≤ m → t n = 0 := fun n hn => if_neg hn
+      t n = (3 : ℝ) ^ (-(2 * s * ((m - n : ℤ) : ℝ))) * A n := fun n hn => ite_eq_left hn
+  have htneg : ∀ n : ℤ, ¬ n ≤ m → t n = 0 := fun n hn => ite_eq_right hn
   have hg0 : ∀ n : ℤ, 0 ≤ g n := by
     intro n
     by_cases hn : n ≤ m

@@ -185,7 +185,7 @@ theorem tendsto_analyticPenalizedCubeResolvent_comp {V : Set (Vec d)}
       hwkae
       (A.continuousOn_analyticPenalizedCubeResolvent hV n nu hg hgBound outer)
       hwae hx
-  · simp only [analyticPenalizedCubeResolvent, dif_neg hx]
+  · simp only [analyticPenalizedCubeResolvent, dite_eq_right hx]
     exact tendsto_const_nhds
 
 /-- The diagonal of the two cubic exhaustions computes the composition of

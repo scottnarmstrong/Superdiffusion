@@ -380,8 +380,8 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
         funext x
         show u.toFun x - v.toFun x = u.toFun x - (w 0).toFun x + ((w 0).toFun x - v.toFun x)
         ring
-      rw [eLpNorm_exponent_top, eLpNorm_exponent_top, eLpNorm_exponent_top, hfun]
-      exact eLpNormEssSup_add_le
+      rw [hfun]
+      exact eLpNorm_add_le (show (1 : ℝ≥0∞) ≤ ⊤ by simp)
     have harith1 : (Annealed.sigmaBar M n : ℝ) * Real.rpow 3 (-(n : ℝ)) *
         (Real.rpow 3 ((n : ℝ) / 2) * (K0 * ep / (1 - ep))) +
           ep * Real.rpow 3 ((n : ℝ) / 2) * Kg ≤ C * ep * Real.rpow 3 ((n : ℝ) / 2) * Kg := by

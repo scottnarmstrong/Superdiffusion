@@ -108,7 +108,7 @@ The analogue of `zeroShellValuePathLaw` with the single fresh shell replaced by
 the block `(n, m]`. -/
 def shellSumValuePathLaw (P : ProbabilityMeasure (ℤ → ShellField d)) (n m : ℤ) :
     ProbabilityMeasure C(Vec d, Mat d) :=
-  P.map (measurable_shellSumValuePath (d := d) n m).aemeasurable
+  P.map (shellSumValuePath (d := d) n m)
 
 theorem shellSumValuePathLaw_toMeasure
     (P : ProbabilityMeasure (ℤ → ShellField d)) (n m : ℤ) :

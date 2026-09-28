@@ -205,15 +205,15 @@ private theorem tsum_ite_weight_le {alpha : ℝ} (halpha : 0 < alpha) (q : ℕ) 
         = ENNReal.ofReal (if q < p + 2 then stepThreeWeight alpha p else 0) := by
     intro p
     by_cases hp : q < p + 2
-    · rw [if_pos hp, if_pos hp]
-    · rw [if_neg hp, if_neg hp, ENNReal.ofReal_zero]
+    · rw [ite_eq_left hp, ite_eq_left hp]
+    · rw [ite_eq_right hp, ite_eq_right hp, ENNReal.ofReal_zero]
   rw [Finset.sum_congr rfl fun p _ => hpush p,
     ← ENNReal.ofReal_sum_of_nonneg
       (fun p _ => by
         by_cases hp : q < p + 2
-        · rw [if_pos hp]
+        · rw [ite_eq_left hp]
           exact stepThreeWeight_nonneg alpha p
-        · rw [if_neg hp])]
+        · rw [ite_eq_right hp])]
   exact ENNReal.ofReal_le_ofReal (sum_range_ite_weight_le halpha N q)
 
 /-! ## 3. The depth swap -/
@@ -243,13 +243,13 @@ theorem hessInnerE_le_swap (M : ABKModel d) {alpha : ℝ} (halpha : 0 < alpha) (
               ENNReal.ofReal (hessDown M k q omega) else 0) = 0 := by
       intro q hq
       simp only [Finset.mem_range, not_lt] at hq
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     rw [tsum_eq_sum hzero, hessBlock, ENNReal.ofReal_mul (stepThreeWeight_nonneg alpha p),
       ENNReal.ofReal_sum_of_nonneg (fun q _ => hessDown_nonneg M k q omega),
       Finset.mul_sum]
     refine Finset.sum_congr rfl fun q hq => ?_
     simp only [Finset.mem_range] at hq
-    rw [if_pos hq]
+    rw [ite_eq_left hq]
   -- Step B: swap the two series and bound the total coefficient of each layer
   rw [hA, ENNReal.tsum_comm, wsumE, ← ENNReal.tsum_mul_left]
   refine ENNReal.tsum_le_tsum fun q => ?_
@@ -262,8 +262,8 @@ theorem hessInnerE_le_swap (M : ABKModel d) {alpha : ℝ} (halpha : 0 < alpha) (
     rw [← ENNReal.tsum_mul_right]
     refine tsum_congr fun p => ?_
     by_cases hp : q < p + 2
-    · rw [if_pos hp, if_pos hp]
-    · rw [if_neg hp, if_neg hp, zero_mul]
+    · rw [ite_eq_left hp, ite_eq_left hp]
+    · rw [ite_eq_right hp, ite_eq_right hp, zero_mul]
   rw [hpull]
   have hstep : (∑' p : ℕ, (if q < p + 2 then ENNReal.ofReal (stepThreeWeight alpha p) else 0)) *
         ENNReal.ofReal (hessDown M k q omega)

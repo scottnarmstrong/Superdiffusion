@@ -28,8 +28,12 @@ theorem cubeLpNorm_infty_le_of_ae_bound {E : Type*} [NormedAddCommGroup E]
     (Q : TriadicCube d) (f : Vec d → E) {M : ℝ} (hM : 0 ≤ M)
     (h : ∀ᵐ x ∂ normalizedCubeMeasure Q, ‖f x‖ ≤ M) :
     cubeLpNorm Q ∞ f ≤ M := by
+  by_cases hf : AEStronglyMeasurable f (normalizedCubeMeasure Q)
+  swap
+  · rw [cubeLpNorm, eLpNorm_of_not_aestronglyMeasurable hf, ENNReal.toReal_top]
+    exact hM
   have hle : eLpNorm f ∞ (normalizedCubeMeasure Q) ≤ ENNReal.ofReal M := by
-    rw [MeasureTheory.eLpNorm_exponent_top]
+    rw [MeasureTheory.eLpNorm_exponent_top hf]
     exact MeasureTheory.eLpNormEssSup_le_of_ae_bound h
   have := ENNReal.toReal_mono ENNReal.ofReal_ne_top hle
   simpa [cubeLpNorm, ENNReal.toReal_ofReal hM] using this

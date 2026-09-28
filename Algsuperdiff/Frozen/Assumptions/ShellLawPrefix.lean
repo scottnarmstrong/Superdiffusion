@@ -24,6 +24,6 @@ structure Algsuperdiff.Frozen.Assumptions.ShellLawPrefix
   marginal_scaling : ∀ k : ℤ,
     Algsuperdiff.Frozen.Assumptions.ShellField.shellMarginalLaw P k =
       (Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellLaw P).map
-        (Algsuperdiff.Frozen.Assumptions.ShellField.measurable_triadicScale
-          gamma k).aemeasurable
+        (Algsuperdiff.Frozen.Assumptions.ShellField.triadicScale
+          gamma k)
 -- FROZEN-STATEMENT-END

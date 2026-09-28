@@ -117,8 +117,11 @@ theorem cubeLpNorm_mono_of_memLp {E F : Type*} [NormedAddCommGroup E]
     [NormedAddCommGroup F] (Q : TriadicCube d) (p : ℝ≥0∞) {f : Vec d → E}
     {g : Vec d → F} (hfg : ∀ x, ‖f x‖ ≤ ‖g x‖)
     (hg : MemLp g p (normalizedCubeMeasure Q)) :
-    cubeLpNorm Q p f ≤ cubeLpNorm Q p g :=
-  ENNReal.toReal_mono hg.2.ne (eLpNorm_mono hfg)
+    cubeLpNorm Q p f ≤ cubeLpNorm Q p g := by
+  by_cases hf : AEStronglyMeasurable f (normalizedCubeMeasure Q)
+  · exact ENNReal.toReal_mono hg.eLpNorm_lt_top.ne (eLpNorm_mono hf hfg)
+  · rw [cubeLpNorm, eLpNorm_of_not_aestronglyMeasurable hf, ENNReal.toReal_top]
+    exact ENNReal.toReal_nonneg
 
 /-- `cubeLpNorm` of a nonnegative constant multiple of a field. -/
 theorem cubeLpNorm_const_mul_of_nonneg {E : Type*} [NormedAddCommGroup E]

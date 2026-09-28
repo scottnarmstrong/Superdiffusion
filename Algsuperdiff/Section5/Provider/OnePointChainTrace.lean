@@ -202,7 +202,7 @@ theorem exists_image_enumeratedClosedCubeFamily_visitFinset {D : ℕ} (emb : C(V
       (Finset.mem_filter.mp (Finset.mem_filter.mp hjq).2).1
     obtain ⟨t, ht, htCube⟩ := hvisited (sites j) hjTrace
     refine ⟨t, ht, ?_⟩
-    rw [← hji, enumeratedClosedCubeFamily, dif_pos j.isLt]
+    rw [← hji, enumeratedClosedCubeFamily, dite_eq_left j.isLt]
     exact Set.image_mono (cubeSet_partitionCube_subset_closedPartitionCube n (sites j)) htCube
 
 /-! ## 3. The hit-then-exit estimate on the carrier -/

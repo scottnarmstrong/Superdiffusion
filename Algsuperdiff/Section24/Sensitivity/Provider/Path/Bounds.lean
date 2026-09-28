@@ -50,7 +50,7 @@ theorem ae_abs_apply_le_lInfEntryBound {U : Domain d} (h : LInfMatrixFieldOn U)
     (volumeMeasureOn (U : Set (Vec d))) with hEdef
   have hE : E ≠ ∞ := (h.2 i j).eLpNorm_ne_top
   have hae : ∀ᵐ x ∂ volumeMeasureOn (U : Set (Vec d)), ‖h.1 x i j‖ₑ ≤ E := by
-    simpa only [hEdef, eLpNorm_exponent_top] using
+    simpa only [hEdef, eLpNorm_exponent_top (h.2 i j).aestronglyMeasurable] using!
       (ae_le_eLpNormEssSup (f := fun x : Vec d => h.1 x i j)
         (μ := volumeMeasureOn (U : Set (Vec d))))
   filter_upwards [hae] with x hx

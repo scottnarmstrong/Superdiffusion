@@ -116,8 +116,7 @@ theorem memLp_two_gagliardoKernel_of_holderHalf {m : ℤ} {K s : ℝ} {f : Vec d
     (hf : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K f) :
     MemLp (Gagliardo.gagliardoKernel s 2 f) 2
       (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m))) := by
-  refine ⟨aestronglyMeasurable_gagliardoKernel_of_holderHalf
-    ((isOpen_openCubeSet _).measurableSet) hK hf, ?_⟩
+  refine (?_)
   have hbound := normalizedGagliardoESeminormOn_cube_le (E := Vec d) (m := m) (g := f)
     (K := K) (s := s) hd hs0 hs hK hf
   rw [Support.normalizedGagliardoESeminormOn_def] at hbound

@@ -62,11 +62,11 @@ theorem cutoff_energy_absorbed_plain
   have hetaZ : MemVectorL2 U (fun x ↦ eta x • u.grad x) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using!
       (MemLp.of_eval fun i : Fin d ↦
-        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hetaTop)
+        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).fun_mul hetaTop)
   have hq : MemVectorL2 U q := by
     simpa only [MemVectorL2, volumeMeasureOn, q, Pi.smul_apply, smul_eq_mul, mul_comm] using!
       (MemLp.of_eval fun i : Fin d ↦
-        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
+        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).fun_mul hphiTop)
   -- the localized product with the linear cutoff produces the `L²` control of `u • grad eta`
   have hpde : MemVectorL2 U (fun x ↦ u.toFun x • de x) := by
     have hbase : MemVectorL2 U
@@ -84,7 +84,7 @@ theorem cutoff_energy_absorbed_plain
     have hetaPde : MemVectorL2 U (fun x ↦ eta x • (u.toFun x • de x)) := by
       simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using!
         (MemLp.of_eval fun i : Fin d ↦
-          (memScalarL2_coord_of_memVectorL2 hpde i).mul' hetaTop)
+          (memScalarL2_coord_of_memVectorL2 hpde i).fun_mul hetaTop)
     have htwo : MemVectorL2 U (fun x ↦ (2 : ℝ) • (eta x • (u.toFun x • de x))) :=
       hetaPde.const_smul (2 : ℝ)
     apply htwo.ae_eq

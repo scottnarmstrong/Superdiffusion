@@ -79,9 +79,9 @@ theorem coordFaceReflection_zero_apply (i : Fin d) (y : Vec d) (l : Fin d) :
     coordFaceReflection (0 : ℝ) i y l = if l = i then -(y l) else y l := by
   rw [Homogenization.coordFaceReflection_apply]
   by_cases hli : l = i
-  · rw [if_pos hli, if_pos hli]
+  · rw [ite_eq_left hli, ite_eq_left hli]
     ring
-  · rw [if_neg hli, if_neg hli]
+  · rw [ite_eq_right hli, ite_eq_right hli]
 
 /-- The coordinate reflection is a measurable embedding: it is measurable (being
 measure preserving), injective (being an involution), and it maps measurable
@@ -160,9 +160,9 @@ theorem vecDot_coordFaceReflection_zero (i : Fin d) (g y : Vec d) :
   intro j _
   rw [coordFaceReflection_zero_apply, coordFaceReflection_zero_apply]
   by_cases hji : j = i
-  · rw [if_pos hji, if_pos hji]
+  · rw [ite_eq_left hji, ite_eq_left hji]
     ring
-  · rw [if_neg hji, if_neg hji]
+  · rw [ite_eq_right hji, ite_eq_right hji]
 
 /-- **The affine family is carried onto itself.**  Precomposing the affine
 function `(c, g)` with the coordinate negation is the affine function

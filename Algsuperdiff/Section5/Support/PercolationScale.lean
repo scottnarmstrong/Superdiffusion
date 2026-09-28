@@ -191,7 +191,7 @@ theorem percolationScaleTotal_spec (M : ABKModel d) (Creg Cinj : ℝ) (m : ℤ) 
     ∀ k : ℕ, percolationScaleTotal M Creg Cinj m ep omega ≤ k →
       omega ∉ lightQPathEvent M Creg Cinj m ep k := by
   intro k hk
-  rw [percolationScaleTotal, dif_pos h] at hk
+  rw [percolationScaleTotal, dite_eq_left h] at hk
   exact Nat.find_spec h k hk
 
 /-- **The value on the exceptional set.**  Nothing is hidden: where light paths
@@ -201,14 +201,14 @@ theorem percolationScaleTotal_eq_zero_of_not (M : ABKModel d) (Creg Cinj : ℝ) 
     (ep : ℝ) {omega : Cutoff.CutoffSample d}
     (h : ¬ ∃ N : ℕ, ∀ k : ℕ, N ≤ k → omega ∉ lightQPathEvent M Creg Cinj m ep k) :
     percolationScaleTotal M Creg Cinj m ep omega = 0 :=
-  dif_neg h
+  dite_eq_right h
 
 theorem le_percolationScaleTotal_iff (M : ABKModel d) (Creg Cinj : ℝ) (m : ℤ) (ep : ℝ)
     {omega : Cutoff.CutoffSample d}
     (h : ∃ N : ℕ, ∀ k : ℕ, N ≤ k → omega ∉ lightQPathEvent M Creg Cinj m ep k) (N : ℕ) :
     N ≤ percolationScaleTotal M Creg Cinj m ep omega ↔
       ∀ j < N, ¬ ∀ k : ℕ, j ≤ k → omega ∉ lightQPathEvent M Creg Cinj m ep k := by
-  rw [percolationScaleTotal, dif_pos h]
+  rw [percolationScaleTotal, dite_eq_left h]
   exact Nat.le_find_iff h N
 
 /-! ## 4. The percolation scale almost surely -/

@@ -54,9 +54,8 @@ theorem abs_integral_vecDot_le_sqrt_energy_mul_sqrt_energy
   have hdot : IntegrableOn (fun x => vecDot (F x) (G x)) W :=
     integrableOn_vecDot_of_memVectorL2 hF hG
   have hXY : IntegrableOn (fun x => X x * Y x) W := by
-    have hmem : MemLp (fun x => X x * Y x) 1 (volume.restrict W) := by
-      have h := hY.mul (r := 1) hX
-      simpa only [Pi.mul_apply] using! h
+    have hmem : MemLp (fun x => X x * Y x) 1 (volume.restrict W) :=
+      hX.fun_mul (r := 1) hY
     exact hmem.integrable (by norm_num)
   have habs :
       |∫ x in W, vecDot (F x) (G x) ∂volume| ≤
@@ -67,7 +66,7 @@ theorem abs_integral_vecDot_le_sqrt_energy_mul_sqrt_energy
       _ ≤ ∫ x in W, X x * Y x ∂volume := by
         apply setIntegral_mono_ae hdot.abs hXY
         filter_upwards with x
-        simpa [X, Y, ← vecNorm_eq_euclideanNorm] using
+        simpa [X, Y, ← vecNorm_eq_euclideanNorm] using!
           abs_vecDot_le_vecNorm_mul_vecNorm (F x) (G x)
   have hcs :=
     integral_mul_le_sqrt_integral_sq_mul_sqrt_integral_sq_of_ae_nonneg

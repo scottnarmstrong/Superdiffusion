@@ -150,14 +150,14 @@ theorem printedLocalEnergy_fluxCorrected (M : ABKModel d) (L m : ℤ)
         (Cutoff.coefficientCutoffCoeffOn M L omega (originCube d m)) u R := by
   unfold printedLocalEnergy
   by_cases hsub : openCubeSet R ⊆ openCubeSet (originCube d m)
-  · rw [dif_pos hsub, dif_pos hsub]
+  · rw [dite_eq_left hsub, dite_eq_left hsub]
     congr 1
     unfold localSymmetricEnergyENorm
     congr 1
     refine lintegral_congr fun x => ?_
     rw [Ch02.CoeffOn.restrictToSubcube_toCoeffField,
       Ch02.CoeffOn.restrictToSubcube_toCoeffField, symmPart_fluxCorrectedCoeffOn]
-  · rw [dif_neg hsub, dif_neg hsub]
+  · rw [dite_eq_right hsub, dite_eq_right hsub]
 
 /-! ## 4. The print-accurate `𝓔` slots -/
 

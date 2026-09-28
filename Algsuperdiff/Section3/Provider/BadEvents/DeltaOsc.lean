@@ -127,7 +127,7 @@ theorem lambda_sensitivity_const {d : ℕ} (hd : 2 ≤ d) :
               (unitCubeLambda s q a)⁻¹ := by
   have hspec := Classical.choose_spec
     (Algsuperdiff.Frozen.Section24.lambda_sensitivity (d := d) hd)
-  rw [lambdaSensitivityConst, dif_pos hd]
+  rw [lambdaSensitivityConst, dite_eq_left hd]
   exact hspec
 
 /-- The frozen response-sensitivity conclusion, read at the extracted
@@ -152,7 +152,7 @@ theorem responseJ_sensitivity_const {d : ℕ} (hd : 2 ≤ d) :
                   (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹ ^ 2) := by
   have hspec := Classical.choose_spec
     (Algsuperdiff.Frozen.Section24.responseJ_sensitivity (d := d) hd)
-  rw [responseSensitivityConst, dif_pos hd]
+  rw [responseSensitivityConst, dite_eq_left hd]
   exact hspec
 
 /-- The frozen `Lambda`-sensitivity conclusion, read at the extracted
@@ -172,7 +172,7 @@ theorem bigLambda_sensitivity_const {d : ℕ} (hd : 2 ≤ d) :
               (unitCubeLambda s (.finite 2) a)⁻¹ := by
   have hspec := Classical.choose_spec
     (Algsuperdiff.Frozen.Section24.bigLambda_sensitivity (d := d) hd)
-  rw [bigLambdaSensitivityConst, dif_pos hd]
+  rw [bigLambdaSensitivityConst, dite_eq_left hd]
   exact hspec
 
 /-- Positivity of the extracted `lambda`-sensitivity constant. -/

@@ -232,7 +232,7 @@ private theorem cutoffUpperEllipticity_eq_LambdaSq (M : ABKModel d) (m L : ℤ) 
   change Ch04.LambdaSqCoeffField (originCube d m) s q.1
       (Cutoff.coefficientCutoff M.nu L omega) = _
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega)]
   exact (Ch02.LambdaSq_eq_ofAEEq (cutoffFamily_aeeq M L omega)
     (originCube d m) s q.1).symm
 
@@ -252,7 +252,7 @@ private theorem cutoffLowerEllipticityInv_eq_lambdaSq_inv (M : ABKModel d) (m L 
   change (Ch04.lambdaSqCoeffField (originCube d m) s q.1
       (Cutoff.coefficientCutoff M.nu L omega))⁻¹ = _
   rw [Ch04.lambdaSqCoeffField]
-  simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega)]
   exact congrArg Inv.inv
     (Ch02.lambdaSq_eq_ofAEEq (cutoffFamily_aeeq M L omega)
       (originCube d m) s q.1).symm

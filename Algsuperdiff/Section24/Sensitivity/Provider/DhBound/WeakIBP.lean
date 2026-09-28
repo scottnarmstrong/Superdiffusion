@@ -75,7 +75,7 @@ theorem memScalarL2_vecDot_matWeakDiv {U : Set (Vec d)}
     MemScalarL2 U (fun x => vecDot (matWeakDiv Dh x) (g x)) := by
   rw [vecDot_matWeakDiv_eq_sum]
   exact memLp_finsetSum Finset.univ fun j _ =>
-    memLp_finsetSum Finset.univ fun i _ => (hg j).mul' (hDmem i i j)
+    memLp_finsetSum Finset.univ fun i _ => (hDmem i i j).fun_mul (r := 2) (hg j)
 
 /-- Coordinates of the skew-multiplied gradient are square integrable when the
 matrix entries are essentially bounded. -/
@@ -87,7 +87,7 @@ theorem memScalarL2_matVecMul_coord {U : Set (Vec d)}
   have hexp : (fun x => matVecMul (h x) (g x) i) =
       fun x => ∑ j, h x i j * g x j := rfl
   rw [hexp]
-  exact memLp_finsetSum Finset.univ fun j _ => (hg j).mul' (hmem i j)
+  exact memLp_finsetSum Finset.univ fun j _ => (hmem i j).fun_mul (r := 2) (hg j)
 
 /-- **Weak integration by parts at a smooth compactly supported test.**  For
 a.e. antisymmetric `h` with square-integrable weak first derivatives and every

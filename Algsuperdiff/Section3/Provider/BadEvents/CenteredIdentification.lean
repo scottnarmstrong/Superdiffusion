@@ -90,7 +90,7 @@ theorem cubeLowerEllipticityInvLiteral_eq [NeZero d] (M : ABKModel d)
   unfold cubeLowerEllipticityInvLiteral
   congr 1
   rw [Ch04.lambdaSqCoeffField]
-  simp only [dif_pos
+  simp only [dite_eq_left
     (coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
 
 /-- The literal upper ellipticity of the cutoff is the Chapter 2 quantity of the
@@ -106,7 +106,7 @@ theorem cubeUpperEllipticityLiteral_eq [NeZero d] (M : ABKModel d)
             omega)) := by
   unfold cubeUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos
+  simp only [dite_eq_left
     (coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
 
 /-! ## Step 1 of the manuscript's proof -/

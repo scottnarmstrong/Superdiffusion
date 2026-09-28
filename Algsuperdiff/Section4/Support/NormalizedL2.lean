@@ -135,7 +135,8 @@ theorem normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn {W : Set (Vec
   have hsmul : eLpNorm f 2 (normalizedVolumeMeasureOn W)
       = (volume W)⁻¹ ^ ((1 : ENNReal) / 2).toReal * eLpNorm f 2 (volume.restrict W) := by
     rw [normalizedVolumeMeasureOn_def,
-      eLpNorm_smul_measure_of_ne_top (by simp) f ((volume W)⁻¹), smul_eq_mul]
+      eLpNorm_smul_measure_of_ne_top (by simp) f ((volume W)⁻¹) hf.aestronglyMeasurable,
+      smul_eq_mul]
   have hhalf : ((1 : ENNReal) / 2).toReal = 1 / 2 := by
     rw [ENNReal.toReal_div]
     norm_num
@@ -159,13 +160,13 @@ theorem normalizedL2On_add_le {W : Set (Vec d)} {f g : Vec d → ℝ}
   have hle : eLpNorm (fun x => f x + g x) 2 (volume.restrict W)
       ≤ eLpNorm f 2 (volume.restrict W) + eLpNorm g 2 (volume.restrict W) := by
     rw [hpi]
-    exact eLpNorm_add_le hf.aestronglyMeasurable hg.aestronglyMeasurable one_le_two
+    exact eLpNorm_add_le one_le_two
   have hne : eLpNorm f 2 (volume.restrict W) + eLpNorm g 2 (volume.restrict W) ≠ ⊤ :=
-    ENNReal.add_ne_top.2 ⟨hf.2.ne, hg.2.ne⟩
+    ENNReal.add_ne_top.2 ⟨hf.eLpNorm_lt_top.ne, hg.eLpNorm_lt_top.ne⟩
   have hler : (eLpNorm (fun x => f x + g x) 2 (volume.restrict W)).toReal
       ≤ (eLpNorm f 2 (volume.restrict W)).toReal
         + (eLpNorm g 2 (volume.restrict W)).toReal := by
-    rw [← ENNReal.toReal_add hf.2.ne hg.2.ne]
+    rw [← ENNReal.toReal_add hf.eLpNorm_lt_top.ne hg.eLpNorm_lt_top.ne]
     exact ENNReal.toReal_mono hne hle
   rw [normalizedL2On_eq_toReal_eLpNorm_div hfg, normalizedL2On_eq_toReal_eLpNorm_div hf,
     normalizedL2On_eq_toReal_eLpNorm_div hg, ← add_div, div_eq_mul_inv, div_eq_mul_inv]

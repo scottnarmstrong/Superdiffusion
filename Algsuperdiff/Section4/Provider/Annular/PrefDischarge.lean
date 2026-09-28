@@ -402,9 +402,9 @@ theorem guarded_annCoverSum_eq_row (M : ABKModel d) (L m : ℤ)
   classical
   rw [tsum_annFam_row]
   by_cases hn : n ≤ m
-  · rw [if_pos hn, if_pos hn]
+  · rw [ite_eq_left hn, ite_eq_left hn]
     exact Finset.mul_sum _ _ _
-  · rw [if_neg hn, if_neg hn]
+  · rw [ite_eq_right hn, ite_eq_right hn]
 
 /-! ## Part F -- the Step-1 shape at the development's carriers -/
 

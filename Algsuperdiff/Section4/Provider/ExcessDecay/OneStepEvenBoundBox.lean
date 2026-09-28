@@ -141,7 +141,7 @@ private theorem prod_ite_single_box (i : Fin d) (A : ℝ) (B : Fin d → ℝ) :
     · rfl
     · rw [one_mul]
   rw [Finset.prod_congr rfl (fun k _ => h k), Finset.prod_mul_distrib,
-    Finset.prod_ite_eq' Finset.univ i (fun _ => A), if_pos (Finset.mem_univ i)]
+    Finset.prod_ite_eq' Finset.univ i (fun _ => A), ite_eq_left (Finset.mem_univ i)]
 
 /-! ### The box moments -/
 
@@ -152,11 +152,11 @@ theorem setIntegral_coordBox_centered {lo hi : Fin d → ℝ} (hlt : ∀ i, lo i
       = fun x : Vec d => ∏ k, (if k = i then x k - (lo k + hi k) / 2 else 1) := by
     funext x
     rw [Finset.prod_ite_eq' Finset.univ i (fun k => x k - (lo k + hi k) / 2),
-      if_pos (Finset.mem_univ i), boxCenter_apply]
+      ite_eq_left (Finset.mem_univ i), boxCenter_apply]
   have hbody : (fun t : ℝ => if i = i then t - (lo i + hi i) / 2 else (1 : ℝ))
       = fun t : ℝ => t - (lo i + hi i) / 2 := by
     funext t
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   rw [hpt, setIntegral_coordBox_prod lo hi
     (fun k t => if k = i then t - (lo k + hi k) / 2 else 1)]
   refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
@@ -178,13 +178,13 @@ theorem setIntegral_coordBox_centered_mul {lo hi : Fin d → ℝ} (hlt : ∀ i, 
     rw [Finset.prod_mul_distrib,
       Finset.prod_ite_eq' Finset.univ i (fun k => x k - (lo k + hi k) / 2),
       Finset.prod_ite_eq' Finset.univ j (fun k => x k - (lo k + hi k) / 2),
-      if_pos (Finset.mem_univ i), if_pos (Finset.mem_univ j), boxCenter_apply, boxCenter_apply]
+      ite_eq_left (Finset.mem_univ i), ite_eq_left (Finset.mem_univ j), boxCenter_apply, boxCenter_apply]
   rw [hpt, setIntegral_coordBox_prod lo hi
     (fun k t => (if k = i then t - (lo k + hi k) / 2 else 1)
       * (if k = j then t - (lo k + hi k) / 2 else 1))]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hfac : ∀ k : Fin d,
         (∫ t in Set.Ioo (lo k) (hi k),
             (if k = i then t - (lo k + hi k) / 2 else 1)
@@ -197,30 +197,30 @@ theorem setIntegral_coordBox_centered_mul {lo hi : Fin d → ℝ} (hlt : ∀ i, 
                 * (if k = i then t - (lo k + hi k) / 2 else 1)
               = (t - (lo k + hi k) / 2) ^ 2 := by
           intro t
-          rw [if_pos hk]
+          rw [ite_eq_left hk]
           ring
         simp only [hbody]
-        rw [if_pos hk, integral_Ioo_mid_sq (hlt k).le, hk]
+        rw [ite_eq_left hk, integral_Ioo_mid_sq (hlt k).le, hk]
         ring
       · have hbody : ∀ t : ℝ,
             (if k = i then t - (lo k + hi k) / 2 else 1)
                 * (if k = i then t - (lo k + hi k) / 2 else 1)
               = (1 : ℝ) := by
           intro t
-          rw [if_neg hk]
+          rw [ite_eq_right hk]
           ring
         simp only [hbody]
-        rw [if_neg hk, integral_Ioo_length (hlt k).le]
+        rw [ite_eq_right hk, integral_Ioo_length (hlt k).le]
     rw [Finset.prod_congr rfl (fun k _ => hfac k),
       prod_ite_single_box i ((hi i - lo i) ^ 2 / 12) (fun k => hi k - lo k)]
     ring
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     have hbody : (fun t : ℝ =>
         (if i = i then t - (lo i + hi i) / 2 else 1)
           * (if i = j then t - (lo i + hi i) / 2 else (1 : ℝ)))
           = fun t : ℝ => t - (lo i + hi i) / 2 := by
       funext t
-      rw [if_pos rfl, if_neg hij, mul_one]
+      rw [ite_eq_left rfl, ite_eq_right hij, mul_one]
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
     show (∫ t in Set.Ioo (lo i) (hi i),
         (if i = i then t - (lo i + hi i) / 2 else 1)
@@ -286,13 +286,13 @@ theorem setIntegral_coordBox_coordQuad {lo hi : Fin d → ℝ} (hlt : ∀ i, lo 
       rw [MeasureTheory.integral_const_mul, setIntegral_coordBox_centered_mul hlt i j]
       by_cases hji : j = i
       · subst hji
-        rw [if_pos rfl, if_pos rfl]
+        rw [ite_eq_left rfl, ite_eq_left rfl]
         ring
-      · rw [if_neg hji, if_neg (fun h : i = j => hji h.symm), mul_zero]
+      · rw [ite_eq_right hji, ite_eq_right (fun h : i = j => hji h.symm), mul_zero]
     rw [Finset.sum_congr rfl (fun j _ => hj j),
       Finset.sum_ite_eq' Finset.univ i
         (fun _ => g i ^ 2 * ((hi i - lo i) ^ 2 / 12) * ∏ k, (hi k - lo k)),
-      if_pos (Finset.mem_univ i)]
+      ite_eq_left (Finset.mem_univ i)]
   rw [Finset.sum_congr rfl (fun i _ => hstep i), ← Finset.sum_mul]
   ring
 

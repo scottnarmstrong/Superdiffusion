@@ -247,7 +247,7 @@ theorem memLp_fluxTermBCField_two [NeZero d] (h : UnitCubeSkewW2Infinity d)
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
     (u : H10Function ((cubeDomain R : Domain d) : Set (Vec d))) :
     MemLp (fluxTermBCField h u) (2 : ℝ≥0∞) (normalizedCubeMeasure R) :=
-  MemLp.smul (memLp_matWeakDiv_cube h R hsub ∞) (memLp_u_two_cube u)
+  MemLp.smul (memLp_u_two_cube u) (memLp_matWeakDiv_cube h R hsub ∞)
 
 /-- The finite-depth Besov product estimate for the Term BC field on a
 sub-cube. -/

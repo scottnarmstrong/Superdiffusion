@@ -112,7 +112,7 @@ with CoarseGraining's regular-coefficient carrier replaced by the compact-open
 carrier `C(Vec d, Mat d)`. -/
 def zeroShellValuePathLaw (P : ProbabilityMeasure (ℤ → ShellField d)) :
     ProbabilityMeasure C(Vec d, Mat d) :=
-  P.map (measurable_zeroShellValuePathMap (d := d)).aemeasurable
+  P.map (ShellField.valuePath (d := d) ∘ fun F : ℤ → ShellField d ↦ F 0)
 
 /-- The transported law is the `valuePath` pushforward of the zero-shell law. -/
 theorem zeroShellValuePathLaw_toMeasure_eq_map_valuePath

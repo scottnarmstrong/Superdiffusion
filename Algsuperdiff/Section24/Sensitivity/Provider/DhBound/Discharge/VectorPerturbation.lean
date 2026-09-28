@@ -40,8 +40,8 @@ theorem cubeLpNorm_two_le_cubeLpNorm_infty_of_memLp_infty_vec
   have hle :
       MeasureTheory.eLpNorm u (2 : ℝ≥0∞) (normalizedCubeMeasure Q) ≤
         MeasureTheory.eLpNorm u ∞ (normalizedCubeMeasure Q) :=
-    MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) hu.1
-  have htoReal := ENNReal.toReal_mono (ne_of_lt hu.2) hle
+    MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
+  have htoReal := ENNReal.toReal_mono (ne_of_lt hu.eLpNorm_lt_top) hle
   simpa [cubeLpNorm] using htoReal
 
 /-! ## The one-cube `L²` oscillation of a Lipschitz vector field -/

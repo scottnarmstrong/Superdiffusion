@@ -132,14 +132,14 @@ theorem exists_lipschitzWith_ae_eq_of_tendsto_eLpNorm
     {U : Set (Vec d)} (hUmeas : MeasurableSet U) {u : Vec d → ℝ} {K : ℝ≥0}
     {W : ℕ → Vec d → ℝ}
     (hlip : ∀ n, LipschitzOnWith K (W n) U)
-    (hmeas : ∀ n, AEStronglyMeasurable (W n) (volume.restrict U))
-    (humeas : AEStronglyMeasurable u (volume.restrict U))
+    (_hmeas : ∀ n, AEStronglyMeasurable (W n) (volume.restrict U))
+    (_humeas : AEStronglyMeasurable u (volume.restrict U))
     (htend : Filter.Tendsto (fun n => eLpNorm (W n - u) 2 (volume.restrict U))
       Filter.atTop (nhds 0)) :
     ∃ v : Vec d → ℝ, LipschitzWith K v ∧ v =ᵐ[volume.restrict U] u := by
   classical
   have htim : TendstoInMeasure (volume.restrict U) W Filter.atTop u :=
-    tendstoInMeasure_of_tendsto_eLpNorm (p := 2) (by simp) hmeas humeas htend
+    tendstoInMeasure_of_tendsto_eLpNorm (p := 2) (by simp) htend
   obtain ⟨ns, _hns, hns_ae⟩ := htim.exists_seq_tendsto_ae
   set S : Set (Vec d) :=
     {x | x ∈ U ∧ Filter.Tendsto (fun k => W (ns k) x) Filter.atTop (nhds (u x))} with hS_def

@@ -177,7 +177,7 @@ theorem zero_at_infty_toReal_streamAnalyticMinimalResolvent
       (Real.sqrt (mu : ℝ) * r) =
       streamUniformExhaustionEnvelope M omega (Real.sqrt (mu : ℝ) * r) := by
     unfold streamUniformExhaustionProfile
-    rw [if_pos hcut]
+    rw [ite_eq_left hcut]
   have hsmall : streamUniformExhaustionEnvelope M omega
       (Real.sqrt (mu : ℝ) * r) < (mu : ℝ) * eps := by
     have hd := hs₀ (Real.sqrt (mu : ℝ) * r) hs₀r

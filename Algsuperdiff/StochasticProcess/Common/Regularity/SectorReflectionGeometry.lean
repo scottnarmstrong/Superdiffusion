@@ -173,9 +173,9 @@ theorem euclideanSqDist_coordFaceReflection_center (x₀ y : Vec d) (i : Fin d) 
   rw [Pi.sub_apply, Pi.sub_apply, Homogenization.coordFaceReflection_apply]
   by_cases hji : j = i
   · subst hji
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     ring
-  · rw [if_neg hji]
+  · rw [ite_eq_right hji]
 
 theorem mem_euclideanBall_coordFaceReflection_center_iff
     (x₀ : Vec d) (r : ℝ) (i : Fin d) (y : Vec d) :
@@ -198,11 +198,11 @@ theorem mem_partialReflectedBallSector_coordFaceReflection_iff
     refine ⟨hyB, fun j hjS hjT => ?_⟩
     have hji : j ≠ i := fun h => hjT (h ▸ hiT)
     have := hy j hjS hjT
-    rwa [Homogenization.coordFaceReflection_apply, if_neg hji] at this
+    rwa [Homogenization.coordFaceReflection_apply, ite_eq_right hji] at this
   · rintro ⟨hyB, hy⟩
     refine ⟨hyB, fun j hjS hjT => ?_⟩
     have hji : j ≠ i := fun h => hjT (h ▸ hiT)
-    rw [Homogenization.coordFaceReflection_apply, if_neg hji]
+    rw [Homogenization.coordFaceReflection_apply, ite_eq_right hji]
     exact hy j hjS hjT
 
 /-- Adding `i` to the unfolded set removes exactly the `i`-half-space constraint. -/

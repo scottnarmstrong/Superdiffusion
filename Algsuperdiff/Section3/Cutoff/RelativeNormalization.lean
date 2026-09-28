@@ -32,8 +32,8 @@ def scaledCoefficientCutoffLaw (M : ABKModel d) (m : ℤ) (r : ℝ) (hr : r ≠ 
 
 instance scaledCoefficientCutoffLaw_isProbabilityMeasure (M : ABKModel d)
     (m : ℤ) (r : ℝ) (hr : r ≠ 0) :
-    IsProbabilityMeasure (scaledCoefficientCutoffLaw M m r hr) :=
-  Measure.isProbabilityMeasure_map (measurable_smulReg r hr).aemeasurable
+    IsProbabilityMeasure (scaledCoefficientCutoffLaw M m r hr) := by
+  unfold scaledCoefficientCutoffLaw; infer_instance
 
 private theorem translateReg_smulReg (r : ℝ) (hr : r ≠ 0) (z : Vec d)
     (a : RegCoeffField d) :

@@ -184,7 +184,8 @@ theorem eventG1a_lhs_le_rowGE (M : ABKModel d) {sprime : ℝ}
         ENNReal.tsum_le_tsum fun k => ENNReal.ofReal_le_ofReal
           (score_le_wt_mul_atomG1a M hsle k.2 omega)
     _ ≤ ∑' k : ℤ, ENNReal.ofReal (wt sprime m k * atomG1a M k omega) :=
-        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective _
+        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective
+          (fun k : ℤ => ENNReal.ofReal (wt sprime m k * atomG1a M k omega))
     _ = rowGE (arrayG1a M) sprime m omega := rfl
 
 /-- Off the lane's good event the `ℝ≥0∞` row exceeds the threshold. -/

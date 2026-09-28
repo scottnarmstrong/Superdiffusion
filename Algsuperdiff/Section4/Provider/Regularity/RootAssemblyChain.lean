@@ -69,8 +69,10 @@ theorem eLpNormTwo_normalizedVolumeMeasureOn_eq_smul (W : Set (Vec d)) (f : Vec 
   have hhalf : ((1 : ℝ≥0∞) / 2).toReal = 1 / 2 := by
     rw [ENNReal.toReal_div]
     norm_num
+  by_cases hWtop : volume W = ⊤
+  · simp [Support.normalizedVolumeMeasureOn_def, hWtop]
   rw [Support.normalizedVolumeMeasureOn_def,
-    eLpNorm_smul_measure_of_ne_top (by simp) f ((volume W)⁻¹), smul_eq_mul, hhalf]
+    eLpNorm_smul_measure_of_ne_zero (ENNReal.inv_ne_zero.2 hWtop) f 2, smul_eq_mul, hhalf]
 
 /-- **The normalized `L²` norm is finite** on a window of nonzero volume carrying
 an `L²` datum. -/

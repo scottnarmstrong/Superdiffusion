@@ -47,13 +47,13 @@ theorem measurable_zeroShellMap :
 noncomputable def shellMarginalLaw
     (P : MeasureTheory.ProbabilityMeasure (ℤ → ShellField d)) (k : ℤ) :
     MeasureTheory.ProbabilityMeasure (ShellField d) :=
-  P.map (measurable_shellCoordinate k).aemeasurable
+  P.map (fun F : ℤ → ShellField d ↦ F k)
 
 /-- The literal zero-coordinate shell-field law. -/
 noncomputable def zeroShellLaw
     (P : MeasureTheory.ProbabilityMeasure (ℤ → ShellField d)) :
     MeasureTheory.ProbabilityMeasure (ShellField d) :=
-  P.map (measurable_zeroShellMap (d := d)).aemeasurable
+  P.map (fun F : ℤ → ShellField d ↦ F 0)
 
 @[simp]
 theorem shellMarginalLaw_zero
@@ -75,7 +75,7 @@ theorem translateSequence_apply (z : Vec d) (F : ℤ → ShellField d) (k : ℤ)
 /-- Componentwise real translation is measurable on the whole sequence. -/
 theorem measurable_translateSequence (z : Vec d) :
     Measurable (translateSequence (d := d) z) := by
-  exact measurable_pi_lambda _ fun k ↦
+  exact Measurable.of_eval fun k ↦
     (measurable_translate z).comp (measurable_pi_apply k)
 
 /-- Simultaneously negate every shell in the sequence. -/
@@ -90,7 +90,7 @@ theorem negateSequence_apply (F : ℤ → ShellField d) (k : ℤ) :
 /-- Componentwise negation is measurable on the whole sequence. -/
 theorem measurable_negateSequence :
     Measurable (negateSequence (d := d)) := by
-  exact measurable_pi_lambda _ fun k ↦
+  exact Measurable.of_eval fun k ↦
     measurable_negate.comp (measurable_pi_apply k)
 
 /-- Simultaneously apply one signed-permutation conjugation to every shell. -/
@@ -107,7 +107,7 @@ theorem rotateSequence_apply (R : Mat d) (hR : IsSignedPermutationMatrix R)
 /-- Componentwise signed-permutation conjugation is measurable on the whole sequence. -/
 theorem measurable_rotateSequence (R : Mat d) (hR : IsSignedPermutationMatrix R) :
     Measurable (rotateSequence (d := d) R hR) := by
-  exact measurable_pi_lambda _ fun k ↦
+  exact Measurable.of_eval fun k ↦
     (measurable_rotate R hR).comp (measurable_pi_apply k)
 
 end

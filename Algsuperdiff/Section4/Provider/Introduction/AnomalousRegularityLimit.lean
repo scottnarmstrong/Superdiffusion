@@ -134,8 +134,19 @@ theorem eLpNorm_sqrt_vecNormSq_normalized_le {W A : Set (Vec d)} (hAW : A ⊆ W)
     eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (normalizedVolumeMeasureOn A) ≤
       ((volume A)⁻¹) ^ ((2 : ℝ)⁻¹) *
         eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (volume.restrict W) := by
+  by_cases hg : AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (F y))) (volume.restrict A)
+  swap
+  · rcases eq_or_ne (volume A) ⊤ with hA | hA
+    · rw [normalizedVolumeMeasureOn_def, hA, ENNReal.inv_top, zero_smul, eLpNorm_measure_zero]
+      exact zero_le
+    · have hW : eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (volume.restrict W) = ⊤ :=
+        eLpNorm_of_not_aestronglyMeasurable fun h =>
+          hg (h.mono_measure (Measure.restrict_mono hAW le_rfl))
+      rw [hW, ENNReal.mul_top
+        (ENNReal.rpow_pos_of_nonneg (ENNReal.inv_pos.mpr hA) (by norm_num)).ne']
+      exact le_top
   rw [normalizedVolumeMeasureOn_def,
-    eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)]
+    eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) _ _ hg]
   have hmono : eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (volume.restrict A) ≤
       eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (volume.restrict W) :=
     eLpNorm_mono_measure _ (Measure.restrict_mono hAW le_rfl)
@@ -153,7 +164,7 @@ theorem eLpNorm_sqrt_vecNormSq_restrict_le {W : Set (Vec d)} {F : Vec d → Vec 
         ENNReal.ofReal (Real.sqrt (∫ y in W, ‖F y‖ ^ (2 : ℕ) ∂volume)) := by
   have h1 : eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (volume.restrict W) ≤
       eLpNorm (fun y => Real.sqrt d * ‖F y‖) 2 (volume.restrict W) := by
-    refine eLpNorm_mono_real fun y => ?_
+    refine eLpNorm_mono_real (aestronglyMeasurable_sqrt_vecNormSq hF) fun y => ?_
     rw [Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg _)]
     exact sqrt_vecNormSq_le_sqrt_card_mul_norm (F y)
   have h2 : eLpNorm (fun y => Real.sqrt d * ‖F y‖) 2 (volume.restrict W) =
@@ -161,7 +172,7 @@ theorem eLpNorm_sqrt_vecNormSq_restrict_le {W : Set (Vec d)} {F : Vec d → Vec 
     have hsm : (fun y => Real.sqrt (d : ℝ) * ‖F y‖) = (Real.sqrt (d : ℝ)) • fun y => ‖F y‖ := by
       funext y
       simp [smul_eq_mul]
-    rw [hsm, eLpNorm_const_smul, eLpNorm_norm]
+    rw [hsm, eLpNorm_const_smul, eLpNorm_norm _ hF.aestronglyMeasurable]
     congr 1
     exact Real.enorm_eq_ofReal (Real.sqrt_nonneg _)
   have h3 : eLpNorm F 2 (volume.restrict W) =
@@ -179,8 +190,7 @@ theorem eLpNorm_sqrt_vecNormSq_restrict_le {W : Set (Vec d)} {F : Vec d → Vec 
 
 /-- **The triangle inequality for the `L²` magnitude of a field.** -/
 theorem eLpNorm_sqrt_vecNormSq_le_add {μ : Measure (Vec d)} {F G : Vec d → Vec d}
-    (hF : AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (F y))) μ)
-    (hD : AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (G y - F y))) μ) :
+    (hG : AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (G y))) μ) :
     eLpNorm (fun y => Real.sqrt (vecNormSq (G y))) 2 μ ≤
       eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 μ +
         eLpNorm (fun y => Real.sqrt (vecNormSq (G y - F y))) 2 μ := by
@@ -191,8 +201,8 @@ theorem eLpNorm_sqrt_vecNormSq_le_add {μ : Measure (Vec d)} {F G : Vec d → Ve
     have hEq : F y + (G y - F y) = G y := by abel
     rw [hEq] at h
     exact h
-  refine le_trans ?_ (eLpNorm_add_le hF hD one_le_two)
-  refine eLpNorm_mono_real fun y => ?_
+  refine le_trans ?_ (eLpNorm_add_le one_le_two)
+  refine eLpNorm_mono_real hG fun y => ?_
   rw [Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg _)]
   exact hpt y
 
@@ -285,8 +295,7 @@ theorem excess_display_closed {W A : Set (Vec d)} (hAW : A ⊆ W)
     simpa using! h
   · intro L
     have htri := eLpNorm_sqrt_vecNormSq_le_add (μ := normalizedVolumeMeasureOn A)
-      (F := G L) (G := F) (aestronglyMeasurable_sqrt_vecNormSq_normalized hAW (hG L))
-      (aestronglyMeasurable_sqrt_vecNormSq_normalized hAW (hF.sub (hG L)))
+      (F := G L) (G := F) (aestronglyMeasurable_sqrt_vecNormSq_normalized hAW hF)
     rw [sqrt_vecNormSq_sub_comm F (G L)] at htri
     calc s * eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2 (normalizedVolumeMeasureOn A)
         ≤ s * (eLpNorm (fun y => Real.sqrt (vecNormSq (G L y))) 2
@@ -302,8 +311,7 @@ theorem excess_display_closed {W A : Set (Vec d)} (hAW : A ⊆ W)
           add_le_add le_rfl (herr A hAW L)
   · intro L
     have htri := eLpNorm_sqrt_vecNormSq_le_add (μ := normalizedVolumeMeasureOn W)
-      (F := F) (G := G L) (aestronglyMeasurable_sqrt_vecNormSq_normalized (subset_refl W) hF)
-      (aestronglyMeasurable_sqrt_vecNormSq_normalized (subset_refl W) ((hG L).sub hF))
+      (F := F) (G := G L) (aestronglyMeasurable_sqrt_vecNormSq_normalized (subset_refl W) (hG L))
     calc s * eLpNorm (fun y => Real.sqrt (vecNormSq (G L y))) 2 (normalizedVolumeMeasureOn W)
         ≤ s * (eLpNorm (fun y => Real.sqrt (vecNormSq (F y))) 2
               (normalizedVolumeMeasureOn W) +

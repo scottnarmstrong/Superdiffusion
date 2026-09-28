@@ -24,7 +24,7 @@ source carrier and the coefficient map are genuine measurable objects, so this
 definition has no default-value or a.e.-map branch. -/
 noncomputable def coefficientCutoffProbabilityLaw (M : ABKModel d) (m : ℤ) :
     ProbabilityMeasure (RegCoeffField d) :=
-  (cutoffSampleLaw M).map (measurable_coefficientCutoff M.nu m).aemeasurable
+  (cutoffSampleLaw M).map (coefficientCutoff M.nu m)
 
 /-- The actual Chapter 4 coefficient law of `a_m`, forgetting only the
 probability-measure packaging. -/
@@ -37,7 +37,7 @@ measurable pushforward of the induced canonical cutoff-sample law. -/
 noncomputable instance coefficientCutoffLaw_isProbability (M : ABKModel d)
     (m : ℤ) : IsProbabilityMeasure (coefficientCutoffLaw M m) := by
   change IsProbabilityMeasure
-    ((cutoffSampleLaw M).map (measurable_coefficientCutoff M.nu m).aemeasurable).toMeasure
+    ((cutoffSampleLaw M).map (coefficientCutoff M.nu m)).toMeasure
   infer_instance
 
 @[simp]

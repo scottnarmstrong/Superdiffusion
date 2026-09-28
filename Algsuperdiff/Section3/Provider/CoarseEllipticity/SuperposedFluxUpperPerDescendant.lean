@@ -1048,7 +1048,7 @@ theorem superposedFlux_upper_per_descendant_split
               (Cutoff.coefficientCutoff M.nu m omega).toFun).upperLeft) := by
       funext omega
       rw [Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField,
-        dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
+        dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
       have hbridge := congrArg
         (fun A : BlockMat d => Homogenization.Book.Ch02.matrixNorm A.upperLeft)
         (Homogenization.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField

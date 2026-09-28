@@ -70,8 +70,8 @@ theorem ennreal_tsum_guard (b : ℤ) (g : ℤ → ℝ≥0∞) :
   rw [h1]
   refine tsum_congr fun j => ?_
   by_cases hj : j ≤ b
-  · rw [Set.indicator_of_mem (show j ∈ {j : ℤ | j ≤ b} from hj), if_pos hj]
-  · rw [Set.indicator_of_notMem (show j ∉ {j : ℤ | j ≤ b} from hj), if_neg hj]
+  · rw [Set.indicator_of_mem (show j ∈ {j : ℤ | j ≤ b} from hj), ite_eq_left hj]
+  · rw [Set.indicator_of_notMem (show j ∉ {j : ℤ | j ≤ b} from hj), ite_eq_right hj]
 
 /-- **The annular double sum, transported to `[0,infinity]`.**  A nonnegative
 real annular double sum is dominated by the corresponding iterated
@@ -102,7 +102,7 @@ theorem ofReal_annDouble_le_ennDouble {m : ℤ} {h : ℤ → ℤ → ℝ} {H : �
   rw [annDouble_def, hRHS]
   refine le_trans (ofReal_tsum_le hstep0) (ENNReal.tsum_le_tsum fun j => ?_)
   by_cases hj : j ≤ m
-  · rw [ofReal_ite_zero, if_pos hj, if_pos hj,
+  · rw [ofReal_ite_zero, ite_eq_left hj, ite_eq_left hj,
       ennreal_tsum_guard (j - 1) (fun n => H j n)]
     refine le_trans (ofReal_tsum_le (fun n => ?_)) (ENNReal.tsum_le_tsum fun n => ?_)
     · split_ifs
@@ -110,10 +110,10 @@ theorem ofReal_annDouble_le_ennDouble {m : ℤ} {h : ℤ → ℤ → ℝ} {H : �
       · exact le_rfl
     · rw [ofReal_ite_zero]
       by_cases hn : n ≤ j - 1
-      · rw [if_pos hn, if_pos hn]
+      · rw [ite_eq_left hn, ite_eq_left hn]
         exact hdom j n hj hn
-      · rw [if_neg hn, if_neg hn]
-  · rw [ofReal_ite_zero, if_neg hj, if_neg hj]
+      · rw [ite_eq_right hn, ite_eq_right hn]
+  · rw [ofReal_ite_zero, ite_eq_right hj, ite_eq_right hj]
 
 /-! ## Part B -- the four right-hand terms at the representative observables -/
 

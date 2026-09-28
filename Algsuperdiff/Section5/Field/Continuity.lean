@@ -121,10 +121,10 @@ theorem symmPart_nu_add_streamField (nu : ℝ) (omega : FullSample d gamma) (x :
   rw [hskew_entry]
   by_cases hik : i = k
   · subst hik
-    simp only [Matrix.one_apply, if_pos]
+    simp only [Matrix.one_apply, ite_eq_left]
     ring
   · have hki : k ≠ i := Ne.symm hik
-    simp only [Matrix.one_apply, if_neg hik, if_neg hki]
+    simp only [Matrix.one_apply, ite_eq_right hik, ite_eq_right hki]
     ring
 
 end

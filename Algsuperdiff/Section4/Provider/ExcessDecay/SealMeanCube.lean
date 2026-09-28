@@ -96,15 +96,15 @@ def axisHi (c : Vec d) (i : Fin d) (q b : ℝ) : Fin d → ℝ :=
 def axisBox (c : Vec d) (i : Fin d) (p q b : ℝ) : Set (Vec d) :=
   coordBox (axisLo c i p b) (axisHi c i q b)
 
-theorem axisLo_self {c : Vec d} {i : Fin d} {p b : ℝ} : axisLo c i p b i = p := if_pos rfl
+theorem axisLo_self {c : Vec d} {i : Fin d} {p b : ℝ} : axisLo c i p b i = p := ite_eq_left rfl
 
 theorem axisLo_of_ne {c : Vec d} {i j : Fin d} {p b : ℝ} (hji : j ≠ i) :
-    axisLo c i p b j = c j - b := if_neg hji
+    axisLo c i p b j = c j - b := ite_eq_right hji
 
-theorem axisHi_self {c : Vec d} {i : Fin d} {q b : ℝ} : axisHi c i q b i = q := if_pos rfl
+theorem axisHi_self {c : Vec d} {i : Fin d} {q b : ℝ} : axisHi c i q b i = q := ite_eq_left rfl
 
 theorem axisHi_of_ne {c : Vec d} {i j : Fin d} {q b : ℝ} (hji : j ≠ i) :
-    axisHi c i q b j = c j + b := if_neg hji
+    axisHi c i q b j = c j + b := ite_eq_right hji
 
 theorem mem_axisBox_iff {c : Vec d} {i : Fin d} {p q b : ℝ} {y : Vec d} :
     y ∈ axisBox c i p q b ↔
@@ -239,7 +239,7 @@ theorem pow_le_volume_toReal_axisBox {c : Vec d} {i : Fin d} {p q b e : ℝ}
     rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
   calc e ^ d = ∏ _j : Fin d, e := hconst.symm
     _ ≤ ∏ j : Fin d, (axisHi c i q b j - axisLo c i p b j) :=
-        Finset.prod_le_prod (fun j _ => he) hedge
+        Finset.prod_le_prod₀ (fun j _ => he) hedge
 
 /-- Upper-bounding every edge of an axis box by the same number. -/
 theorem volume_toReal_axisBox_le_pow {c : Vec d} {i : Fin d} {p q b e : ℝ}
@@ -268,7 +268,7 @@ theorem volume_toReal_axisBox_le_pow {c : Vec d} {i : Fin d} {p q b e : ℝ}
     · rw [axisLo_of_ne hji, axisHi_of_ne hji]
       linarith only [hb]
   calc ∏ j : Fin d, (axisHi c i q b j - axisLo c i p b j) ≤ ∏ _j : Fin d, e :=
-        Finset.prod_le_prod hnn hedge
+        Finset.prod_le_prod₀ hnn hedge
     _ = e ^ d := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
 /-! ## 2. The cube and the cube doubled across a face -/
@@ -315,9 +315,9 @@ theorem sealDouble_eq_axisBox (c : Vec d) (L : ℝ) (i : Fin d) {sg : ℝ}
       = axisLo c i (c i + sg * (L / 2) - L) (L / 2) j
     by_cases hji : j = i
     · subst hji
-      rw [if_pos rfl, axisLo_self]
+      rw [ite_eq_left rfl, axisLo_self]
       rcases hsg with rfl | rfl <;> ring
-    · rw [if_neg hji, axisLo_of_ne hji]
+    · rw [ite_eq_right hji, axisLo_of_ne hji]
   have hhi : (fun j => if j = i then c j + L / 2 + (1 + sg) / 2 * L else c j + L / 2)
       = axisHi c i (c i + sg * (L / 2) + L) (L / 2) := by
     funext j
@@ -325,9 +325,9 @@ theorem sealDouble_eq_axisBox (c : Vec d) (L : ℝ) (i : Fin d) {sg : ℝ}
       = axisHi c i (c i + sg * (L / 2) + L) (L / 2) j
     by_cases hji : j = i
     · subst hji
-      rw [if_pos rfl, axisHi_self]
+      rw [ite_eq_left rfl, axisHi_self]
       rcases hsg with rfl | rfl <;> ring
-    · rw [if_neg hji, axisHi_of_ne hji]
+    · rw [ite_eq_right hji, axisHi_of_ne hji]
   rw [sealDouble, axisBox, hlo, hhi]
 
 /-! ## 3. The two volume ratios and the absorption coefficient -/
@@ -722,7 +722,7 @@ theorem sealFlushSubCentre_apply (z : Vec d) (m k n : ℤ) (i : Fin d) (sg : ℝ
 theorem sealFlushSubCentre_apply_self (z : Vec d) (m k n : ℤ) (i : Fin d) (sg : ℝ) :
     sealFlushSubCentre z m k n i sg i
       = wellPlacedCentre z m k i + sg * (((3 : ℝ) ^ k - (3 : ℝ) ^ n) / 2) := by
-  rw [sealFlushSubCentre_apply, if_pos (rfl : i = i)]
+  rw [sealFlushSubCentre_apply, ite_eq_left (rfl : i = i)]
 
 /-- **The flush face sits in the frontier hyperplane.**
 

@@ -276,7 +276,7 @@ theorem setIntegral_gradSq_le_of_localizedBound {Om : Set (Vec d)}
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul,
       mul_comm] using!
       (MemLp.of_eval fun i : Fin d =>
-        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
+        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).fun_mul hphiTop)
   have htargetInt : Integrable (fun x => eta x ^ 2 * vecNormSq (u.grad x))
       (volumeMeasureOn Om) := by
     apply (integrableOn_vecDot_of_memVectorL2 u.grad_memVectorL2 hq).congr

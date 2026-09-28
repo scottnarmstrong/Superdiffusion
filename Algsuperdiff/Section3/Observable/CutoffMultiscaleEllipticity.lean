@@ -99,7 +99,7 @@ private theorem cutoffLowerEllipticityInvLiteral_nonneg (M : ABKModel d)
   unfold cutoffLowerEllipticityInvLiteral
   exact inv_nonneg.mpr <| by
     rw [Ch04.lambdaSqCoeffField]
-    simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
+    simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
     exact Ch02.lambdaSq_nonneg (originCube d domainScale)
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
         (Cutoff.coefficientCutoff M.nu cutoffScale omega)
@@ -112,7 +112,7 @@ private theorem cutoffUpperEllipticityLiteral_nonneg (M : ABKModel d)
   let : NeZero d := neZero_of_model M
   unfold cutoffUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
   exact Ch02.LambdaSq_nonneg (originCube d domainScale)
     (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
       (Cutoff.coefficientCutoff M.nu cutoffScale omega)

@@ -214,7 +214,7 @@ theorem ae_summable_tailLayerTerm (M : ABKModel d) (m k : ℤ) (v : Fin d → �
       refine hx ⟨(x - (m + 1)).toNat, ?_⟩
       show m + 1 + (((x - (m + 1)).toNat : ℕ) : ℤ) = x
       omega
-    rw [tailLayerTerm, if_neg hxm]
+    rw [tailLayerTerm, ite_eq_right hxm]
   refine (hemb.summable_iff hzero).mp ?_
   refine (summable_nat_add_iff (f := fun n : ℕ => tailLayerTerm m k v omega (m + 1 + (n : ℤ)))
     (i0 - (m + 1)).toNat).mp ?_
@@ -224,7 +224,7 @@ theorem ae_summable_tailLayerTerm (M : ABKModel d) (m k : ℤ) (v : Fin d → �
       Int.toNat_of_nonneg (by omega)
     push_cast [hshift]
     ring
-  rw [hidx, tailLayerTerm, if_pos (by omega : m < i0 + (n : ℤ))]
+  rw [hidx, tailLayerTerm, ite_eq_left (by omega : m < i0 + (n : ℤ))]
 
 /-- **The upper shell series converges almost surely, at every cube
 simultaneously.**  The index `ℤ × (Fin d → ℤ)` is countable, so the null sets of
@@ -247,9 +247,9 @@ theorem tailLayerTerm_negateCutoffSample (m k : ℤ) (v : Fin d → ℤ)
     tailLayerTerm m k v (Cutoff.negateCutoffSample omega) i =
       tailLayerTerm m k v omega i := by
   by_cases h : m < i
-  · rw [tailLayerTerm, tailLayerTerm, if_pos h, if_pos h, Cutoff.negateCutoffSample_val,
+  · rw [tailLayerTerm, tailLayerTerm, ite_eq_left h, ite_eq_left h, Cutoff.negateCutoffSample_val,
       ShellField.negateSequence_apply, translate_negate, shellW1InfGradNorm_negate]
-  · rw [tailLayerTerm, tailLayerTerm, if_neg h, if_neg h]
+  · rw [tailLayerTerm, tailLayerTerm, ite_eq_right h, ite_eq_right h]
 
 /-- The finite layer block is `N`-invariant. -/
 theorem tailLayerSum_negateCutoffSample (m k : ℤ) (v : Fin d → ℤ)

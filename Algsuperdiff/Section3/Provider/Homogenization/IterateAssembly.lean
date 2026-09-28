@@ -276,7 +276,7 @@ private theorem truncated_shift_decay {F : ℕ → ℝ} {A C delta : ℝ} {T t0 
   set G : ℕ → ℝ := fun s => if s ≤ T then F s else 0 with hGdef
   have hGeq : ∀ s : ℕ, s ≤ T → G s = F s := by
     intro s hs
-    simp only [hGdef, if_pos hs]
+    simp only [hGdef, ite_eq_left hs]
   have hGnn : ∀ s : ℕ, 0 ≤ G s := by
     intro s
     simp only [hGdef]
@@ -302,7 +302,7 @@ private theorem truncated_shift_decay {F : ℕ → ℝ} {A C delta : ℝ} {T t0 
       rw [hsum, hGeq t hT]
       exact hFrec t ht hT
     · have hGt : G t = 0 := by
-        simp only [hGdef, if_neg hT]
+        simp only [hGdef, ite_eq_right hT]
       rw [hGt]
       have h2 : (0 : ℝ) ≤ ∑ k ∈ Finset.Icc 1 t,
           (1 / 3 : ℝ) ^ k * (G (t - k) - 0) :=

@@ -101,7 +101,7 @@ theorem analyticCubeResolvent_of_notMem (A : WholeSpaceAnalyticData d) (mu : Pos
     {f : Vec d → ℝ} (hf : Measurable f) {D : ℝ} (hfD : ∀ x, |f x| ≤ D) (m : ℕ)
     {x : Vec d} (hx : x ∉ DivergenceFormProcess.Form.wholeSpaceCube d m) :
     A.analyticCubeResolvent mu f hf hfD m x = 0 := by
-  rw [WholeSpaceAnalyticData.analyticCubeResolvent, dif_neg hx]
+  rw [WholeSpaceAnalyticData.analyticCubeResolvent, dite_eq_right hx]
 
 omit [NeZero d] in
 /-- The challenge's cube-resolvent predicate, transported from the

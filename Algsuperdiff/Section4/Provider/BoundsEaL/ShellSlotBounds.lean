@@ -132,7 +132,7 @@ theorem tailLayerSum_le_tailSeriesGauge (m k : ℤ) (v : Fin d → ℤ)
     refine Finset.sum_congr rfl fun i hi => ?_
     have hmi : m < i := (Finset.mem_Ioc.mp hi).1
     unfold tailLayerTerm
-    rw [if_pos hmi]
+    rw [ite_eq_left hmi]
   rw [hcongr]
   exact hsum.sum_le_tsum (Finset.Ioc m L)
     (fun i _ => tailLayerTerm_nonneg m k v omega i)

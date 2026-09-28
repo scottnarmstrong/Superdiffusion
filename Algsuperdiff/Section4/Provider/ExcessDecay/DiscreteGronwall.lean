@@ -95,7 +95,7 @@ theorem discrete_gronwall {N : ℕ} {H : ℝ} {a ε : ℕ → ℝ} (hH : 0 ≤ H
   have hpe : ∏ k ∈ range l, (1 + ε k) ≤ Real.exp (∑ k ∈ range l, ε k) := by
     calc ∏ k ∈ range l, (1 + ε k)
         ≤ ∏ k ∈ range l, Real.exp (ε k) := by
-          refine Finset.prod_le_prod (fun k _ => ?_) fun k _ => ?_
+          refine Finset.prod_le_prod₀ (fun k _ => ?_) fun k _ => ?_
           · linarith only [hε k]
           · linarith only [Real.add_one_le_exp (ε k)]
       _ = Real.exp (∑ k ∈ range l, ε k) := (Real.exp_sum _ _).symm

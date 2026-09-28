@@ -130,7 +130,7 @@ theorem enumeratedCubeFamily_overlap {d r : ℕ} (n : ℤ)
   by_cases hi : i < r
   swap
   · refine ⟨∅, by simp only [Finset.card_empty, Nat.zero_le], fun j hinter => ?_⟩
-    rw [enumeratedOpenEnlargementFamily, dif_neg hi] at hinter
+    rw [enumeratedOpenEnlargementFamily, dite_eq_right hi] at hinter
     obtain ⟨x, _hx, hx⟩ := hinter
     exact (Set.notMem_empty x hx).elim
   let ii : Fin r := ⟨i, hi⟩
@@ -151,7 +151,7 @@ theorem enumeratedCubeFamily_overlap {d r : ℕ} (n : ℤ)
   · intro j hinter
     have hj : j < r := by
       by_contra hj
-      rw [enumeratedClosedCubeFamily, dif_neg hj] at hinter
+      rw [enumeratedClosedCubeFamily, dite_eq_right hj] at hinter
       obtain ⟨x, hx, _hx⟩ := hinter
       exact Set.notMem_empty x hx
     let jj : Fin r := ⟨j, hj⟩
@@ -159,7 +159,7 @@ theorem enumeratedCubeFamily_overlap {d r : ℕ} (n : ℤ)
         (closedPartitionCube n (sites jj) ∩
           openEnlargedPartitionCube n (sites ii)).Nonempty := by
       simpa only [enumeratedClosedCubeFamily, enumeratedOpenEnlargementFamily,
-        dif_pos hj, dif_pos hi, jj, ii] using hinter
+        dite_eq_left hj, dite_eq_left hi, jj, ii] using hinter
     have hneighbor : sites jj ∈ neighboringSites (sites ii) :=
       mem_neighboringSites_of_siteDist_le_one
         (siteDist_le_one_of_closedPartitionCube_inter_openEnlarged_nonempty n hinter')

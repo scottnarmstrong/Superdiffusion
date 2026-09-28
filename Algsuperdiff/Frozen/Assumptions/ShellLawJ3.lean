@@ -13,10 +13,10 @@ structure Algsuperdiff.Frozen.Assumptions.ShellLawJ3
   hyperoctahedral : ∀ (R : Mat d)
       (hR : Homogenization.IsSignedPermutationMatrix R),
     P.map
-        (Algsuperdiff.Frozen.Assumptions.ShellField.measurable_rotateSequence
-          R hR).aemeasurable = P
+        (Algsuperdiff.Frozen.Assumptions.ShellField.rotateSequence
+          R hR) = P
   negation :
     P.map
-        (Algsuperdiff.Frozen.Assumptions.ShellField.measurable_negateSequence
-          (d := d)).aemeasurable = P
+        (Algsuperdiff.Frozen.Assumptions.ShellField.negateSequence
+          (d := d)) = P
 -- FROZEN-STATEMENT-END

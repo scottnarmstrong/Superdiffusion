@@ -134,7 +134,7 @@ theorem tsum_int_guard_le (g : ℤ → ℝ) (b : ℤ) :
     intro n hn
     have hle : n ≤ b := by
       by_contra hc
-      exact hn (by rw [hG]; exact if_neg hc)
+      exact hn (by rw [hG]; exact ite_eq_right hc)
     refine ⟨(b - n).toNat, ?_⟩
     show b - (((b - n).toNat : ℕ) : ℤ) = n
     omega
@@ -142,7 +142,7 @@ theorem tsum_int_guard_le (g : ℤ → ℝ) (b : ℤ) :
   rw [← hkey]
   refine tsum_congr fun i => ?_
   rw [hG]
-  exact if_pos (by omega)
+  exact ite_eq_left (by omega)
 
 /-- **The guarded annular double sum as an iterated `N`-sum.**  Under `j = m - u`
 and `n = m - u - 1 - i` the annular region `{(j,n): j <= m, n <= j - 1}` is

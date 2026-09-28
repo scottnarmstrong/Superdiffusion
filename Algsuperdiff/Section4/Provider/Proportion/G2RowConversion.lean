@@ -424,7 +424,8 @@ theorem XrowE_le_XrowTwoE (M : ABKModel d) (s : {s : ℝ // 0 < s}) (m : ℤ)
           (ENNReal.ofReal_mul (wt_nonneg _ m j.1)).symm
   rw [hcongr]
   exact ENNReal.tsum_comp_le_tsum_of_injective (f := fun j : {j : ℤ // j ≤ m} => j.1)
-    Subtype.val_injective _
+    Subtype.val_injective
+    (fun j : ℤ => ENNReal.ofReal (wt ((s : ℝ) / 4) m j * (XcalE M s j omega).toReal))
 
 /-- **The Appendix-D reduction of `𝒢₂`, off the null set.**  Off `𝒢₂(m;s,ε)` — and
 off the null set of `goodRowSetG2` — the Appendix-D row sum of the normalized

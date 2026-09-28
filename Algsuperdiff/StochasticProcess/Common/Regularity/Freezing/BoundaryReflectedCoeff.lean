@@ -176,7 +176,7 @@ def faceReflectedCoeff (c : ℝ) (i : Fin d) (sigma : ℝ) (a : CoeffField d) :
 theorem faceReflectedCoeff_of_pos {c : ℝ} {i : Fin d} {sigma : ℝ}
     (a : CoeffField d) {y : Vec d} (hy : 0 < sigma * (c - y i)) :
     faceReflectedCoeff c i sigma a y = a y := by
-  rw [faceReflectedCoeff, if_pos hy]
+  rw [faceReflectedCoeff, ite_eq_left hy]
 
 theorem faceReflectedCoeff_of_neg {c : ℝ} {i : Fin d} {sigma : ℝ}
     (a : CoeffField d) {y : Vec d} (hy : 0 < sigma * (y i - c)) :
@@ -186,7 +186,7 @@ theorem faceReflectedCoeff_of_neg {c : ℝ} {i : Fin d} {sigma : ℝ}
     have hneg : sigma * (c - y i) = -(sigma * (y i - c)) := by ring
     rw [hneg]
     exact not_lt.2 (neg_nonpos.2 hy.le)
-  rw [faceReflectedCoeff, if_neg hnot, if_pos hy]
+  rw [faceReflectedCoeff, ite_eq_right hnot, ite_eq_left hy]
 
 theorem coordFaceReflection_coord (c : ℝ) (i : Fin d) (y : Vec d) :
     coordFaceReflection c i y i = 2 * c - y i := by

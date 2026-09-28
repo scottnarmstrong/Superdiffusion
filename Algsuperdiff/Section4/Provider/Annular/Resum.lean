@@ -106,16 +106,16 @@ theorem tsum_annFam {m : ℤ} {h : ℤ → ℤ → ℝ} (hs : Summable (annFam m
   rw [hs.tsum_prod, annDouble_def]
   refine tsum_congr fun j => ?_
   by_cases hj : j ≤ m
-  · rw [if_pos hj]
+  · rw [ite_eq_left hj]
     refine tsum_congr fun n => ?_
     by_cases hn : n ≤ j - 1
-    · rw [annFam_apply, if_pos (⟨hj, hn⟩ : j ≤ m ∧ n ≤ j - 1), if_pos hn]
-    · rw [annFam_apply, if_neg (fun hc : j ≤ m ∧ n ≤ j - 1 => hn hc.2), if_neg hn]
-  · rw [if_neg hj]
+    · rw [annFam_apply, ite_eq_left (⟨hj, hn⟩ : j ≤ m ∧ n ≤ j - 1), ite_eq_left hn]
+    · rw [annFam_apply, ite_eq_right (fun hc : j ≤ m ∧ n ≤ j - 1 => hn hc.2), ite_eq_right hn]
+  · rw [ite_eq_right hj]
     have hzero : ∀ n : ℤ, annFam m h (j, n) = 0 := by
       intro n
       rw [annFam_apply]
-      exact if_neg (fun hc : j ≤ m ∧ n ≤ j - 1 => hj hc.1)
+      exact ite_eq_right (fun hc : j ≤ m ∧ n ≤ j - 1 => hj hc.1)
     calc ∑' n : ℤ, annFam m h (j, n) = ∑' _ : ℤ, (0 : ℝ) := tsum_congr hzero
       _ = 0 := tsum_zero
 
@@ -214,7 +214,7 @@ private theorem annWeightFam_annIdx (c : ℝ) (m : ℤ) (a b : ℕ) :
       = ((3 : ℝ) ^ (-c)) ^ (a + 1) * ((3 : ℝ) ^ (-c)) ^ b := by
   have hg : m - (a : ℤ) ≤ m ∧ m - (a : ℤ) - 1 - (b : ℤ) ≤ m - (a : ℤ) - 1 :=
     ⟨by omega, by omega⟩
-  rw [annWeightFam_def, annIdx, annFam_apply, if_pos hg]
+  rw [annWeightFam_def, annIdx, annFam_apply, ite_eq_left hg]
   have hcast : ((m - (m - (a : ℤ) - 1 - (b : ℤ)) : ℤ) : ℝ) = ((a + b + 1 : ℕ) : ℝ) := by
     push_cast
     ring
@@ -225,7 +225,7 @@ private theorem annWeightFam_support (c : ℝ) (m : ℤ) :
     ∀ p : ℤ × ℤ, p ∉ Set.range (annIdx m) → annWeightFam c m p = 0 := by
   rintro ⟨j, n⟩ hp
   rw [annWeightFam_def, annFam_apply]
-  refine if_neg ?_
+  refine ite_eq_right ?_
   rintro ⟨h1, h2⟩
   refine hp ⟨((m - j).toNat, (j - 1 - n).toNat), ?_⟩
   simp only [annIdx, Prod.mk.injEq]
@@ -402,7 +402,7 @@ theorem annularResum_core {cstar gamma C₂ gradM Wsum : ℝ} {m : ℤ}
         + C₂ * cstar⁻¹ * gamma * gradM * annFam m (fun _ n => vg n) p := by
     rintro ⟨j, n⟩
     by_cases hg : j ≤ m ∧ n ≤ j - 1
-    · simp only [annFam_apply, if_pos hg]
+    · simp only [annFam_apply, ite_eq_left hg]
       have hstep := mul_le_mul_of_nonneg_left (hugly j n hg.1 hg.2) (hw20 n)
       have hexp : w2 n * (C₂ * W n * E2 j n + C₂ * W n * sig n
             + C₂ * cstar⁻¹ * gamma * W n * L2f j n
@@ -415,7 +415,7 @@ theorem annularResum_core {cstar gamma C₂ gradM Wsum : ℝ} {m : ℤ}
         rw [← hcol1 n, ← hcol2 n]
         ring
       exact hstep.trans (le_of_eq hexp)
-    · simp only [annFam_apply, if_neg hg]
+    · simp only [annFam_apply, ite_eq_right hg]
       simp
   have hkey := tsum_le_five hf0 hle h₁ h₂ h₃ h₄ h₅
   have hfsum : Summable (annFam m (fun j n => w2 n * Jann j n)) :=

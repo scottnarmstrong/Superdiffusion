@@ -75,10 +75,15 @@ private theorem eLpNorm_comp_measurableEquiv {alpha beta : Type*}
     (he : MeasurePreserving (fun x => e x) mu nu) {p : ℝ≥0∞} (hp0 : p ≠ 0)
     (hpt : p ≠ ∞) (f : beta → E) :
     eLpNorm f p nu = eLpNorm (fun x => f (e x)) p mu := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt]
-  congr 1
-  exact MeasurePreserving.lintegral_map_equiv (fun a => ‖f a‖ₑ ^ p.toReal) e he
+  by_cases hf : AEStronglyMeasurable f nu
+  · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hf,
+      eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt
+        (show AEStronglyMeasurable (fun x => f (e x)) mu from hf.comp_measurePreserving he)]
+    congr 1
+    exact MeasurePreserving.lintegral_map_equiv (fun a => ‖f a‖ₑ ^ p.toReal) e he
+  · rw [eLpNorm_of_not_aestronglyMeasurable hf, eLpNorm_of_not_aestronglyMeasurable]
+    intro h
+    exact hf ((he.aestronglyMeasurable_comp_iff e.measurableEmbedding).1 h)
 
 /-! ## 2. The one-slot change of variables -/
 
@@ -88,7 +93,8 @@ theorem normalizedVolumeMeasureOn_translateSet (z : Vec d) (A : Set (Vec d)) :
     Support.normalizedVolumeMeasureOn (translateSet z A) =
       Measure.map (fun x : Vec d => x + z) (Support.normalizedVolumeMeasureOn A) := by
   rw [Support.normalizedVolumeMeasureOn_def, Support.normalizedVolumeMeasureOn_def,
-    Measure.map_smul, (measurePreserving_addRight_restrict_translateSet z A).map_eq,
+    Measure.map_smul (f := fun x : Vec d => x + z) (hf := (measurable_add_const z).aemeasurable),
+    (measurePreserving_addRight_restrict_translateSet z A).map_eq,
     volume_translateSet_eq]
 
 /-- `x ↦ x + z` is measure preserving from `⨍_A` to `⨍_{z+A}`. -/
@@ -134,7 +140,8 @@ theorem normalizedGagliardoMeasureOn_translateSet (z : Vec d) (A : Set (Vec d)) 
   have hmeas : Measurable (fun x : Vec d => x + z) := measurable_id.add_const z
   rw [Support.normalizedGagliardoMeasureOn_def, Support.normalizedGagliardoMeasureOn_def,
     Support.normalizedVolumeMeasureOn_def, Support.normalizedVolumeMeasureOn_def,
-    Measure.prod_smul_left, Measure.prod_smul_left, Measure.map_smul,
+    Measure.prod_smul_left, Measure.prod_smul_left,
+    Measure.map_smul (hf := (hmeas.prodMap hmeas).aemeasurable),
     ← Measure.map_prod_map _ _ hmeas hmeas,
     (measurePreserving_addRight_restrict_translateSet z A).map_eq,
     volume_translateSet_eq]
@@ -214,9 +221,8 @@ private theorem memLp_comp_measurableEquiv {alpha beta : Type*}
     (he : MeasurePreserving (fun x => e x) mu nu) {p : ℝ≥0∞} (hp0 : p ≠ 0)
     (hpt : p ≠ ∞) {f : beta → E} (hf : MemLp f p nu) :
     MemLp (fun x => f (e x)) p mu := by
-  refine ⟨hf.1.comp_measurePreserving he, ?_⟩
-  rw [← eLpNorm_comp_measurableEquiv e he hp0 hpt f]
-  exact hf.2
+  rw [memLp_iff, ← eLpNorm_comp_measurableEquiv e he hp0 hpt f]
+  exact hf.eLpNorm_lt_top
 
 omit [NormedSpace ℝ E] in
 /-- **The `L²` half of the force datum transports.**  `g ∈ L^p(z+A)` in the

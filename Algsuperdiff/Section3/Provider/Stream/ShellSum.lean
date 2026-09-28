@@ -57,7 +57,7 @@ candidate (`IsSemitopologicalSemiring`, `IsTopologicalSemiring`, down through `C
 term sidesteps that search entirely; it is what the nested-level caches below build on. -/
 private instance instContinuousAddVecMatCLM (d : ℕ) :
     ContinuousAdd (Vec d →L[ℝ] Mat d) :=
-  ContinuousLinearMap.topologicalAddGroup.toContinuousAdd
+  ContinuousLinearMap.isTopologicalAddGroup.toContinuousAdd
 
 /-- Migration cache (mathlib v4.33.1): pin the nested second-derivative fibre's
 `TopologicalSpace`/`IsTopologicalAddGroup`/`ContinuousAdd` directly via
@@ -75,7 +75,7 @@ private instance instTopologicalSpaceVecVecMatCLM (d : ℕ) :
 
 private instance instIsTopologicalAddGroupVecVecMatCLM (d : ℕ) :
     IsTopologicalAddGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
-  ContinuousLinearMap.topologicalAddGroup
+  ContinuousLinearMap.isTopologicalAddGroup
 
 private instance instContinuousAddVecVecMatCLM (d : ℕ) :
     ContinuousAdd (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=

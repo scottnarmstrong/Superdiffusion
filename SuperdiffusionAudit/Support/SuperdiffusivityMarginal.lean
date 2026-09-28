@@ -356,12 +356,6 @@ theorem map_eval_eq_liveLaw (Q : Vec d → Measure (ContinuousPath (Vec d)))
   have := hQ.1 x
   have hevm : Measurable fun path : ContinuousPath (Vec d) => path t.toNNReal :=
     ContinuousPath.measurable_coordinateProcess (alpha := Vec d) t.toNNReal
-  have : IsProbabilityMeasure
-      (Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal) (Q x)) :=
-    Measure.isProbabilityMeasure_map hevm.aemeasurable
-  have : IsProbabilityMeasure
-      (Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal)
-        (liveLaw M omega x)) := Measure.isProbabilityMeasure_map hevm.aemeasurable
   have hnonneg : ∀ psi : Vec d → ℝ, Continuous psi → HasCompactSupport psi →
       (∀ y, 0 ≤ psi y) →
       (∫ y, psi y ∂Measure.map (fun path : ContinuousPath (Vec d) => path t.toNNReal) (Q x)) =

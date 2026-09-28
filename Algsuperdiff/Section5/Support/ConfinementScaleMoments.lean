@@ -127,7 +127,7 @@ theorem lintegral_widenedScale_rpow_le (mu : Measure Omega) {S : ℤ → Omega �
         rw [widenedScale_eq_iSup_nat, iSup_rpow_of_pos _ hp0]
         refine iSup_le fun j => ?_
         rw [hterm j omega]
-        exact ENNReal.le_tsum j
+        exact ENNReal.le_tsum (f := fun j : ℕ => r ^ j * ENNReal.ofReal (S (n + j) omega) ^ p) j
     _ = ∑' j : ℕ, ∫⁻ omega, r ^ j * ENNReal.ofReal (S (n + j) omega) ^ p ∂mu := by
         refine lintegral_tsum fun j => ?_
         exact (((ENNReal.measurable_ofReal.comp (hmeas (n + j))).pow_const

@@ -73,15 +73,15 @@ theorem exists_int_triadicGridCoord (s t : ℝ) :
     ∃ n : ℤ, triadicGridCoord s t = s * (n : ℝ) := by
   unfold triadicGridCoord
   by_cases ht : 0 ≤ t
-  · exact ⟨⌊t / s⌋, by rw [if_pos ht]⟩
-  · exact ⟨⌈t / s⌉, by rw [if_neg ht]⟩
+  · exact ⟨⌊t / s⌋, by rw [ite_eq_left ht]⟩
+  · exact ⟨⌈t / s⌉, by rw [ite_eq_right ht]⟩
 
 /-- The truncated coordinate is within one spacing of the original, strictly. -/
 theorem abs_sub_triadicGridCoord_lt {s : ℝ} (hs : 0 < s) (t : ℝ) :
     |t - triadicGridCoord s t| < s := by
   unfold triadicGridCoord
   by_cases ht : 0 ≤ t
-  · rw [if_pos ht]
+  · rw [ite_eq_left ht]
     have hlo : s * (⌊t / s⌋ : ℝ) ≤ t := by
       have h := Int.floor_le (t / s)
       have := mul_le_mul_of_nonneg_left h hs.le
@@ -93,7 +93,7 @@ theorem abs_sub_triadicGridCoord_lt {s : ℝ} (hs : 0 < s) (t : ℝ) :
       linarith only [this]
     rw [abs_of_nonneg (by linarith only [hlo])]
     linarith only [hhi]
-  · rw [if_neg ht]
+  · rw [ite_eq_right ht]
     have hhi : t ≤ s * (⌈t / s⌉ : ℝ) := by
       have h := Int.le_ceil (t / s)
       have := mul_le_mul_of_nonneg_left h hs.le
@@ -111,7 +111,7 @@ theorem abs_triadicGridCoord_le {s : ℝ} (hs : 0 < s) (t : ℝ) :
     |triadicGridCoord s t| ≤ |t| := by
   unfold triadicGridCoord
   by_cases ht : 0 ≤ t
-  · rw [if_pos ht]
+  · rw [ite_eq_left ht]
     have hnonneg : (0 : ℤ) ≤ ⌊t / s⌋ :=
       Int.le_floor.2 (by simpa only [Int.cast_zero] using div_nonneg ht hs.le)
     have hnonnegR : (0 : ℝ) ≤ (⌊t / s⌋ : ℝ) := by exact_mod_cast hnonneg
@@ -121,7 +121,7 @@ theorem abs_triadicGridCoord_le {s : ℝ} (hs : 0 < s) (t : ℝ) :
       rwa [mul_div_cancel₀ t hs.ne'] at this
     rw [abs_of_nonneg (by positivity), abs_of_nonneg ht]
     exact hlo
-  · rw [if_neg ht]
+  · rw [ite_eq_right ht]
     have htneg : t ≤ 0 := le_of_not_ge ht
     have hnonpos : ⌈t / s⌉ ≤ (0 : ℤ) :=
       Int.ceil_le.2 (by simpa only [Int.cast_zero] using div_nonpos_of_nonpos_of_nonneg htneg hs.le)

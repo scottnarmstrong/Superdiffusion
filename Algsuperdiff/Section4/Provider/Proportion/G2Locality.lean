@@ -109,7 +109,7 @@ theorem measurable_cutoffCoarseFullBlockRaw_local (M : ABKModel d) (L : ℤ)
   change Measurable fun omega : Cutoff.CutoffSample d =>
     (toFullBlockMat (coarseBlockMatrix (cubeSet Q)
       (Cutoff.coefficientCutoff M.nu L omega).toFun) : BlockCoord d → BlockCoord d → ℝ)
-  refine measurable_pi_lambda _ fun alpha => measurable_pi_lambda _ fun beta => ?_
+  refine Measurable.of_eval fun alpha => Measurable.of_eval fun beta => ?_
   cases alpha with
   | inl i =>
       cases beta with
@@ -133,9 +133,9 @@ theorem measurable_cutoffCoarseFullBlockRaw_local (M : ABKModel d) (L : ℤ)
               (Cutoff.coefficientCutoff M.nu L omega).toFun i j
           rw [hEq]
           by_cases hij : i = j
-          · simp only [if_pos hij]
+          · simp only [ite_eq_left hij]
             exact (hMu _).const_mul 2
-          · simp only [if_neg hij]
+          · simp only [ite_eq_right hij]
             exact ((hMu _).sub (hMu _)).sub (hMu _)
       | inr j =>
           have hEq : (fun omega : Cutoff.CutoffSample d =>
@@ -191,9 +191,9 @@ theorem measurable_cutoffCoarseFullBlockRaw_local (M : ABKModel d) (L : ℤ)
               (Cutoff.coefficientCutoff M.nu L omega).toFun i j
           rw [hEq]
           by_cases hij : i = j
-          · simp only [if_pos hij]
+          · simp only [ite_eq_left hij]
             exact (hMu _).const_mul 2
-          · simp only [if_neg hij]
+          · simp only [ite_eq_right hij]
             exact ((hMu _).sub (hMu _)).sub (hMu _)
 
 /-- **The common coarse-block is local** — the first genuine use of a.e. stability:

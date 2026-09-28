@@ -24,7 +24,7 @@ noncomputable def Algsuperdiff.Frozen.Section24.perturbCoeffOn
         (volumeMeasureOn (U : Set (Vec d))) from rfl]
       exact (h.1.2 i j).eLpNorm_ne_top
     have hae : ∀ᵐ x ∂ volumeMeasureOn (U : Set (Vec d)), ‖h.1.1 x i j‖ₑ ≤ E := by
-      simpa only [E, eLpNorm_exponent_top] using
+      simpa only [E, eLpNorm_exponent_top (h.1.2 i j).aestronglyMeasurable] using!
         (ae_le_eLpNormEssSup (f := fun x : Vec d => h.1.1 x i j)
           (μ := volumeMeasureOn (U : Set (Vec d))))
     filter_upwards [hae] with x hx

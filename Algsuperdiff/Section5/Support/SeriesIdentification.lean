@@ -104,7 +104,7 @@ private theorem matVecMul_smul_one {d : ℕ} (xi : Vec d) :
     matVecMul ((1 : ℝ) • (1 : Mat d)) xi = xi := by
   funext i
   simp only [matVecMul, one_smul, Matrix.one_apply, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private theorem setIntegral_vecDot_neg_left {d : ℕ} (U : Set (Vec d)) (F p : Vec d → Vec d) :
     ∫ x in U, vecDot (-F x) (p x) ∂volume = -∫ x in U, vecDot (F x) (p x) ∂volume := by

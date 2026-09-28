@@ -121,9 +121,9 @@ theorem summable_annFam_of_le {m : ℤ} {h : ℤ → ℤ → ℝ} {K c : ℝ} (h
     ((annWeightFam_summable hc0 m).mul_left K)
   rintro ⟨j, n⟩
   by_cases hg : j ≤ m ∧ n ≤ j - 1
-  · rw [annFam_apply, if_pos hg, annWeightFam_def, annFam_apply, if_pos hg]
+  · rw [annFam_apply, ite_eq_left hg, annWeightFam_def, annFam_apply, ite_eq_left hg]
     exact hle j n hg.1 hg.2
-  · rw [annFam_apply, if_neg hg, annWeightFam_def, annFam_apply, if_neg hg, mul_zero]
+  · rw [annFam_apply, ite_eq_right hg, annWeightFam_def, annFam_apply, ite_eq_right hg, mul_zero]
 
 /-- **The polynomial-times-geometric comparison.**  If the family is dominated
 by `K ((m-n)+2)^2 3^(b(m-n))` with `b + 2c <= 0` for some `c` in `(0,1]`, it is

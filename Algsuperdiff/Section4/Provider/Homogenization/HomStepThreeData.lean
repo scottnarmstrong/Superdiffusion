@@ -223,9 +223,10 @@ theorem memWsp_of_holderHalf {m : ℤ} {K s : ℝ} {f : Vec d → E} (hd : 1 ≤
     (hs0 : 0 < s) (hs : s < 1 / 2) (hK : 0 ≤ K)
     (hf : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K f) :
     Gagliardo.MemWsp (originCube d m) s 2 f := by
-  refine ⟨aestronglyMeasurable_gagliardoKernel_of_holderHalf hK hf, ?_⟩
   have hid := normalizedGagliardoESeminormOn_openCubeSet (originCube d m) s f
   have hbound := normalizedGagliardoESeminormOn_cube_le (E := E) hd hs0 hs hK hf
+  show eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2
+    (Gagliardo.gagliardoCubeMeasure (originCube d m)) < ⊤
   rw [← Gagliardo.Internal.cubeGagliardoESeminorm_def, ← hid]
   exact lt_of_le_of_lt hbound ENNReal.ofReal_lt_top
 

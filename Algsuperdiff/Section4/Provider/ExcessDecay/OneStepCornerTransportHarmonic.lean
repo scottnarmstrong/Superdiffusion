@@ -113,9 +113,9 @@ theorem toEuc_symm_negCoordLIE (i : Fin d) (z : 𝔼) :
   rw [toEuc_symm_apply, negCoordLIE_apply, Homogenization.coordFaceReflection_apply,
     toEuc_symm_apply]
   by_cases h : l = i
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     ring
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
 
 theorem toEuc_negCoordLIE (i : Fin d) (y : Vec d) :
     negCoordLIE i ((toEuc : Vec d → 𝔼) y)

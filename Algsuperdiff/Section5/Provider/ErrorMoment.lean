@@ -131,7 +131,7 @@ theorem isDirichletSolutionAt_rescale_constant {d : ℕ} {y : Vec d} {n : ℤ}
 
 private theorem normalized_eLpNorm_top_le_of_ae {d : ℕ} {U : Set (Vec d)}
     {f : Vec d → ℝ} {sigma scale E : ℝ} (hsigma : 0 < sigma)
-    (hscale : 0 < scale)
+    (hscale : 0 < scale) (hf : AEStronglyMeasurable f (volume.restrict U))
     (h : ∀ᵐ x ∂(volume.restrict U), scale * |f x| ≤ E * sigma⁻¹) :
     ENNReal.ofReal (sigma * scale) * eLpNorm f ⊤ (volume.restrict U) ≤
       ENNReal.ofReal E := by
@@ -144,7 +144,7 @@ private theorem normalized_eLpNorm_top_le_of_ae {d : ℕ} {U : Set (Vec d)}
       _ = E * sigma⁻¹ * scale⁻¹ := by rw [div_eq_mul_inv]
   have hlp : eLpNorm f ⊤ (volume.restrict U) ≤
       ENNReal.ofReal (E * sigma⁻¹ * scale⁻¹) := by
-    simpa using (eLpNorm_le_of_ae_bound (p := (⊤ : ℝ≥0∞)) hae)
+    simpa using (eLpNorm_le_of_ae_bound (p := (⊤ : ℝ≥0∞)) hf hae)
   calc
     ENNReal.ofReal (sigma * scale) * eLpNorm f ⊤ (volume.restrict U) ≤
         ENNReal.ofReal (sigma * scale) * ENNReal.ofReal (E * sigma⁻¹ * scale⁻¹) :=
@@ -192,11 +192,8 @@ theorem localizedError_origin_le_of_renormalization {d : ℕ} (M : ABKModel d)
           (volume.restrict (cubeSetAt 0 n)) +
         eLpNorm (fun x => w.toFun x - v.toFun x) ⊤
           (volume.restrict (cubeSetAt 0 n)) := by
-    have huMeas := u.memL2.aestronglyMeasurable
-    have hwMeas := w.memL2.aestronglyMeasurable
-    have hvMeas := v.memL2.aestronglyMeasurable
-    have hadd := eLpNorm_add_le (huMeas.sub hwMeas) (hwMeas.sub hvMeas)
-      (show (1 : ℝ≥0∞) ≤ ⊤ by simp)
+    have hadd := eLpNorm_add_le (f := u.toFun - w.toFun) (g := w.toFun - v.toFun)
+      (μ := volume.restrict (cubeSetAt 0 n)) (show (1 : ℝ≥0∞) ≤ ⊤ by simp)
     have heq : (fun x => u.toFun x - v.toFun x) =
         (u.toFun - w.toFun) + (w.toFun - v.toFun) := by
       funext x
@@ -351,7 +348,8 @@ theorem exists_localizedError_origin_bound (d : ℕ) (cstar : ℝ)
             EB omega * (sigma⁻¹ * Real.rpow 3 ((n : ℝ) / 2) *
               Real.rpow 3 (-(n : ℝ) / 2)) := hx
         _ = EB omega * sigma⁻¹ := by rw [mul_assoc sigma⁻¹, hcancel, mul_one]
-    exact normalized_eLpNorm_top_le_of_ae hsigma (Real.rpow_pos_of_pos (by norm_num) _) hae
+    exact normalized_eLpNorm_top_le_of_ae hsigma (Real.rpow_pos_of_pos (by norm_num) _)
+      (u.memL2.aestronglyMeasurable.sub w.memL2.aestronglyMeasurable) hae
   · exact hcomp M n
 
 /-! ## Moment packaging -/

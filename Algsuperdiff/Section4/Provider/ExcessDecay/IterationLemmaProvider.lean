@@ -206,7 +206,7 @@ theorem iteration_lemma_provider
       · exact hε k hcase.1 hcase.2
       · exact le_rfl
     · show (if n ≤ j ∧ j ≤ m then ε j else 0) = ε j
-      rw [if_pos (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
+      rw [ite_eq_left (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
   obtain ⟨δt, hδt0, hδteq⟩ : ∃ f : ℤ → ℝ, (∀ k : ℤ, 0 ≤ f k)
       ∧ ∀ j : ℤ, n ≤ j → j ≤ m → f j = δ j := by
     refine ⟨fun j => if n ≤ j ∧ j ≤ m then δ j else 0, fun k => ?_, fun j hj1 hj2 => ?_⟩
@@ -215,7 +215,7 @@ theorem iteration_lemma_provider
       · exact hδ k hcase.1 hcase.2
       · exact le_rfl
     · show (if n ≤ j ∧ j ≤ m then δ j else 0) = δ j
-      rw [if_pos (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
+      rw [ite_eq_left (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
   have hSe : ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j :=
     Finset.sum_congr rfl fun j hj => by
       rw [Finset.mem_Icc] at hj

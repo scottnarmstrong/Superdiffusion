@@ -114,9 +114,13 @@ theorem eLpNorm_grad_window_le_sup {m j : ℤ} {z : Vec d} {Kh : ℝ} (hKh : 0 �
     refine ((ae_restrict_iff' (measurableSet_stepThreeWindow z m j)).mpr
       (Filter.Eventually.of_forall fun y hy => ?_))
     exact hsup y (truncatedWindow_subset_domain z m j hy)
-  have h := eLpNorm_le_of_ae_bound (p := 2) hae
-  rw [measure_univ, ENNReal.one_rpow, one_mul] at h
-  exact ENNReal.toReal_le_of_le_ofReal hC0 h
+  by_cases hmeas : AEStronglyMeasurable hdat.grad
+      (Support.normalizedVolumeMeasureOn (truncatedWindow z m j))
+  · have h := eLpNorm_le_of_ae_bound (p := 2) hmeas hae
+    rw [measure_univ, ENNReal.one_rpow, one_mul] at h
+    exact ENNReal.toReal_le_of_le_ofReal hC0 h
+  · rw [eLpNorm_of_not_aestronglyMeasurable hmeas, ENNReal.toReal_top]
+    exact hC0
 
 theorem eLpNorm_grad_coord_window_le_sup {m j : ℤ} {z : Vec d} {Kh : ℝ}
     (hKh : 0 ≤ Kh) (hz : z ∈ openCubeSet (originCube d m))
@@ -138,9 +142,13 @@ theorem eLpNorm_grad_coord_window_le_sup {m j : ℤ} {z : Vec d} {Kh : ℝ}
       (Filter.Eventually.of_forall fun y hy => ?_))
     exact le_trans (norm_le_pi_norm (hdat.grad y) i)
       (hsup y (truncatedWindow_subset_domain z m j hy))
-  have h := eLpNorm_le_of_ae_bound (p := 2) hae
-  rw [measure_univ, ENNReal.one_rpow, one_mul] at h
-  exact ENNReal.toReal_le_of_le_ofReal hC0 h
+  by_cases hmeas : AEStronglyMeasurable (fun y => hdat.grad y i)
+      (Support.normalizedVolumeMeasureOn (truncatedWindow z m j))
+  · have h := eLpNorm_le_of_ae_bound (p := 2) hmeas hae
+    rw [measure_univ, ENNReal.one_rpow, one_mul] at h
+    exact ENNReal.toReal_le_of_le_ofReal hC0 h
+  · rw [eLpNorm_of_not_aestronglyMeasurable hmeas, ENNReal.toReal_top]
+    exact hC0
 
 theorem sum_eLpNorm_grad_coord_window_le_sup {m j : ℤ} {z : Vec d} {Kh : ℝ}
     (hKh : 0 ≤ Kh) (hz : z ∈ openCubeSet (originCube d m))

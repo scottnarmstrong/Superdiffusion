@@ -235,7 +235,7 @@ theorem competitorVertexData_of_mem_closedBall {I : Set (TriadicCube d)}
     competitorVertexData I p v = componentAverage (badComponent I R) p := by
   classical
   rw [competitorVertexData,
-    if_pos (mem_closedCubeCarrier_iff.mpr ⟨R, hR, hv⟩),
+    ite_eq_left (mem_closedCubeCarrier_iff.mpr ⟨R, hR, hv⟩),
     claimedBadComponent_eq_badComponent hR hv]
 
 /-- **The good branch**: away from the closed bad cubes the datum is `ℓ_p` itself. -/
@@ -243,7 +243,7 @@ theorem competitorVertexData_of_notMem_closedCubeCarrier {I : Set (TriadicCube d
     (p : Vec d) {v : Vec d} (hv : v ∉ closedCubeCarrier I) :
     competitorVertexData I p v = linearFn p v := by
   classical
-  rw [competitorVertexData, if_neg hv]
+  rw [competitorVertexData, ite_eq_right hv]
 
 /-! ## Vertices of a cell of a Whitney cube -/
 

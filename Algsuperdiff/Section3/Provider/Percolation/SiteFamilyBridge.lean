@@ -265,7 +265,7 @@ theorem badExtended_subset_iUnion_siteBadEvent (M : ABKModel d) (base : ℤ)
   obtain ⟨L, hL⟩ := Set.mem_iUnion.1
     (badExtended_subset_iUnion_badScaleEvent M (siteCube base u) homega)
   refine Set.mem_iUnion.2 ⟨L + sepShift d, ?_⟩
-  rw [siteBadEvent, if_neg (by omega)]
+  rw [siteBadEvent, ite_eq_right (by omega)]
   have : L + sepShift d - sepShift d = L := by omega
   rw [this]
   exact hL
@@ -407,7 +407,7 @@ theorem indep_siteSigma_siteBadEvent (M : ABKModel d) (base : ℤ) (l : ℕ)
       intro T
       refine MeasurableSpace.generateFrom_le ?_
       rintro A ⟨L, hL, y, -, rfl⟩
-      rw [siteBadEvent, if_pos (by omega)]
+      rw [siteBadEvent, ite_eq_left (by omega)]
       exact @MeasurableSet.empty (CutoffSample d) ⊥
     exact ProbabilityTheory.indep_of_indep_of_le_right
       (ProbabilityTheory.indep_of_indep_of_le_left

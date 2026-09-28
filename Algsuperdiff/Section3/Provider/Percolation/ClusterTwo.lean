@@ -100,32 +100,32 @@ theorem Connected₂.trans {S : Finset (Fin d → ℤ)} {u v w : Fin d → ℤ}
   obtain ⟨M, y, hy0, hyM, hyp, hyS⟩ := h₂
   refine ⟨N + M, fun i => if i ≤ N then x i else y (i - N), ?_, ?_, ?_, ?_⟩
   · show (if (0 : ℕ) ≤ N then x 0 else y (0 - N)) = u
-    rw [if_pos (Nat.zero_le N)]; exact hx0
+    rw [ite_eq_left (Nat.zero_le N)]; exact hx0
   · show (if N + M ≤ N then x (N + M) else y (N + M - N)) = w
     rcases Nat.eq_zero_or_pos M with rfl | hM
-    · rw [if_pos (by omega), Nat.add_zero, hxN, ← hyM, hy0]
-    · rw [if_neg (by omega), show N + M - N = M from by omega]
+    · rw [ite_eq_left (by omega), Nat.add_zero, hxN, ← hyM, hy0]
+    · rw [ite_eq_right (by omega), show N + M - N = M from by omega]
       exact hyM
   · intro i hi
     show latDist (if i ≤ N then x i else y (i - N))
       (if i + 1 ≤ N then x (i + 1) else y (i + 1 - N)) ≤ 2
     by_cases h1 : i + 1 ≤ N
-    · rw [if_pos (by omega), if_pos h1]
+    · rw [ite_eq_left (by omega), ite_eq_left h1]
       exact hxp i (by omega)
     · by_cases h2 : i ≤ N
       · have hiN : i = N := by omega
         subst hiN
-        rw [if_pos (le_refl i), if_neg (by omega), show i + 1 - i = 1 from by omega, hxN,
+        rw [ite_eq_left (le_refl i), ite_eq_right (by omega), show i + 1 - i = 1 from by omega, hxN,
           ← hy0]
         exact hyp 0 (by omega)
-      · rw [if_neg (by omega), if_neg (by omega),
+      · rw [ite_eq_right (by omega), ite_eq_right (by omega),
           show i + 1 - N = (i - N) + 1 from by omega]
         exact hyp (i - N) (by omega)
   · intro i hi
     show (if i ≤ N then x i else y (i - N)) ∈ S
     by_cases h1 : i ≤ N
-    · rw [if_pos h1]; exact hxS i h1
-    · rw [if_neg h1]; exact hyS (i - N) (by omega)
+    · rw [ite_eq_left h1]; exact hxS i h1
+    · rw [ite_eq_right h1]; exact hyS (i - N) (by omega)
 
 /-! ### The 2-cluster -/
 
@@ -141,11 +141,11 @@ theorem mem_cluster₂_iff {S : Finset (Fin d → ℤ)} {u v : Fin d → ℤ} :
   classical
   unfold cluster₂
   by_cases hu : u ∈ S
-  · rw [if_pos hu, Finset.mem_filter]
+  · rw [ite_eq_left hu, Finset.mem_filter]
     constructor
     · rintro ⟨-, hconn⟩; exact ⟨hu, hconn⟩
     · rintro ⟨-, hconn⟩; exact ⟨hconn.mem_right, hconn⟩
-  · rw [if_neg hu]
+  · rw [ite_eq_right hu]
     simp [hu]
 
 /-- The 2-cluster is a subset of the site set: the source's `A ⊆ B*_{m-h}`. -/
@@ -204,7 +204,7 @@ def closedLatDiam (A : Finset (Fin d → ℤ)) : ℕ := if A.Nonempty then latDi
 
 
 theorem closedLatDiam_eq_of_nonempty {A : Finset (Fin d → ℤ)} (hA : A.Nonempty) :
-    closedLatDiam A = latDiam A + 1 := if_pos hA
+    closedLatDiam A = latDiam A + 1 := ite_eq_left hA
 
 /-! ### From a large 2-cluster to a distance-two crossing -/
 

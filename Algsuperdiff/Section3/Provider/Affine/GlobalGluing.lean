@@ -122,7 +122,7 @@ theorem gluedKuhnAffine_eqOn_closedCarrier {S : Finset (KuhnCell d)} {s : ℤ}
   have hspec := hex.choose_spec
   show (if h : ∃ U ∈ S, x ∈ U.closedCarrier then kuhnInterp h.choose g x else g x) =
     kuhnInterp T g x
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact kuhnInterp_eqOn_closedCarrier_inter hex.choose T g
     ((hscale _ hspec.1).trans (hscale T hT).symm) ⟨hspec.2, hx⟩
 

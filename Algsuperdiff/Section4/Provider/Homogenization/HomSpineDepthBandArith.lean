@@ -147,7 +147,7 @@ theorem sum_near_bandStraddleWeight_le {a : ℝ} (ha : a ≤ 1 / 2) {D : ℝ} (h
     intro i _
     have hnotlt : ¬ (j + i < j) := by omega
     have hsub : j + i - j = i := by omega
-    rw [bandStraddleWeight, if_neg hnotlt, hsub, inv_three_pow_eq]
+    rw [bandStraddleWeight, ite_eq_right hnotlt, hsub, inv_three_pow_eq]
     have hsplit : (3 : ℝ) ^ (a * ((j + i : ℕ) : ℝ)) =
         (3 : ℝ) ^ (a * (j : ℝ)) * (3 : ℝ) ^ (a * (i : ℝ)) := by
       rw [← Real.rpow_add (by norm_num)]
@@ -183,7 +183,7 @@ theorem sum_three_rpow_mul_bandStraddleWeight_le {a : ℝ} (ha0 : 0 < a) (ha : a
     have hcongr : ∀ k ∈ Finset.range j,
         (3 : ℝ) ^ (a * (k : ℝ)) * bandStraddleWeight D j k = (3 : ℝ) ^ (a * (k : ℝ)) := by
       intro k hk
-      rw [bandStraddleWeight, if_pos (Finset.mem_range.mp hk), mul_one]
+      rw [bandStraddleWeight, ite_eq_left (Finset.mem_range.mp hk), mul_one]
     rw [Finset.sum_congr rfl hcongr]
     exact sum_far_three_rpow_le ha0 j
   have htarget : (3 : ℝ) ^ (a * (j : ℝ)) *

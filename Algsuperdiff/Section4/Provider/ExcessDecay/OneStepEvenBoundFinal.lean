@@ -94,9 +94,9 @@ theorem image_sub_slab (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) :
     rw [smul_basisVec_apply]
     by_cases hj : j = i
     · subst hj
-      rw [slabLo_self, deepLo_self, if_pos rfl]
+      rw [slabLo_self, deepLo_self, ite_eq_left rfl]
       ring
-    · rw [slabLo_of_ne hj, deepLo_of_ne hj, if_neg hj]
+    · rw [slabLo_of_ne hj, deepLo_of_ne hj, ite_eq_right hj]
       ring
   have h2 : (fun j => slabHi x m k i j - (delta • (basisVec i : Vec d)) j)
       = deepHi x m k i delta := by
@@ -104,8 +104,8 @@ theorem image_sub_slab (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) :
     rw [smul_basisVec_apply]
     by_cases hj : j = i
     · subst hj
-      rw [slabHi_self, deepHi_self, if_pos rfl]
-    · rw [slabHi_of_ne hj, deepHi_of_ne hj, if_neg hj]
+      rw [slabHi_self, deepHi_self, ite_eq_left rfl]
+    · rw [slabHi_of_ne hj, deepHi_of_ne hj, ite_eq_right hj]
       ring
   rw [h1, h2]
 
@@ -127,7 +127,7 @@ theorem volume_toReal_coordBox_deep_ge {x : Vec d} {m k : ℤ} {i : Fin d} {delt
   calc delta ^ d = ∏ _j : Fin d, delta := by
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ ∏ j : Fin d, (deepHi x m k i delta j - deepLo x m k i delta j) :=
-        Finset.prod_le_prod (fun _ _ => hdelta.le) hstep
+        Finset.prod_le_prod₀ (fun _ _ => hdelta.le) hstep
 
 /-! ## 2. The slab comparison -/
 

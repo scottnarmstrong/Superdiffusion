@@ -149,7 +149,7 @@ theorem tendsto_analyticCubeResolvent_comp (mu nu : PositiveShift)
         (A.abs_analyticCubeResolvent_le mu hf hD hfD k) outer)
       (A.continuousOn_analyticCubeResolvent nu hg (fun y => hgBound y) outer)
       (A.analyticCubeResolvent_ae nu hg (fun y => hgBound y) outer) hx
-  · simp only [analyticCubeResolvent, dif_neg hx]
+  · simp only [analyticCubeResolvent, dite_eq_right hx]
     exact tendsto_const_nhds
 
 /-- The bounded-domain identity in the orientation used by the abstract

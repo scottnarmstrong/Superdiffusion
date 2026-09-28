@@ -168,10 +168,10 @@ private theorem tsum_deepGradTerm_eq (k : ℤ) (v : Fin d → ℤ)
     intro x hx
     have hkx : k ≤ x := by
       by_contra hcon
-      exact hx (by rw [deepGradTerm, if_neg hcon])
+      exact hx (by rw [deepGradTerm, ite_eq_right hcon])
     exact ⟨(x - k).toNat, by show k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
   refine Eq.trans (tsum_congr fun n => ?_) (hinj.tsum_eq hsupp)
-  rw [deepGradTerm, if_pos (by omega : k ≤ k + (n : ℤ))]
+  rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
 
 /-- **B6, first half: the deep block of the gradient slot has the Step-4 target
 shape.**
@@ -241,15 +241,15 @@ theorem deepGradTerm_eq_add (m k : ℤ) (v : Fin d → ℤ)
       tailLayerTerm m k v omega i +
         (if k ≤ i ∧ i ≤ m then gradLayerGauge k v omega i else 0) := by
   rcases lt_or_ge i k with hik | hik
-  · rw [deepGradTerm, if_neg (by omega), tailLayerTerm, if_neg (by omega),
-      if_neg (by omega : ¬ (k ≤ i ∧ i ≤ m))]
+  · rw [deepGradTerm, ite_eq_right (by omega), tailLayerTerm, ite_eq_right (by omega),
+      ite_eq_right (by omega : ¬ (k ≤ i ∧ i ≤ m))]
     ring
   · rcases le_or_gt i m with him | him
-    · rw [deepGradTerm, if_pos hik, tailLayerTerm, if_neg (by omega),
-        if_pos (⟨hik, him⟩ : k ≤ i ∧ i ≤ m)]
+    · rw [deepGradTerm, ite_eq_left hik, tailLayerTerm, ite_eq_right (by omega),
+        ite_eq_left (⟨hik, him⟩ : k ≤ i ∧ i ≤ m)]
       ring
-    · rw [deepGradTerm, if_pos hik, gradLayerGauge, tailLayerTerm, if_pos him,
-        if_neg (by omega : ¬ (k ≤ i ∧ i ≤ m))]
+    · rw [deepGradTerm, ite_eq_left hik, gradLayerGauge, tailLayerTerm, ite_eq_left him,
+        ite_eq_right (by omega : ¬ (k ≤ i ∧ i ≤ m))]
       ring
 
 /-- **The slot bracket, resolved.**  Wherever the upper shell series converges,
@@ -263,13 +263,13 @@ theorem headLayerSum_add_tailSeriesGauge_eq (m k : ℤ) (v : Fin d → ℤ)
   have hmidsum : Summable fun i : ℤ =>
       (if k ≤ i ∧ i ≤ m then gradLayerGauge k v omega i else 0) := by
     refine summable_of_ne_finset_zero (s := Finset.Icc k m) fun i hi => ?_
-    rw [if_neg (fun h => hi (Finset.mem_Icc.mpr h))]
+    rw [ite_eq_right (fun h => hi (Finset.mem_Icc.mpr h))]
   have hmid : (∑' i : ℤ, if k ≤ i ∧ i ≤ m then gradLayerGauge k v omega i else 0) =
       ∑ i ∈ Finset.Icc k m, gradLayerGauge k v omega i := by
     rw [tsum_eq_sum (s := Finset.Icc k m) fun i hi => by
-      rw [if_neg (fun h => hi (Finset.mem_Icc.mpr h))]]
+      rw [ite_eq_right (fun h => hi (Finset.mem_Icc.mpr h))]]
     refine Finset.sum_congr rfl fun i hi => ?_
-    rw [if_pos (Finset.mem_Icc.mp hi)]
+    rw [ite_eq_left (Finset.mem_Icc.mp hi)]
   have hdeep : deepGradSeries k v omega =
       tailSeriesGauge m k v omega + ∑ i ∈ Finset.Icc k m, gradLayerGauge k v omega i := by
     rw [deepGradSeries, tsum_congr (deepGradTerm_eq_add m k v omega hkm),

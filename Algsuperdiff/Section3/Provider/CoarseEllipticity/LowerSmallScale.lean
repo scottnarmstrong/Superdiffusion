@@ -124,7 +124,7 @@ theorem cutoffLowerEllipticityInv_le_nu_inv
       change 1 ≤ r at hq
       rw [Book.Ch04.lambdaSqCoeffField]
       simp only [Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField,
-        dif_pos, Book.Ch02.lambdaSq_finite]
+        dite_eq_left, Book.Ch02.lambdaSq_finite]
       exact lambdaSqFinite_inv_le_of_forall_maxDescendant_le
         (originCube d domainScale) _ hs (lt_of_lt_of_le zero_lt_one hq)
           (inv_nonneg.mpr M.nu_pos.le)
@@ -134,7 +134,7 @@ theorem cutoffLowerEllipticityInv_le_nu_inv
       apply lambdaSqCoeffField_inv_infinity_le_of_forall
       intro n
       rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale]
-      simp only [Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos]
+      simp only [Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField, dite_eq_left]
       calc
         Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
             Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale

@@ -71,11 +71,11 @@ theorem coordFaceReflection_apply (a : ℝ) (i : Fin d) (y : Vec d) (j : Fin d) 
   · subst hj
     have h2 : coordReflectionLinear j y j = -(y j) := by simp [coordReflectionLinear]
     have h3 : coordFaceReflectionOffset a j j = 2 * a := by simp [coordFaceReflectionOffset]
-    rw [h2, h3, if_pos rfl]
+    rw [h2, h3, ite_eq_left rfl]
     ring
   · have h2 : coordReflectionLinear i y j = y j := by simp [coordReflectionLinear, hj]
     have h3 : coordFaceReflectionOffset a i j = 0 := by simp [coordFaceReflectionOffset, hj]
-    rw [h2, h3, if_neg hj, add_zero]
+    rw [h2, h3, ite_eq_right hj, add_zero]
 
 /-- A point of the reflecting hyperplane is fixed. -/
 theorem coordFaceReflection_eq_self {a : ℝ} {i : Fin d} {y : Vec d} (hy : y i = a) :
@@ -84,9 +84,9 @@ theorem coordFaceReflection_eq_self {a : ℝ} {i : Fin d} {y : Vec d} (hy : y i 
   rw [coordFaceReflection_apply]
   by_cases hj : j = i
   · subst hj
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     linarith only [hy]
-  · rw [if_neg hj]
+  · rw [ite_eq_right hj]
 
 /-- If `U` is invariant under the reflection, so is the closed support of any
 test function supported in `U` — hence the reflected test is again supported in

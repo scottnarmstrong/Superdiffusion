@@ -116,7 +116,7 @@ theorem cubeExitResolvent_coe (v : ℕ) {lam : ℝ} (hlam : 0 < lam) (y : Vec d)
     A.cubeExitResolvent v lam (y : OnePoint (Vec d)) =
       ENNReal.ofReal (A.analyticCubeResolvent ⟨lam, hlam⟩ (cubeOneDatum d v)
         (measurable_cubeOneDatum d v) (abs_cubeOneDatum_le d v) v y) := by
-  rw [cubeExitResolvent, dif_pos hlam,
+  rw [cubeExitResolvent, dite_eq_left hlam,
     PositiveC0ContractiveResolvent.onePointLiveExtension_coe]
 
 /-- **The limit of the Dirichlet resolvents of the constant datum as the shift

@@ -157,8 +157,8 @@ theorem analyticPenalizedCubeResolvent_mono {V : Set (Vec d)}
     A.analyticPenalizedCubeResolvent hV n mu f hf hfD m x ≤
       A.analyticPenalizedCubeResolvent hV n mu g hg hgE m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticPenalizedCubeResolvent, dif_pos hx,
-      analyticPenalizedCubeResolvent, dif_pos hx]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_left hx,
+      analyticPenalizedCubeResolvent, dite_eq_left hx]
     let hU := isOpenBoundedConvexDomain_wholeSpaceCube d m
     let F := boundedMeasurableToScalarL2 hU
       (hf.comp measurable_subtype_coe) (fun y ↦ hfD y)
@@ -198,8 +198,8 @@ theorem analyticPenalizedCubeResolvent_mono {V : Set (Vec d)}
         (wholeSpacePenalizationPotential_isBounded hV n m) mu
         (hg.comp measurable_subtype_coe) (fun y ↦ hgE y)] with y hle hrepF hrepG
     rwa [hrepF, hrepG]
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx]
 
 /-- The local exterior-penalized resolvents increase with the exhaustion. -/
 theorem analyticPenalizedCubeResolvent_le_succ {V : Set (Vec d)}
@@ -210,8 +210,8 @@ theorem analyticPenalizedCubeResolvent_le_succ {V : Set (Vec d)}
       A.analyticPenalizedCubeResolvent hV n mu f hf hfD (m + 1) x := by
   by_cases hx : x ∈ wholeSpaceCube d m
   · have hx' := wholeSpaceCube_subset_succ d m hx
-    rw [analyticPenalizedCubeResolvent, dif_pos hx,
-      analyticPenalizedCubeResolvent, dif_pos hx']
+    rw [analyticPenalizedCubeResolvent, dite_eq_left hx,
+      analyticPenalizedCubeResolvent, dite_eq_left hx']
     let hSmall := isOpenBoundedConvexDomain_wholeSpaceCube d m
     let hLarge := isOpenBoundedConvexDomain_wholeSpaceCube d (m + 1)
     let F := boundedMeasurableToScalarL2 hLarge
@@ -256,7 +256,7 @@ theorem analyticPenalizedCubeResolvent_le_succ {V : Set (Vec d)}
           (hf.comp measurable_subtype_coe) (fun y ↦ hfD y))]
         with y hle hsmall hlarge
     rwa [hsmall, hlarge]
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx]
     exact A.analyticPenalizedCubeResolvent_nonneg hV n mu hf hf0 hfD (m + 1) x
 
 /-- At each point the local penalized resolvents form a monotone sequence. -/
@@ -279,8 +279,8 @@ theorem analyticPenalizedCubeResolvent_smul {V : Set (Vec d)}
         (hf.const_smul c) hcf m x =
       c * A.analyticPenalizedCubeResolvent hV n mu f hf hfD m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticPenalizedCubeResolvent, dif_pos hx,
-      analyticPenalizedCubeResolvent, dif_pos hx]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_left hx,
+      analyticPenalizedCubeResolvent, dite_eq_left hx]
     exact (continuousCoeffPotentialBoundedResolvent_smul A.a
       (isOpenBoundedConvexDomain_wholeSpaceCube d m) A.hnu
       A.hnu (A.cubeEllipticity m) A.hsymm
@@ -288,8 +288,8 @@ theorem analyticPenalizedCubeResolvent_smul {V : Set (Vec d)}
       (wholeSpacePenalizationPotential V n)
       (wholeSpacePenalizationPotential_isBounded hV n m) mu c
       (hf.comp measurable_subtype_coe) (fun y ↦ hfD y) (fun y ↦ hcf y) hx).symm
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx, mul_zero]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx, mul_zero]
 
 /-- A zero-extended local penalized resolvent is measurable. -/
 theorem measurable_analyticPenalizedCubeResolvent {V : Set (Vec d)}
@@ -315,8 +315,8 @@ theorem measurable_analyticPenalizedCubeResolvent {V : Set (Vec d)}
       domainExtension v := by
     funext x
     by_cases hx : x ∈ wholeSpaceCube d m
-    · rw [analyticPenalizedCubeResolvent, dif_pos hx, domainExtension_of_mem hx]
-    · rw [analyticPenalizedCubeResolvent, dif_neg hx]
+    · rw [analyticPenalizedCubeResolvent, dite_eq_left hx, domainExtension_of_mem hx]
+    · rw [analyticPenalizedCubeResolvent, dite_eq_right hx]
       have hnot : ¬ ∃ y : wholeSpaceCube d m, (y : Vec d) = x := by
         rintro ⟨y, rfl⟩
         exact hx y.2
@@ -338,7 +338,7 @@ theorem continuousOn_analyticPenalizedCubeResolvent {V : Set (Vec d)}
     (wholeSpacePenalizationPotential_isBounded hV n m) mu
     (hf.comp measurable_subtype_coe) (fun y ↦ hfD y)).congr ?_
   intro x hx
-  rw [analyticPenalizedCubeResolvent, dif_pos hx]
+  rw [analyticPenalizedCubeResolvent, dite_eq_left hx]
 
 /-- On its cube, the local representative agrees almost everywhere with the
 potential resolvent class. -/
@@ -363,7 +363,7 @@ theorem analyticPenalizedCubeResolvent_ae {V : Set (Vec d)}
     ae_restrict_mem
       (isOpenBoundedConvexDomain_wholeSpaceCube d m).isOpen.measurableSet]
       with x hrep hx
-  rw [analyticPenalizedCubeResolvent, dif_pos hx, hrep]
+  rw [analyticPenalizedCubeResolvent, dite_eq_left hx, hrep]
 
 /-- The minimal penalized resolvent is measurable. -/
 theorem measurable_analyticPenalizedResolvent {V : Set (Vec d)}
@@ -474,9 +474,9 @@ theorem analyticPenalizedCubeResolvent_add {V : Set (Vec d)}
       A.analyticPenalizedCubeResolvent hV n mu f hf hfD m x +
         A.analyticPenalizedCubeResolvent hV n mu g hg hgE m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticPenalizedCubeResolvent, dif_pos hx,
-      analyticPenalizedCubeResolvent, dif_pos hx,
-      analyticPenalizedCubeResolvent, dif_pos hx]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_left hx,
+      analyticPenalizedCubeResolvent, dite_eq_left hx,
+      analyticPenalizedCubeResolvent, dite_eq_left hx]
     exact (continuousCoeffPotentialBoundedResolvent_add A.a
       (isOpenBoundedConvexDomain_wholeSpaceCube d m) A.hnu
       A.hnu (A.cubeEllipticity m) A.hsymm
@@ -485,9 +485,9 @@ theorem analyticPenalizedCubeResolvent_add {V : Set (Vec d)}
       (wholeSpacePenalizationPotential_isBounded hV n m) mu
       (hf.comp measurable_subtype_coe) (hg.comp measurable_subtype_coe)
       (fun y ↦ hfD y) (fun y ↦ hgE y) (fun y ↦ hfg y) hx).symm
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx, add_zero]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx, add_zero]
 
 end WholeSpaceAnalyticData
 

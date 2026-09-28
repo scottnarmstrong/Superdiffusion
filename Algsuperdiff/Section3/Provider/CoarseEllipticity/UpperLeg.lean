@@ -379,7 +379,7 @@ private theorem LambdaSqCoeffField_finite_le_four_mul_infinity_half
       4 * Ch04.LambdaSqCoeffField Q (s / 2) .infinity a := by
   classical
   by_cases ha : Ch04.AELocallyUniformlyEllipticField a
-  · simp only [Ch04.LambdaSqCoeffField, ha, dif_pos]
+  · simp only [Ch04.LambdaSqCoeffField, ha, dite_eq_left]
     exact LambdaSq_finite_le_four_mul_infinity_half Q
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha) hs hq
   · simp [Ch04.LambdaSqCoeffField, ha]
@@ -679,7 +679,7 @@ theorem cutoffUpperEllipticity_le_four_mul_infinity_half {d : ℕ}
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)
         (t := s / 2) (s := s) (by positivity) (by linarith)
       simpa only [Ch04.LambdaSqCoeffField,
-        Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos] using!
+        Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField, dite_eq_left] using!
         hmono.trans (le_mul_of_one_le_left
           (Ch02.LambdaSq_infinity_nonneg
             (originCube d m)
@@ -739,7 +739,7 @@ private theorem cutoffUpperEllipticity_infinity_half_mul_sigmaBarInv_le
           (coefficientCutoff M.nu m omega') ≤
         M.nu + M.nu⁻¹ * F := by
     simpa only [Ch04.maxDescendantBMatrixNormCoeffFieldAtScale,
-      coefficientCutoff_aeLocallyUniformlyEllipticField, dif_pos, F] using!
+      coefficientCutoff_aeLocallyUniformlyEllipticField, dite_eq_left, F] using!
       (Provider.Base.maxDescendantBMatrixNormAtScale_coefficientCutoff_le
         M (originCube d m) m n omega')
   have hterm :

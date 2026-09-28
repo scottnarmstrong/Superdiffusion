@@ -108,7 +108,7 @@ def evenAffineIntercept (x : Vec d) (m : ℤ) (i : Fin d) (c : ℝ) (A : Vec d) 
 
 @[simp] theorem oddAffineSlope_apply_self (i : Fin d) (A : Vec d) :
     oddAffineSlope i A i = A i := by
-  rw [oddAffineSlope, if_pos rfl]
+  rw [oddAffineSlope, ite_eq_left rfl]
 
 /-- **The even part is constant along the reflection**: its normal slope
 vanishes. -/
@@ -122,7 +122,7 @@ theorem vecDot_oddAffineSlope (i : Fin d) (A y : Vec d) :
   classical
   have h : vecDot (oddAffineSlope i A) y = ∑ j : Fin d, oddAffineSlope i A j * y j := rfl
   have h2 : ∑ j : Fin d, oddAffineSlope i A j * y j = oddAffineSlope i A i * y i :=
-    Finset.sum_eq_single i (fun j _ hji => by rw [oddAffineSlope, if_neg hji, zero_mul])
+    Finset.sum_eq_single i (fun j _ hji => by rw [oddAffineSlope, ite_eq_right hji, zero_mul])
       (fun hcon => absurd (Finset.mem_univ i) hcon)
   rw [h, h2, oddAffineSlope_apply_self]
 

@@ -279,13 +279,13 @@ theorem exists_gradient_oscillation_nested_telescope (hd : 0 < d) :
       (Φ (j + 1)).toH1Function.grad x - (Φ j).toH1Function.grad x := by
     intro j hj
     funext x
-    rw [hF, if_pos hj]
+    rw [hF, ite_eq_left hj]
   have hFmidx : ∀ x : Vec d, F N x = w.grad x - (Φ N).toH1Function.grad x := by
     intro x
-    rw [hF, if_neg (lt_irrefl N), if_pos rfl]
+    rw [hF, ite_eq_right (lt_irrefl N), ite_eq_left rfl]
   have hFtopx : ∀ x : Vec d, F (N + 1) x = (Φ 0).toH1Function.grad x := by
     intro x
-    rw [hF, if_neg (by omega), if_neg (by omega)]
+    rw [hF, ite_eq_right (by omega), ite_eq_right (by omega)]
   have hFmid : F N = fun x => w.grad x - (Φ N).toH1Function.grad x := by
     funext x
     exact hFmidx x
@@ -310,7 +310,7 @@ theorem exists_gradient_oscillation_nested_telescope (hd : 0 < d) :
         (fun i : ℕ => (Φ i).toH1Function.grad x) (j + 1) -
           (fun i : ℕ => (Φ i).toH1Function.grad x) j := by
       intro j hj
-      rw [hF, if_pos (Finset.mem_range.mp hj)]
+      rw [hF, ite_eq_left (Finset.mem_range.mp hj)]
     rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_congr rfl hlow,
       Finset.sum_range_sub (fun i : ℕ => (Φ i).toH1Function.grad x) N, hFmidx, hFtopx]
     abel
@@ -333,7 +333,7 @@ theorem exists_gradient_oscillation_nested_telescope (hd : 0 < d) :
   -- the recentred shape of the summands
   have hcenLow : ∀ j : ℕ, j ≤ N → cen j = volumeAverageVec (openCubeAtScale z n) (F j) := by
     intro j hj
-    rw [hcen, if_neg (by omega)]
+    rw [hcen, ite_eq_right (by omega)]
   have hSosc : ∀ j : ℕ, j ≤ N → S j =
       Real.sqrt (Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z n) (F j)) := by
     intro j hj
@@ -341,7 +341,7 @@ theorem exists_gradient_oscillation_nested_telescope (hd : 0 < d) :
     rfl
   -- the fine-scale defect
   have hdefect : S (N + 1) ≤ E 0 := by
-    have hcenTop : cen (N + 1) = 0 := by rw [hcen, if_pos rfl]
+    have hcenTop : cen (N + 1) = 0 := by rw [hcen, ite_eq_left rfl]
     obtain ⟨g, hg⟩ : ∃ g : Vec d → Vec d, (Φ 0).toH1Function.grad = g := ⟨_, rfl⟩
     have h := (hΦ 0 (Nat.zero_le N)).2
     rw [← hE 0, hg] at h

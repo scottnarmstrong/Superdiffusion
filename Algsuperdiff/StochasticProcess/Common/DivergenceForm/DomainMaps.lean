@@ -58,8 +58,8 @@ private noncomputable def zeroExtendFromDomainLinearMap (hU : MeasurableSet U) :
     rw [hfg, hsum, Pi.add_apply, hf, hg, Set.indicator_apply, Set.indicator_apply,
       Set.indicator_apply]
     by_cases hx : x ∈ U
-    · rw [if_pos hx, if_pos hx, if_pos hx, hadd hx, Pi.add_apply]
-    · rw [if_neg hx, if_neg hx, if_neg hx, zero_add]
+    · rw [ite_eq_left hx, ite_eq_left hx, ite_eq_left hx, hadd hx, Pi.add_apply]
+    · rw [ite_eq_right hx, ite_eq_right hx, ite_eq_right hx, zero_add]
   map_smul' c f := by
     classical
     apply Lp.ext
@@ -72,8 +72,8 @@ private noncomputable def zeroExtendFromDomainLinearMap (hU : MeasurableSet U) :
     rw [RingHom.id_apply, hcf, hambient, Pi.smul_apply, hf,
       Set.indicator_apply, Set.indicator_apply]
     by_cases hx : x ∈ U
-    · rw [if_pos hx, if_pos hx, hsmul hx, Pi.smul_apply]
-    · rw [if_neg hx, if_neg hx, smul_zero]
+    · rw [ite_eq_left hx, ite_eq_left hx, hsmul hx, Pi.smul_apply]
+    · rw [ite_eq_right hx, ite_eq_right hx, smul_zero]
 
 /-- Isometric zero extension from `L²(U)` into ambient `L²(ℝᵈ)`. -/
 noncomputable def zeroExtendFromDomain (hU : MeasurableSet U) :

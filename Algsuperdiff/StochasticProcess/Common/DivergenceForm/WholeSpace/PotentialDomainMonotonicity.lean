@@ -164,8 +164,8 @@ theorem potentialPartDomainZeroExtension_isSubsolution [NeZero d]
       hquVOnU, huUSpec] with x hUq hVq hu
     rw [hUq, hu, Set.indicator_apply]
     by_cases hx : x ∈ V
-    · rw [if_pos hx, Set.indicator_of_mem hx, hVq hx]
-    · rw [if_neg hx, Set.indicator_of_notMem hx, mul_zero]
+    · rw [ite_eq_left hx, Set.indicator_of_mem hx, hVq hx]
+    · rw [ite_eq_right hx, Set.indicator_of_notMem hx, mul_zero]
   have hpotential :
       (∫ x, q x * ZeroTraceSobolev.toL2 uU x *
           ZeroTraceSobolev.toL2 φ x ∂volumeMeasureOn U) =

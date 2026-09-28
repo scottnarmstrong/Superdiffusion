@@ -210,13 +210,17 @@ theorem kickAnnMax_le_of_mem_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) {
     have h1 : annularWeight (s : ℝ) (k - i) * errorAnnSup M s j i omega
         ≤ ∑' n : {n : ℤ // n ≤ j - 1},
             annularWeight (s : ℝ) (k - n.1) * errorAnnSup M s j n.1 omega :=
-      ENNReal.le_tsum (⟨i, hij⟩ : {n : ℤ // n ≤ j - 1})
+      ENNReal.le_tsum (f := fun n : {n : ℤ // n ≤ j - 1} =>
+          annularWeight (s : ℝ) (k - n.1) * errorAnnSup M s j n.1 omega)
+        (⟨i, hij⟩ : {n : ℤ // n ≤ j - 1})
     have h2 : (∑' n : {n : ℤ // n ≤ j - 1},
           annularWeight (s : ℝ) (k - n.1) * errorAnnSup M s j n.1 omega)
         = annularWeight (s : ℝ) (k - j) * XcalE M s j omega :=
       inner_eq_annularWeight_mul_XcalE M s k j omega
     have h3 : annularWeight (s : ℝ) (k - j) * XcalE M s j omega ≤ XrowE M s k omega :=
-      ENNReal.le_tsum (⟨j, hjk⟩ : {j : ℤ // j ≤ k})
+      ENNReal.le_tsum (f := fun j' : {j : ℤ // j ≤ k} =>
+          annularWeight (s : ℝ) (k - j'.1) * XcalE M s j'.1 omega)
+        (⟨j, hjk⟩ : {j : ℤ // j ≤ k})
     rw [h2] at h1
     exact h1.trans h3
   -- read the real inequality off

@@ -57,9 +57,12 @@ private theorem vectorNormalizedL2On_eq_normalizedVolume_eLpNorm_toReal
       fun x => ‖HilbertVec.ofVec (f x)‖ := by
     funext x
     exact euclideanNorm_eq_norm_ofVec _
-  rw [normalizedVolumeOn, eLpNorm_smul_measure_of_ne_top (by norm_num),
+  have hmeasN : AEStronglyMeasurable (fun x => euclideanNorm (f x)) (volume.restrict W) := by
+    rw [hfun]
+    exact hHF.aestronglyMeasurable.norm
+  rw [normalizedVolumeOn, eLpNorm_smul_measure_of_ne_top (by norm_num) _ _ hmeasN,
     smul_eq_mul, ENNReal.toReal_mul]
-  rw [hfun, eLpNorm_norm]
+  rw [hfun, eLpNorm_norm _ hHF.aestronglyMeasurable]
   have hV0 : volume W ≠ 0 := (ENNReal.toReal_ne_zero.mp hW.ne').1
   have hVtop : volume W ≠ ∞ := (ENNReal.toReal_ne_zero.mp hW.ne').2
   rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv]
@@ -92,20 +95,17 @@ theorem vectorNormalizedL2On_le_volume_rpow_mul_vectorLpSizeOn
   have hWtop : volume W ≠ ∞ := (ENNReal.toReal_ne_zero.mp hW.ne').2
   let : IsProbabilityMeasure (normalizedVolumeOn W) :=
     normalizedVolumeOn_isProbability hW0 hWtop
-  have hfWn : MemLp g (ENNReal.ofReal p) (normalizedVolumeOn W) := by
-    dsimp [normalizedVolumeOn]
-    exact hfW.smul_measure (ENNReal.inv_ne_top.mpr hW0)
   have hdown : eLpNorm g 2 (normalizedVolumeOn W) ≤
       eLpNorm g (ENNReal.ofReal p) (normalizedVolumeOn W) :=
-    eLpNorm_le_eLpNorm_of_exponent_le hp2E hfWn.aestronglyMeasurable
+    eLpNorm_le_eLpNorm_of_exponent_le hp2E
   have hrestrict : eLpNorm g (ENNReal.ofReal p) (volume.restrict W) ≤
       eLpNorm g (ENNReal.ofReal p) (volume.restrict U) :=
     eLpNorm_mono_measure g (Measure.restrict_mono hWU le_rfl)
   have hscaled : eLpNorm g (ENNReal.ofReal p) (normalizedVolumeOn W) ≤
       (volume W)⁻¹ ^ (ENNReal.ofReal p).toReal⁻¹ *
         eLpNorm g (ENNReal.ofReal p) (volume.restrict U) := by
-    rw [normalizedVolumeOn, eLpNorm_smul_measure_of_ne_top hpE, smul_eq_mul,
-      one_div]
+    rw [normalizedVolumeOn, eLpNorm_smul_measure_of_ne_top hpE _ _ hfW.aestronglyMeasurable,
+      smul_eq_mul, one_div]
     simpa [mul_comm] using mul_le_mul_left hrestrict
       ((volume W)⁻¹ ^ (ENNReal.ofReal p).toReal⁻¹)
   have htop : (volume W)⁻¹ ^ (ENNReal.ofReal p).toReal⁻¹ *

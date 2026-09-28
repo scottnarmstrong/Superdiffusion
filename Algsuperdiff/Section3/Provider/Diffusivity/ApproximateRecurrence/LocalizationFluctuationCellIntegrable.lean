@@ -111,9 +111,7 @@ private theorem eLpNorm_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
           (mu.restrict S) := by rw [← hsplit]
     _ ≤ eLpNorm (G : alpha → E) 2 (mu.restrict S) +
           eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) :=
-        eLpNorm_add_le (Lp.aestronglyMeasurable G).restrict
-          ((Lp.aestronglyMeasurable F).sub (Lp.aestronglyMeasurable G)).restrict
-          (by norm_num)
+        eLpNorm_add_le (by norm_num)
 
 /-- **The window `L^2` functional is `1`-Lipschitz on `L^2`.**  Restriction only
 decreases the seminorm, so the ambient `L^2` distance controls the window one. -/

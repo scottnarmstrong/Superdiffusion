@@ -135,7 +135,7 @@ private theorem measurable_clm_of_measurable_apply_single {alpha : Type*}
     (h : ∀ i : Fin d, Measurable fun a => f a (Pi.single i (1 : ℝ))) :
     Measurable f := by
   set e := ContinuousLinearEquiv.piRing (𝕜 := ℝ) (E := F) (Fin d) with he
-  have hcomp : Measurable fun a => e (f a) := measurable_pi_lambda _ h
+  have hcomp : Measurable fun a => e (f a) := Measurable.of_eval h
   have hsymm : Measurable (e.symm : (Fin d → F) → (Vec d →L[ℝ] F)) :=
     e.symm.continuous.measurable
   have hid : f = fun a => e.symm (e (f a)) := by

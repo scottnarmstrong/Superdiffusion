@@ -273,7 +273,7 @@ theorem agmonMass_localizedInterior_le {Om : Set (Vec d)}
             vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i))) ∂volume := by
   by_cases hzero : Kl = 0
   · subst Kl
-    rw [localizedInteriorUpper, if_pos rfl] at hkappa ⊢
+    rw [localizedInteriorUpper, ite_eq_left rfl] at hkappa ⊢
     let chi : Vec d → ℝ := fun y => Real.exp (kappa * psi y)
     let zeta : Vec d → ℝ := fun y => eta y * chi y
     have hchi : ContDiff ℝ (⊤ : ℕ∞) chi := contDiff_exponentialWeight hpsi kappa
@@ -332,7 +332,7 @@ theorem agmonMass_localizedInterior_le {Om : Set (Vec d)}
     simp only [chi] at hfinal
     convert hfinal using 1
     all_goals ring
-  · rw [localizedInteriorUpper, if_neg hzero] at hkappa ⊢
+  · rw [localizedInteriorUpper, ite_eq_right hzero] at hkappa ⊢
     exact agmonMass_localizedSplit_interior_le hOm hnu hKs hKl hmass hM hEllS
       hsplit hksSkew hklSkew hklC1 hsol hMbound heta hetaCompact hetaOm hetaL
       hpsi hpsiGrad hg hksSize hklDiv hkappa

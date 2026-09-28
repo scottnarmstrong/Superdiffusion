@@ -118,19 +118,19 @@ theorem oddExtend_eq_self_of_faceOdd_upper {x : Vec d} {m k : ℤ} {i : Fin d}
           min_eq_left (by linarith only [hlt])]
       · exact foldCoord_of_unmet (hother j hj).1 (hother j hj).2 (y j)
     rw [oddExtend_apply, hfold, hsign, foldSignCoord_of_meetsUpperFace hup,
-      if_neg (not_lt.2 hlt.le), one_mul]
+      ite_eq_right (not_lt.2 hlt.le), one_mul]
   · have hfold : windowFold x m k y
         = coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y := by
       funext j
       by_cases hj : j = i
       · subst hj
         rw [windowFold_apply, foldCoord_of_meetsUpperFace hup,
-          min_eq_right (by linarith only [hgt]), coordFaceReflection_apply, if_pos rfl]
+          min_eq_right (by linarith only [hgt]), coordFaceReflection_apply, ite_eq_left rfl]
         ring
       · rw [windowFold_apply, foldCoord_of_unmet (hother j hj).1 (hother j hj).2 (y j),
-          coordFaceReflection_apply, if_neg hj]
+          coordFaceReflection_apply, ite_eq_right hj]
     rw [oddExtend_apply, hfold, hsign, foldSignCoord_of_meetsUpperFace hup,
-      if_pos hgt, hO y]
+      ite_eq_left hgt, hO y]
     ring
 
 /-- **The interface is null.**  The pointwise atom therefore holds almost

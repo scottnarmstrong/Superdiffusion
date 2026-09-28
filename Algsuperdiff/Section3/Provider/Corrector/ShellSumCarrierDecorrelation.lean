@@ -276,7 +276,7 @@ theorem memLp_two_hilbertForcing_shell (M : ABKModel d) (e x : Vec d) (k : ℤ) 
     MemLp (fun omega : ShellSeq d => HilbertVec.ofVec (matVecMul ((omega k) x) e)) 2
       M.P.toMeasure := by
   have hmeasV : Measurable (fun omega : ShellSeq d => matVecMul ((omega k) x) e) :=
-    measurable_pi_lambda _ fun i => measurable_shellRowForcing e x i k
+    Measurable.of_eval fun i => measurable_shellRowForcing e x i k
   have hmeas : AEStronglyMeasurable (fun omega : ShellSeq d =>
       HilbertVec.ofVec (matVecMul ((omega k) x) e)) M.P.toMeasure :=
     ((HilbertVec.ofVecL d).continuous.comp_stronglyMeasurable

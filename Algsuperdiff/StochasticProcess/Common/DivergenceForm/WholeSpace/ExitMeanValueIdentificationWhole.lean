@@ -341,7 +341,7 @@ theorem exists_h1Function_analyticMinimalResolventReal (v : ℕ) (mu : PositiveS
       (fun x ↦ 2 * D * |phi.toH1Function.toFun x|) (fun n ↦ ?_)
       (hphiInt.abs.const_mul (2 * D)) (fun n ↦ ?_) ?_
     · exact ((A.measurable_cubeLevelResidual (v + 1 + n) mu hf hfD).aestronglyMeasurable).mul
-        phi.toH1Function.memL2.1
+        phi.toH1Function.memL2.aestronglyMeasurable
     · filter_upwards with x
       rw [Real.norm_eq_abs, abs_mul]
       exact mul_le_mul_of_nonneg_right

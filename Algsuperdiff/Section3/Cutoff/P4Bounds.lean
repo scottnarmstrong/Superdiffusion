@@ -205,7 +205,7 @@ theorem LambdaSqCoeffField_le_cutoffEnvelope
         (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
           (coefficientCutoff M.nu m omega) hlocal).AEEq F := by
       simpa [F, hlocal] using coefficientCutoff_canonicalFamily_aeeq M m omega
-    rw [Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_pos hlocal]
+    rw [Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_left hlocal]
     rw [Ch02.maxDescendantBMatrixNormAtScale_eq_ofAEEq hAEEq]
     exact Ch02.maxDescendantBMatrixNormAtScale_nonneg Q
       (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) F
@@ -242,7 +242,7 @@ theorem lambdaSqCoeffField_inv_le_cutoffCoercivity
         (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
           (coefficientCutoff M.nu m omega) hlocal).AEEq F := by
       simpa [F, hlocal] using coefficientCutoff_canonicalFamily_aeeq M m omega
-    rw [Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_pos hlocal]
+    rw [Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_left hlocal]
     rw [Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_eq_ofAEEq hAEEq]
     exact Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q
       (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) F

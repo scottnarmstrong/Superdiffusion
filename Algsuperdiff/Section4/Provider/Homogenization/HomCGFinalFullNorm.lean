@@ -71,7 +71,9 @@ theorem three_rpow_neg_scale_eq (Q : TriadicCube d) (alpha : ℝ) :
 constant of the Euclidean/supremum comparison and with NO measure factor: the
 normalized cube measure is a probability measure. -/
 theorem normalizedEuclideanLpENorm_le_of_bound {Q : TriadicCube d} {r : ℝ≥0∞}
-    {F : Vec d → Vec d} {B : ℝ} (hF : ∀ x, ‖F x‖ ≤ B) :
+    {F : Vec d → Vec d} {B : ℝ} (hF : ∀ x, ‖F x‖ ≤ B)
+    (hFm : AEStronglyMeasurable (fun x => euclideanNorm (F x))
+      (cubeBoundedMeasurableDomain Q).normalizedVolume) :
     (cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm r F ≤
       ENNReal.ofReal ((d : ℝ) * B) := by
   have hbd : ∀ᵐ x ∂((cubeBoundedMeasurableDomain Q).normalizedVolume),
@@ -80,11 +82,49 @@ theorem normalizedEuclideanLpENorm_le_of_bound {Q : TriadicCube d} {r : ℝ≥0�
     rw [Real.norm_eq_abs, abs_of_nonneg (euclideanNorm_nonneg _)]
     exact (euclideanNorm_le_dimension_mul_norm (F x)).trans
       (mul_le_mul_of_nonneg_left (hF x) (Nat.cast_nonneg d))
-  have h := eLpNorm_le_of_ae_bound (p := r) hbd
+  have h := eLpNorm_le_of_ae_bound (p := r) hFm hbd
   rw [BoundedMeasurableDomain.normalizedVolume_apply_univ, ENNReal.one_rpow, one_mul] at h
   exact h
 
 /-! ## 3. The full norm of a Hölder field -/
+
+/-- The Euclidean size of a `C^{0,α}` field (`α > 0`) is a.e. strongly measurable for the
+normalized cube measure: the field is continuous on the open cube, which carries the
+measure up to a null set. -/
+private theorem aestronglyMeasurable_euclideanNorm_of_holder {Q : TriadicCube d}
+    {phi : Vec d → Vec d} {alpha K : ℝ} (hK : 0 ≤ K) (halpha : 0 < alpha)
+    (hg : HolderSeminormBoundOn (openCubeSet Q) alpha K phi) :
+    AEStronglyMeasurable (fun x => euclideanNorm (phi x))
+      (cubeBoundedMeasurableDomain Q).normalizedVolume := by
+  have hcont : ContinuousOn phi (openCubeSet Q) := by
+    rw [Metric.continuousOn_iff]
+    intro b hb eps heps
+    have hK1 : (0 : ℝ) < K + 1 := by linarith only [hK]
+    have hq : (0 : ℝ) < eps / (K + 1) := div_pos heps hK1
+    refine ⟨(eps / (K + 1)) ^ alpha⁻¹, Real.rpow_pos_of_pos hq _, fun a ha hab => ?_⟩
+    have hstep : ‖a - b‖ ^ alpha < ((eps / (K + 1)) ^ alpha⁻¹) ^ alpha := by
+      refine Real.rpow_lt_rpow (norm_nonneg _) ?_ halpha
+      rwa [dist_eq_norm] at hab
+    have hpow : ((eps / (K + 1)) ^ alpha⁻¹) ^ alpha = eps / (K + 1) := by
+      rw [← Real.rpow_mul hq.le, inv_mul_cancel₀ (ne_of_gt halpha), Real.rpow_one]
+    have hmul : K * ‖a - b‖ ^ alpha ≤ K * (eps / (K + 1)) := by
+      rw [← hpow]
+      exact mul_le_mul_of_nonneg_left hstep.le hK
+    have hlt : K * (eps / (K + 1)) < eps := by
+      have hid : K * (eps / (K + 1)) = (K / (K + 1)) * eps := by field_simp
+      have hfrac : K / (K + 1) < 1 := (div_lt_one hK1).2 (by linarith only [])
+      rw [hid]
+      calc (K / (K + 1)) * eps < 1 * eps := mul_lt_mul_of_pos_right hfrac heps
+        _ = eps := one_mul eps
+    have hbd := hg a ha b hb
+    rw [dist_eq_norm]
+    linarith only [hbd, hmul, hlt]
+  rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
+    normalizedCubeMeasure, cubeMeasure, volume_restrict_cubeSet_eq_volume_restrict_openCubeSet]
+  refine AEStronglyMeasurable.smul_measure ?_ _
+  simp only [euclideanNorm_eq_norm_ofVec]
+  exact ((HilbertVec.ofVecL d).continuous.comp_continuousOn hcont).norm.aestronglyMeasurable
+    (isOpen_openCubeSet Q).measurableSet
 
 /-- The inverse exponent is at most one. -/
 private theorem inv_toReal_le_one (q : FiniteLpExponent) : (q.exponent.toReal)⁻¹ ≤ 1 := by
@@ -115,7 +155,11 @@ theorem cubeEuclideanWspFullENorm_le_of_holder {Q : TriadicCube d}
   have htinv : (0 : ℝ) ≤ (q.exponent.toReal)⁻¹ := le_of_lt (inv_pos.mpr htpos)
   have htinv1 : (q.exponent.toReal)⁻¹ ≤ 1 := inv_toReal_le_one q
   have hR : (0 : ℝ) < cubeScaleFactor Q := cubeScaleFactor_pos Q
+  have halpha : 0 < alpha := by
+    have hdiff : 0 < alpha - s'.1 := pos_of_mul_pos_left hlo htpos.le
+    linarith only [hdiff, s'.2.1]
   have hA := normalizedEuclideanLpENorm_le_of_bound (Q := Q) (r := q.exponent) hsup
+    (aestronglyMeasurable_euclideanNorm_of_holder hKHol halpha hg)
   have hS := cubeEuclideanWspESeminorm_le_of_holder (Q := Q) (s' := s') (q := q)
     (phi := phi) hKHol hlo hhi hg
   set a : ℝ≥0∞ := ENNReal.ofReal ((d : ℝ) * Ksup) with ha

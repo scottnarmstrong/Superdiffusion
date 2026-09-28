@@ -136,7 +136,8 @@ private theorem fifthRoot_core {E t : ℝ} (hE : 1 ≤ E) (htpos : 0 < t)
   refine ⟨?_, pow_le_one₀ htpos.le ht1, ?_⟩
   · have hsplit : E * t ^ (5 : ℕ) = E * t * t ^ (4 : ℕ) := by ring
     rw [hsplit]
-    exact mul_le_one₀ hEt (pow_nonneg htpos.le 4) (pow_le_one₀ htpos.le ht1)
+    exact (mul_le_mul hEt (pow_le_one₀ htpos.le ht1) (pow_nonneg htpos.le 4) zero_le_one).trans_eq
+      (mul_one 1)
   · rw [← mul_pow]
     exact pow_le_one₀ (by positivity) hEt
 

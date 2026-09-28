@@ -86,14 +86,14 @@ private theorem exists_exterior_point (hd : 0 < d) {y : Vec d} {n : ℤ} {x : Ve
   have habs_shift : |c + s| = (3 : ℝ) ^ n / 2 + t := by
     rw [hshift]
     by_cases hcc : 0 ≤ c
-    · rw [if_pos hcc, abs_of_nonneg (by linarith)]
-    · rw [if_neg hcc, abs_of_nonpos (by linarith)]
+    · rw [ite_eq_left hcc, abs_of_nonneg (by linarith)]
+    · rw [ite_eq_right hcc, abs_of_nonpos (by linarith)]
       ring
   have habs_s : |s| ≤ (3 : ℝ) ^ n / 2 + t := by
     by_cases hcc : 0 ≤ c
-    · rw [hs, if_pos hcc, abs_of_nonneg (by linarith [hcbd.2])]
+    · rw [hs, ite_eq_left hcc, abs_of_nonneg (by linarith [hcbd.2])]
       linarith
-    · rw [hs, if_neg hcc]
+    · rw [hs, ite_eq_right hcc]
       rw [abs_of_nonpos (by linarith [hcbd.1])]
       linarith [hcbd.1]
   refine ⟨z, ?_, ?_, ?_⟩
@@ -122,10 +122,10 @@ private theorem exists_exterior_point (hd : 0 < d) {y : Vec d} {n : ℤ} {x : Ve
     refine le_trans ?_ hcoord
     rw [hsplit]
     rcases le_or_gt 0 c with hcc | hcc
-    · rw [hshift, if_pos hcc]
+    · rw [hshift, ite_eq_left hcc]
       rw [abs_of_nonneg (by linarith [hqi.2])]
       linarith [hqi.2]
-    · rw [hshift, if_neg (not_le.2 hcc)]
+    · rw [hshift, ite_eq_right (not_le.2 hcc)]
       rw [abs_of_nonpos (by linarith [hqi.1])]
       linarith [hqi.1]
   · refine (pi_norm_le_iff_of_nonneg (by linarith)).2 fun j => ?_

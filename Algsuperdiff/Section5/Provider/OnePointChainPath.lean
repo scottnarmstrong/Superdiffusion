@@ -118,7 +118,7 @@ theorem isCompact_iUnion_enumeratedClosedCubeFamily (n : ℤ)
       · exact False.elim hi
     · rintro ⟨j, hj⟩
       refine ⟨j.1, ?_⟩
-      rw [enumeratedClosedCubeFamily, dif_pos j.2]
+      rw [enumeratedClosedCubeFamily, dite_eq_left j.2]
       exact hj
   rw [heq]
   exact isCompact_iUnion fun _ => isCompact_closedBall _ _

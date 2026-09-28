@@ -85,13 +85,13 @@ theorem measurableSet_shiftedSiteBadEventFive (M : ABKModel d) (Creg C0 ep : ℝ
 theorem shiftedSiteBadEventFive_of_lt (M : ABKModel d) (Creg C0 ep : ℝ) (n : ℤ)
     {l : ℕ} (hl : l < Provider.Percolation.sepShift d) (z : Percolation.Site d) :
     shiftedSiteBadEventFive M Creg C0 ep n l z = ∅ := by
-  rw [shiftedSiteBadEventFive, if_pos hl]
+  rw [shiftedSiteBadEventFive, ite_eq_left hl]
 
 theorem shiftedSiteBadEventFive_of_le (M : ABKModel d) (Creg C0 ep : ℝ) (n : ℤ)
     {l : ℕ} (hl : Provider.Percolation.sepShift d ≤ l) (z : Percolation.Site d) :
     shiftedSiteBadEventFive M Creg C0 ep n l z =
       siteBadEventFive M Creg C0 ep n (l - Provider.Percolation.sepShift d) z := by
-  rw [shiftedSiteBadEventFive, if_neg (by omega)]
+  rw [shiftedSiteBadEventFive, ite_eq_right (by omega)]
 
 /-- **The shift loses nothing**: the union over the shifted levels is the union
 over the levels of the scale decomposition. -/
@@ -109,7 +109,7 @@ theorem badSet_shiftedSiteBadEventFive (M : ABKModel d) (Creg C0 ep : ℝ) (n : 
     · exact ⟨l - Provider.Percolation.sepShift d, hl⟩
   · rintro ⟨L, hL⟩
     refine ⟨L + Provider.Percolation.sepShift d, ?_⟩
-    rw [shiftedSiteBadEventFive, if_neg (by omega)]
+    rw [shiftedSiteBadEventFive, ite_eq_right (by omega)]
     have hidx : L + Provider.Percolation.sepShift d - Provider.Percolation.sepShift d = L := by
       omega
     rw [hidx]
@@ -341,7 +341,7 @@ theorem sepTwoBlockIndep_shiftedSiteBadEventFive (M : ABKModel d) (Creg C0 ep : 
       intro T
       refine MeasurableSpace.generateFrom_le ?_
       rintro A ⟨z, -, l', hl', rfl⟩
-      rw [shiftedSiteBadEventFive, if_pos (by omega)]
+      rw [shiftedSiteBadEventFive, ite_eq_left (by omega)]
       exact @MeasurableSet.empty (Cutoff.CutoffSample d) ⊥
     exact ProbabilityTheory.indep_of_indep_of_le_right
       (ProbabilityTheory.indep_of_indep_of_le_left

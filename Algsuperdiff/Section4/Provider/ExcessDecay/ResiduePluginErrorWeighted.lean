@@ -388,7 +388,9 @@ theorem exists_flushResidue_le_displayLegs_of_epsPin_errorWeighted (d : ℕ) [Ne
               ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
                 openCubeSet (originCube d m))))).toReal :=
           Finset.sum_le_sum fun i' _ => ENNReal.toReal_mono hvecfin
-            (eLpNorm_mono fun y => norm_le_pi_norm (hdat.grad y) i')
+            (eLpNorm_mono ((continuous_apply i').comp_aestronglyMeasurable
+              (aestronglyMeasurable_of_eLpNorm_ne_top hvecfin))
+              fun y => norm_le_pi_norm (hdat.grad y) i')
       _ = (d : ℝ) * (eLpNorm hdat.grad 2
             (Support.normalizedVolumeMeasureOn
               ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩

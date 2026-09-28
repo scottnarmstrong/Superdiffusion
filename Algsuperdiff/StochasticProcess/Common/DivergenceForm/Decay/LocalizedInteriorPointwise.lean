@@ -315,7 +315,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
     simpa only [normalizedFrozenCoeff] using!
       isScalarForcedWeakSolution_const_smul_interior (c := nu⁻¹) hfrozen
   have hnormalizedMeas : Measurable (normalizedFrozenCoeff nu a x) := by
-    refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     change Measurable fun y => nu⁻¹ *
       (a y i j - (a x - nu • (1 : Mat d)) i j)
     exact (((measurable_pi_apply j).comp

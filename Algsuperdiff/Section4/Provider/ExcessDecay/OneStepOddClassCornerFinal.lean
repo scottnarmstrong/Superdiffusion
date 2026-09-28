@@ -136,10 +136,10 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
   have hA3j : A3 j = A j := by
     rw [hA3def]
     show (A - oddAffineSlope i A) j = A j
-    rw [Pi.sub_apply, oddAffineSlope, if_neg hji, sub_zero]
+    rw [Pi.sub_apply, oddAffineSlope, ite_eq_right hji, sub_zero]
   have hgij_i : evenAffineSlope j A3 i = 0 := by
     show (A3 - oddAffineSlope j A3) i = 0
-    rw [Pi.sub_apply, oddAffineSlope, if_neg hij, hA3i, sub_zero]
+    rw [Pi.sub_apply, oddAffineSlope, ite_eq_right hij, hA3i, sub_zero]
   have hLsplit : ∀ y, affineEval (c - vecDot A x) A y
       = evenAffinePart x m i c A y + evenAffinePart x m j c A y
         - evenAffinePart x m j c3 A3 y := by

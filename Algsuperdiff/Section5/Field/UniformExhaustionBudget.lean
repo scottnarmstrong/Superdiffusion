@@ -206,7 +206,7 @@ theorem lintegral_streamUniformExhaustionProfile_mul_cube_le
       change ENNReal.ofReal
         ((if streamUniformExhaustionCutoff M omega lam < s then
           streamUniformExhaustionEnvelope M omega s else 1) * s ^ 3) = _
-      rw [if_pos (show streamUniformExhaustionCutoff M omega lam < s from hs)]
+      rw [ite_eq_left (show streamUniformExhaustionCutoff M omega lam < s from hs)]
     _ ≤ ∫⁻ s in Ioi (1 : ℝ), ENNReal.ofReal
           (streamUniformExhaustionEnvelope M omega s * s ^ 3) :=
       lintegral_mono_set hmono
@@ -221,7 +221,7 @@ theorem streamUniformExhaustionGrowth_nonneg (M : ABKModel d)
     (omega : FullSample d M.gamma) {q : ℝ} (hq1 : 1 < q) (hq2 : q < 2) :
     0 ≤ streamUniformExhaustionGrowth M omega q := by
   unfold streamUniformExhaustionGrowth
-  rw [if_pos ⟨hq1, hq2⟩]
+  rw [ite_eq_left ⟨hq1, hq2⟩]
   exact mul_nonneg (pow_nonneg (streamUniformExhaustionScale_pos M omega).le _)
     (pow_nonneg (by have : 0 < 2 - q := sub_pos.mpr hq2; positivity) _)
 
@@ -266,7 +266,7 @@ theorem streamUniformExhaustionCutoff_pow_le
     unfold eps
     ring
   unfold streamUniformExhaustionCutoff streamUniformExhaustionGrowth
-  rw [if_pos ⟨hq1, hq2⟩]
+  rw [ite_eq_left ⟨hq1, hq2⟩]
   rw [← pow_mul, show 3 * 4 = 12 by norm_num, mul_pow]
   calc
     streamUniformExhaustionScale M omega ^ 12 *

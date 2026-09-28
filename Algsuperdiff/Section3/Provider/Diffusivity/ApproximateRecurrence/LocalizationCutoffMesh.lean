@@ -327,7 +327,11 @@ theorem exists_localizationCutoffCellSplit_blockVecDot_coarseBlockMatrix_le
     highScale e' R R hsub wD wN
   have hFflux := memVectorL2_localizationFz_flux sigma (omega : ShellSeq d) lowScale
     highScale e' R R hsub wD wN
-  have hadd := isDoubledMuMinimizerField_add hFpot hFflux (hS R hR) (hT R hR)
+  have hadd := isDoubledMuMinimizerField_add (U := cubeDomain R)
+    (a := (coefficientCutoffTriadicCoeffFamily M highScale omega).coeffOn R)
+    (P := principalPz sigma (omega : ShellSeq d) lowScale highScale e e' R wD wN)
+    (F := localizationFz sigma (omega : ShellSeq d) lowScale highScale e' R wD wN)
+    hFpot hFflux (hS R hR) (hT R hR)
   rw [localizationBackground_eq_constantDoubledField_principalPz_add_localizationFz] at hadd
   exact hadd.1
 

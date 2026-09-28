@@ -46,7 +46,7 @@ def tupleFun {M : ℕ} (y : Fin M → (Fin d → ℤ)) : ℕ → (Fin d → ℤ)
   fun m => if h : m < M then y ⟨m, h⟩ else 0
 
 theorem tupleFun_apply {M : ℕ} (y : Fin M → (Fin d → ℤ)) {m : ℕ} (hm : m < M) :
-    tupleFun y m = y ⟨m, hm⟩ := dif_pos hm
+    tupleFun y m = y ⟨m, hm⟩ := dite_eq_left hm
 
 
 end Algsuperdiff.Section3.Provider.Percolation

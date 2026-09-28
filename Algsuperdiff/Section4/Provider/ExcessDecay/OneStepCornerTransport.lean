@@ -64,9 +64,9 @@ theorem coordFaceReflection_zero_comm_self (a : ℝ) (l : Fin d) (y : Vec d) :
       = coordFaceReflection (-a) l (coordFaceReflection (0 : ℝ) l y) := by
   funext j
   by_cases hjl : j = l
-  · simp only [Homogenization.coordFaceReflection_apply, if_pos hjl]
+  · simp only [Homogenization.coordFaceReflection_apply, ite_eq_left hjl]
     ring
-  · simp only [Homogenization.coordFaceReflection_apply, if_neg hjl]
+  · simp only [Homogenization.coordFaceReflection_apply, ite_eq_right hjl]
 
 /-- The negation fixes the origin. -/
 theorem coordFaceReflection_zero_zero (l : Fin d) :
@@ -74,9 +74,9 @@ theorem coordFaceReflection_zero_zero (l : Fin d) :
   funext j
   simp only [Homogenization.coordFaceReflection_apply, Pi.zero_apply]
   by_cases hjl : j = l
-  · rw [if_pos hjl]
+  · rw [ite_eq_left hjl]
     ring
-  · rw [if_neg hjl]
+  · rw [ite_eq_right hjl]
 
 /-- The negation of a difference. -/
 theorem coordFaceReflection_zero_sub (l : Fin d) (u v : Vec d) :
@@ -84,9 +84,9 @@ theorem coordFaceReflection_zero_sub (l : Fin d) (u v : Vec d) :
       = coordFaceReflection (0 : ℝ) l u - coordFaceReflection (0 : ℝ) l v := by
   funext j
   by_cases hjl : j = l
-  · simp only [Homogenization.coordFaceReflection_apply, if_pos hjl, Pi.sub_apply]
+  · simp only [Homogenization.coordFaceReflection_apply, ite_eq_left hjl, Pi.sub_apply]
     ring
-  · simp only [Homogenization.coordFaceReflection_apply, if_neg hjl, Pi.sub_apply]
+  · simp only [Homogenization.coordFaceReflection_apply, ite_eq_right hjl, Pi.sub_apply]
 
 private theorem neg_half_zpow (m : ℤ) :
     -((1 / 2 : ℝ) * (3 : ℝ) ^ m) = -(1 / 2 : ℝ) * (3 : ℝ) ^ m := by ring
@@ -173,10 +173,10 @@ theorem isOddAffineData_of_comp_coordFaceReflection_zero {x : Vec d} {m k : ℤ}
     by_cases hil : i = l
     · subst hil
       refine h.2 i ((meetsLowerFace_coordFaceReflection_zero_self i).mpr hi) _ ?_
-      rw [Homogenization.coordFaceReflection_apply, if_pos rfl, hy]
+      rw [Homogenization.coordFaceReflection_apply, ite_eq_left rfl, hy]
       ring
     · refine h.1 i ((meetsUpperFace_coordFaceReflection_zero_ne hil).mpr hi) _ ?_
-      rw [Homogenization.coordFaceReflection_apply, if_neg hil]
+      rw [Homogenization.coordFaceReflection_apply, ite_eq_right hil]
       exact hy
   · have hkey := affineLift_comp_coordFaceReflection_zero x c A l
       (coordFaceReflection (0 : ℝ) l y)
@@ -185,10 +185,10 @@ theorem isOddAffineData_of_comp_coordFaceReflection_zero {x : Vec d} {m k : ℤ}
     by_cases hil : i = l
     · subst hil
       refine h.1 i ((meetsUpperFace_coordFaceReflection_zero_self i).mpr hi) _ ?_
-      rw [Homogenization.coordFaceReflection_apply, if_pos rfl, hy]
+      rw [Homogenization.coordFaceReflection_apply, ite_eq_left rfl, hy]
       ring
     · refine h.2 i ((meetsLowerFace_coordFaceReflection_zero_ne hil).mpr hi) _ ?_
-      rw [Homogenization.coordFaceReflection_apply, if_neg hil]
+      rw [Homogenization.coordFaceReflection_apply, ite_eq_right hil]
       exact hy
 
 /-! ## 3. The window quantities under a coordinate negation -/

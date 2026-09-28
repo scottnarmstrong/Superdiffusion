@@ -217,7 +217,7 @@ theorem eventG0_score_le_YcalRowE (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
               YcalE M Ccg (M.gamma / 4) n omega
           else 0) := by
     intro n hn
-    rw [if_pos (Finset.mem_Icc.1 hn).2]
+    rw [ite_eq_left (Finset.mem_Icc.1 hn).2]
   rw [Finset.sum_congr rfl hrw]
   exact ENNReal.sum_le_tsum _
 

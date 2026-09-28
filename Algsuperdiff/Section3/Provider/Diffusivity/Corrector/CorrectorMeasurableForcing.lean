@@ -179,7 +179,8 @@ theorem norm_toHilbertVectorL2OfVecField_le_of_bound_on (hU : MeasurableSet U)
   have hnorm : ‖toHilbertVectorL2OfVecField hf‖ =
       (eLpNorm (hilbertifyVecField f) 2 (volumeMeasureOn U)).toReal := by
     rw [toHilbertVectorL2OfVecField, toHilbertVectorL2, MeasureTheory.Lp.norm_toLp]
-  have hbound := MeasureTheory.eLpNorm_le_of_ae_bound (p := (2 : ENNReal)) hae
+  have hbound := MeasureTheory.eLpNorm_le_of_ae_bound (p := (2 : ENNReal))
+    (memHilbertVectorL2_hilbertifyVecField hf).aestronglyMeasurable hae
   have hfin : ((volumeMeasureOn U) Set.univ) ^ ((2 : ENNReal).toReal)⁻¹ *
       ENNReal.ofReal ((d : ℝ) * C) ≠ ⊤ :=
     ENNReal.mul_ne_top

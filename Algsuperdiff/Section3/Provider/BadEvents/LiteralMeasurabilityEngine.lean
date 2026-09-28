@@ -455,7 +455,7 @@ theorem measurable_comp_LambdaSqCoeffField_infinity (hX : Measurable X)
     funext omega
     simp only [Ch04.LambdaSqCoeffField, Ch02.LambdaSq_infinity,
       Ch02.LambdaSqInfinity, Ch04.maxDescendantBMatrixNormCoeffFieldAtScale,
-      dif_pos (hell omega), iSup]
+      dite_eq_left (hell omega), iSup]
     congr 1
     ext x
     constructor <;> rintro ⟨n, hn⟩ <;> exact ⟨n, hn.symm⟩
@@ -482,7 +482,7 @@ theorem measurable_comp_lambdaSqCoeffField_finite_inv (hX : Measurable X)
     funext omega
     simp only [Ch04.lambdaSqCoeffField, Ch02.lambdaSq_finite,
       Ch02.lambdaSqFinite, Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale,
-      dif_pos (hell omega)]
+      dite_eq_left (hell omega)]
     let F : Ch02.TriadicCoeffFamily d :=
       Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField (X omega) (hell omega)
     let S : ℝ := ∑' n : ℕ, Ch02.geometricWeight s q n *
@@ -522,7 +522,7 @@ theorem measurable_comp_lambdaSqCoeffField_infinity_inv (hX : Measurable X)
     funext omega
     simp only [Ch04.lambdaSqCoeffField, Ch02.lambdaSq_infinity,
       Ch02.lambdaSqInfinity, Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale,
-      dif_pos (hell omega), iSup, inv_inv]
+      dite_eq_left (hell omega), iSup, inv_inv]
     congr 1
     ext x
     constructor <;> rintro ⟨n, hn⟩ <;> exact ⟨n, hn.symm⟩

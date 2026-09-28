@@ -48,7 +48,7 @@ private theorem weightedCubeMassOn_le_small_of_not_mem_largeScale
       apply hω
       rw [largeScaleOccurrenceEvent, Set.mem_iUnion]
       refine ⟨L, ?_⟩
-      rw [if_pos hlarge]
+      rw [ite_eq_left hlarge]
       exact hoccurs
     have hcount : inflatedCubeCount B L Γ ω = 0 := by
       apply Nat.eq_zero_of_not_pos

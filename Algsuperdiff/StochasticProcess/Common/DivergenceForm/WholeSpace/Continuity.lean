@@ -85,7 +85,7 @@ theorem norm_cubeDatum_le {f : Vec d → ℝ} (hf : Measurable f)
     rfl
   change ‖F‖ ≤ _
   rw [Lp.norm_def, eLpNorm_congr_ae hFae]
-  exact ENNReal.toReal_mono hfLp.2.ne
+  exact ENNReal.toReal_mono hfLp.eLpNorm_lt_top.ne
     (eLpNorm_mono_measure f (Measure.restrict_le_self))
 
 omit [NeZero d] in
@@ -314,7 +314,7 @@ theorem exists_holderBound_cubeResolvent_tail (mu : PositiveShift)
       (euclideanBall x R) aLocal delta := by
     filter_upwards [hsmall,
       ae_restrict_mem (isOpen_euclideanBall x R).measurableSet] with y hy hyB
-    simpa only [aLocal, hyB, if_true] using hy
+    simpa only [aLocal, hyB, ite_true] using hy
   have hnormalizedLocal : IsMatrixDivFormWeakSolutionZerothOrderOn
       aLocal (euclideanBall x R) z (fun y ↦ A.nu⁻¹ * g y) 0 := by
     intro phi
@@ -328,7 +328,7 @@ theorem exists_holderBound_cubeResolvent_tail (mu : PositiveShift)
       apply integral_congr_ae
       filter_upwards [ae_restrict_mem (isOpen_euclideanBall x R).measurableSet]
         with y hy
-      simp only [aLocal, hy, if_true]
+      simp only [aLocal, hy, ite_true]
     rw [hlhs]
     exact h
   obtain ⟨v, hvcont, hvae, hvholder⟩ :=

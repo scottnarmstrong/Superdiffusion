@@ -331,7 +331,7 @@ theorem sqrt_descendantsAverage_gradientAverageSq_le (a : RegCoeffField d)
         maximizerEnergyL2Norm a ha Q p q := by
   have hlam0 : 0 ≤ (Ch04.lambdaSqCoeffField Q s r a)⁻¹ := by
     refine inv_nonneg.mpr ?_
-    simp only [Ch04.lambdaSqCoeffField, dif_pos ha]
+    simp only [Ch04.lambdaSqCoeffField, dite_eq_left ha]
     exact Ch02.lambdaSq_nonneg Q _ hs hr
   set Y : ℝ :=
     (3 : ℝ) ^ (s * (j : ℝ)) * Real.sqrt ((Ch04.lambdaSqCoeffField Q s r a)⁻¹) *

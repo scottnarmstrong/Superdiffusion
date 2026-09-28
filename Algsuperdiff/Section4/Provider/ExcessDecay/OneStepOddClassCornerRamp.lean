@@ -185,14 +185,14 @@ theorem normalizedL2On_oddRamp_cornerPairSlabPushed_le {m k : ℤ} {x : Vec d}
     intro y hy
     have h := (mem_coordBox_iff.1 hy) i
     have hsm : (delta • (basisVec j : Vec d)) i = 0 := by
-      rw [smul_basisVec_apply, if_neg hij]
+      rw [smul_basisVec_apply, ite_eq_right hij]
     have hlo : cornerPairSlabLo x m k i j delta i
         = (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta := by
       rw [cornerPairSlabLo]
-      rw [if_pos (Or.inl rfl)]
+      rw [ite_eq_left (Or.inl rfl)]
     have hhi : cornerPairSlabHi x m k i j i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
       rw [cornerPairSlabHi]
-      rw [if_pos (Or.inl rfl)]
+      rw [ite_eq_left (Or.inl rfl)]
     rw [hlo, hhi, hsm] at h
     constructor
     · linarith only [h.1]

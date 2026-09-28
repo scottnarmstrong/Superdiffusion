@@ -109,8 +109,12 @@ theorem memScalarLInfOn_of_ae_abs_le {W : Set (Vec d)} {g : Vec d → ℝ} {G : 
 theorem scalarLInfSizeOn_le_of_ae_abs_le {W : Set (Vec d)} {g : Vec d → ℝ}
     {G : ℝ} (hG : 0 ≤ G) (hbound : ∀ᵐ x ∂volume.restrict W, |g x| ≤ G) :
     scalarLInfSizeOn W g ≤ G := by
+  by_cases hmeas : AEStronglyMeasurable g (volume.restrict W)
+  swap
+  · simp only [scalarLInfSizeOn, eLpNorm_of_not_aestronglyMeasurable hmeas, ENNReal.toReal_top]
+    exact hG
   have hess : eLpNorm g ⊤ (volume.restrict W) ≤ ENNReal.ofReal G := by
-    rw [eLpNorm_exponent_top]
+    rw [eLpNorm_exponent_top hmeas]
     refine eLpNormEssSup_le_of_ae_bound ?_
     filter_upwards [hbound] with x hx
     simpa only [Real.norm_eq_abs] using hx
@@ -150,7 +154,7 @@ theorem exists_representative_abs_center_le [NeZero d]
     ae_restrict_of_ae_restrict_of_subset hball ha
   have hgBall : ∀ᵐ x ∂volume.restrict (euclideanBall x₀ r), |g x| ≤ G := hgb
   have hgmeas : AEStronglyMeasurable g (volume.restrict (euclideanBall x₀ r)) :=
-    (hsol.1.mono_measure (Measure.restrict_mono hball le_rfl)).1
+    (hsol.1.mono_measure (Measure.restrict_mono hball le_rfl)).aestronglyMeasurable
   have hgLInf : MemScalarLInfOn (euclideanBall x₀ r) g :=
     memScalarLInfOn_of_ae_abs_le hgmeas hgBall
   have hgSize : scalarLInfSizeOn (euclideanBall x₀ r) g ≤ G :=

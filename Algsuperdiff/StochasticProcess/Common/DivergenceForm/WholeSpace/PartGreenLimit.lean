@@ -70,7 +70,7 @@ theorem partShiftSolution_of_pos {V : Set (Vec d)} (hV : IsOpenBoundedConvexDoma
     (hlam : 0 < lam) :
     A.partShiftSolution hV hf hfD lam =
       alphaShiftedSolution A.a hlam A.hnu (partEllipticity A hV) (partDatumL2 hV hf hfD) :=
-  dif_pos hlam
+  dite_eq_left hlam
 
 /-- **The shifted weak equation of the carrier family.** -/
 theorem isAlphaShiftedWeakSolution_partShiftSolution {V : Set (Vec d)}
@@ -94,9 +94,9 @@ theorem toL2_partShiftSolution_ae {V : Set (Vec d)} (hV : IsOpenBoundedConvexDom
       funext fun x ↦ A.partShiftResolvent_of_pos hV hf hfD hlam x
     rw [hfun, A.partShiftSolution_of_pos hV hf hfD hlam]
     exact hsol.symm
-  · have hzero : A.partShiftSolution hV hf hfD lam = 0 := dif_neg hlam
+  · have hzero : A.partShiftSolution hV hf hfD lam = 0 := dite_eq_right hlam
     have hres : A.partShiftResolvent hV f hf hfD lam = fun _ ↦ (0 : ℝ) :=
-      funext fun x ↦ by rw [partShiftResolvent, dif_neg hlam]
+      funext fun x ↦ by rw [partShiftResolvent, dite_eq_right hlam]
     rw [hzero, hres, map_zero]
     exact Lp.coeFn_zero ℝ 2 _
 

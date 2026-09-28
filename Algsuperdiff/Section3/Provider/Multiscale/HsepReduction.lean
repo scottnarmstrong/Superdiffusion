@@ -143,8 +143,8 @@ theorem indicator_gamma_hsep_gt_le_indicator_natLt (M : ABKModel d) {m : ℤ}
       have : ((⌊(81 * gam)⁻¹⌋₊ : ℕ) : ℝ) < ((hsep M m E b omega : ℕ) : ℝ) := by
         linarith
       exact_mod_cast this
-    rw [if_pos hcase, Set.indicator_of_mem hmem]
-  · rw [if_neg hcase]
+    rw [ite_eq_left hcase, Set.indicator_of_mem hmem]
+  · rw [ite_eq_right hcase]
     exact Set.indicator_nonneg (fun _ _ => zero_le_one) omega
 
 /-- **`e.indc.O.sigma`'s indicator**.  The indicator `1_{gamma hsep
@@ -220,8 +220,8 @@ theorem isBigOWith_gammaSigma_three_rpow_gamma_hsep_mul_indicator_of_gates
     (isBigOWith_gammaSigma_indicator_gamma_hsep_gt_of_gates M hd hE hS hsigma0 hsigma
       hsigma2 hb0 hb1 hEexp hE4 hunit hgamma20 hinvSq hEb hgamma hgam)
   by_cases hcase : (81 : ℝ)⁻¹ < gam * (hsep M m E b omega : ℝ)
-  · rw [if_pos hcase]; norm_num
-  · rw [if_neg hcase]
+  · rw [ite_eq_left hcase]; norm_num
+  · rw [ite_eq_right hcase]
 
 
 /-- **The Step 3 display, both halves.**  Pointwise the prefactor is `<= 2 + Z`,
@@ -269,9 +269,9 @@ theorem three_rpow_gamma_hsep_le_two_add_orlicz_of_gates (M : ABKModel d) {m : �
     mul_nonneg hgam.le (Nat.cast_nonneg _)
   have hdet := three_rpow_le_two_add_indicator hx
   by_cases hcase : (81 : ℝ)⁻¹ < gam * (hsep M m E b omega : ℝ)
-  · rw [if_pos hcase] at hdet ⊢
+  · rw [ite_eq_left hcase] at hdet ⊢
     linarith [hdet]
-  · rw [if_neg hcase] at hdet ⊢
+  · rw [ite_eq_right hcase] at hdet ⊢
     linarith [hdet]
 
 

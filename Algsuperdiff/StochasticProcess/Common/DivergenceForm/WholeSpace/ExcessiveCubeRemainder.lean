@@ -114,7 +114,7 @@ theorem continuousOn_cubeBarrier (m : ℕ) :
 theorem cubeBarrier_of_notMem (m : ℕ) (hVU : P.V ⊆ wholeSpaceCube d m)
     {x : Vec d} (hx : x ∉ wholeSpaceCube d m) : P.cubeBarrier m x = 0 := by
   have hxV : x ∉ P.V := fun h => hx (hVU h)
-  rw [cubeBarrier, WholeSpaceAnalyticData.analyticCubeResolvent, dif_neg hx,
+  rw [cubeBarrier, WholeSpaceAnalyticData.analyticCubeResolvent, dite_eq_right hx,
     P.hutildeOff x hxV, sub_zero]
 
 /-- On an exhaustion cube containing the part domain, the continuous zero
@@ -132,9 +132,9 @@ theorem utilde_ae_cube (m : ℕ) (hVU : P.V ⊆ wholeSpaceCube d m) :
   filter_upwards [hind, hrep] with x h1 h2
   rw [cubeZeroExtension, h1, Set.indicator_apply]
   by_cases hxV : x ∈ P.V
-  · rw [if_pos hxV]
+  · rw [ite_eq_left hxV]
     exact h2 hxV
-  · rw [if_neg hxV]
+  · rw [ite_eq_right hxV]
     exact P.hutildeOff x hxV
 
 /-- The remainder on one exhaustion cube: the cube resolvent minus the zero

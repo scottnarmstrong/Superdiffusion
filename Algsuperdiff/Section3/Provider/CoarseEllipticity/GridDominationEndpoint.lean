@@ -130,11 +130,11 @@ theorem lambdaSqCoeffField_inv_infinity_eq_sSup [NeZero d] (Q : TriadicCube d)
   classical
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
   · simp only [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, h,
-      dif_pos]
-    simp only [Book.Ch04.lambdaSqCoeffField, h, dif_pos, Book.Ch02.lambdaSq_infinity,
+      dite_eq_left]
+    simp only [Book.Ch04.lambdaSqCoeffField, h, dite_eq_left, Book.Ch02.lambdaSq_infinity,
       Book.Ch02.lambdaSqInfinity, inv_inv]
   · simp only [Book.Ch04.lambdaSqCoeffField,
-      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, h, dif_neg,
+      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, h, dite_eq_right,
       not_false_iff, inv_zero, mul_zero]
     have hset : {N : ℝ | ∃ _n : ℕ, N = 0} = ({0} : Set ℝ) := by
       ext x
@@ -151,11 +151,11 @@ theorem LambdaSqCoeffField_infinity_eq_sSup [NeZero d] (Q : TriadicCube d)
             (Q.scale - (n : ℤ)) a} := by
   classical
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · simp only [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, h, dif_pos]
-    simp only [Book.Ch04.LambdaSqCoeffField, h, dif_pos, Book.Ch02.LambdaSq_infinity,
+  · simp only [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, h, dite_eq_left]
+    simp only [Book.Ch04.LambdaSqCoeffField, h, dite_eq_left, Book.Ch02.LambdaSq_infinity,
       Book.Ch02.LambdaSqInfinity]
   · simp only [Book.Ch04.LambdaSqCoeffField,
-      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, h, dif_neg,
+      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, h, dite_eq_right,
       not_false_iff, mul_zero]
     have hset : {N : ℝ | ∃ _n : ℕ, N = 0} = ({0} : Set ℝ) := by
       ext x

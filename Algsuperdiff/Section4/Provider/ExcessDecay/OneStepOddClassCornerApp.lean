@@ -174,9 +174,9 @@ theorem corner_faceApp_le {m n : ℤ} {x : Vec d} {face : Fin d} {V : Vec d → 
         exact evenAffineSlope_apply_self face A
       · refine Or.inr ⟨?_, ?_⟩
         · rw [cornerFaceSlabLo]
-          rw [if_neg hlf]
+          rw [ite_eq_right hlf]
         · rw [cornerFaceSlabHi]
-          rw [if_neg hlf]
+          rw [ite_eq_right hlf]
     rw [evenAffinePart]
     exact moment_transfer_window_le hx (by omega : n - 2 < m)
       (cornerFaceSlabLo_lt_hi hx (by omega) hdelta0) hcases
@@ -427,9 +427,9 @@ theorem corner_pairApp_le {m n : ℤ} {x : Vec d} {i j : Fin d} {V : Vec d → �
           exact evenAffineSlope_apply_self j A'
         · refine Or.inr ⟨?_, ?_⟩
           · rw [cornerPairSlabLo]
-            rw [if_neg (fun h => h.elim hli hlj)]
+            rw [ite_eq_right (fun h => h.elim hli hlj)]
           · rw [cornerPairSlabHi]
-            rw [if_neg (fun h => h.elim hli hlj)]
+            rw [ite_eq_right (fun h => h.elim hli hlj)]
     rw [evenAffinePart]
     exact moment_transfer_window_le hx (by omega : n - 2 < m)
       (cornerPairSlabLo_lt_hi hx (by omega) hdelta0) hcases

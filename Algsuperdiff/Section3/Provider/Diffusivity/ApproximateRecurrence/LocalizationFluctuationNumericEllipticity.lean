@@ -31,7 +31,7 @@ and `Ch04.lambdaSqCoeffField` of the *coefficient field* `coefficientCutoff
 M.nu L`, while `gaugedEllipticitySum` reads `Ch02.LambdaSq` and `Ch02.lambdaSq`
 of the *triadic family* `coefficientCutoffTriadicCoeffFamily M L`.  On the
 a.e.-elliptic support the Chapter-4 observables **are** the Chapter-2 ones of
-the canonical dependent family (`Ch04.LambdaSqCoeffField`'s own `dif_pos`
+the canonical dependent family (`Ch04.LambdaSqCoeffField`'s own `dite_eq_left`
 branch), and the two families have the same underlying coefficient field on
 every cube, so `Ch02.LambdaSq_eq_ofAEEq` identifies them exactly.  The exported
 observables are their literals
@@ -127,7 +127,7 @@ theorem lowerEllipticityProfile_at_gamma_two (Ccg gamma : ℝ) (hgamma : 0 < gam
   have hstep : lowerEllipticityProfile Ccg gamma gamma coarseExponentTwo =
       if (2 : ℝ) < 2 then Ccg * Real.rpow (gamma / (2 * gamma - gamma)) (2 / 2)
         else Ccg * gamma * (2 * gamma - gamma)⁻¹ := rfl
-  rw [hstep, if_neg (by norm_num : ¬((2 : ℝ) < 2)),
+  rw [hstep, ite_eq_right (by norm_num : ¬((2 : ℝ) < 2)),
     show (2 : ℝ) * gamma - gamma = gamma by ring]
   field_simp
 
@@ -163,7 +163,7 @@ theorem LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
     Ch04.LambdaSqCoeffField (originCube d m) s (Ch02.MultiscaleExponent.finite 2)
       (Cutoff.coefficientCutoff M.nu L omega)
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos hell]
+  simp only [dite_eq_left hell]
   exact (Ch02.LambdaSq_eq_ofAEEq (aeeq_triadicCoeffFamily_coefficientCutoff M L omega)
     (originCube d m) s (.finite 2)).symm
 
@@ -180,7 +180,7 @@ theorem lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
     (Ch04.lambdaSqCoeffField (originCube d m) s (Ch02.MultiscaleExponent.finite 2)
       (Cutoff.coefficientCutoff M.nu L omega))⁻¹
   rw [Ch04.lambdaSqCoeffField]
-  simp only [dif_pos hell]
+  simp only [dite_eq_left hell]
   rw [Ch02.lambdaSq_eq_ofAEEq (aeeq_triadicCoeffFamily_coefficientCutoff M L omega)
     (originCube d m) s (.finite 2)]
 

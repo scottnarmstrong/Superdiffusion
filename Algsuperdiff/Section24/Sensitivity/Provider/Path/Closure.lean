@@ -59,13 +59,13 @@ theorem hasDerivAt_doubledMu_perturbCoeffOn {U : Domain d} (a : CoeffOn U)
     refine hsqrt.congr' ?_
     filter_upwards [hsmall] with t ht
     rw [hedef]
-    simp only [if_pos ht]
+    simp only [ite_eq_left ht]
   -- the second-order bound
   have hbound : ∀ t : ℝ, |F t - F 0 - t * L| ≤ K * t ^ 2 + |t| * e t := by
     intro t
     by_cases hcase : |t| ≤ t0
     · have hval : e t = C * Real.sqrt |t| := by
-        rw [hedef]; simp only [if_pos hcase]
+        rw [hedef]; simp only [ite_eq_left hcase]
       by_cases htz : t = 0
       · subst htz
         simp
@@ -95,7 +95,7 @@ theorem hasDerivAt_doubledMu_perturbCoeffOn {U : Domain d} (a : CoeffOn U)
         · nlinarith [hlower, hprod, hqt, hKt]
         · nlinarith [hupper, hCt]
     · have hval : e t = |F t - F 0 - t * L| / |t| := by
-        rw [hedef]; simp only [if_neg hcase]
+        rw [hedef]; simp only [ite_eq_right hcase]
       have htpos : 0 < |t| := lt_of_lt_of_le ht0pos (le_of_not_ge hcase)
       have hKt : 0 ≤ K * t ^ 2 := by positivity
       rw [hval, mul_div_cancel₀ _ htpos.ne']

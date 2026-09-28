@@ -65,13 +65,13 @@ def seqValuePath (omega : ShellSeq d) : ℤ → C(Vec d, Mat d) :=
   fun k => ShellField.valuePath (omega k)
 
 theorem measurable_seqValuePath : Measurable (seqValuePath (d := d)) :=
-  measurable_pi_lambda _ fun k =>
+  Measurable.of_eval fun k =>
     ShellField.measurable_valuePath.comp (measurable_pi_apply k)
 
 /-- **The layer law.**  The joint law of all shell value paths. -/
 def seqPathLaw (P : ProbabilityMeasure (ℤ → ShellField d)) :
     ProbabilityMeasure (ℤ → C(Vec d, Mat d)) :=
-  P.map (measurable_seqValuePath (d := d)).aemeasurable
+  P.map (seqValuePath (d := d))
 
 theorem seqPathLaw_toMeasure (P : ProbabilityMeasure (ℤ → ShellField d)) :
     (seqPathLaw P).toMeasure = Measure.map (seqValuePath (d := d)) P.toMeasure :=

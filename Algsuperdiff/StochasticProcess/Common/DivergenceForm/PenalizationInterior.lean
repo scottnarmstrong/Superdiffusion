@@ -121,6 +121,7 @@ theorem vectorLpSizeOn_grad_le_norm_gradToHilbertVectorL2
       eLpNorm (hilbertifyVecField w.grad) 2 (volume.restrict U) := by
     rw [hnormEq]
     exact eLpNorm_norm _
+      ((Lp.aestronglyMeasurable _).congr w.coeFn_gradToHilbertVectorL2)
   have hcoe : eLpNorm (hilbertifyVecField w.grad) 2 (volume.restrict U) =
       eLpNorm (w.gradToHilbertVectorL2 : Vec d → HilbertVec d) 2
         (volume.restrict U) :=

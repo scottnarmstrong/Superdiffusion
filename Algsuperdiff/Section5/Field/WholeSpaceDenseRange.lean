@@ -93,7 +93,7 @@ theorem mul_toReal_streamAnalyticMinimalResolvent_compl_amp_le_envelope
       (Real.sqrt (mu : ℝ) * r) =
       streamUniformExhaustionEnvelope M omega (Real.sqrt (mu : ℝ) * r) := by
     unfold streamUniformExhaustionProfile
-    rw [if_pos hcut]
+    rw [ite_eq_left hcut]
   exact htail.trans (by
     simpa only [ar, hprofile] using hdom)
 
@@ -575,7 +575,7 @@ theorem eventually_forall_abs_mul_streamAnalyticMinimalResolventReal_sub_lt
       nlinarith only [hxB, hR0]
     have hamp : streamExhaustionAmp x r = 2 / 3 * (1 + ‖x‖) := by
       unfold streamExhaustionAmp
-      rw [if_pos hactive, max_eq_right (hrTwo.trans htwoAmp)]
+      rw [ite_eq_left hactive, max_eq_right (hrTwo.trans htwoAmp)]
     have hxzero : f x = 0 := by
       by_contra hfx
       have hxt : x ∈ tsupport f := subset_closure hfx
@@ -609,7 +609,7 @@ theorem eventually_forall_abs_mul_streamAnalyticMinimalResolventReal_sub_lt
       (henvMu.trans (half_lt_self heps)))
   · have hamp : streamExhaustionAmp x r = r := by
       unfold streamExhaustionAmp
-      rw [if_neg hactive]
+      rw [ite_eq_right hactive]
     exact abs_scaled_streamResolvent_sub_lt_of_amp_eq M omega mu hmu1 f x
       hr heps (hmod x) hamp hcutMu henvMu
 

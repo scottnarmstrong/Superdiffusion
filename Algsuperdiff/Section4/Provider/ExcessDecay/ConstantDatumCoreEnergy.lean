@@ -87,14 +87,14 @@ theorem normalizedL2SqOnSet_sub_le_two_add_two (Q : TriadicCube d)
   have hsub : MemLp (fun y => f y - h y) 2 (normalizedCubeMeasure Q) := hf.sub hh
   have hle : eLpNorm (fun y => f y - h y) 2 (normalizedCubeMeasure Q) ≤
       eLpNorm f 2 (normalizedCubeMeasure Q) + eLpNorm h 2 (normalizedCubeMeasure Q) :=
-    MeasureTheory.eLpNorm_sub_le hf.1 hh.1 (by norm_num)
+    MeasureTheory.eLpNorm_sub_le (by norm_num)
   have hne : eLpNorm f 2 (normalizedCubeMeasure Q) +
       eLpNorm h 2 (normalizedCubeMeasure Q) ≠ ⊤ :=
-    ENNReal.add_ne_top.2 ⟨hf.2.ne, hh.2.ne⟩
+    ENNReal.add_ne_top.2 ⟨hf.eLpNorm_lt_top.ne, hh.eLpNorm_lt_top.ne⟩
   have htri : cubeLpNorm Q 2 (fun y => f y - h y) ≤
       cubeLpNorm Q 2 f + cubeLpNorm Q 2 h := by
     have hmono := ENNReal.toReal_mono hne hle
-    rw [ENNReal.toReal_add hf.2.ne hh.2.ne] at hmono
+    rw [ENNReal.toReal_add hf.eLpNorm_lt_top.ne hh.eLpNorm_lt_top.ne] at hmono
     exact hmono
   rw [normalizedL2SqOnSet_openCubeSet_eq_cubeLpNorm_two_sq Q _ hsub,
     normalizedL2SqOnSet_openCubeSet_eq_cubeLpNorm_two_sq Q _ hf,

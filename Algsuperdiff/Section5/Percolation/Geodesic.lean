@@ -157,7 +157,7 @@ theorem geodesicPoint_siteDist {d : ℕ} (x y : Site d) :
 @[simp] theorem head?_geodesic {d : ℕ} (x y : Site d) :
     (geodesic x y).head? = some x := by
   have hpos : siteDist x y + 1 ≠ 0 := Nat.ne_of_gt (Nat.zero_lt_succ _)
-  simp only [geodesic, List.head?_map, List.head?_range, if_neg hpos,
+  simp only [geodesic, List.head?_map, List.head?_range, ite_eq_right hpos,
     Option.map_some, geodesicPoint_zero]
 
 /-- The synchronous geodesic ends at `y`. -/
@@ -165,7 +165,7 @@ theorem geodesicPoint_siteDist {d : ℕ} (x y : Site d) :
     (geodesic x y).getLast? = some y := by
   rw [geodesic, List.getLast?_map]
   have hpos : 0 < siteDist x y + 1 := Nat.zero_lt_succ _
-  rw [List.getLast?_range, if_neg (Nat.ne_of_gt hpos)]
+  rw [List.getLast?_range, ite_eq_right (Nat.ne_of_gt hpos)]
   simp only [Option.map_some, Nat.add_sub_cancel, geodesicPoint_siteDist]
 
 private theorem natAbs_geodesicPoint_succ_sub_eq_one {d : ℕ}

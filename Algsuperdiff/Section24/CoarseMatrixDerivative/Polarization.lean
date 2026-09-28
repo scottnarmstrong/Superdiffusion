@@ -58,7 +58,7 @@ theorem blockQuadFormEntry_symm (B : BlockVec d → ℝ) (α β : BlockCoord d) 
   by_cases h : α = β
   · subst h
     rfl
-  · rw [if_neg h, if_neg (Ne.symm h), add_comm (blockBasis α) (blockBasis β)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h), add_comm (blockBasis α) (blockBasis β)]
     ring
 
 theorem isSymmetricBlockMat_blockMatOfQuadForm (B : BlockVec d → ℝ) :
@@ -124,9 +124,9 @@ theorem blockMatEntry_blockMatOfQuadForm_bilin
   unfold blockQuadFormEntry
   by_cases h : α = β
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     ring
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     change
       (φ (blockBasis α + blockBasis β) (blockBasis α + blockBasis β)
         - φ (blockBasis α) (blockBasis α) - φ (blockBasis β) (blockBasis β)) / 2 =

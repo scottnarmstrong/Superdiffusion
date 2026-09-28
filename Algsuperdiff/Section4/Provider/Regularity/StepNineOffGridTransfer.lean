@@ -159,8 +159,10 @@ theorem eLpNormTwo_normalizedVolumeMeasureOn_le_of_volume_le {W W' : Set (Vec d)
       eLpNorm f 2 (Support.normalizedVolumeMeasureOn V)
         = (volume V)⁻¹ ^ ((1 : ℝ) / 2) * eLpNorm f 2 (volume.restrict V) := by
     intro V
+    by_cases hVtop : volume V = ⊤
+    · simp [Support.normalizedVolumeMeasureOn_def, hVtop]
     rw [Support.normalizedVolumeMeasureOn_def,
-      eLpNorm_smul_measure_of_ne_top (by simp) f ((volume V)⁻¹), smul_eq_mul, hhalf]
+      eLpNorm_smul_measure_of_ne_zero (ENNReal.inv_ne_zero.2 hVtop) f 2, smul_eq_mul, hhalf]
   -- the coefficient comparison `|W'|⁻¹ ≤ K² |W|⁻¹`
   have hcancelW' : volume W' * (volume W')⁻¹ = 1 := ENNReal.mul_inv_cancel hW'0 hW'top
   have hcancelW : volume W * (volume W)⁻¹ = 1 := ENNReal.mul_inv_cancel hW0 hWtop

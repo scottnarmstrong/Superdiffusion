@@ -77,7 +77,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
     eLpNorm (fun x => f n x - g x) 2 μ * eLpNorm h 2 μ with hB
   have hBtend : Tendsto (fun n => (B n).toReal) atTop (nhds 0) := by
     have hprod : Tendsto B atTop (nhds (0 * eLpNorm h 2 μ)) := by
-      refine ENNReal.Tendsto.mul (by simpa [μ] using htend) (Or.inr hh.2.ne)
+      refine ENNReal.Tendsto.mul (by simpa [μ] using htend) (Or.inr hh.eLpNorm_lt_top.ne)
         tendsto_const_nhds (Or.inr (by simp))
     rw [zero_mul] at hprod
     have hreal := (ENNReal.tendsto_toReal (by simp : (0 : ℝ≥0∞) ≠ ⊤)).comp hprod
@@ -90,17 +90,20 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
     have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
       (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)) (r := 1)
-      ((hf n).sub hg).1 hh.1 (fun x y => x * y) 1 hbound
+      (fun x y => x * y) 1 continuous_mul ((hf n).sub hg).aestronglyMeasurable
+      hh.aestronglyMeasurable hbound
     simpa [B] using! hh'
   calc ‖∫ x, (f n x - g x) * h x ∂μ‖
       ≤ (∫⁻ x, ENNReal.ofReal ‖(f n x - g x) * h x‖ ∂μ).toReal :=
         norm_integral_le_lintegral_norm _
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm]
+        have hm : AEStronglyMeasurable (fun x => (f n x - g x) * h x) μ :=
+          ((hf n).sub hg).aestronglyMeasurable.mul hh.aestronglyMeasurable
+        rw [eLpNorm_one_eq_lintegral_enorm hm]
         simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
         refine ENNReal.toReal_mono ?_ hHolder
-        exact ENNReal.mul_ne_top ((hf n).sub hg).2.ne hh.2.ne
+        exact ENNReal.mul_ne_top ((hf n).sub hg).eLpNorm_lt_top.ne hh.eLpNorm_lt_top.ne
 
 /-! ## 2. Coordinate splitting of the tested integral -/
 

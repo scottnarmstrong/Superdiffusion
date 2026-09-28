@@ -79,12 +79,12 @@ theorem scalarToDivergenceField_memVectorL2
   intro j
   by_cases hji : j = i
   · subst j
-    simpa only [scalarToDivergenceField, if_pos] using!
+    simpa only [scalarToDivergenceField, ite_eq_left] using!
       (coordinatePrimitiveH1 hU q hq i z).memL2.neg
   · rw [show (fun x : Vec d ↦ scalarToDivergenceField q i z x j) =
         fun _ : Vec d ↦ (0 : ℝ) by
           funext x
-          simp only [scalarToDivergenceField, hji, if_false]]
+          simp only [scalarToDivergenceField, hji, ite_false]]
     exact MeasureTheory.MemLp.zero'
 
 /-- The divergence field pairs with every zero-trace test exactly as the
@@ -103,9 +103,9 @@ theorem integral_scalarToDivergenceField_vecDot_grad_eq
     classical
     unfold vecDot scalarToDivergenceField
     rw [Finset.sum_eq_single i]
-    · simp only [if_pos, neg_mul]
+    · simp only [ite_eq_left, neg_mul]
     · intro j _ hji
-      simp only [hji, if_false, zero_mul]
+      simp only [hji, ite_false, zero_mul]
     · intro hi
       exact (hi (Finset.mem_univ i)).elim
   have hibp := p.integral_mul_zeroTrace_gradCoord_eq_neg_integral_gradCoord_mul φ i

@@ -285,7 +285,7 @@ theorem memLp_termBCField_two [NeZero d] (h : UnitCubeSkewW2Infinity d)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :
     MemLp (termBCField h u) (2 : ℝ≥0∞)
       (normalizedCubeMeasure (originCube d 0)) :=
-  MemLp.smul (memLp_matWeakDiv h ∞) (memLp_u_two u)
+  MemLp.smul (memLp_u_two u) (memLp_matWeakDiv h ∞)
 
 /-- The finite-depth Besov product estimate for the Term BC field. -/
 theorem cubeBesovPositiveVectorPartialSeminormTwo_termBCField_le [NeZero d]

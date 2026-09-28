@@ -65,9 +65,12 @@ theorem eLpNorm_grad_coord_le_eLpNorm_grad {A : Set (Vec d)} (G : Vec d → Vec 
     (i : Fin d) :
     eLpNorm (fun y => G y i) 2 (Support.normalizedVolumeMeasureOn A) ≤
       eLpNorm G 2 (Support.normalizedVolumeMeasureOn A) := by
-  refine eLpNorm_mono (fun y => ?_)
-  rw [Real.norm_eq_abs]
-  simpa using norm_le_pi_norm (G y) i
+  by_cases hG : AEStronglyMeasurable G (Support.normalizedVolumeMeasureOn A)
+  · refine eLpNorm_mono ((continuous_apply i).comp_aestronglyMeasurable hG) (fun y => ?_)
+    rw [Real.norm_eq_abs]
+    simpa using norm_le_pi_norm (G y) i
+  · rw [eLpNorm_of_not_aestronglyMeasurable hG]
+    exact le_top
 
 /-- The coordinate sum of the datum gradient is at most `d` times the ambient
 one. -/

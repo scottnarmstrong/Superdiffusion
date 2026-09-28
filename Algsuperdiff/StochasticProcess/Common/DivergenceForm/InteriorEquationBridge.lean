@@ -134,7 +134,7 @@ theorem memScalarLInfOn_of_ae_bound {W : Set (Vec d)} {g : Vec d → ℝ} {K : �
     simpa [Real.norm_eq_abs] using hx
   refine ⟨memLp_top_of_bound hmeas K hnorm, ?_⟩
   have hle : eLpNorm g ⊤ (volume.restrict W) ≤ ENNReal.ofReal K := by
-    rw [eLpNorm_exponent_top]
+    rw [eLpNorm_exponent_top hmeas]
     exact eLpNormEssSup_le_of_ae_bound hnorm
   unfold scalarLInfSizeOn
   exact ENNReal.toReal_le_of_le_ofReal hK hle

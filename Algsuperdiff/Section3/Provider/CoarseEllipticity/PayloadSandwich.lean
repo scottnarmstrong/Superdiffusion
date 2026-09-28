@@ -127,9 +127,9 @@ theorem coarseSigmaStarInvNormCoeffField_nonneg (R : TriadicCube d)
   classical
   rw [coarseSigmaStarInvNormCoeffField]
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     exact Book.Ch02.coarseSigmaStarInvMatrixNorm_nonneg _ _
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
 
 /-- The upper per-cube datum is a matrix norm, hence nonnegative on both
 branches. -/
@@ -138,9 +138,9 @@ theorem coarseBNormCoeffField_nonneg (R : TriadicCube d) (a : RegCoeffField d) :
   classical
   rw [coarseBNormCoeffField]
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     exact Book.Ch02.coarseBMatrixNorm_nonneg _ _
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
 
 /-! ## 2. `blockGridSup` A -/
 
@@ -216,17 +216,17 @@ theorem maxDescendantSigmaStarInvCoeffField_eq_blockGridSup [NeZero d] (m : ℤ)
           coarseSigmaStarInvNormCoeffField a := by
   classical
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_pos h,
+  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_left h,
       maxDescendantSigmaStarInvMatrixNormAtScale_eq_gridSupAbs, blockGridSup,
       gridSupAbs, gridSupAbs]
     refine Finset.sup'_congr _ rfl fun R _ => ?_
-    rw [coarseSigmaStarInvNormCoeffField, dif_pos h]
-  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_neg h,
+    rw [coarseSigmaStarInvNormCoeffField, dite_eq_left h]
+  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_right h,
       blockGridSup, gridSupAbs]
     have hz : (fun R : TriadicCube d => |coarseSigmaStarInvNormCoeffField R a|)
         = fun _ : TriadicCube d => (0 : ℝ) := by
       funext R
-      rw [coarseSigmaStarInvNormCoeffField, dif_neg h, abs_zero]
+      rw [coarseSigmaStarInvNormCoeffField, dite_eq_right h, abs_zero]
     rw [hz, Finset.sup'_const]
 
 /-- **The, upper half**: the `b` twin of
@@ -238,17 +238,17 @@ theorem maxDescendantBCoeffField_eq_blockGridSup [NeZero d] (m : ℤ) (k : ℕ)
       = blockGridSup (Omega := RegCoeffField d) d m k coarseBNormCoeffField a := by
   classical
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_pos h,
+  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_left h,
       maxDescendantBMatrixNormAtScale_eq_gridSupAbs, blockGridSup,
       gridSupAbs, gridSupAbs]
     refine Finset.sup'_congr _ rfl fun R _ => ?_
-    rw [coarseBNormCoeffField, dif_pos h]
-  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_neg h,
+    rw [coarseBNormCoeffField, dite_eq_left h]
+  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_right h,
       blockGridSup, gridSupAbs]
     have hz : (fun R : TriadicCube d => |coarseBNormCoeffField R a|)
         = fun _ : TriadicCube d => (0 : ℝ) := by
       funext R
-      rw [coarseBNormCoeffField, dif_neg h, abs_zero]
+      rw [coarseBNormCoeffField, dite_eq_right h, abs_zero]
     rw [hz, Finset.sup'_const]
 
 /-! ## 5. The top-scale step -/
@@ -306,15 +306,15 @@ theorem maxDescendantSigmaStarInvCoeffField_top_le_blockGridSup [NeZero d] (m : 
   have hscale : (originCube d m).scale = m := rfl
   rw [← maxDescendantSigmaStarInvCoeffField_eq_blockGridSup m 0 a]
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_pos h,
-      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_pos h]
+  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_left h,
+      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_left h]
     have hl : m - 1 - ((0 : ℕ) : ℤ) ≤ (originCube d m).scale := by
       rw [hscale]; omega
     have htop : m = (originCube d m).scale := hscale.symm
     rw [htop]
     exact maxDescendantSigmaStarInvMatrixNormAtScale_top_le (originCube d m) hl _
-  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_neg h,
-      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_neg h]
+  · rw [Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_right h,
+      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_right h]
 
 /-- **The top-scale step at the Chapter 4 carrier, upper**. -/
 theorem maxDescendantBCoeffField_top_le_blockGridSup [NeZero d] (m : ℤ)
@@ -325,15 +325,15 @@ theorem maxDescendantBCoeffField_top_le_blockGridSup [NeZero d] (m : ℤ)
   have hscale : (originCube d m).scale = m := rfl
   rw [← maxDescendantBCoeffField_eq_blockGridSup m 0 a]
   by_cases h : Book.Ch04.AELocallyUniformlyEllipticField a
-  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_pos h,
-      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_pos h]
+  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_left h,
+      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_left h]
     have hl : m - 1 - ((0 : ℕ) : ℤ) ≤ (originCube d m).scale := by
       rw [hscale]; omega
     have htop : m = (originCube d m).scale := hscale.symm
     rw [htop]
     exact maxDescendantBMatrixNormAtScale_top_le (originCube d m) hl _
-  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_neg h,
-      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_neg h]
+  · rw [Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_right h,
+      Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_right h]
 
 /-! ## 6. The sandwich at the observable carrier -/
 

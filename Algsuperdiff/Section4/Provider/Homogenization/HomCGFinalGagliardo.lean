@@ -206,6 +206,65 @@ private theorem enorm_cubeEuclideanWspKernel_rpow_le {A : Set (Vec d)}
 
 /-! ## 4. The seminorm half -/
 
+/-- A Hölder bound with a positive exponent makes the field continuous on the set. -/
+private theorem continuousOn_of_holderSeminormBoundOn {U : Set (Vec d)} {alpha K : ℝ}
+    {f : Vec d → Vec d} (hK : 0 ≤ K) (halpha : 0 < alpha)
+    (hf : HolderSeminormBoundOn U alpha K f) : ContinuousOn f U := by
+  rw [Metric.continuousOn_iff]
+  intro b hb eps heps
+  have hK1 : (0 : ℝ) < K + 1 := by linarith only [hK]
+  have hq : (0 : ℝ) < eps / (K + 1) := div_pos heps hK1
+  refine ⟨(eps / (K + 1)) ^ alpha⁻¹, Real.rpow_pos_of_pos hq _, fun a ha hab => ?_⟩
+  have hstep : ‖a - b‖ ^ alpha < ((eps / (K + 1)) ^ alpha⁻¹) ^ alpha := by
+    refine Real.rpow_lt_rpow (norm_nonneg _) ?_ halpha
+    rwa [dist_eq_norm] at hab
+  have hpow : ((eps / (K + 1)) ^ alpha⁻¹) ^ alpha = eps / (K + 1) := by
+    rw [← Real.rpow_mul hq.le, inv_mul_cancel₀ (ne_of_gt halpha), Real.rpow_one]
+  have hmul : K * ‖a - b‖ ^ alpha ≤ K * (eps / (K + 1)) := by
+    rw [← hpow]
+    exact mul_le_mul_of_nonneg_left hstep.le hK
+  have hlt : K * (eps / (K + 1)) < eps := by
+    have hid : K * (eps / (K + 1)) = (K / (K + 1)) * eps := by field_simp
+    have hfrac : K / (K + 1) < 1 := (div_lt_one hK1).2 (by linarith only [])
+    rw [hid]
+    calc (K / (K + 1)) * eps < 1 * eps := mul_lt_mul_of_pos_right hfrac heps
+      _ = eps := one_mul eps
+  have hbd := hf a ha b hb
+  rw [dist_eq_norm]
+  linarith only [hbd, hmul, hlt]
+
+/-- The `W^{s′,q}` kernel of a `C^{0,α}` field is a.e. strongly measurable for the
+Gagliardo cube measure: the scalar factor is globally measurable, and the vector factor
+is continuous on `□ × □`. -/
+private theorem aestronglyMeasurable_cubeEuclideanWspKernel_of_holder {Q : TriadicCube d}
+    {s' : FractionalOrder} {q : FiniteLpExponent} {phi : Vec d → Vec d} {alpha K : ℝ}
+    (hK : 0 ≤ K) (halpha : 0 < alpha)
+    (hg : HolderSeminormBoundOn (openCubeSet Q) alpha K phi)
+    (hmu : Gagliardo.gagliardoCubeMeasure Q =
+      (volume (openCubeSet Q))⁻¹ •
+        ((volume.prod volume).restrict (openCubeSet Q ×ˢ openCubeSet Q))) :
+    AEStronglyMeasurable (cubeEuclideanWspKernel s' q phi)
+      (Gagliardo.gagliardoCubeMeasure Q) := by
+  have hset : MeasurableSet (openCubeSet Q) := (isOpen_openCubeSet Q).measurableSet
+  have hcont := continuousOn_of_holderSeminormBoundOn hK halpha hg
+  rw [hmu]
+  refine AEStronglyMeasurable.smul_measure ?_ _
+  have hdist : Continuous fun z : Vec d × Vec d => euclideanDist z.1 z.2 := by
+    simp_rw [euclideanDist_eq_norm_sub_ofVec]
+    exact (((HilbertVec.ofVecL d).continuous.comp continuous_fst).sub
+      ((HilbertVec.ofVecL d).continuous.comp continuous_snd)).norm
+  have hscal : AEStronglyMeasurable
+      (fun z : Vec d × Vec d =>
+        euclideanDist z.1 z.2 ^ (-(s'.1 + (d : ℝ) / q.exponent.toReal)))
+      ((volume.prod volume).restrict (openCubeSet Q ×ˢ openCubeSet Q)) :=
+    (hdist.measurable.pow_const _).aestronglyMeasurable
+  have hvec : ContinuousOn (fun z : Vec d × Vec d => HilbertVec.ofVec (phi z.1 - phi z.2))
+      (openCubeSet Q ×ˢ openCubeSet Q) :=
+    (HilbertVec.ofVecL d).continuous.comp_continuousOn
+      ((hcont.comp continuous_fst.continuousOn fun _ hz => hz.1).sub
+        (hcont.comp continuous_snd.continuousOn fun _ hz => hz.2))
+  exact hscal.smul (hvec.aestronglyMeasurable (hset.prod hset))
+
 /-- **`[φ]_{W^{s′,q}(□)} ≤ d · K · C_rad(d,β)^{1/q} · L^{α-s′}`.**
 
 The `C^{0,α} ↪ W^{s′,q}` embedding at `CoarseGraining`'s carrier, on a triadic
@@ -342,7 +401,11 @@ theorem cubeEuclideanWspESeminorm_le_of_holder {Q : TriadicCube d}
   have hdKt : (0 : ℝ) ≤ ((d : ℝ) * K) ^ q.exponent.toReal := Real.rpow_nonneg hdK _
   have hdKti : (0 : ℝ) ≤ (((d : ℝ) * K) ^ q.exponent.toReal) ^ (q.exponent.toReal)⁻¹ :=
     Real.rpow_nonneg hdKt _
-  rw [cubeEuclideanWspESeminorm_eq_lintegral, one_div]
+  have halpha : 0 < alpha := by
+    have hdiff : 0 < alpha - s'.1 := pos_of_mul_pos_left hlo hrpos.le
+    linarith only [hdiff, s'.2.1]
+  rw [cubeEuclideanWspESeminorm_eq_lintegral Q s' q phi
+    (aestronglyMeasurable_cubeEuclideanWspKernel_of_holder hK halpha hg hmu), one_div]
   refine (ENNReal.rpow_le_rpow hkey hinv).trans (le_of_eq ?_)
   rw [ENNReal.mul_rpow_of_nonneg _ _ hinv,
     ENNReal.ofReal_rpow_of_nonneg hdKt hinv,

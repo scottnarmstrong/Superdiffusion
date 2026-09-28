@@ -124,7 +124,7 @@ theorem cubeLowerEllipticityInvLiteral_pos (M : ABKModel d) (Q : TriadicCube d)
   unfold cubeLowerEllipticityInvLiteral
   refine inv_pos.mpr ?_
   rw [Ch04.lambdaSqCoeffField]
-  simp only [dif_pos
+  simp only [dite_eq_left
     (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
   cases qe with
   | finite r =>
@@ -303,7 +303,7 @@ theorem compl_goodLocalEllipticity_ae_eq (M : ABKModel d) {Ccg : ℝ}
     (goodLocalEllipticity M Ccg Q n)ᶜ
         =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
       coarseEllipticityFailure M Ccg Q n := by
-  refine Filter.eventuallyEq_set.mpr ?_
+  refine Filter.eventuallyEqSet_iff.mpr ?_
   filter_upwards [cubeLowerEllipticityInv_pos_ae M Q n (1 / 8) (by norm_num)
     exponentTwo] with omega homega
   exact notMem_goodLocalEllipticity_iff M hCcg Q n homega

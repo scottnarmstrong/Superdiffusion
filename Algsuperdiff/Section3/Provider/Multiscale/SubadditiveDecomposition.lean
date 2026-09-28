@@ -163,14 +163,14 @@ theorem whitneyCubeOf_mem {m : ℤ} {hn : ℕ → ℕ} {T : KuhnCell d}
     (hT : T ∈ simplexPartition m hn) :
     whitneyCubeOf m hn T ∈ whitneyPartition m hn := by
   classical
-  rw [whitneyCubeOf, dif_pos (exists_whitneyCube_of_mem_simplexPartition hT)]
+  rw [whitneyCubeOf, dite_eq_left (exists_whitneyCube_of_mem_simplexPartition hT)]
   exact (exists_whitneyCube_of_mem_simplexPartition hT).choose_spec.1
 
 theorem carrier_subset_whitneyCubeOf {m : ℤ} {hn : ℕ → ℕ} {T : KuhnCell d}
     (hT : T ∈ simplexPartition m hn) :
     T.carrier ⊆ cubeSet (whitneyCubeOf m hn T) := by
   classical
-  rw [whitneyCubeOf, dif_pos (exists_whitneyCube_of_mem_simplexPartition hT)]
+  rw [whitneyCubeOf, dite_eq_left (exists_whitneyCube_of_mem_simplexPartition hT)]
   exact (exists_whitneyCube_of_mem_simplexPartition hT).choose_spec.2
 
 /-- Uniqueness of the containing cube. -/
@@ -214,28 +214,28 @@ theorem notBadIndicator_of_bad {M : ABKModel d} {m : ℤ} {hn : ℕ → ℕ}
     (h : whitneyCubeOf m hn T ∈ badFamily M m hn omega) :
     notBadIndicator M m hn omega T = 0 := by
   classical
-  rw [notBadIndicator, if_pos h]
+  rw [notBadIndicator, ite_eq_left h]
 
 theorem notBadIndicator_of_not_bad {M : ABKModel d} {m : ℤ} {hn : ℕ → ℕ}
     {omega : Algsuperdiff.Section3.Cutoff.CutoffSample d} {T : KuhnCell d}
     (h : whitneyCubeOf m hn T ∉ badFamily M m hn omega) :
     notBadIndicator M m hn omega T = 1 := by
   classical
-  rw [notBadIndicator, if_neg h]
+  rw [notBadIndicator, ite_eq_right h]
 
 theorem collarIndicator_of_mem {M : ABKModel d} {m : ℤ} {hn : ℕ → ℕ}
     {omega : Algsuperdiff.Section3.Cutoff.CutoffSample d} {T : KuhnCell d}
     (h : whitneyCubeOf m hn T ∈ whitneyNeighborhood m hn (badFamily M m hn omega)) :
     collarIndicator M m hn omega T = 1 := by
   classical
-  rw [collarIndicator, if_pos h]
+  rw [collarIndicator, ite_eq_left h]
 
 theorem collarIndicator_of_notMem {M : ABKModel d} {m : ℤ} {hn : ℕ → ℕ}
     {omega : Algsuperdiff.Section3.Cutoff.CutoffSample d} {T : KuhnCell d}
     (h : whitneyCubeOf m hn T ∉ whitneyNeighborhood m hn (badFamily M m hn omega)) :
     collarIndicator M m hn omega T = 0 := by
   classical
-  rw [collarIndicator, if_neg h]
+  rw [collarIndicator, ite_eq_right h]
 
 /-! ## `SW(□_m)` as an admissible dissection -/
 

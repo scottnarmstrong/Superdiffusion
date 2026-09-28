@@ -262,10 +262,9 @@ private theorem memLp_eightFifths_of_moments {B V X : Omega → ℝ}
     (hBn : eLpNorm B 8 mu ≤ ENNReal.ofReal Cb)
     (hVn : eLpNorm V 4 mu ≤ ENNReal.ofReal Cv) :
     MemLp X (8 / 5 : ℝ≥0∞) mu :=
-  ⟨hXm,
-    lt_of_le_of_lt
-      (eLpNorm_energy_le_of_moments hB0 hV0 hX0 hdom hBm hVm hCb0 hCv0 hBn hVn)
-      ENNReal.ofReal_lt_top⟩
+  (lt_of_le_of_lt
+      (eLpNorm_energy_le_of_moments hB0 hV0 hX0 hdom hXm hBm hVm hCb0 hCv0 hBn hVn)
+      ENNReal.ofReal_lt_top)
 
 /-- `ENNReal.ofReal (8/5)` is the literal `8/5`. -/
 private theorem ofReal_eightFifths'' :
@@ -314,7 +313,7 @@ private theorem integral_mul_indicator_le_of_two_moments [IsFiniteMeasure mu]
   have hseminorm : eLpNorm X (ENNReal.ofReal (8 / 5 : ℝ)) mu ≤
       ENNReal.ofReal (Cb * Cv ^ (2 : ℕ)) := by
     rw [ofReal_eightFifths'']
-    exact eLpNorm_energy_le_of_moments hB0 hV0 hX0 hdom hBm hVm hCb0 hCv0 hBn hVn
+    exact eLpNorm_energy_le_of_moments hB0 hV0 hX0 hdom hXm hBm hVm hCb0 hCv0 hBn hVn
   have hroot : (∫ x, X x ^ (8 / 5 : ℝ) ∂mu) ^ ((1 : ℝ) / (8 / 5 : ℝ)) ≤
       Cb * Cv ^ (2 : ℕ) :=
     integral_rpow_le_of_eLpNorm_le hX0 (by norm_num) hmem (by positivity) hseminorm
@@ -384,7 +383,7 @@ private theorem lambdaSqUpper_eq_cutoffUpperEllipticity (M : ABKModel d) (k L : 
   change _ = Ch04.LambdaSqCoeffField (originCube d k) s q.1
       (Cutoff.coefficientCutoff M.nu L omega)
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega)]
   exact Ch02.LambdaSq_eq_ofAEEq
     (Algsuperdiff.Section3.Provider.Tail.coefficientCutoffFamily_aeeq M L omega)
     (originCube d k) s q.1

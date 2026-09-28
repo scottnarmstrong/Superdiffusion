@@ -67,9 +67,9 @@ noncomputable section
 /-! ## 1. The `p = 2` `eLpNorm` as a `lintegral` -/
 
 private theorem eLpNorm_two_eq_rpow {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    {E : Type*} [NormedAddCommGroup E] (f : α → E) :
+    {E : Type*} [NormedAddCommGroup E] (f : α → E) (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 2 μ = (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
   norm_num
 
 /-! ## 2. Jensen against a probability measure -/
@@ -95,8 +95,8 @@ theorem enorm_sub_integral_rpow_two_le (μ : Measure α) [IsProbabilityMeasure �
   have h2 : (∫⁻ y, ‖f x - f y‖ₑ ∂μ)
       ≤ (∫⁻ y, ‖f x - f y‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by
     have hcmp := eLpNorm_le_eLpNorm_of_exponent_le (μ := μ) (p := 1) (q := 2)
-      (f := fun y => f x - f y) (by norm_num) hgm
-    rwa [eLpNorm_one_eq_lintegral_enorm, eLpNorm_two_eq_rpow] at hcmp
+      (f := fun y => f x - f y) (by norm_num)
+    rwa [eLpNorm_one_eq_lintegral_enorm hgm, eLpNorm_two_eq_rpow _ hgm] at hcmp
   have h4 : ‖f x - ∫ y, f y ∂μ‖ₑ ^ (2 : ℝ)
       ≤ ((∫⁻ y, ‖f x - f y‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ))) ^ (2 : ℝ) :=
     ENNReal.rpow_le_rpow (h1.trans h2) (by norm_num)
@@ -111,7 +111,8 @@ theorem eLpNorm_sub_integral_le_eLpNorm_prod (μ : Measure α) [IsProbabilityMea
     eLpNorm (fun x => f x - ∫ y, f y ∂μ) 2 μ
       ≤ eLpNorm (fun z : α × α => f z.1 - f z.2) 2 (μ.prod μ) := by
   have hfm : AEStronglyMeasurable f μ := hf.aestronglyMeasurable
-  rw [eLpNorm_two_eq_rpow, eLpNorm_two_eq_rpow]
+  rw [eLpNorm_two_eq_rpow (fun x => f x - ∫ y, f y ∂μ) (hfm.sub aestronglyMeasurable_const),
+    eLpNorm_two_eq_rpow (fun z : α × α => f z.1 - f z.2) (hfm.comp_fst.sub hfm.comp_snd)]
   refine ENNReal.rpow_le_rpow ?_ (by norm_num)
   have hmeas : AEMeasurable (fun z : α × α => ‖f z.1 - f z.2‖ₑ ^ (2 : ℝ)) (μ.prod μ) :=
     ((hfm.comp_fst.sub hfm.comp_snd).enorm).pow_const _
@@ -228,12 +229,20 @@ theorem eLpNorm_sub_integral_le_normalizedGagliardoESeminormOn
     exact Measure.ae_smul_measure (ae_restrict_mem hW) _
   have hae1 : ∀ᵐ z ∂(μ.prod μ), z.1 ∈ W := Measure.quasiMeasurePreserving_fst.ae haeW
   have hae2 : ∀ᵐ z ∂(μ.prod μ), z.2 ∈ W := Measure.quasiMeasurePreserving_snd.ae haeW
+  have hdiffm : AEStronglyMeasurable (fun z : Vec d × Vec d => f z.1 - f z.2) (μ.prod μ) :=
+    hfμ.aestronglyMeasurable.comp_fst.sub hfμ.aestronglyMeasurable.comp_snd
+  have hkerm : AEStronglyMeasurable (Gagliardo.gagliardoKernel s 2 f) (μ.prod μ) := by
+    have hscal : AEStronglyMeasurable
+        (fun z : Vec d × Vec d => dist z.1 z.2 ^ (-(Gagliardo.kernelExponent d s 2)))
+        (μ.prod μ) :=
+      (measurable_dist.pow measurable_const).aestronglyMeasurable
+    exact hscal.smul hdiffm
   -- move 2: the pointwise kernel domination
   have hstep2 : eLpNorm (fun z : Vec d × Vec d => f z.1 - f z.2) 2 (μ.prod μ)
       ≤ ENNReal.ofReal (D ^ e) * eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2 (μ.prod μ) := by
     have hmono : eLpNorm (fun z : Vec d × Vec d => f z.1 - f z.2) 2 (μ.prod μ)
         ≤ eLpNorm ((D ^ e) • (Gagliardo.gagliardoKernel s 2 f)) 2 (μ.prod μ) := by
-      refine eLpNorm_mono_ae ?_
+      refine eLpNorm_mono_ae hdiffm ?_
       filter_upwards [hae1, hae2] with z hz1 hz2
       have hb := norm_sub_le_rpow_mul_norm_gagliardoKernel (d := d) (D := D) hs f
         (hdiam z.1 hz1 z.2 hz2)
@@ -254,7 +263,7 @@ theorem eLpNorm_sub_integral_le_normalizedGagliardoESeminormOn
           * eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2 (μ.prod μ) := by
     rw [normalizedGagliardoESeminormOn_def,
       normalizedGagliardoMeasureOn_eq_smul_prod hWpos hWtop, ← hμ,
-      eLpNorm_smul_measure_of_ne_top (by norm_num) _ (volume W), smul_eq_mul, hhalf]
+      eLpNorm_smul_measure_of_ne_top (by norm_num) _ (volume W) hkerm, smul_eq_mul, hhalf]
   have hkerinv : eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2 (μ.prod μ)
       = ((volume W) ^ ((1 : ℝ) / 2))⁻¹ * normalizedGagliardoESeminormOn W s f := by
     rw [hker, ← mul_assoc, ENNReal.inv_mul_cancel hVpow0 hVpowtop, one_mul]

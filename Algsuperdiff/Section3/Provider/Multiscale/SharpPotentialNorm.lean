@@ -75,7 +75,7 @@ theorem probe_cutoffBBlockFamily_inv_le_sum_abs_purePotential
     (Ch02.cubeDomain R)
     ((coefficientCutoffTriadicCoeffFamily M L omega).coeffOn R) hsigma
   rw [cutoffBBlockFamily, coarseBNormCoeffField,
-    dif_pos (coefficientCutoff_aelocallyUniformlyElliptic M L omega)]
+    dite_eq_left (coefficientCutoff_aelocallyUniformlyElliptic M L omega)]
   rw [Ch02.coarseBMatrixNorm_eq_ofAEEq
     (coefficientCutoff_canonicalFamily_aeeq M L omega) R]
   exact hnorm

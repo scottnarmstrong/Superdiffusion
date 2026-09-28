@@ -149,7 +149,7 @@ theorem columnsIndep_shiftArray {P : Measure Ω} {X : ℤ → ℤ → Ω → ℝ
   intro b
   have hb := (h (b + m0)).comp
     (g := fun (_ : ℤ) (x : ℤ → ℝ) => (fun (k : ℤ) => x (k + m0)))
-    (fun _ => measurable_pi_lambda _ fun k => measurable_pi_apply (k + m0))
+    (fun _ => Measurable.of_eval fun k => measurable_pi_apply (k + m0))
   have hrw : ∀ j : ℤ, j * (r : ℤ) + (b + m0) = j * (r : ℤ) + b + m0 :=
     fun j => (add_assoc _ _ _).symm
   simp only [Function.comp_def, hrw] at hb

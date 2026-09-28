@@ -68,7 +68,7 @@ theorem sigmaStarInvCoarse_transpose (U : Domain d) (a : CoeffOn U) :
   show Ch02.sigmaStarInvEntry U a.transpose i j = Ch02.sigmaStarInvEntry U a i j
   unfold Ch02.sigmaStarInvEntry
   by_cases hij : i = j
-  · simp only [hij, dif_pos, responseJ_transpose_zero_left]
+  · simp only [hij, dite_eq_left, responseJ_transpose_zero_left]
   · simp only [hij, responseJ_transpose_zero_left]
 
 /-! ## The transposed coefficient family -/

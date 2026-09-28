@@ -104,7 +104,7 @@ theorem localSymmetricEnergyENorm_le_ofReal_printedLocalEnergy {Q R : TriadicCub
     localSymmetricEnergyENorm R (a.restrictToSubcube h) (restrictH1ToSubcube u h) ≤
       ENNReal.ofReal (printedLocalEnergy a u R) := by
   unfold printedLocalEnergy
-  rw [dif_pos h, ENNReal.ofReal_toReal (localSymmetricEnergyENorm_ne_top _ _ _)]
+  rw [dite_eq_left h, ENNReal.ofReal_toReal (localSymmetricEnergyENorm_ne_top _ _ _)]
 
 /-! ## 2. Two pieces of bookkeeping -/
 

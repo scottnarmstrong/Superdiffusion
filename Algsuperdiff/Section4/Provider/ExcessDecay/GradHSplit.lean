@@ -83,9 +83,10 @@ theorem ofReal_norm_volumeAverageVec_le_eLpNorm_two {W : Set (Vec d)}
   rw [hav, ofReal_norm]
   calc ‖∫ y, f y ∂(normalizedVolumeMeasureOn W)‖ₑ
       ≤ ∫⁻ y, ‖f y‖ₑ ∂(normalizedVolumeMeasureOn W) := enorm_integral_le_lintegral_enorm _
-    _ = eLpNorm f 1 (normalizedVolumeMeasureOn W) := eLpNorm_one_eq_lintegral_enorm.symm
+    _ = eLpNorm f 1 (normalizedVolumeMeasureOn W) :=
+        (eLpNorm_one_eq_lintegral_enorm hint.aestronglyMeasurable).symm
     _ ≤ eLpNorm f 2 (normalizedVolumeMeasureOn W) :=
-        eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) hint.aestronglyMeasurable
+        eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
 
 /-- The window average commutes with subtracting a constant. -/
 theorem volumeAverageVec_sub_const {W : Set (Vec d)} {f : Vec d → Vec d} (c : Vec d)
@@ -263,8 +264,7 @@ theorem eLpNorm_windowThree_le_volumeAverageVec_windowTwo_add_gagliardo
       eLpNorm (fun y => f y - c) 2 (normalizedVolumeMeasureOn W3) + ENNReal.ofReal ‖c‖ := by
     have hid : f = fun y => (f y - c) + c := by funext y; abel
     have h := eLpNorm_add_le (μ := normalizedVolumeMeasureOn W3) (p := 2)
-      (f := fun y => f y - c) (g := fun _ : Vec d => c)
-      hintc.aestronglyMeasurable aestronglyMeasurable_const (by norm_num)
+      (f := fun y => f y - c) (g := fun _ : Vec d => c) (by norm_num)
     rw [← hconst]
     calc eLpNorm f 2 (normalizedVolumeMeasureOn W3)
         = eLpNorm (fun y => (f y - c) + c) 2 (normalizedVolumeMeasureOn W3) := by rw [← hid]

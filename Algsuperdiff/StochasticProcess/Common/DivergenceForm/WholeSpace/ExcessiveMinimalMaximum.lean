@@ -98,7 +98,7 @@ theorem tendsto_analyticCubeResolvent_of_tendsto (nu : PositiveShift)
       (fun k => A.analyticCubeResolvent_ae nu (hgk k) (fun y => hgkC k y) m)
       (A.continuousOn_analyticCubeResolvent nu hg (fun y => hgC y) m)
       (A.analyticCubeResolvent_ae nu hg (fun y => hgC y) m) hx
-  · simp only [analyticCubeResolvent, dif_neg hx]
+  · simp only [analyticCubeResolvent, dite_eq_right hx]
     exact tendsto_const_nhds
 
 /-- One cube resolvent depends only on the almost-everywhere class of its
@@ -110,7 +110,7 @@ theorem analyticCubeResolvent_congr_ae (mu : PositiveShift) {f g : Vec d → ℝ
     A.analyticCubeResolvent mu f hf hfD m x =
       A.analyticCubeResolvent mu g hg hgE m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx]
+  · rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx]
     let hU := isOpenBoundedConvexDomain_wholeSpaceCube d m
     have hdatum : boundedMeasurableToScalarL2 hU
         (hf.comp measurable_subtype_coe) (fun y => hfD y) =
@@ -135,7 +135,7 @@ theorem analyticCubeResolvent_congr_ae (mu : PositiveShift) {f g : Vec d → ℝ
     exact continuousCoeffBoundedResolvent_ae A.a hU A.hnu A.hnu
       (A.cubeEllipticity m) A.hsymm (A.skewContinuousOnCube m) A.hd mu
       (hf.comp measurable_subtype_coe) (fun y => hfD y)
-  · rw [analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx]
+  · rw [analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx]
 
 /-- The minimal resolvent depends only on the almost-everywhere class of its
 observable. -/

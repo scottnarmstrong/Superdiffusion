@@ -219,9 +219,9 @@ display, at the sharper deterministic estimate `3^x <= exp(1/2) <= 2` on
 theorem three_rpow_le_two_add_indicator {x : ℝ} (hx : 0 ≤ x) :
     (3 : ℝ) ^ x ≤ 2 + (if (81 : ℝ)⁻¹ < x then (3 : ℝ) ^ x else 0) := by
   by_cases hcase : (81 : ℝ)⁻¹ < x
-  · rw [if_pos hcase]
+  · rw [ite_eq_left hcase]
     linarith
-  · rw [if_neg hcase]
+  · rw [ite_eq_right hcase]
     push Not at hcase
     have hl2 : Real.log 3 ≤ 2 := log_three_le_two
     have hlog : Real.log 3 * x ≤ 1 / 2 := by nlinarith [hx, hcase, hl2]

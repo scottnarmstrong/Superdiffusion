@@ -52,12 +52,12 @@ theorem scalar_inner_zeroExtension_eq_restriction
       with x hzx hφx
   rw [Set.indicator_apply, Set.indicator_apply]
   by_cases hxV : x ∈ V
-  · rw [if_pos hxV, if_pos (hVU hxV), hzx (hVU hxV),
+  · rw [ite_eq_left hxV, ite_eq_left (hVU hxV), hzx (hVU hxV),
       Set.indicator_of_mem hxV, hφx hxV]
-  · rw [if_neg hxV]
+  · rw [ite_eq_right hxV]
     by_cases hxU : x ∈ U
-    · rw [if_pos hxU, hzx hxU, Set.indicator_of_notMem hxV, zero_mul]
-    · rw [if_neg hxU]
+    · rw [ite_eq_left hxU, hzx hxU, Set.indicator_of_notMem hxV, zero_mul]
+    · rw [ite_eq_right hxU]
 
 theorem coefficientPairing_zeroExtension_eq_restriction
     (a : CoeffField d)
@@ -79,13 +79,13 @@ theorem coefficientPairing_zeroExtension_eq_restriction
       with x hFx hGx
   rw [Set.indicator_apply, Set.indicator_apply]
   by_cases hxV : x ∈ V
-  · rw [if_pos hxV, if_pos (hVU hxV), hFx (hVU hxV),
+  · rw [ite_eq_left hxV, ite_eq_left (hVU hxV), hFx (hVU hxV),
       Set.indicator_of_mem hxV, hGx hxV]
-  · rw [if_neg hxV]
+  · rw [ite_eq_right hxV]
     by_cases hxU : x ∈ U
-    · rw [if_pos hxU, hFx hxU, Set.indicator_of_notMem hxV,
+    · rw [ite_eq_left hxU, hFx hxU, Set.indicator_of_notMem hxV,
         map_zero, inner_zero_left]
-    · rw [if_neg hxU]
+    · rw [ite_eq_right hxU]
 
 theorem scalar_inner_restriction_le
     (hVU : V ⊆ U) (fU : ScalarL2 U) (fV : ScalarL2 V)
@@ -201,10 +201,10 @@ theorem extendByZeroToPartSuperset_gradient [NeZero d]
   change HilbertVec.ofVec (w.zeroExtensionGrad x) = _
   rw [H10Function.zeroExtensionGrad, Set.indicator_apply, Set.indicator_apply]
   by_cases hxV : x ∈ V
-  · rw [if_pos hxV, if_pos hxV, ← hwcoe hxV]
+  · rw [ite_eq_left hxV, ite_eq_left hxV, ← hwcoe hxV]
     have hwu : w.toH1Function.gradToHilbertVectorL2 = gradient u := hw.2
     rw [← congrArg (fun z : HilbertVectorL2 V => z x) hwu]
-  · rw [if_neg hxV, if_neg hxV]
+  · rw [ite_eq_right hxV, ite_eq_right hxV]
     rfl
 
 end ZeroTraceSobolev

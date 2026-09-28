@@ -38,10 +38,12 @@ variable {d : ℕ}
 
 /-! ## `L^∞` bookkeeping -/
 
-/-- An a.e. uniform bound makes the essential supremum finite. -/
+/-- An a.e. uniform bound on an a.e. strongly measurable function makes the
+essential supremum finite. -/
 theorem eLpNorm_top_ne_top_of_ae_abs_le {μ : Measure (Vec d)} {F : Vec d → ℝ} {C : ℝ}
+    (hFm : AEStronglyMeasurable F μ)
     (hF : ∀ᵐ x ∂μ, |F x| ≤ C) : eLpNorm F ∞ μ ≠ ⊤ := by
-  rw [MeasureTheory.eLpNorm_exponent_top]
+  rw [MeasureTheory.eLpNorm_exponent_top hFm]
   exact (MeasureTheory.eLpNormEssSup_lt_top_of_ae_bound (C := C)
     (by simpa [Real.norm_eq_abs] using hF)).ne
 
@@ -50,11 +52,130 @@ theorem ae_abs_le_toReal_eLpNorm_top {μ : Measure (Vec d)} {F : Vec d → ℝ}
     (hfin : eLpNorm F ∞ μ ≠ ⊤) :
     ∀ᵐ x ∂μ, |F x| ≤ ENNReal.toReal (eLpNorm F ∞ μ) := by
   have hle : ∀ᵐ x ∂μ, ‖F x‖ₑ ≤ eLpNorm F ∞ μ := by
-    rw [MeasureTheory.eLpNorm_exponent_top]
+    rw [MeasureTheory.eLpNorm_exponent_top (aestronglyMeasurable_of_eLpNorm_ne_top hfin)]
     exact MeasureTheory.ae_le_eLpNormEssSup
   filter_upwards [hle] with x hx
   have := ENNReal.toReal_mono hfin hx
   simpa [Real.norm_eq_abs] using this
+
+/-! ## Measurability of the frozen derivative norms -/
+
+/-- Local copies of the `ContinuousLinearMap` normed-group/space instances on the
+`Vec`/`Mat` abbreviations (see `Lipschitz.MatrixNorms`): typeclass search does not
+find them unaided. -/
+private noncomputable instance instNormedAddCommGroupVecMatCLM :
+    NormedAddCommGroup (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.toNormedAddCommGroup
+
+private noncomputable instance instNormedSpaceVecMatCLM :
+    NormedSpace ℝ (Vec d →L[ℝ] Mat d) :=
+  ContinuousLinearMap.toNormedSpace
+
+private noncomputable instance instNormedAddCommGroupVecVecMatCLM :
+    NormedAddCommGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  ContinuousLinearMap.toNormedAddCommGroup
+
+private noncomputable instance instNormedSpaceVecVecMatCLM :
+    NormedSpace ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
+  @ContinuousLinearMap.toNormedSpace ℝ ℝ (Vec d) (Vec d →L[ℝ] Mat d)
+    _ _ _ _ _ _ (RingHom.id ℝ) _ ℝ _ _ (smulCommClass_self ℝ _)
+
+private theorem matrixNorm_add_le (A B : Mat d) :
+    matrixNorm (A + B) ≤ matrixNorm A + matrixNorm B := by
+  rw [matrixNorm_eq_matrixOperatorNorm, matrixNorm_eq_matrixOperatorNorm,
+    matrixNorm_eq_matrixOperatorNorm]
+  have h := matrixOperatorNorm_le_matrixOperatorNorm_add_matrixOperatorNorm_sub (A + B) A
+  rwa [add_sub_cancel_left] at h
+
+/-- The frozen first-derivative norm is Lipschitz for the operator norm. -/
+theorem matrixDerivativeNorm_le_add_sq_mul_norm_sub (D E : Vec d →L[ℝ] Mat d) :
+    matrixDerivativeNorm D ≤ matrixDerivativeNorm E + (d : ℝ) ^ 2 * ‖D - E‖ := by
+  refine csSup_le (matrixDerivativeNorm_range_nonempty D) ?_
+  rintro c ⟨v, rfl⟩
+  calc matrixNorm (D v.1) = matrixNorm (E v.1 + (D - E) v.1) := by
+        rw [show (D - E) v.1 = D v.1 - E v.1 from rfl]
+        congr 1
+        abel
+    _ ≤ matrixNorm (E v.1) + matrixNorm ((D - E) v.1) := matrixNorm_add_le _ _
+    _ ≤ matrixDerivativeNorm E + matrixDerivativeNorm (D - E) :=
+        add_le_add (matrixNorm_apply_le_matrixDerivativeNorm E v.1 v.2)
+          (matrixNorm_apply_le_matrixDerivativeNorm (D - E) v.1 v.2)
+    _ ≤ matrixDerivativeNorm E + (d : ℝ) ^ 2 * ‖D - E‖ :=
+        add_le_add le_rfl (matrixDerivativeNorm_le_sq_mul_norm (D - E))
+
+theorem continuous_matrixDerivativeNorm :
+    Continuous (matrixDerivativeNorm : (Vec d →L[ℝ] Mat d) → ℝ) := by
+  refine (LipschitzWith.of_le_add_mul' ((d : ℝ) ^ 2) fun D E => ?_).continuous
+  rw [dist_eq_norm]
+  exact matrixDerivativeNorm_le_add_sq_mul_norm_sub D E
+
+/-- The frozen second-derivative norm is Lipschitz for the operator norm. -/
+theorem matrixSecondDerivativeNorm_le_add_sq_mul_norm_sub
+    (H K : Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :
+    matrixSecondDerivativeNorm H ≤ matrixSecondDerivativeNorm K + (d : ℝ) ^ 2 * ‖H - K‖ := by
+  refine csSup_le (matrixSecondDerivativeNorm_range_nonempty H) ?_
+  rintro c ⟨v, rfl⟩
+  have hv : ‖v.1‖ ≤ 1 := (norm_vec_le_vecNorm v.1).trans v.2
+  have hHK : ‖H v.1 - K v.1‖ ≤ ‖H - K‖ := by
+    rw [show H v.1 - K v.1 = (H - K) v.1 from rfl]
+    exact ((H - K).le_opNorm v.1).trans (mul_le_of_le_one_right (norm_nonneg _) hv)
+  calc matrixDerivativeNorm (H v.1)
+      ≤ matrixDerivativeNorm (K v.1) + (d : ℝ) ^ 2 * ‖H v.1 - K v.1‖ :=
+        matrixDerivativeNorm_le_add_sq_mul_norm_sub _ _
+    _ ≤ matrixSecondDerivativeNorm K + (d : ℝ) ^ 2 * ‖H - K‖ :=
+        add_le_add (matrixDerivativeNorm_apply_le_matrixSecondDerivativeNorm K v.1 v.2)
+          (mul_le_mul_of_nonneg_left hHK (sq_nonneg _))
+
+theorem continuous_matrixSecondDerivativeNorm :
+    Continuous (matrixSecondDerivativeNorm : (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) → ℝ) := by
+  refine (LipschitzWith.of_le_add_mul' ((d : ℝ) ^ 2) fun H K => ?_).continuous
+  rw [dist_eq_norm]
+  exact matrixSecondDerivativeNorm_le_add_sq_mul_norm_sub H K
+
+/-- A field of continuous linear maps on `Vec d` is in `L^p` as soon as its values
+on the coordinate directions are. -/
+theorem memLp_clm_of_basisVec {α : Type*} {mα : MeasurableSpace α} {μ : Measure α}
+    {p : ℝ≥0∞} {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {L : α → Vec d →L[ℝ] F} (h : ∀ l : Fin d, MemLp (fun y => L y (basisVec l)) p μ) :
+    MemLp L p μ := by
+  classical
+  let e := ContinuousLinearEquiv.piRing (𝕜 := ℝ) (E := F) (Fin d)
+  have hA : MemLp (fun y => fun l : Fin d => L y (basisVec l)) p μ := memLp_pi_iff.2 h
+  have hL : L = (e.symm : (Fin d → F) →L[ℝ] (Vec d →L[ℝ] F)) ∘
+      fun y => fun l : Fin d => L y (basisVec l) := by
+    funext y
+    exact (e.symm_apply_apply (L y)).symm
+  rw [hL]
+  exact (e.symm : (Fin d → F) →L[ℝ] (Vec d →L[ℝ] F)).comp_memLp' hA
+
+/-- Entrywise `L^p` membership of a derivative field gives `L^p` membership of
+the field itself. -/
+theorem memLp_matrixDerivative_of_entries {α : Type*} {mα : MeasurableSpace α}
+    {μ : Measure α} {p : ℝ≥0∞} {D : α → Vec d →L[ℝ] Mat d}
+    (hmem : ∀ k i j : Fin d, MemLp (fun x => D x (basisVec k) i j) p μ) :
+    MemLp D p μ :=
+  memLp_clm_of_basisVec fun k =>
+    memLp_pi_iff.2 fun i => memLp_pi_iff.2 fun j => hmem k i j
+
+/-- A derivative field with entrywise `L^∞` entries has an a.e. strongly
+measurable frozen derivative norm. -/
+theorem aestronglyMeasurable_matrixDerivativeNorm_of_memLp
+    {U : Set (Vec d)} {D : Vec d → Vec d →L[ℝ] Mat d}
+    (hmem : ∀ k i j : Fin d, MemLp (fun x => D x (basisVec k) i j) ∞ (volumeMeasureOn U)) :
+    AEStronglyMeasurable (fun y => matrixDerivativeNorm (D y)) (volumeMeasureOn U) :=
+  continuous_matrixDerivativeNorm.comp_aestronglyMeasurable
+    (memLp_matrixDerivative_of_entries hmem).aestronglyMeasurable
+
+/-- Second-derivative analogue of
+`aestronglyMeasurable_matrixDerivativeNorm_of_memLp`. -/
+theorem aestronglyMeasurable_matrixSecondDerivativeNorm_of_memLp
+    {U : Set (Vec d)} {H : Vec d → Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)}
+    (hmem : ∀ l k i j : Fin d,
+      MemLp (fun x => H x (basisVec l) (basisVec k) i j) ∞ (volumeMeasureOn U)) :
+    AEStronglyMeasurable (fun y => matrixSecondDerivativeNorm (H y)) (volumeMeasureOn U) :=
+  continuous_matrixSecondDerivativeNorm.comp_aestronglyMeasurable
+    (memLp_clm_of_basisVec fun l =>
+      memLp_matrixDerivative_of_entries fun k i j => hmem l k i j).aestronglyMeasurable
 
 /-! ## Entrywise a.e. bounds through the frozen derivative norms -/
 
@@ -87,7 +208,9 @@ theorem ae_abs_apply_le_toReal_eLpNorm_matrixDerivativeNorm
     refine (matrixDerivativeNorm_le_sq_mul_sum (D x)).trans ?_
     gcongr with k' _ i' _ j' _
     exact hx k' i' j'
-  filter_upwards [ae_abs_le_toReal_eLpNorm_top (eLpNorm_top_ne_top_of_ae_abs_le hbd)] with x hx
+  filter_upwards [ae_abs_le_toReal_eLpNorm_top
+    (eLpNorm_top_ne_top_of_ae_abs_le
+      (aestronglyMeasurable_matrixDerivativeNorm_of_memLp hmem) hbd)] with x hx
   exact (abs_entry_apply_le_matrixDerivativeNorm (D x) k i j).trans ((le_abs_self _).trans hx)
 
 /-- Second-derivative analogue of
@@ -124,7 +247,9 @@ theorem ae_abs_apply_apply_le_toReal_eLpNorm_matrixSecondDerivativeNorm
     refine (matrixSecondDerivativeNorm_le_sq_mul_sum (H x)).trans ?_
     gcongr with l' _ k' _ i' _ j' _
     exact hx l' k' i' j'
-  filter_upwards [ae_abs_le_toReal_eLpNorm_top (eLpNorm_top_ne_top_of_ae_abs_le hbd)] with x hx
+  filter_upwards [ae_abs_le_toReal_eLpNorm_top
+    (eLpNorm_top_ne_top_of_ae_abs_le
+      (aestronglyMeasurable_matrixSecondDerivativeNorm_of_memLp hmem) hbd)] with x hx
   exact (abs_entry_apply_apply_le_matrixSecondDerivativeNorm (H x) l k i j).trans
     ((le_abs_self _).trans hx)
 

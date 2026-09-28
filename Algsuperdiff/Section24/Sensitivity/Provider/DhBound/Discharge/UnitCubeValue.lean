@@ -1,5 +1,6 @@
 import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.VectorPerturbation
 import Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz.UnitCube
+import Algsuperdiff.Section24.UnitCubeSkewW2Infinity.ValueL2
 
 /-!
 # `L^∞` bookkeeping for the frozen unit-cube perturbation
@@ -109,7 +110,13 @@ theorem ae_abs_value_le_w1Infinity (h : UnitCubeSkewW2Infinity d) (i j : Fin d) 
       (matrixFrobeniusNorm_le_sum_abs_entries _)).trans ?_
     gcongr with i' _ j' _
     exact hx i' j'
-  filter_upwards [ae_abs_le_toReal_eLpNorm_top (eLpNorm_top_ne_top_of_ae_abs_le hbd)] with x hx
+  have hmeas : AEStronglyMeasurable
+      (fun x => matrixNorm (h.toLInfSkewMatrixFieldOn.1.1 x)) (volumeMeasureOn U) :=
+    Algsuperdiff.Section24.UnitCubeSkewW2Infinity.continuous_matrixNorm.comp_aestronglyMeasurable
+      (Algsuperdiff.Section24.UnitCubeSkewW2Infinity.aestronglyMeasurable_of_entries fun i' j' =>
+        (h.toLInfSkewMatrixFieldOn.1.2 i' j').aestronglyMeasurable)
+  filter_upwards [ae_abs_le_toReal_eLpNorm_top (eLpNorm_top_ne_top_of_ae_abs_le hmeas hbd)]
+    with x hx
   refine le_trans ?_ (hx.trans (toReal_eLpNorm_matrixNorm_le_w1Infinity h))
   
   rw [matrixNorm_eq_matrixOperatorNorm]

@@ -278,7 +278,7 @@ theorem memH10_comp_coordFaceReflection {Ω : Set (Vec d)} (hΩ : MeasurableSet 
     have hae : AEStronglyMeasurable
         (fun y => u.approx n y - u.toH1Function.toFun y) (volume.restrict Ω) :=
       ((u.approx_smooth n).continuous.aestronglyMeasurable).sub
-        u.toH1Function.memL2.1
+        u.toH1Function.memL2.aestronglyMeasurable
     have hcomp : eLpNorm ((fun y => u.approx n y - u.toH1Function.toFun y)
           ∘ coordFaceReflection a i) 2 (volume.restrict Ω)
         = eLpNorm (fun y => u.approx n y - u.toH1Function.toFun y) 2
@@ -303,7 +303,7 @@ theorem memH10_comp_coordFaceReflection {Ω : Set (Vec d)} (hΩ : MeasurableSet 
       have hcont : Continuous fun y => (fderiv ℝ (u.approx n) y) (basisVec k) :=
         ((u.approx_smooth n).continuous_fderiv (by norm_num)).clm_apply
           continuous_const
-      exact hcont.aestronglyMeasurable.sub (u.toH1Function.gradMemL2 k).1
+      exact hcont.aestronglyMeasurable.sub (u.toH1Function.gradMemL2 k).aestronglyMeasurable
     have hcomp : eLpNorm ((fun y => (fderiv ℝ (u.approx n) y) (basisVec k)
           - u.toH1Function.grad y k) ∘ coordFaceReflection a i) 2 (volume.restrict Ω)
         = eLpNorm (fun y => (fderiv ℝ (u.approx n) y) (basisVec k)

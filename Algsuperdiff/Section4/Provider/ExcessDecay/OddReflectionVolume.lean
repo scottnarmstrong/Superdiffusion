@@ -108,7 +108,7 @@ theorem volume_reflectedWindow_le (x : Vec d) {m k : ℤ} (hkm : k < m) :
   calc ∏ i : Fin d, ENNReal.ofReal (reflectedHi x m k i - reflectedLo x m k i)
       ≤ ∏ i : Fin d,
           2 * ENNReal.ofReal (windowHi x m k i - windowLo x m k i) :=
-        Finset.prod_le_prod' fun i _ => ofReal_edge_le hkm i
+        Finset.prod_le_prod fun i _ => ofReal_edge_le hkm i
     _ = (∏ _i : Fin d, (2 : ℝ≥0∞)) *
           ∏ i : Fin d, ENNReal.ofReal (windowHi x m k i - windowLo x m k i) :=
         Finset.prod_mul_distrib

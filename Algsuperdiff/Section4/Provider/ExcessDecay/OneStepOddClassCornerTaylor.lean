@@ -184,7 +184,7 @@ theorem volume_toReal_coordBox_ge_of_edges {lo hi : Fin d → ℝ} {delta : ℝ}
   calc delta ^ d = ∏ _l : Fin d, delta := by
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ ∏ l : Fin d, (hi l - lo l) :=
-        Finset.prod_le_prod (fun _ _ => hdelta.le) (fun l _ => hedge l)
+        Finset.prod_le_prod₀ (fun _ _ => hdelta.le) (fun l _ => hedge l)
 
 /-- The face slab's edges are all at least `delta`. -/
 theorem cornerFaceSlab_edge_ge {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
@@ -194,9 +194,9 @@ theorem cornerFaceSlab_edge_ge {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
   have hw : (0 : ℝ) < (3 : ℝ) ^ k := zpow_pos (by norm_num) _
   rw [cornerFaceSlabHi, cornerFaceSlabLo]
   by_cases hli : l = i
-  · rw [if_pos hli, if_pos hli]
+  · rw [ite_eq_left hli, ite_eq_left hli]
     linarith only []
-  · rw [if_neg hli, if_neg hli]
+  · rw [ite_eq_right hli, ite_eq_right hli]
     have h := quarter_zpow_lt_hug_edge hx hkm l
     linarith only [h, hdelta16, hw]
 
@@ -208,9 +208,9 @@ theorem cornerPairSlab_edge_ge {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : �
   have hw : (0 : ℝ) < (3 : ℝ) ^ k := zpow_pos (by norm_num) _
   rw [cornerPairSlabHi, cornerPairSlabLo]
   by_cases hlij : l = i ∨ l = j
-  · rw [if_pos hlij, if_pos hlij]
+  · rw [ite_eq_left hlij, ite_eq_left hlij]
     linarith only []
-  · rw [if_neg hlij, if_neg hlij]
+  · rw [ite_eq_right hlij, ite_eq_right hlij]
     have h := quarter_zpow_lt_hug_edge hx hkm l
     linarith only [h, hdelta16, hw]
 
@@ -222,7 +222,7 @@ theorem cornerFaceSlab_depth {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
     (hy : y ∈ coordBox (cornerFaceSlabLo x m k i delta) (cornerFaceSlabHi x m k i)) :
     (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta < y i ∧ y i < (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
   have h := (mem_coordBox_iff.1 hy) i
-  rw [cornerFaceSlabLo, if_pos rfl, cornerFaceSlabHi, if_pos rfl] at h
+  rw [cornerFaceSlabLo, ite_eq_left rfl, cornerFaceSlabHi, ite_eq_left rfl] at h
   exact h
 
 /-- A point of the corner slab is within `delta` of the `j`-face (and of the
@@ -236,10 +236,10 @@ theorem cornerPairSlab_depth {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ}
           ∧ y j < (1 / 2 : ℝ) * (3 : ℝ) ^ m) := by
   have hi' := (mem_coordBox_iff.1 hy) i
   have hj' := (mem_coordBox_iff.1 hy) j
-  rw [cornerPairSlabLo, if_pos (Or.inl rfl), cornerPairSlabHi,
-    if_pos (Or.inl rfl)] at hi'
-  rw [cornerPairSlabLo, if_pos (Or.inr rfl), cornerPairSlabHi,
-    if_pos (Or.inr rfl)] at hj'
+  rw [cornerPairSlabLo, ite_eq_left (Or.inl rfl), cornerPairSlabHi,
+    ite_eq_left (Or.inl rfl)] at hi'
+  rw [cornerPairSlabLo, ite_eq_left (Or.inr rfl), cornerPairSlabHi,
+    ite_eq_left (Or.inr rfl)] at hj'
   exact ⟨hi', hj'⟩
 
 end

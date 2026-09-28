@@ -287,7 +287,7 @@ theorem lawCarrier_map_fluxCorrectedRegField (M : ABKModel d) (L m : ℤ)
   have : IsProbabilityMeasure
       (Measure.map (fluxCorrectedRegField M L m Q)
         (Cutoff.cutoffSampleLaw M).toMeasure) :=
-    Measure.isProbabilityMeasure_map hT.aemeasurable
+    inferInstance
   refine lawCarrier_of_aeLocallyUniformlyElliptic ?_
   rw [AELocallyUniformlyEllipticLaw,
     ae_map_iff hT.aemeasurable measurableSet_aeLocallyUniformlyEllipticField]

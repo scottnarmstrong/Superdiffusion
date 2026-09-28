@@ -72,7 +72,7 @@ private theorem smooth_unitCube_integral_sq_eq [NeZero d]
       dsimp only [q]
       fun_prop
     rw [hderiv.fderiv]
-    simp only [ContinuousLinearMap.proj_apply, basisVec_apply, if_pos]
+    simp only [ContinuousLinearMap.proj_apply, basisVec_apply, ite_eq_left]
   have hDφ2 : ∀ x : Vec d,
       (fderiv ℝ φ2 x) (basisVec i) =
         2 * φ x * (fderiv ℝ φ x) (basisVec i) := by
@@ -223,7 +223,7 @@ private theorem smooth_unitCube_dirichletPoincare [NeZero d]
         simp only [u, H1Function.ofContDiff]
       _ = (eLpNorm φ 2 volume).toReal := by
         rw [MeasureTheory.eLpNorm_restrict_eq_of_support_subset
-          (fun x hx => hφQ (subset_tsupport φ hx))]
+          hφ.continuous.aestronglyMeasurable (fun x hx => hφQ (subset_tsupport φ hx))]
       _ = ‖F‖ := by simp only [F, Lp.norm_toLp]
   have hDFu : ‖DF‖ = ‖u.gradCoordToScalarL2 i‖ := by
     have hsupport : Function.support Dφ ⊆ axisCube (0 : Vec d) 1 := by
@@ -238,7 +238,8 @@ private theorem smooth_unitCube_dirichletPoincare [NeZero d]
         simp only [DF, Lp.norm_toLp]
       _ = (eLpNorm Dφ 2
           (volume.restrict (axisCube (0 : Vec d) 1))).toReal := by
-        rw [← MeasureTheory.eLpNorm_restrict_eq_of_support_subset hsupport]
+        rw [← MeasureTheory.eLpNorm_restrict_eq_of_support_subset
+          hDφcont.aestronglyMeasurable hsupport]
       _ = ‖u.gradCoordToScalarL2 i‖ := by
         rw [H1Function.gradCoordToScalarL2, Homogenization.toScalarL2, Lp.norm_toLp]
         simp only [u, Dφ, H1Function.ofContDiff]

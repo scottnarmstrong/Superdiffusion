@@ -129,9 +129,9 @@ theorem measure_straddleBandSlice_le (Q : TriadicCube d) (j k : ℕ)
       refine hx ?_
       rw [straddleLayerSet]
       by_cases hkj : k < j
-      · rw [if_pos hkj]
+      · rw [ite_eq_left hkj]
         exact hx1
-      · rw [if_neg hkj]
+      · rw [ite_eq_right hkj]
         have hkj' : j ≤ k := by omega
         have hsplit : ((1 / 3 : ℝ) ^ k * cubeScaleFactor Q) =
             (1 / 3 : ℝ) ^ (k - j) * (cubeScaleFactor Q / (3 : ℝ) ^ j) := by
@@ -217,8 +217,8 @@ theorem lintegral_indicator_straddleLayerSet_le (Q : TriadicCube d) (j k : ℕ)
   classical
   by_cases hkj : k < j
   · have hone : bandStraddleWeight ((d : ℝ) + 1) j k = 1 := by
-      rw [bandStraddleWeight, if_pos hkj]
-    rw [straddleLayerSet, if_pos hkj, hone, ENNReal.ofReal_one, one_mul]
+      rw [bandStraddleWeight, ite_eq_left hkj]
+    rw [straddleLayerSet, ite_eq_left hkj, hone, ENNReal.ofReal_one, one_mul]
     refine lintegral_mono fun x => ?_
     by_cases hx : x ∈ cubeSet Q
     · rw [Set.indicator_of_mem hx]
@@ -229,8 +229,8 @@ theorem lintegral_indicator_straddleLayerSet_le (Q : TriadicCube d) (j k : ℕ)
     have ht0 : (0 : ℝ) ≤ t := pow_nonneg (by norm_num) _
     have ht1 : t ≤ 1 := pow_le_one₀ (by norm_num) (by norm_num)
     have hw : bandStraddleWeight ((d : ℝ) + 1) j k = 2 * ((d : ℝ) + 1) * t := by
-      rw [bandStraddleWeight, if_neg hkj]
-    rw [straddleLayerSet, if_neg hkj, hw,
+      rw [bandStraddleWeight, ite_eq_right hkj]
+    rw [straddleLayerSet, ite_eq_right hkj, hw,
       lintegral_enorm_gridDualDepthTest_eq Q j v hr, Finset.mul_sum]
     /- dominate the layer union cell by ce -/
     have hpt : ∀ x : Vec d,

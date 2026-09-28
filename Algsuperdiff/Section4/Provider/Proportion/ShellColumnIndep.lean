@@ -147,7 +147,7 @@ theorem columnsIndep_of_shellColumn (M : ABKModel d)
     ((iIndep_shellSigma M).precomp (injective_residue hr b)) ?_
   intro j
   let : MeasurableSpace (Cutoff.CutoffSample d) := shellSigma d (j * (r : ℤ) + b)
-  exact measurable_pi_lambda _ fun k => hcol k (j * (r : ℤ) + b)
+  exact Measurable.of_eval fun k => hcol k (j * (r : ℤ) + b)
 
 end
 

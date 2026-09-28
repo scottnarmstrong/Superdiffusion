@@ -227,7 +227,7 @@ theorem analyticCubeResolvent_le_succ (mu : PositiveShift) {f : Vec d → ℝ}
   by_cases hx : x ∈ wholeSpaceCube d m
   · have hx' : x ∈ wholeSpaceCube d (m + 1) :=
       wholeSpaceCube_subset_succ d m hx
-    rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx']
+    rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx']
     let hV := isOpenBoundedConvexDomain_wholeSpaceCube d m
     let hU := isOpenBoundedConvexDomain_wholeSpaceCube d (m + 1)
     let fU : ScalarL2 (wholeSpaceCube d (m + 1)) :=
@@ -307,7 +307,7 @@ theorem analyticCubeResolvent_le_succ (mu : PositiveShift) {f : Vec d → ℝ}
     rw [map_sub, hsub, Pi.sub_apply, hexty, Set.indicator_of_mem hyV] at hnonneg
     rw [hbigy, hsmally]
     exact sub_nonneg.mp hnonneg
-  · rw [analyticCubeResolvent, dif_neg hx]
+  · rw [analyticCubeResolvent, dite_eq_right hx]
     exact A.analyticCubeResolvent_nonneg mu hf hf0 hfD (m + 1) x
 
 /-- At each point, the local analytic resolvents form a monotone sequence. -/
@@ -336,8 +336,8 @@ theorem measurable_analyticCubeResolvent (mu : PositiveShift) {f : Vec d → ℝ
   have heq : A.analyticCubeResolvent mu f hf hfD m = domainExtension v := by
     funext x
     by_cases hx : x ∈ wholeSpaceCube d m
-    · rw [analyticCubeResolvent, dif_pos hx, domainExtension_of_mem hx]
-    · rw [analyticCubeResolvent, dif_neg hx]
+    · rw [analyticCubeResolvent, dite_eq_left hx, domainExtension_of_mem hx]
+    · rw [analyticCubeResolvent, dite_eq_right hx]
       have hnot : ¬ ∃ y : wholeSpaceCube d m, (y : Vec d) = x := by
         rintro ⟨y, rfl⟩
         exact hx y.2
@@ -357,7 +357,7 @@ theorem continuousOn_analyticCubeResolvent (mu : PositiveShift)
     (A.skewContinuousOnCube m) A.hd mu
     (hf.comp measurable_subtype_coe) (fun y => hfD y)).congr ?_
   intro x hx
-  rw [analyticCubeResolvent, dif_pos hx]
+  rw [analyticCubeResolvent, dite_eq_left hx]
 
 /-- On its defining cube, the analytic representative agrees almost
 everywhere with the `L²` resolvent class. -/
@@ -378,7 +378,7 @@ theorem analyticCubeResolvent_ae (mu : PositiveShift) {f : Vec d → ℝ}
     ae_restrict_mem
       (isOpenBoundedConvexDomain_wholeSpaceCube d m).isOpen.measurableSet]
       with x hrep hx
-  rw [analyticCubeResolvent, dif_pos hx, hrep]
+  rw [analyticCubeResolvent, dite_eq_left hx, hrep]
 
 /-- The analytic minimal resolvent is measurable as a pointwise supremum. -/
 theorem measurable_analyticMinimalResolvent (mu : PositiveShift)
@@ -397,7 +397,7 @@ theorem analyticCubeResolvent_mono (mu : PositiveShift)
     A.analyticCubeResolvent mu f hf hfD m x ≤
       A.analyticCubeResolvent mu g hg hgE m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx]
+  · rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx]
     let hU := isOpenBoundedConvexDomain_wholeSpaceCube d m
     let F : ScalarL2 (wholeSpaceCube d m) :=
       boundedMeasurableToScalarL2 hU (hf.comp measurable_subtype_coe)
@@ -433,7 +433,7 @@ theorem analyticCubeResolvent_mono (mu : PositiveShift)
         (A.cubeEllipticity m) F G hFG] with y hrepF hrepG hle
     rw [hrepF, hrepG]
     exact hle
-  · rw [analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx]
+  · rw [analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx]
 
 private theorem alphaShiftedResolvent_resolvent_identity_apply
     {U : Set (Vec d)} {Lam : ℝ} (mu nu : PositiveShift) (hUell :
@@ -477,16 +477,16 @@ theorem analyticCubeResolvent_add (mu : PositiveShift)
       A.analyticCubeResolvent mu f hf hfD m x +
         A.analyticCubeResolvent mu g hg hgE m x := by
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx,
-      analyticCubeResolvent, dif_pos hx]
+  · rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx,
+      analyticCubeResolvent, dite_eq_left hx]
     exact (continuousCoeffBoundedResolvent_add A.a
       (isOpenBoundedConvexDomain_wholeSpaceCube d m) A.hnu
       A.hnu (A.cubeEllipticity m) A.hsymm
       (A.skewContinuousOnCube m) A.hd mu
       (hf.comp measurable_subtype_coe) (hg.comp measurable_subtype_coe)
       (fun y => hfD y) (fun y => hgE y) (fun y => hfg y) hx).symm
-  · rw [analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx,
-      analyticCubeResolvent, dif_neg hx, add_zero]
+  · rw [analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx,
+      analyticCubeResolvent, dite_eq_right hx, add_zero]
 
 /-- The extended-real local resolvent is additive on nonnegative data. -/
 theorem analyticCubeResolventENN_add (mu : PositiveShift)
@@ -597,8 +597,8 @@ theorem analyticCubeResolvent_resolvent_identity (mu nu : PositiveShift)
     (A.skewContinuousOnCube m) A.hd nu
     (hg.comp measurable_subtype_coe) (fun y => hgD y)
   by_cases hx : x ∈ wholeSpaceCube d m
-  · rw [analyticCubeResolvent, dif_pos hx, analyticCubeResolvent, dif_pos hx,
-      analyticCubeResolvent, dif_pos hx]
+  · rw [analyticCubeResolvent, dite_eq_left hx, analyticCubeResolvent, dite_eq_left hx,
+      analyticCubeResolvent, dite_eq_left hx]
     change rmu x = rnu x + ((nu : ℝ) - (mu : ℝ)) * router x
     have hclass : boundedMeasurableToScalarL2 hU
           (hg.comp measurable_subtype_coe) (fun y => hgD y) =
@@ -615,7 +615,7 @@ theorem analyticCubeResolvent_resolvent_identity (mu nu : PositiveShift)
       rw [hdatum, domainExtension_of_mem hy]
       change g y = _
       dsimp only [g]
-      rw [analyticCubeResolvent, dif_pos hy]
+      rw [analyticCubeResolvent, dite_eq_left hy]
       simpa only [rmu, F] using hrep
     have hL2 := A.alphaShiftedResolvent_resolvent_identity_apply mu nu
       (A.cubeEllipticity m) F
@@ -660,8 +660,8 @@ theorem analyticCubeResolvent_resolvent_identity (mu nu : PositiveShift)
           with y hnu houter hadd hsmul
       rw [hadd, Pi.add_apply, hsmul, Pi.smul_apply, smul_eq_mul, ← hnu,
         ← houter]
-  · rw [analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx,
-      analyticCubeResolvent, dif_neg hx, mul_zero, add_zero]
+  · rw [analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx,
+      analyticCubeResolvent, dite_eq_right hx, mul_zero, add_zero]
 
 end WholeSpaceAnalyticData
 

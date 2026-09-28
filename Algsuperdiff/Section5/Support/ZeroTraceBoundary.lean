@@ -177,7 +177,7 @@ private theorem outside_and_shift_mem {y : Vec d} {n : ℤ} {x₀ : Vec d}
   · rw [mem_cubeSetAt_iff_abs_coord]
     intro j
     rcases eq_or_ne j i₀ with rfl | hj
-    · rw [coordShift_apply, if_pos rfl]
+    · rw [coordShift_apply, ite_eq_left rfl]
       have hval : sgn * (x j + -(sgn * t) - y j) =
           sgn * (x j - y j) - t := by
         have hrw : sgn * (x j + -(sgn * t) - y j) = sgn * (x j - y j) - (sgn * sgn) * t := by
@@ -185,19 +185,19 @@ private theorem outside_and_shift_mem {y : Vec d} {n : ℤ} {x₀ : Vec d}
         rw [hrw, hsgnsq, one_mul]
       rw [← habs (x j + -(sgn * t) - y j), hval, abs_lt]
       constructor <;> linarith only [hxi, hxlo, hxhi, htA, hA]
-    · rw [coordShift_apply, if_neg hj]
+    · rw [coordShift_apply, ite_eq_right hj]
       exact (htang j hj).1
   · refine (pi_norm_lt_iff (lt_of_lt_of_le ht0 htrho)).2 fun j => ?_
     rw [Pi.sub_apply, Real.norm_eq_abs]
     rcases eq_or_ne j i₀ with rfl | hj
-    · rw [coordShift_apply, if_pos rfl]
+    · rw [coordShift_apply, ite_eq_left rfl]
       have hval : sgn * (x j + -(sgn * t) - x₀ j) = sgn * (x j - x₀ j) - t := by
         have hrw : sgn * (x j + -(sgn * t) - x₀ j) = sgn * (x j - x₀ j) - (sgn * sgn) * t := by
           ring
         rw [hrw, hsgnsq, one_mul]
       rw [← habs (x j + -(sgn * t) - x₀ j), hval, abs_lt]
       constructor <;> linarith only [hxlo, hxhi, ht0, htrho]
-    · rw [coordShift_apply, if_neg hj]
+    · rw [coordShift_apply, ite_eq_right hj]
       exact (htang j hj).2
 
 /-! ## 3. Arbitrarily small values arbitrarily close to the boundary -/
@@ -348,7 +348,7 @@ theorem exists_mem_cubeSetAt_abs_lt_of_mem_frontier {y : Vec d} {n : ℤ}
   -- the translation estimate for the zero extension closes the argument
   have hconst : eLpNorm (fun _ : Vec d => (eps / t : ℝ)) 2 (volume.restrict Q)
       ≤ eLpNorm (euclideanBackwardDifferenceQuotient (sgn * t) i₀ W.toH1Function.toFun) 2
-          (volume.restrict Q) := eLpNorm_mono_ae hae
+          (volume.restrict Q) := eLpNorm_mono_ae aestronglyMeasurable_const hae
   have hrest : eLpNorm (euclideanBackwardDifferenceQuotient (sgn * t) i₀ W.toH1Function.toFun) 2
         (volume.restrict Q)
       ≤ eLpNorm (euclideanBackwardDifferenceQuotient (sgn * t) i₀ W.toH1Function.toFun) 2

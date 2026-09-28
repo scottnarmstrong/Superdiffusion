@@ -113,7 +113,7 @@ private theorem cubeLowerEllipticityInvLiteral_nonneg (M : ABKModel d)
   unfold cubeLowerEllipticityInvLiteral
   exact inv_nonneg.mpr <| by
     rw [Ch04.lambdaSqCoeffField]
-    simp only [dif_pos
+    simp only [dite_eq_left
       (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
     exact Ch02.lambdaSq_nonneg Q
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
@@ -129,7 +129,7 @@ private theorem cubeUpperEllipticityLiteral_nonneg (M : ABKModel d)
   let : NeZero d := neZero_of_model M
   unfold cubeUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos
+  simp only [dite_eq_left
     (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
   exact Ch02.LambdaSq_nonneg Q
     (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField

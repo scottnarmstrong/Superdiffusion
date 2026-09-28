@@ -55,7 +55,7 @@ theorem isCompact_kuhnCellCoordSlice (T : KuhnCell (n + 1))
   apply Metric.isCompact_iff_isClosed_bounded.2
   constructor
   · exact (isClosed_closedCarrier T).preimage (isometry_finInsertNth_line i z).continuous
-  · exact (isometry_finInsertNth_line i z).antilipschitz.isBounded_preimage
+  · exact (isometry_finInsertNth_line i z).antilipschitzWith.isBounded_preimage
       ((isCompact_kuhnCell_closedCarrier T).isBounded)
 
 /-- A coordinate slice of a closed Kuhn cell is convex. -/
@@ -169,7 +169,7 @@ theorem zeroExtendedKuhnAffine_of_mem_closedCarrier
     (g : Vec d → ℝ) {T : KuhnCell d} (hT : T ∈ cells)
     {x : Vec d} (hx : x ∈ T.closedCarrier) :
     zeroExtendedKuhnAffine cells g x = kuhnInterp T g x := by
-  rw [zeroExtendedKuhnAffine, if_pos ⟨T, hT, hx⟩,
+  rw [zeroExtendedKuhnAffine, ite_eq_left ⟨T, hT, hx⟩,
     gluedKuhnAffine_of_mem_closedCarrier hscale g hT hx]
 
 /-- Off every selected closed cell, the zero extension is zero. -/
@@ -177,7 +177,7 @@ theorem zeroExtendedKuhnAffine_of_forall_notMem
     {d : ℕ} (cells : Finset (KuhnCell d)) (g : Vec d → ℝ)
     {x : Vec d} (hx : ∀ T ∈ cells, x ∉ T.closedCarrier) :
     zeroExtendedKuhnAffine cells g x = 0 := by
-  rw [zeroExtendedKuhnAffine, if_neg]
+  rw [zeroExtendedKuhnAffine, ite_eq_right]
   rintro ⟨T, hT, hxT⟩
   exact hx T hT hxT
 
@@ -257,7 +257,7 @@ theorem hasDerivAt_zeroExtendedKuhnAffine_insertNth_of_not_mem_endpoints
           fun s : ℝ => kuhnInterp T g (i.insertNth s z) :=
       hnear.mono fun _ hs => zeroExtendedKuhnAffine_of_mem_closedCarrier hscale g hT.1 hs
     have hderiv := (hasDerivAt_kuhnInterp_insertNth T g i z t).congr_of_eventuallyEq heq
-    simpa only [zeroExtendedKuhnAffineLineSlope, dif_pos hmem, T] using hderiv
+    simpa only [zeroExtendedKuhnAffineLineSlope, dite_eq_left hmem, T] using hderiv
   · have hnear : ∀ᶠ s in 𝓝 t,
         ¬ ∃ T ∈ cells, i.insertNth s z ∈ T.closedCarrier :=
       hstable.mono fun s hs h => hmem <| by
@@ -271,7 +271,7 @@ theorem hasDerivAt_zeroExtendedKuhnAffine_insertNth_of_not_mem_endpoints
     have hderiv : HasDerivAt
         (fun s : ℝ => zeroExtendedKuhnAffine cells g (i.insertNth s z)) 0 t :=
       (hasDerivAt_const t 0).congr_of_eventuallyEq heq
-    simpa only [zeroExtendedKuhnAffineLineSlope, dif_neg hmem] using hderiv
+    simpa only [zeroExtendedKuhnAffineLineSlope, dite_eq_right hmem] using hderiv
 
 /-- Every selected line slope is bounded by the finite coordinate sum. -/
 theorem norm_zeroExtendedKuhnAffineLineSlope_le
@@ -281,10 +281,10 @@ theorem norm_zeroExtendedKuhnAffineLineSlope_le
       zeroExtendedKuhnAffineCoordBound cells g i := by
   classical
   by_cases hmem : ∃ T ∈ cells, i.insertNth t z ∈ T.closedCarrier
-  · rw [zeroExtendedKuhnAffineLineSlope, dif_pos hmem]
+  · rw [zeroExtendedKuhnAffineLineSlope, dite_eq_left hmem]
     exact Finset.single_le_sum (fun T _ => norm_nonneg (kuhnSlope T g i))
       (Classical.choose_spec hmem).1
-  · rw [zeroExtendedKuhnAffineLineSlope, dif_neg hmem, norm_zero]
+  · rw [zeroExtendedKuhnAffineLineSlope, dite_eq_right hmem, norm_zero]
     exact zeroExtendedKuhnAffineCoordBound_nonneg cells g i
 
 private theorem intervalIntegrable_deriv_zeroExtendedKuhnAffine_line

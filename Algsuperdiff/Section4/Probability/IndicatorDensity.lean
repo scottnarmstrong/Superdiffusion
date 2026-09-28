@@ -67,15 +67,15 @@ theorem scaleProp_inter_le (A B : ℤ → Set Ω) (M : ℕ) (ω : Ω) :
   rw [← mul_add, ← Finset.sum_add_distrib]
   refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun m _ => ?_)) (by positivity)
   by_cases hAB : ω ∈ (A m ∩ B m)ᶜ
-  · rw [if_pos hAB]
+  · rw [ite_eq_left hAB]
     have hmem : ω ∉ A m ∨ ω ∉ B m := by
       by_contra hc
       push Not at hc
       exact hAB ⟨hc.1, hc.2⟩
     rcases hmem with hc | hc
-    · rw [if_pos ((Set.mem_compl_iff _ _).mpr hc)]; split_ifs <;> norm_num
-    · rw [if_pos ((Set.mem_compl_iff _ _).mpr hc)]; split_ifs <;> norm_num
-  · rw [if_neg hAB]; split_ifs <;> norm_num
+    · rw [ite_eq_left ((Set.mem_compl_iff _ _).mpr hc)]; split_ifs <;> norm_num
+    · rw [ite_eq_left ((Set.mem_compl_iff _ _).mpr hc)]; split_ifs <;> norm_num
+  · rw [ite_eq_right hAB]; split_ifs <;> norm_num
 
 /-- **The `½θ` split, as an inclusion of events.**  A `θ`-density of `(A ∩ B)`-bad
 scales forces a `θ₁`-density for `A` or a `θ₂`-density for `B`, whenever
@@ -109,15 +109,15 @@ theorem scaleProp_subadd (A B Cev : ℤ → Set Ω) (M : ℕ) (ω : Ω) :
   rw [← mul_add, ← mul_add, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
   refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun m _ => ?_)) (by positivity)
   by_cases hABC : ω ∈ (A m ∩ B m ∩ Cev m)ᶜ
-  · rw [if_pos hABC]
+  · rw [ite_eq_left hABC]
     have hmem : ω ∉ A m ∨ ω ∉ B m ∨ ω ∉ Cev m := by
       by_contra hc; push Not at hc
       exact hABC ⟨⟨hc.1, hc.2.1⟩, hc.2.2⟩
     rcases hmem with h | h | h
-    · rw [if_pos ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
-    · rw [if_pos ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
-    · rw [if_pos ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
-  · rw [if_neg hABC]; split_ifs <;> norm_num
+    · rw [ite_eq_left ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
+    · rw [ite_eq_left ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
+    · rw [ite_eq_left ((Set.mem_compl_iff _ _).mpr h)]; split_ifs <;> norm_num
+  · rw [ite_eq_right hABC]; split_ifs <;> norm_num
 
 /-- **The measure union bound over three bad-scale densities.**  Given the three
 ratio-lemma tails at level `θ/3` and the subadditivity `scaleProp_subadd`, the

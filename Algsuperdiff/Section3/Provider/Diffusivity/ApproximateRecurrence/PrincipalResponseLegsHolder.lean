@@ -92,6 +92,15 @@ variable {Omega : Type*} {mOmega : MeasurableSpace Omega} {mu : Measure Omega}
 private theorem eLpNorm_sq_eq (V : Omega → ℝ) (hV0 : ∀ omega, 0 ≤ V omega) :
     eLpNorm (fun omega => V omega ^ (2 : ℕ)) 2 mu =
       eLpNorm V 4 mu ^ (2 : ℕ) := by
+  by_cases hVm : AEStronglyMeasurable V mu
+  swap
+  · have hVsq : ¬ AEStronglyMeasurable (fun omega => V omega ^ (2 : ℕ)) mu := by
+      intro h
+      refine hVm ((Real.continuous_sqrt.comp_aestronglyMeasurable h).congr
+        (Filter.Eventually.of_forall fun omega => ?_))
+      exact Real.sqrt_sq (hV0 omega)
+    rw [eLpNorm_of_not_aestronglyMeasurable hVsq, eLpNorm_of_not_aestronglyMeasurable hVm]
+    simp
   have hfun : (fun omega => ‖V omega‖ ^ (2 : ℝ)) =
       fun omega => V omega ^ (2 : ℕ) := by
     funext omega
@@ -100,7 +109,7 @@ private theorem eLpNorm_sq_eq (V : Omega → ℝ) (hV0 : ∀ omega, 0 ≤ V omeg
   have hexp : (2 : ℝ≥0∞) * ENNReal.ofReal (2 : ℝ) = 4 := by
     rw [show ENNReal.ofReal (2 : ℝ) = (2 : ℝ≥0∞) by simp]
     norm_num
-  have hbase := eLpNorm_norm_rpow (μ := mu) (p := (2 : ℝ≥0∞)) V (by norm_num : (0 : ℝ) < 2)
+  have hbase := eLpNorm_norm_rpow (μ := mu) (p := (2 : ℝ≥0∞)) V hVm (by norm_num : (0 : ℝ) < 2)
   rw [hfun, hexp] at hbase
   rw [hbase, ← ENNReal.rpow_natCast (eLpNorm V 4 mu) 2]
   norm_num
@@ -116,6 +125,7 @@ theorem eLpNorm_energy_le_of_moments {B V X : Omega → ℝ}
     (hB0 : ∀ omega, 0 ≤ B omega) (hV0 : ∀ omega, 0 ≤ V omega)
     (hX0 : ∀ omega, 0 ≤ X omega)
     (hdom : ∀ omega, X omega ≤ B omega * V omega ^ (2 : ℕ))
+    (hXm : AEStronglyMeasurable X mu)
     (hBm : AEStronglyMeasurable B mu) (hVm : AEStronglyMeasurable V mu)
     {Cb Cv : ℝ} (hCb0 : 0 ≤ Cb) (hCv0 : 0 ≤ Cv)
     (hBn : eLpNorm B 8 mu ≤ ENNReal.ofReal Cb)
@@ -125,7 +135,7 @@ theorem eLpNorm_energy_le_of_moments {B V X : Omega → ℝ}
     hVm.pow 2
   have hmono : eLpNorm X (8 / 5) mu ≤
       eLpNorm (fun omega => B omega * V omega ^ (2 : ℕ)) (8 / 5) mu := by
-    refine eLpNorm_mono fun omega => ?_
+    refine eLpNorm_mono hXm fun omega => ?_
     have hprod : (0 : ℝ) ≤ B omega * V omega ^ (2 : ℕ) := by
       have := hB0 omega
       positivity
@@ -136,8 +146,8 @@ theorem eLpNorm_energy_le_of_moments {B V X : Omega → ℝ}
       eLpNorm (fun omega => B omega * V omega ^ (2 : ℕ)) (8 / 5) mu ≤
         ((1 : ℝ≥0) : ℝ≥0∞) * eLpNorm B 8 mu *
           eLpNorm (fun omega => V omega ^ (2 : ℕ)) 2 mu := by
-    refine eLpNorm_le_eLpNorm_mul_eLpNorm'_of_norm hBm hVsqm (fun a b => a * b) 1
-      (Filter.Eventually.of_forall fun omega => ?_)
+    refine eLpNorm_le_eLpNorm_mul_eLpNorm_of_norm (fun a b : ℝ => a * b) 1 continuous_mul
+      hBm hVsqm (Filter.Eventually.of_forall fun omega => ?_)
     rw [norm_mul]
     simp
   rw [eLpNorm_sq_eq V hV0] at hholder

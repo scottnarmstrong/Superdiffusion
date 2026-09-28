@@ -173,7 +173,7 @@ theorem card_filter_mem_openCubeAtScale_le (x : Vec d) (n : ℤ) (N : ℕ)
         Finset.card_le_card_of_injOn _ hmap hinj
     _ = ∏ i : Fin d, (overlapIndexBox x n N i).card := Fintype.card_piFinset _
     _ ≤ ∏ _i : Fin d, 3 ^ N :=
-        Finset.prod_le_prod' fun i _ => card_overlapIndexBox_le x n N i
+        Finset.prod_le_prod fun i _ => card_overlapIndexBox_le x n N i
     _ = (3 ^ N) ^ d := by simp
 
 /-- **The overlap count in indicator form.**  This is the shape the integral

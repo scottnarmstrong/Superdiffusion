@@ -261,7 +261,7 @@ private theorem measurable_tail (M : ABKModel d) {p : ℝ} (hp : 0 < p) (l n m :
           ∫ w, streamIncrementLpMass p (m + (incrementPartitionShift d : ℤ)) n m w
             ∂M.P.toMeasure| := by
       funext omega
-      rw [streamIncrementLpTail, if_pos hc]
+      rw [streamIncrementLpTail, ite_eq_left hc]
     rw [hrw]
     have hsub : Measurable fun omega : ShellSeq d =>
         streamIncrementLpMass p l n m omega -
@@ -271,7 +271,7 @@ private theorem measurable_tail (M : ABKModel d) {p : ℝ} (hp : 0 < p) (l n m :
     exact hsub.abs
   · have hrw : streamIncrementLpTail M p l n m = streamIncrementLpMass p l n m := by
       funext omega
-      rw [streamIncrementLpTail, if_neg hc]
+      rw [streamIncrementLpTail, ite_eq_right hc]
     rw [hrw]
     exact measurable_mass hp l n m
 

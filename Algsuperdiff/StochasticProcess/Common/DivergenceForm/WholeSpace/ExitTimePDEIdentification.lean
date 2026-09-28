@@ -65,18 +65,18 @@ theorem cubeTorsionField_apply (x : Vec d) (j : Fin d) :
     cubeTorsionField d x j = if j = default then -x (default : Fin d) else 0 := by
   unfold cubeTorsionField scalarToDivergenceField
   by_cases hj : j = (default : Fin d)
-  · rw [if_pos hj, if_pos hj, coordinatePrimitive_one]
-  · rw [if_neg hj, if_neg hj]
+  · rw [ite_eq_left hj, ite_eq_left hj, coordinatePrimitive_one]
+  · rw [ite_eq_right hj, ite_eq_right hj]
 
 theorem vecNormSq_cubeTorsionField (x : Vec d) :
     vecNormSq (cubeTorsionField d x) = x (default : Fin d) * x (default : Fin d) := by
   classical
   unfold vecNormSq vecDot
   rw [Finset.sum_eq_single (default : Fin d)]
-  · rw [cubeTorsionField_apply, if_pos rfl]
+  · rw [cubeTorsionField_apply, ite_eq_left rfl]
     ring
   · intro j _ hj
-    rw [cubeTorsionField_apply, if_neg hj, mul_zero]
+    rw [cubeTorsionField_apply, ite_eq_right hj, mul_zero]
   · intro hcontra
     exact absurd (Finset.mem_univ (default : Fin d)) hcontra
 

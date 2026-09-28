@@ -27,7 +27,7 @@ lemma prod_add_one_le_exp {ι : Type*} (s : Finset ι) (c : ι → ℝ)
     (hc : ∀ i ∈ s, 0 ≤ c i) :
     ∏ i ∈ s, (1 + c i) ≤ Real.exp (∑ i ∈ s, c i) := by
   rw [Real.exp_sum]
-  refine Finset.prod_le_prod (fun i hi => by linarith [hc i hi]) (fun i _ => ?_)
+  refine Finset.prod_le_prod₀ (fun i hi => by linarith [hc i hi]) (fun i _ => ?_)
   linarith [Real.add_one_le_exp (c i)]
 
 /-- `∏_{i∈s} ofReal(1 + c_i) ≤ ofReal(exp(∑_{i∈s} c_i))` for nonnegative `c`. -/

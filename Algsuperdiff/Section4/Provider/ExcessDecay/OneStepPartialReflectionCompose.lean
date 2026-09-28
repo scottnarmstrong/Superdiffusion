@@ -62,9 +62,9 @@ private theorem oddExtend_eq_self_of_not_beyond {x : Vec d} {m k : ℤ}
     rw [windowFoldSign]
     refine Finset.prod_eq_one fun j _ => ?_
     by_cases hup : MeetsUpperFace x m k j
-    · rw [foldSignCoord_of_meetsUpperFace hup, if_neg ((hnb j).1 hup)]
+    · rw [foldSignCoord_of_meetsUpperFace hup, ite_eq_right ((hnb j).1 hup)]
     · by_cases hlow : MeetsLowerFace x m k j
-      · rw [foldSignCoord_of_meetsLowerFace hup hlow, if_neg ((hnb j).2 hlow)]
+      · rw [foldSignCoord_of_meetsLowerFace hup hlow, ite_eq_right ((hnb j).2 hlow)]
       · rw [foldSignCoord_of_unmet hup hlow]
   rw [oddExtend_apply, hfold, hsign, one_mul]
 
@@ -124,9 +124,9 @@ theorem oddExtend_eq_self_of_faceOdd_forall {x : Vec d} {m k : ℤ} (hkm : k < m
           have hlownot : ¬ MeetsLowerFace x m k i :=
             not_meetsLowerFace_of_meetsUpperFace hkm hup
           have hy'j : ∀ j, j ≠ i → y' j = y j := fun j hj => by
-            rw [hy'def, coordFaceReflection_apply, if_neg hj]
+            rw [hy'def, coordFaceReflection_apply, ite_eq_right hj]
           have hy'i : y' i = (3 : ℝ) ^ m - y i := by
-            rw [hy'def, coordFaceReflection_apply, if_pos rfl]
+            rw [hy'def, coordFaceReflection_apply, ite_eq_left rfl]
             ring
           have hy'lt : y' i < (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
             rw [hy'i]
@@ -180,8 +180,8 @@ theorem oddExtend_eq_self_of_faceOdd_forall {x : Vec d} {m k : ℤ} (hkm : k < m
               Finset.prod_congr rfl fun j hj => by
                 rw [hy'j j (Finset.ne_of_mem_erase hj)]
             rw [hrest, foldSignCoord_of_meetsUpperFace hup,
-              foldSignCoord_of_meetsUpperFace hup, if_pos hyi,
-              if_neg (not_lt.2 hy'lt.le)]
+              foldSignCoord_of_meetsUpperFace hup, ite_eq_left hyi,
+              ite_eq_right (not_lt.2 hy'lt.le)]
             ring
           have hIH := ih y' hcard' hne'
           rw [oddExtend_apply] at hIH ⊢
@@ -198,9 +198,9 @@ theorem oddExtend_eq_self_of_faceOdd_forall {x : Vec d} {m k : ℤ} (hkm : k < m
           have hupnot : ¬ MeetsUpperFace x m k i := fun h =>
             not_meetsLowerFace_of_meetsUpperFace hkm h hlow
           have hy'j : ∀ j, j ≠ i → y' j = y j := fun j hj => by
-            rw [hy'def, coordFaceReflection_apply, if_neg hj]
+            rw [hy'def, coordFaceReflection_apply, ite_eq_right hj]
           have hy'i : y' i = -(3 : ℝ) ^ m - y i := by
-            rw [hy'def, coordFaceReflection_apply, if_pos rfl]
+            rw [hy'def, coordFaceReflection_apply, ite_eq_left rfl]
             ring
           have hy'gt : -(1 / 2 : ℝ) * (3 : ℝ) ^ m < y' i := by
             rw [hy'i]
@@ -255,8 +255,8 @@ theorem oddExtend_eq_self_of_faceOdd_forall {x : Vec d} {m k : ℤ} (hkm : k < m
               Finset.prod_congr rfl fun j hj => by
                 rw [hy'j j (Finset.ne_of_mem_erase hj)]
             rw [hrest, foldSignCoord_of_meetsLowerFace hupnot hlow,
-              foldSignCoord_of_meetsLowerFace hupnot hlow, if_pos hyi,
-              if_neg (not_lt.2 hy'gt.le)]
+              foldSignCoord_of_meetsLowerFace hupnot hlow, ite_eq_left hyi,
+              ite_eq_right (not_lt.2 hy'gt.le)]
             ring
           have hIH := ih y' hcard' hne'
           rw [oddExtend_apply] at hIH ⊢

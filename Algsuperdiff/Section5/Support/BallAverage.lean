@@ -215,7 +215,7 @@ theorem eLpNorm_top_restrict_eq_ballAverageSupNormOn [NeZero d] {U D : Set (Vec 
     rcases eq_top_or_lt_top (ballAverageSupNormOn U D f) with hS | hS
     · rw [hS]
       exact le_top
-    rw [eLpNorm_exponent_top]
+    rw [eLpNorm_exponent_top hf.aestronglyMeasurable]
     have hStoReal : (0 : ℝ) ≤ (ballAverageSupNormOn U D f).toReal := ENNReal.toReal_nonneg
     refine essSup_le_of_ae_le _ ((ae_restrict_iff' hUmeas).2 ?_)
     filter_upwards [ae_tendsto_setAverage_ball hFint] with z hz hzU
@@ -303,7 +303,7 @@ theorem eLpNorm_top_restrict_eq_ballAverageSupNormOn [NeZero d] {U D : Set (Vec 
       exact le_top
     have hae : ∀ᵐ z ∂(volume : Measure (Vec d)), z ∈ U → |f z| ≤ c.toReal := by
       have hle : ∀ᵐ z ∂(volume.restrict U), ‖f z‖ₑ ≤ c := by
-        rw [hc, eLpNorm_exponent_top]
+        rw [hc, eLpNorm_exponent_top hf.aestronglyMeasurable]
         exact ae_le_essSup
       rw [← ae_restrict_iff' hUmeas]
       filter_upwards [hle] with z hz

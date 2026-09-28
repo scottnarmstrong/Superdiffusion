@@ -98,11 +98,11 @@ def negateLayerField (k l : ℤ) (j : ShellField d) : ShellField d :=
 
 theorem negateLayerField_self (k : ℤ) (j : ShellField d) :
     negateLayerField k k j = ShellField.negate j := by
-  rw [negateLayerField, if_pos rfl]
+  rw [negateLayerField, ite_eq_left rfl]
 
 theorem negateLayerField_of_ne {k l : ℤ} (h : l ≠ k) (j : ShellField d) :
     negateLayerField k l j = j := by
-  rw [negateLayerField, if_neg h]
+  rw [negateLayerField, ite_eq_right h]
 
 theorem measurable_negateLayerField (k l : ℤ) :
     Measurable (negateLayerField (d := d) k l) := by
@@ -122,7 +122,7 @@ def negateLayer (k : ℤ) (omega : ShellSeq d) : ShellSeq d :=
   fun l => negateLayerField k l (omega l)
 
 theorem measurable_negateLayer (k : ℤ) : Measurable (negateLayer (d := d) k) :=
-  measurable_pi_lambda _ fun l =>
+  Measurable.of_eval fun l =>
     (measurable_negateLayerField k l).comp (measurable_pi_apply l)
 
 /-- **Negating a single layer preserves the joint sequence law.**
@@ -183,14 +183,14 @@ def flipLayer (k : ℤ) (F : ℤ → C(Vec d, Mat d)) : ℤ → C(Vec d, Mat d) 
 
 theorem flipLayer_self (k : ℤ) (F : ℤ → C(Vec d, Mat d)) :
     flipLayer k F k = -(F k) := by
-  rw [flipLayer, if_pos rfl]
+  rw [flipLayer, ite_eq_left rfl]
 
 theorem flipLayer_of_ne {k l : ℤ} (h : l ≠ k) (F : ℤ → C(Vec d, Mat d)) :
     flipLayer k F l = F l := by
-  rw [flipLayer, if_neg h]
+  rw [flipLayer, ite_eq_right h]
 
 theorem measurable_flipLayer (k : ℤ) : Measurable (flipLayer (d := d) k) := by
-  refine measurable_pi_lambda _ fun l => ?_
+  refine Measurable.of_eval fun l => ?_
   by_cases h : l = k
   · subst h
     have hfun : (fun F : ℤ → C(Vec d, Mat d) => flipLayer l F l)
@@ -292,7 +292,7 @@ theorem flipKoopman_layerForcingL2 (M : ABKModel d) (e : Vec d) (k l : ℤ) :
     (measurePreserving_flipLayer M k)
   by_cases h : l = k
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hfun : layerForcing e l ∘ flipLayer (d := d) l
         = fun F => -(layerForcing (d := d) e l F) := by
       funext F
@@ -312,7 +312,7 @@ theorem flipKoopman_layerForcingL2 (M : ABKModel d) (e : Vec d) (k l : ℤ) :
     rw [hstep]
     refine (MemLp.toLp_eq_toLp_iff _ ((memLp_two_layerForcing M e l).neg)).2 ?_
     · exact Filter.Eventually.of_forall (congrFun hfun)
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hfun : layerForcing e l ∘ flipLayer (d := d) k = layerForcing (d := d) e l := by
       funext F
       show valuePathForcing e (flipLayer k F l) = valuePathForcing e (F l)
@@ -345,10 +345,10 @@ theorem inner_stationaryPotentialProjection_layerForcingL2_eq_zero
     (layerForcingL2 M e l) with hB
   have hflipA : flipKoopman M k A = -A := by
     rw [hA, ← flipKoopman_stationaryPotentialProjection M k,
-      flipKoopman_layerForcingL2 M e k k, if_pos rfl, map_neg]
+      flipKoopman_layerForcingL2 M e k k, ite_eq_left rfl, map_neg]
   have hflipB : flipKoopman M k B = B := by
     rw [hB, ← flipKoopman_stationaryPotentialProjection M k,
-      flipKoopman_layerForcingL2 M e k l, if_neg hkl]
+      flipKoopman_layerForcingL2 M e k l, ite_eq_right hkl]
   have hstep : (inner ℝ A B : ℝ) = inner ℝ (flipKoopman M k A) (flipKoopman M k B) :=
     (inner_flipKoopman M k A B).symm
   rw [hflipA, hflipB, inner_neg_left] at hstep

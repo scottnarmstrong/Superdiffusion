@@ -178,7 +178,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 theorem stronglyMeasurable_vecPack {ψ : Fin d → (Ω → ℝ)}
     (hψ : ∀ i, StronglyMeasurable (ψ i)) : StronglyMeasurable (vecPack ψ) := by
   have hvec : Measurable fun ω : Ω => (fun i => ψ i ω : Vec d) :=
-    measurable_pi_lambda _ fun i => (hψ i).measurable
+    Measurable.of_eval fun i => (hψ i).measurable
   exact ((HilbertVec.continuousLinearEquivVec d).symm.continuous).comp_stronglyMeasurable
     hvec.stronglyMeasurable
 
@@ -551,7 +551,7 @@ omit [MeasurableConstVAdd (Vec d) Ω] [VAddInvariantMeasure (Vec d) Ω μ] [SFin
 theorem stronglyMeasurable_kernelStream {g : Fin d → (Vec d → ℝ)}
     (hgc : ∀ m, Continuous (g m)) {X : Ω → HilbertVec d} (hXm : StronglyMeasurable X) :
     StronglyMeasurable (kernelStream (Ω := Ω) g X) :=
-  (measurable_pi_lambda _ fun m =>
+  (Measurable.of_eval fun m =>
     (stronglyMeasurable_kernelStream_apply hgc hXm m).measurable).stronglyMeasurable
 
 /-- **The kernel stream is square integrable.** -/

@@ -41,9 +41,9 @@ theorem abs_axisCubeFaceOrientation (z x₀ : Vec d) (i : Fin d) :
     |axisCubeFaceOrientation z x₀ i| = 1 := by
   unfold axisCubeFaceOrientation
   by_cases hi : x₀ i = z i
-  · rw [if_pos hi]
+  · rw [ite_eq_left hi]
     norm_num
-  · rw [if_neg hi]
+  · rw [ite_eq_right hi]
     norm_num
 
 /-- Explicit closure-coordinate data for an axis cube. -/
@@ -72,7 +72,7 @@ theorem euclideanBall_inter_axisCube_eq_ballSector
     rw [mem_axisCubeFaceSet_iff] at hiFace
     rcases hiFace with hiLower | hiUpper
     · unfold axisCubeFaceOrientation
-      rw [if_pos hiLower]
+      rw [ite_eq_left hiLower]
       have hyLower := (hyQ i).1
       rw [← hiLower] at hyLower
       linarith only [hyLower]
@@ -83,7 +83,7 @@ theorem euclideanBall_inter_axisCube_eq_ballSector
         rw [← hiLower, hLzero, add_zero] at hy
         exact lt_asymm hy.1 hy.2
       unfold axisCubeFaceOrientation
-      rw [if_neg hiNotLower]
+      rw [ite_eq_right hiNotLower]
       have hyUpper := (hyQ i).2
       rw [← hiUpper] at hyUpper
       linarith only [hyUpper]
@@ -100,7 +100,7 @@ theorem euclideanBall_inter_axisCube_eq_ballSector
           mem_axisCubeFaceSet_iff.mpr (Or.inl hiLower)
         have hs := hySector i hiFace
         unfold axisCubeFaceOrientation at hs
-        rw [if_pos hiLower] at hs
+        rw [ite_eq_left hiLower] at hs
         linarith only [hs, hiLower.le, hiLower.symm.le]
       · have hc := hclear.1 i hiLower
         linarith only [hleft, hc]
@@ -113,7 +113,7 @@ theorem euclideanBall_inter_axisCube_eq_ballSector
           have hLzero : L = 0 := by linarith only [hiLower, hiUpper]
           linarith only [hL, hLzero]
         unfold axisCubeFaceOrientation at hs
-        rw [if_neg hiNotLower] at hs
+        rw [ite_eq_right hiNotLower] at hs
         linarith only [hs, hiUpper.le, hiUpper.symm.le]
       · have hc := hclear.2 i hiUpper
         linarith only [hright, hc]

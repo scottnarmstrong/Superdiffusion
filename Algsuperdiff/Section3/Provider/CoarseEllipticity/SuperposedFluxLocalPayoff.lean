@@ -48,8 +48,8 @@ theorem cutoffSigmaStarInvBlockFamily_translateCutoffSample [NeZero d]
   classical
   rw [cutoffSigmaStarInvBlockFamily, cutoffSigmaStarInvBlockFamily,
     coarseSigmaStarInvNormCoeffField, coarseSigmaStarInvNormCoeffField,
-    dif_pos (coefficientCutoff_aelocallyUniformlyElliptic M L omega),
-    dif_pos (coefficientCutoff_aelocallyUniformlyElliptic M L
+    dite_eq_left (coefficientCutoff_aelocallyUniformlyElliptic M L omega),
+    dite_eq_left (coefficientCutoff_aelocallyUniformlyElliptic M L
       (translateCutoffSample (triadicCubeShift R) omega)),
     Ch02.coarseSigmaStarInvMatrixNorm_eq_ofAEEq
       (coefficientCutoff_canonicalFamily_aeeq M L omega) R,

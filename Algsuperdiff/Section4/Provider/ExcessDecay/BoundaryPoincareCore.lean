@@ -113,7 +113,7 @@ private theorem eLpNorm_le_of_zeroSet_of_meanZeroBound {U E : Set (Vec d)}
       have := u.subAverage.memL2
       rwa [hsubfun] at this
     have hNtop : eLpNorm (fun x => u.toFun x - integralAverage U u.toFun) 2
-        (volume.restrict U) ≠ ⊤ := hmem.2.ne
+        (volume.restrict U) ≠ ⊤ := hmem.eLpNorm_lt_top.ne
     have hmean := enorm_average_mul_le (A := U) (E := E) u.toFun hEsub hEmeas hE0
       (a := integralAverage U u.toFun) hzero
     have hratio : volume U ^ (1 / 2 : ℝ) ≤
@@ -146,9 +146,9 @@ private theorem eLpNorm_le_of_zeroSet_of_meanZeroBound {U E : Set (Vec d)}
         eLpNorm (fun x => u.toFun x - integralAverage U u.toFun) 2
             (volume.restrict U) +
           ‖integralAverage U u.toFun‖ₑ * volume U ^ (1 / 2 : ℝ) := by
-      have hadd := eLpNorm_add_le (p := 2) (μ := volume.restrict U) hmem.1
-        (aestronglyMeasurable_const (b := integralAverage U u.toFun))
-        (by norm_num)
+      have hadd := eLpNorm_add_le (p := 2) (μ := volume.restrict U)
+        (f := fun x => u.toFun x - integralAverage U u.toFun)
+        (g := fun _ : Vec d => integralAverage U u.toFun) (by norm_num)
       rw [hconstU] at hadd
       calc eLpNorm u.toFun 2 (volume.restrict U)
           = eLpNorm ((fun x => u.toFun x - integralAverage U u.toFun) +

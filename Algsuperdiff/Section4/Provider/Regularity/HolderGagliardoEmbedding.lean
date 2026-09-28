@@ -133,6 +133,57 @@ private theorem enorm_gagliardoKernel_sq_le {A : Set (Vec d)} {g : Vec d → E} 
   rw [← hsquare]
   exact ENNReal.rpow_le_rpow hbound (by norm_num)
 
+/-- A Hölder-`1/2` bound on `A` makes the Gagliardo kernel a.e. strongly measurable on
+the normalized product measure of `A`. -/
+private theorem aestronglyMeasurable_gagliardoKernel_of_holderHalfBound {A : Set (Vec d)}
+    {g : Vec d → E} {K s : ℝ} (hA : MeasurableSet A) (hK : 0 ≤ K)
+    (hg : Support.HolderSeminormBoundOn A (1 / 2) K g) :
+    AEStronglyMeasurable (Gagliardo.gagliardoKernel s 2 g)
+      (Support.normalizedGagliardoMeasureOn A) := by
+  have hcont : ContinuousOn g A := by
+    rw [Metric.continuousOn_iff]
+    intro b hb eps heps
+    have hK1 : (0 : ℝ) < K + 1 := by linarith
+    have hq : (0 : ℝ) < eps / (K + 1) := div_pos heps hK1
+    refine ⟨(eps / (K + 1)) ^ (2 : ℝ), by positivity, fun a ha hab => ?_⟩
+    have hnorm : ‖a - b‖ < (eps / (K + 1)) ^ (2 : ℝ) := by
+      rwa [← dist_eq_norm]
+    have hpow : ‖a - b‖ ^ ((1 : ℝ) / 2) ≤ eps / (K + 1) := by
+      refine le_of_lt ?_
+      calc ‖a - b‖ ^ ((1 : ℝ) / 2) < ((eps / (K + 1)) ^ (2 : ℝ)) ^ ((1 : ℝ) / 2) :=
+            Real.rpow_lt_rpow (norm_nonneg _) hnorm (by norm_num)
+        _ = eps / (K + 1) := by
+            rw [← Real.rpow_mul hq.le]
+            norm_num
+    have hbd := hg a ha b hb
+    have hstep : K * ‖a - b‖ ^ ((1 : ℝ) / 2) ≤ K * (eps / (K + 1)) :=
+      mul_le_mul_of_nonneg_left hpow hK
+    have hfrac : K * (eps / (K + 1)) < eps := by
+      have hle : K / (K + 1) < 1 := (div_lt_one hK1).2 (by linarith)
+      calc K * (eps / (K + 1)) = eps * (K / (K + 1)) := by ring
+        _ < eps * 1 := mul_lt_mul_of_pos_left hle heps
+        _ = eps := mul_one eps
+    rw [dist_eq_norm]
+    linarith [hbd, hstep, hfrac]
+  have hmu : Support.normalizedGagliardoMeasureOn A =
+      (volume A)⁻¹ • ((volume.prod volume).restrict (A ×ˢ A)) := by
+    rw [Support.normalizedGagliardoMeasureOn_def, Support.normalizedVolumeMeasureOn_def,
+      Measure.prod_smul_left, Measure.prod_restrict]
+  rw [hmu]
+  refine AEStronglyMeasurable.smul_measure ?_ _
+  have hscal : AEStronglyMeasurable
+      (fun z : Vec d × Vec d => dist z.1 z.2 ^ (-(Gagliardo.kernelExponent d s 2)))
+      ((volume.prod volume).restrict (A ×ˢ A)) :=
+    (measurable_dist.pow measurable_const).aestronglyMeasurable
+  have hfst : ContinuousOn (fun z : Vec d × Vec d => g z.1) (A ×ˢ A) :=
+    hcont.comp continuous_fst.continuousOn fun _ hz => hz.1
+  have hsnd : ContinuousOn (fun z : Vec d × Vec d => g z.2) (A ×ˢ A) :=
+    hcont.comp continuous_snd.continuousOn fun _ hz => hz.2
+  have hvec : AEStronglyMeasurable (fun z : Vec d × Vec d => g z.1 - g z.2)
+      ((volume.prod volume).restrict (A ×ˢ A)) :=
+    (hfst.sub hsnd).aestronglyMeasurable (hA.prod hA)
+  exact hscal.smul hvec
+
 /-! ## 3. The embedding -/
 
 /-- If `g` obeys the Hölder-`1/2` bound `K` on `A`, if `A` has `sup`-diameter at
@@ -194,7 +245,8 @@ theorem normalizedGagliardoESeminormOn_le_of_holderHalf {A : Set (Vec d)} {g : V
       _ = ENNReal.ofReal (K ^ 2) * M := by
           rw [ENNReal.inv_mul_cancel hA0 hAtop, mul_one]
   rw [Support.normalizedGagliardoESeminormOn_def,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      (aestronglyMeasurable_gagliardoKernel_of_holderHalfBound hAmeas hK hg)]
   have htwo : (2 : ℝ≥0∞).toReal = 2 := by norm_num
   rw [htwo]
   refine (ENNReal.rpow_le_rpow hkey (by norm_num : (0 : ℝ) ≤ 1 / 2)).trans (le_of_eq ?_)

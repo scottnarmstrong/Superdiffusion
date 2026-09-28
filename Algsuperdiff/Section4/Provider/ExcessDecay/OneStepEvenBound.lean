@@ -74,11 +74,11 @@ theorem coordFaceReflection_sub_self (a : ℝ) (i : Fin d) (y : Vec d) :
   · subst hj
     show coordFaceReflection a j y j - y j = 2 * (a - y j) * (basisVec j : Vec d) j
     rw [Homogenization.coordFaceReflection_apply_self, Homogenization.basisVec_apply,
-      if_pos rfl]
+      ite_eq_left rfl]
     ring
   · show coordFaceReflection a i y j - y j = 2 * (a - y i) * (basisVec i : Vec d) j
     rw [Homogenization.coordFaceReflection_apply_ne a i j y hj,
-      Homogenization.basisVec_apply, if_neg hj]
+      Homogenization.basisVec_apply, ite_eq_right hj]
     ring
 
 /-- Translating by a multiple of a basis vector. -/

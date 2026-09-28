@@ -292,7 +292,7 @@ theorem isBigOWith_gammaSigma_add [IsFiniteMeasure μ]
         refine summable_of_ne_finset_zero (s := Finset.range 2) ?_
         intro k hk
         rw [Finset.mem_range] at hk
-        rw [if_neg (by omega), if_neg (by omega)])
+        rw [ite_eq_right (by omega), ite_eq_right (by omega)])
       (by
         intro k
         by_cases h0 : k = 0
@@ -308,14 +308,14 @@ theorem isBigOWith_gammaSigma_add [IsFiniteMeasure μ]
       norm_num
     · intro k hk
       rw [Finset.mem_range] at hk
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   have hamp : (∑' k : ℕ, (if k = 0 then a else if k = 1 then b else 0)) = a + b := by
     rw [tsum_eq_sum (s := Finset.range 2) ?_]
     · rw [Finset.sum_range_succ, Finset.sum_range_one]
       norm_num
     · intro k hk
       rw [Finset.mem_range] at hk
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   rw [hobs, hamp] at key
   exact key
 

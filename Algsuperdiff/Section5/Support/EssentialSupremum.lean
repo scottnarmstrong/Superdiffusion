@@ -43,9 +43,9 @@ variable {d : ℕ}
 
 /-- **The essential supremum never exceeds the pointwise supremum.** -/
 theorem eLpNorm_top_restrict_le_supNormOn {U : Set (Vec d)} (hU : MeasurableSet U)
-    (f : Vec d → ℝ) :
+    (f : Vec d → ℝ) (hf : AEStronglyMeasurable f (volume.restrict U)) :
     eLpNorm f ⊤ (volume.restrict U) ≤ supNormOn U f := by
-  rw [eLpNorm_exponent_top]
+  rw [eLpNorm_exponent_top hf]
   refine essSup_le_of_ae_le _ ((ae_restrict_iff' hU).2 ?_)
   refine Filter.Eventually.of_forall fun x hx => ?_
   show ‖f x‖ₑ ≤ supNormOn U f
@@ -58,7 +58,7 @@ positive volume. -/
 theorem supNormOn_le_eLpNorm_top_restrict {U : Set (Vec d)} (hU : IsOpen U)
     {f : Vec d → ℝ} (hf : ContinuousOn f U) :
     supNormOn U f ≤ eLpNorm f ⊤ (volume.restrict U) := by
-  rw [eLpNorm_exponent_top]
+  rw [eLpNorm_exponent_top (hf.aestronglyMeasurable hU.measurableSet)]
   refine supNormOn_le_iff.2 fun x hx => ?_
   by_contra hcon
   push Not at hcon
@@ -109,7 +109,8 @@ representative.** -/
 theorem eLpNorm_top_restrict_eq_supNormOn {U : Set (Vec d)} (hU : IsOpen U)
     {f : Vec d → ℝ} (hf : ContinuousOn f U) :
     eLpNorm f ⊤ (volume.restrict U) = supNormOn U f :=
-  le_antisymm (eLpNorm_top_restrict_le_supNormOn hU.measurableSet f)
+  le_antisymm (eLpNorm_top_restrict_le_supNormOn hU.measurableSet f
+      (hf.aestronglyMeasurable hU.measurableSet))
     (supNormOn_le_eLpNorm_top_restrict hU hf)
 
 /-- The same, reading the `L^∞` norm of a function through a continuous function

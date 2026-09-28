@@ -122,8 +122,8 @@ private theorem tendsto_analyticCubeResolvent_of_bounded_tendsto
         (hg.comp measurable_subtype_coe) (fun y ↦ hgD y)) hx
     simpa only [analyticCubeResolvent, hx, ↓reduceDIte] using hrep
   · have hz : ∀ n, A.analyticCubeResolvent mu (f n) (hf n) (hfD n) m x = 0 :=
-      fun n ↦ by rw [analyticCubeResolvent, dif_neg hx]
-    rw [analyticCubeResolvent, dif_neg hx]
+      fun n ↦ by rw [analyticCubeResolvent, dite_eq_right hx]
+    rw [analyticCubeResolvent, dite_eq_right hx]
     simpa only [hz] using
       (tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ (0 : ℝ)) atTop (nhds 0))
 

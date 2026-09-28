@@ -38,7 +38,7 @@ private theorem isPath_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
     · simp only [hi, List.take_zero, List.getLast?_nil, Option.not_mem_none] at hx
     · have hiPred : i.1 - 1 < Γ.length := by omega
       have hxEq : x = Γ[i.1 - 1] := by
-        rw [List.getLast?_take, if_neg hi,
+        rw [List.getLast?_take, ite_eq_right hi,
           List.getElem?_eq_getElem hiPred] at hx
         have hxRev : Γ[i.1 - 1] = x := by
           simpa only [Option.some_or, Option.mem_some_iff] using hx
@@ -76,13 +76,13 @@ private theorem head?_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
   unfold spliceGeodesic
   rw [List.head?_append, List.head?_append, List.head?_take]
   by_cases hi : i.1 = 0
-  · simp only [if_pos hi, Option.none_or, head?_geodesic, Option.some_or]
+  · simp only [ite_eq_left hi, Option.none_or, head?_geodesic, Option.some_or]
     rw [List.head?_eq_getElem?, List.getElem?_eq_getElem (by omega)]
     let i0 : Fin Γ.length := ⟨0, by omega⟩
     have hiFin : i = i0 := Fin.ext (by simp only [i0]; exact hi)
     apply congrArg some
     simpa only [i0, List.get_eq_getElem] using congrArg Γ.get hiFin
-  · rw [if_neg hi, List.head?_eq_getElem?,
+  · rw [ite_eq_right hi, List.head?_eq_getElem?,
       List.getElem?_eq_getElem (by omega), Option.some_or, Option.some_or]
 
 private theorem getLast?_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
@@ -101,7 +101,7 @@ private theorem getLast?_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
     simpa only [jlast, List.get_eq_getElem] using congrArg Γ.get hjFin
   · have hjSucc : j.1 + 1 < Γ.length := by omega
     have hdrop : (Γ.drop (j.1 + 1)).getLast? = Γ.getLast? := by
-      rw [List.getLast?_drop, if_neg (by omega)]
+      rw [List.getLast?_drop, ite_eq_right (by omega)]
     rw [hdrop]
     rw [List.getLast?_eq_getElem?,
       List.getElem?_eq_getElem (by omega), Option.some_or]
@@ -482,11 +482,11 @@ theorem inflatedVertexCount_eq_card_inflatedBadVertices
       · have hzfilter : z ∉ s.filter fun y => ω ∈ inflatedBadSet B y := by
           intro hzs
           exact hz (Finset.mem_of_mem_filter z hzs)
-        rw [Finset.filter_insert, if_pos hbad, Finset.sum_insert hz,
+        rw [Finset.filter_insert, ite_eq_left hbad, Finset.sum_insert hz,
           Set.indicator_of_mem hbad, ih, Finset.card_insert_of_notMem hzfilter]
         push_cast
         ring
-      · rw [Finset.filter_insert, if_neg hbad, Finset.sum_insert hz,
+      · rw [Finset.filter_insert, ite_eq_right hbad, Finset.sum_insert hz,
           Set.indicator_of_notMem hbad, ih, zero_add]
 
 /-- The inflated-good and inflated-bad vertex counts partition the distinct

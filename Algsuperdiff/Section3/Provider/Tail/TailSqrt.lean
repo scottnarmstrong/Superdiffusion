@@ -266,7 +266,7 @@ theorem isTwoTermBigOWith_of_ae_le [IsFiniteMeasure μ]
   · intro ω
     by_cases hω : ω ∈ N
     · simp [hω]
-    · simp only [hω, if_false]
+    · simp only [hω, ite_false]
       exact not_lt.1 (by simpa [hN] using hω)
   · refine isBigOWith_of_ae_eq (X := Y) ?_ hYt
     filter_upwards [measure_eq_zero_iff_ae_notMem.1 hNnull] with ω hω

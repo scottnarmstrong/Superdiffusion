@@ -291,7 +291,8 @@ private theorem tendsto_eLpNorm_of_strip {H : Set (Vec d)} {S : ℕ → Set (Vec
     (hS : ∀ n, MeasurableSet (S n))
     (hzero : ∀ n, ∀ y ∈ H, y ∉ S n → F n y = 0)
     (hbd : ∀ n, ∀ y : Vec d, |F n y| ≤ C)
-    (hlim : Tendsto (fun n => volume (S n)) atTop (nhds 0)) :
+    (hlim : Tendsto (fun n => volume (S n)) atTop (nhds 0))
+    (hF : ∀ n, AEStronglyMeasurable (F n) (volume.restrict H)) :
     Tendsto (fun n => eLpNorm (F n) 2 (volume.restrict H)) atTop (nhds 0) := by
   have hkey : ∀ n, eLpNorm (F n) 2 (volume.restrict H) ≤
       volume (S n) ^ ((2 : ℝ≥0∞).toReal)⁻¹ * ENNReal.ofReal C := by
@@ -309,7 +310,7 @@ private theorem tendsto_eLpNorm_of_strip {H : Set (Vec d)} {S : ℕ → Set (Vec
     have h2 : eLpNorm (F n) 2 ((volume.restrict H).restrict (S n)) ≤
         ((volume.restrict H).restrict (S n)) Set.univ ^ ((2 : ℝ≥0∞).toReal)⁻¹ *
           ENNReal.ofReal C :=
-      MeasureTheory.eLpNorm_le_of_ae_bound
+      MeasureTheory.eLpNorm_le_of_ae_bound (hF n).restrict
         (Filter.Eventually.of_forall fun y => by
           rw [Real.norm_eq_abs]; exact hbd n y)
     have h3 : ((volume.restrict H).restrict (S n)) Set.univ ≤ volume (S n) := by
@@ -395,7 +396,7 @@ private theorem abs_mul_fderiv_faceCutoff_le {ψ : Vec d → ℝ} {L : ℝ}
     by positivity
   rw [fderiv_faceCutoff_apply]
   by_cases hij : i = j
-  · rw [if_pos hij, one_mul]
+  · rw [ite_eq_left hij, one_mul]
     set N : ℝ := (n : ℝ) + 1 with hNdef
     have hN : (0 : ℝ) < N := by rw [hNdef]; positivity
     set t : ℝ := σ * (a - y i) * N - 1 with htdef
@@ -443,7 +444,7 @@ private theorem abs_mul_fderiv_faceCutoff_le {ψ : Vec d → ℝ} {L : ℝ}
       _ ≤ L * Homogenization.smoothTransitionProfile.derivBound * 2 :=
           mul_le_mul_of_nonneg_left hband2.le (by positivity)
       _ = 2 * L * Homogenization.smoothTransitionProfile.derivBound := by ring
-  · rw [if_neg hij, zero_mul, mul_zero, abs_zero]
+  · rw [ite_eq_right hij, zero_mul, mul_zero, abs_zero]
     exact hgoal_nonneg
 
 private theorem abs_fderiv_apply_le {ψ : Vec d → ℝ} {L : ℝ} (hL0 : 0 ≤ L)
@@ -530,6 +531,7 @@ theorem memH10_faceHalf_of_contDiff_of_vanishing_on_face
       (isOpen_faceHalf hU.isOpen i a σ).measurableSet
       (fun n => (isOpen_faceStrip hU.isOpen i a σ n).measurableSet) ?_ ?_
       (tendsto_volume_faceStrip hU i a σ)
+      (fun n => (f.memL2.sub (F n).memL2).aestronglyMeasurable)
     · intro n y hy hyS
       rw [hftoFun, hFtoFun n y, faceCutoff_eq_one (houtside n y hy hyS), one_mul,
         sub_self]
@@ -553,6 +555,7 @@ theorem memH10_faceHalf_of_contDiff_of_vanishing_on_face
       (isOpen_faceHalf hU.isOpen i a σ).measurableSet
       (fun n => (isOpen_faceStrip hU.isOpen i a σ n).measurableSet) ?_ ?_
       (tendsto_volume_faceStrip hU i a σ)
+      (fun n => ((f.gradMemL2 j).sub ((F n).gradMemL2 j)).aestronglyMeasurable)
     · intro n y hy hyS
       have h2 := houtside n y hy hyS
       have hzero : fderiv ℝ (faceCutoff i a σ n) y (basisVec j) = 0 := by

@@ -110,8 +110,8 @@ theorem measure_scaleProp_le_of_null_enlargement (P : Measure Omega)
           simp only [Set.mem_compl_iff, Set.mem_union, not_or]
           exact ⟨fun h => h.1, fun h => ⟨h, hmem⟩⟩
         by_cases h : omega ∈ (Ev k)ᶜ
-        · rw [if_pos h, if_pos (hiff.2 h)]
-        · rw [if_neg h, if_neg (fun hc => h (hiff.1 hc))]
+        · rw [ite_eq_left h, ite_eq_left (hiff.2 h)]
+        · rw [ite_eq_right h, ite_eq_right (fun hc => h (hiff.1 hc))]
       show theta < scaleProp (fun k => (Ev k ∪ N)ᶜ) n omega
       rw [← heq]
       exact homega
@@ -377,11 +377,11 @@ theorem YcalRowE_le_YcalRowTwoE (M : ABKModel d) (Ccg sprime : ℝ) (m : ℤ)
     YcalRowE M Ccg sprime m omega ≤ YcalRowTwoE M Ccg sprime m omega := by
   refine ENNReal.tsum_le_tsum fun n => ?_
   by_cases hn : n ≤ m
-  · rw [if_pos hn, weightThird_eq_wt hn,
+  · rw [ite_eq_left hn, weightThird_eq_wt hn,
       show YcalE M Ccg sprime n omega = ENNReal.ofReal (Ycal M Ccg sprime n omega) from
         (ENNReal.ofReal_toReal (hfin n)).symm,
       ← ENNReal.ofReal_mul (wt_nonneg sprime m n)]
-  · rw [if_neg hn]
+  · rw [ite_eq_right hn]
     exact zero_le
 
 /-- **The Appendix-D reduction of `𝒢₀`, off the null set.**

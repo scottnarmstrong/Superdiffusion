@@ -209,21 +209,21 @@ theorem exists_faceOdd_forall_eqOn_reflectedWindow {x : Vec d} {m k : ℤ} (hkm 
     dsimp only
     have hiff := mem_reflectedWindow_coordFaceReflection_iff hkm hup z
     by_cases hz : z ∈ reflectedWindow x m k
-    · rw [if_pos (hiff.mpr hz), if_pos hz]
+    · rw [ite_eq_left (hiff.mpr hz), ite_eq_left hz]
       exact hupV i hup z hz
-    · rw [if_neg (fun h => hz (hiff.mp h)), if_neg hz]
+    · rw [ite_eq_right (fun h => hz (hiff.mp h)), ite_eq_right hz]
       exact hupO i hup z
   · intro i hlow z
     dsimp only
     have hiff := mem_reflectedWindow_coordFaceReflection_iff_lower hkm hlow z
     by_cases hz : z ∈ reflectedWindow x m k
-    · rw [if_pos (hiff.mpr hz), if_pos hz]
+    · rw [ite_eq_left (hiff.mpr hz), ite_eq_left hz]
       exact hlowV i hlow z hz
-    · rw [if_neg (fun h => hz (hiff.mp h)), if_neg hz]
+    · rw [ite_eq_right (fun h => hz (hiff.mp h)), ite_eq_right hz]
       exact hlowO i hlow z
   · intro y hy
     show (if y ∈ reflectedWindow x m k then V y else O y) = V y
-    rw [if_pos hy]
+    rw [ite_eq_left hy]
 
 /-! ## 4. The consumers transported along the `EqOn` -/
 

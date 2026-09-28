@@ -252,7 +252,7 @@ theorem penalizationPointwiseLimit_memLp [NeZero d]
     penalizedResolvent_tendsto_pointwiseLimit_ae a hU hV hα hlam hEll f hf
   have hmeas : AEStronglyMeasurable g (volumeMeasureOn U) :=
     aestronglyMeasurable_of_tendsto_ae atTop
-      (fun n => (MeasureTheory.Lp.memLp (u n)).1) htend
+      (fun n => (MeasureTheory.Lp.memLp (u n)).aestronglyMeasurable) htend
   have hbound : ∀ᵐ x ∂volumeMeasureOn U, ‖g x‖ ≤ ‖u 0 x‖ := by
     have hnonneg : ∀ n, ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ u n x :=
       fun n => penalizedResolvent_nonneg_ae
@@ -267,8 +267,7 @@ theorem penalizationPointwiseLimit_memLp [NeZero d]
       (Filter.Eventually.of_forall fun n => hxle n)
     simpa only [Real.norm_eq_abs, abs_of_nonneg hg0,
       abs_of_nonneg (hx0 0)] using hgu
-  exact ⟨hmeas,
-    (eLpNorm_mono_ae hbound).trans_lt (MeasureTheory.Lp.eLpNorm_lt_top (u 0))⟩
+  exact ((eLpNorm_mono_ae hmeas hbound).trans_lt (MeasureTheory.Lp.eLpNorm_lt_top (u 0)))
 
 /-- The monotone penalized resolvents converge strongly in `L²(U)` to their
 almost-everywhere infimum. -/
@@ -306,7 +305,7 @@ theorem penalizedResolvent_tendsto_L2 [NeZero d]
     dsimp only [u] at hnx h0x hnx0 ⊢
     simpa only [Real.norm_eq_abs, abs_of_nonneg hnx] using hnx0
   have heLp := Homogenization.tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
-    (fun n => (MeasureTheory.Lp.memLp (u n)).1) hg
+    (fun n => (MeasureTheory.Lp.memLp (u n)).aestronglyMeasurable) hg
     (MeasureTheory.Lp.memLp (u 0)) hdom htend
   exact MeasureTheory.Lp.tendsto_Lp_of_tendsto_eLpNorm g hg heLp
 

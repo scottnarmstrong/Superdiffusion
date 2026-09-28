@@ -35,7 +35,7 @@ theorem vectorNormalizedL2On_eq_toReal_eLpNorm_div
       fun x => ‖HilbertVec.ofVec (F x)‖ := by
     funext x
     exact euclideanNorm_eq_norm_ofVec (F x)
-  rw [hfun, eLpNorm_norm]
+  rw [hfun, eLpNorm_norm _ hHF.aestronglyMeasurable]
 
 /-- Raw and normalized Euclidean energies differ by the square root of the
 window volume. -/
@@ -64,7 +64,7 @@ theorem sqrt_integral_vecNormSq_eq_sqrt_volume_mul_vectorNormalizedL2On
       fun x => ‖HilbertVec.ofVec (F x)‖ := by
     funext x
     exact euclideanNorm_eq_norm_ofVec _
-  rw [hfun, eLpNorm_norm]
+  rw [hfun, eLpNorm_norm _ hHF.aestronglyMeasurable]
   field_simp [ne_of_gt (Real.sqrt_pos.2 hW)]
 
 /-- Minkowski for normalized Euclidean vector energy. -/
@@ -87,12 +87,12 @@ theorem vectorNormalizedL2On_add_le
       funext x
       exact (HilbertVec.ofVecL d).map_add (F x) (G x)
     rw [heq]
-    exact eLpNorm_add_le hHF.aestronglyMeasurable hHG.aestronglyMeasurable one_le_two
+    exact eLpNorm_add_le one_le_two
   have hne : eLpNorm (fun x => HilbertVec.ofVec (F x)) 2 (volume.restrict W) +
       eLpNorm (fun x => HilbertVec.ofVec (G x)) 2 (volume.restrict W) ≠ ∞ :=
-    ENNReal.add_ne_top.2 ⟨hHF.2.ne, hHG.2.ne⟩
+    ENNReal.add_ne_top.2 ⟨hHF.eLpNorm_lt_top.ne, hHG.eLpNorm_lt_top.ne⟩
   have hreal := ENNReal.toReal_mono hne htri
-  rw [ENNReal.toReal_add hHF.2.ne hHG.2.ne] at hreal
+  rw [ENNReal.toReal_add hHF.eLpNorm_lt_top.ne hHG.eLpNorm_lt_top.ne] at hreal
   rw [vectorNormalizedL2On_eq_toReal_eLpNorm_div hsum,
     vectorNormalizedL2On_eq_toReal_eLpNorm_div hF,
     vectorNormalizedL2On_eq_toReal_eLpNorm_div hG, ← add_div]

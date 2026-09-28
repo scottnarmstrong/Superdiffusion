@@ -232,13 +232,9 @@ theorem exists_lipschitzWith_representative_of_hasWeakGradientOn
         (fun x => unitConvexApproxSequence u x0 (r0 / 2) (m + 1) x - u x) 2
         (volume.restrict V)) Filter.atTop (nhds 0) :=
     hconv0.comp (Filter.tendsto_add_atTop_nat 1)
-  have hmeasF : ∀ m : ℕ, AEStronglyMeasurable
-      (unitConvexApproxSequence u x0 (r0 / 2) (m + 1)) (volume.restrict V) := fun m =>
-    aestronglyMeasurable_convexApproxSmoothing hV hrho one_le_two hu hball hr (heps0 m) (heps1 m)
   have hTIM : TendstoInMeasure (volume.restrict V)
       (fun m : ℕ => unitConvexApproxSequence u x0 (r0 / 2) (m + 1)) Filter.atTop u := by
-    refine tendstoInMeasure_of_tendsto_eLpNorm (p := (2 : ℝ≥0∞)) (by norm_num) hmeasF
-      hu.aestronglyMeasurable ?_
+    refine tendstoInMeasure_of_tendsto_eLpNorm (p := (2 : ℝ≥0∞)) (by norm_num) ?_
     simpa using! hconv
   obtain ⟨ns, -, hae⟩ := hTIM.exists_seq_tendsto_ae
   have hlipS : LipschitzOnWith (Real.toNNReal ((d : ℝ) * K)) u

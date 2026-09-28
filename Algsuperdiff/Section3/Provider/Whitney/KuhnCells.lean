@@ -233,7 +233,7 @@ theorem KuhnCell.vertex_mem_closedCarrier (T : KuhnCell d) (k : Fin (d + 1)) :
   · intro i j hij
     simp only [triadicLocalCoordinate, KuhnCell.vertex, Equiv.symm_apply_apply]
     by_cases hik : d ≤ i.val + k.val <;> by_cases hjk : d ≤ j.val + k.val <;>
-      simp only [hik, hjk, if_true, if_false] <;> nlinarith
+      simp only [hik, hjk, ite_true, ite_false] <;> nlinarith
 
 /-! ## The standard simplicial decomposition `S_j(□)` -/
 

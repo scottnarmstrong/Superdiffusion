@@ -201,8 +201,8 @@ theorem restrict_openCubeSet_restrict_cubeSet_descendant {Q R : TriadicCube d} {
     (volume.restrict (openCubeSet Q)).restrict (cubeSet R) = volume.restrict (cubeSet R) := by
   rw [Measure.restrict_restrict (measurableSet_cubeSet R)]
   refine Measure.restrict_congr_set ?_
-  rw [Filter.eventuallyEq_set]
-  filter_upwards [Filter.eventuallyEq_set.1 (cubeSet_ae_eq_openCubeSet R)] with x hx
+  rw [Filter.eventuallyEqSet_iff]
+  filter_upwards [Filter.eventuallyEqSet_iff.1 (cubeSet_ae_eq_openCubeSet R)] with x hx
   constructor
   · exact fun h => h.1
   · exact fun h => ⟨h, openCubeSet_subset_of_mem_descendantsAtDepth hR (hx.1 h)⟩
@@ -301,9 +301,9 @@ theorem measurable_step5CrossPairing_apply (Q R : TriadicCube d) (e : Vec d) (n 
             else 0 := by
       funext p
       by_cases hx : p.2 ∈ cubeSet R
-      · rw [step5CrossWeightField, Set.indicator_of_mem hx, if_pos hx]
+      · rw [step5CrossWeightField, Set.indicator_of_mem hx, ite_eq_left hx]
         rfl
-      · rw [step5CrossWeightField, Set.indicator_of_notMem hx, if_neg hx]
+      · rw [step5CrossWeightField, Set.indicator_of_notMem hx, ite_eq_right hx]
         rfl
     rw [hrw2]
     exact Measurable.ite hset hval measurable_const

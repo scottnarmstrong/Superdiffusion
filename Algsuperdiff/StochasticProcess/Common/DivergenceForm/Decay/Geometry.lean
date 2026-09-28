@@ -201,10 +201,10 @@ theorem vecNormSq_fderiv_radialPhase_le_one (hdelta : 0 < delta) (x : Vec d) :
       Finset.sum_apply, ContinuousLinearMap.proj_apply, smul_eq_mul,
       basisVec_apply]
     rw [Finset.sum_eq_single i]
-    · rw [if_pos rfl, mul_one]
+    · rw [ite_eq_left rfl, mul_one]
       field_simp
     · intro j _ hji
-      rw [if_neg (by simpa using hji), mul_zero]
+      rw [ite_eq_right (by simpa using hji), mul_zero]
     · intro hi
       exact absurd (Finset.mem_univ i) hi
   have hval : vecNormSq (fun i =>

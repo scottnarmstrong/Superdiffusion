@@ -108,7 +108,8 @@ theorem normalizedGagliardoESeminormOn_le_of_volume_le {A B : Set (Vec d)} {K : 
       (K • Support.normalizedGagliardoMeasureOn A) =
       K ^ (1 / 2 : ℝ) * eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2
         (Support.normalizedGagliardoMeasureOn A) := by
-    rw [eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)]
+    rw [eLpNorm_smul_measure_of_ne_zero_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+      (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)]
     norm_num
   rw [Support.normalizedGagliardoESeminormOn_def, Support.normalizedGagliardoESeminormOn_def]
   rw [← hsmul]

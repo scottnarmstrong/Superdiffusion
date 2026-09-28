@@ -132,7 +132,7 @@ instance instNormedSpaceShellSecondDeriv (d : ℕ) :
     _ _ _ _ _ _ (RingHom.id ℝ) _ ℝ _ _ (smulCommClass_self ℝ _)
 instance instContinuousAddShellSecondDeriv (d : ℕ) :
     ContinuousAdd (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
-  ContinuousLinearMap.topologicalAddGroup.toContinuousAdd
+  ContinuousLinearMap.isTopologicalAddGroup.toContinuousAdd
 instance instContinuousENormMat (d : ℕ) : ContinuousENorm (Mat d) := by
   change ContinuousENorm (Fin d → Fin d → ℝ); infer_instance
 def vecDot {d : ℕ} (x y : Vec d) : ℝ := ∑ i, x i * y i
@@ -259,9 +259,9 @@ variable {d : ℕ}
 theorem measurable_shellCoordinate (k : ℤ) : Measurable (fun F : ShellSeq d => F k) :=
   measurable_pi_apply k
 noncomputable def shellMarginalLaw (P : ProbabilityMeasure (ShellSeq d)) (k : ℤ) :
-    ProbabilityMeasure (ShellField d) := P.map (measurable_shellCoordinate k).aemeasurable
+    ProbabilityMeasure (ShellField d) := P.map (fun F : ShellSeq d => F k)
 noncomputable def zeroShellLaw (P : ProbabilityMeasure (ShellSeq d)) : ProbabilityMeasure
-    (ShellField d) := P.map (measurable_shellCoordinate 0).aemeasurable
+    (ShellField d) := P.map (fun F : ShellSeq d => F 0)
 end ShellField
 
 /-! ## 6. Regular coefficient fields: the entrywise Borel-measurable, locally
@@ -438,10 +438,10 @@ structure Model (d : ℕ) where
   gamma_pos : 0 < gamma
   gamma_le_quarter : gamma ≤ (1 : ℝ) / 4
   independent : iIndepFun (fun k : ℤ => fun F : ShellSeq d => F k) P.toMeasure
-  marginal_scaling : ∀ (k : ℤ) (T : ShellField d → ShellField d) (hT : Measurable T),
+  marginal_scaling : ∀ (k : ℤ) (T : ShellField d → ShellField d) (_hT : Measurable T),
     (∀ (j : ShellField d) (x : Vec d),
         T j x = Real.rpow 3 (gamma * (k : ℝ)) • j ((((3 : ℝ) ^ k)⁻¹) • x)) →
-    ShellField.shellMarginalLaw P k = (ShellField.zeroShellLaw P).map hT.aemeasurable
+    ShellField.shellMarginalLaw P k = (ShellField.zeroShellLaw P).map T
   integrable : ∀ x : Vec d,
     Integrable (fun F : ShellSeq d => F 0 x) P.toMeasure
   mean_zero : ∀ x : Vec d,
@@ -459,13 +459,13 @@ structure Model (d : ℕ) where
     P.toMeasure {F | t < j2Observable d (F 0)} ≤
       ENNReal.ofReal (Real.exp (-(t ^ 2)))
   hyperoctahedral : ∀ (R : Mat d), IsSignedPermutationMatrix R →
-    ∀ (T : ShellSeq d → ShellSeq d) (hT : Measurable T),
+    ∀ (T : ShellSeq d → ShellSeq d) (_hT : Measurable T),
       (∀ (F : ShellSeq d) (k : ℤ) (x : Vec d),
           T F k x = matTranspose R * F k (matVecMul R x) * R) →
-      P.map hT.aemeasurable = P
-  negation : ∀ (T : ShellSeq d → ShellSeq d) (hT : Measurable T),
+      P.map T = P
+  negation : ∀ (T : ShellSeq d → ShellSeq d) (_hT : Measurable T),
     (∀ (F : ShellSeq d) (k : ℤ) (x : Vec d), T F k x = -(F k x)) →
-    P.map hT.aemeasurable = P
+    P.map T = P
   nondegenerate : ∃ cstar : ℝ, 0 < cstar ∧ RealizesCstar d P cstar
 
 /-! ## 10. The lower-infinite cutoff: the truncated stream coefficient

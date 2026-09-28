@@ -76,7 +76,7 @@ private theorem truncIndex_dist {a t : ℝ} (ha : 0 < a) :
     |t - a * ((truncIndex a t : ℤ) : ℝ)| < a := by
   rcases le_or_gt 0 t with ht | ht
   · have hq : truncIndex a t = ⌊t / a⌋ := by
-      rw [truncIndex, if_pos ht]
+      rw [truncIndex, ite_eq_left ht]
     have h1 : ((⌊t / a⌋ : ℤ) : ℝ) ≤ t / a := Int.floor_le _
     have h2 : t / a < ((⌊t / a⌋ : ℤ) : ℝ) + 1 := Int.lt_floor_add_one _
     have h1' : a * ((⌊t / a⌋ : ℤ) : ℝ) ≤ t := by
@@ -88,7 +88,7 @@ private theorem truncIndex_dist {a t : ℝ} (ha : 0 < a) :
     rw [hq, abs_lt]
     exact ⟨by linarith only [h1', ha], by linarith only [h2']⟩
   · have hq : truncIndex a t = ⌈t / a⌉ := by
-      rw [truncIndex, if_neg (not_le.mpr ht)]
+      rw [truncIndex, ite_eq_right (not_le.mpr ht)]
     have h1 : t / a ≤ ((⌈t / a⌉ : ℤ) : ℝ) := Int.le_ceil _
     have h2 : ((⌈t / a⌉ : ℤ) : ℝ) < t / a + 1 := Int.ceil_lt_add_one _
     have h1' : t ≤ a * ((⌈t / a⌉ : ℤ) : ℝ) := by
@@ -105,7 +105,7 @@ private theorem truncIndex_abs_le {a t : ℝ} (ha : 0 < a) :
     |a * ((truncIndex a t : ℤ) : ℝ)| ≤ |t| := by
   rcases le_or_gt 0 t with ht | ht
   · have hq : truncIndex a t = ⌊t / a⌋ := by
-      rw [truncIndex, if_pos ht]
+      rw [truncIndex, ite_eq_left ht]
     have hfl : (0 : ℤ) ≤ ⌊t / a⌋ := by
       have h0 : (0 : ℤ) = ⌊(0 : ℝ)⌋ := by simp
       rw [h0]
@@ -119,7 +119,7 @@ private theorem truncIndex_abs_le {a t : ℝ} (ha : 0 < a) :
     rw [hq, abs_of_nonneg hnn, abs_of_nonneg ht]
     exact h1'
   · have hq : truncIndex a t = ⌈t / a⌉ := by
-      rw [truncIndex, if_neg (not_le.mpr ht)]
+      rw [truncIndex, ite_eq_right (not_le.mpr ht)]
     have hce : ⌈t / a⌉ ≤ (0 : ℤ) := by
       have h0 : (0 : ℤ) = ⌈(0 : ℝ)⌉ := by simp
       rw [h0]

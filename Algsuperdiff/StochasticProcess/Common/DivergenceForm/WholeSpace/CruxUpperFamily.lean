@@ -91,7 +91,7 @@ theorem penalizedComparisonFamily_coe {V : Set (Vec d)} (hV : IsOpen V) (n : ℕ
   have hcond : 0 < lam ∧ Measurable F ∧ ∃ E, ∀ z, |F z| ≤ E := ⟨hlam, hF, ⟨E, hFE⟩⟩
   have hxinf : (x : OnePoint (Vec d)) ∉
       ({OnePoint.infty} : Set (OnePoint (Vec d))) := by simp
-  rw [penalizedComparisonFamily, dif_pos hcond]
+  rw [penalizedComparisonFamily, dite_eq_left hcond]
   simp only [Pi.add_apply, onePointRealExtension_coe,
     Set.indicator_of_notMem hxinf, add_zero]
   exact A.analyticPenalizedResolventReal_bound_irrel hV n ⟨lam, hlam⟩
@@ -107,7 +107,7 @@ theorem penalizedComparisonFamily_infty {V : Set (Vec d)} (hV : IsOpen V)
       R.onePointKernelSemigroup.kernelResolventReal lam F OnePoint.infty := by
   classical
   have hcond : 0 < lam ∧ Measurable F ∧ ∃ E, ∀ z, |F z| ≤ E := ⟨hlam, hF, ⟨E, hFE⟩⟩
-  rw [penalizedComparisonFamily, dif_pos hcond]
+  rw [penalizedComparisonFamily, dite_eq_left hcond]
   simp only [Pi.add_apply, onePointRealExtension_infty,
     Set.indicator_of_mem (Set.mem_singleton (OnePoint.infty : OnePoint (Vec d))),
     zero_add]
@@ -120,7 +120,7 @@ theorem measurable_penalizedComparisonFamily {V : Set (Vec d)} (hV : IsOpen V)
     Measurable (A.penalizedComparisonFamily hV n R lam F) := by
   classical
   have hcond : 0 < lam ∧ Measurable F ∧ ∃ E, ∀ z, |F z| ≤ E := ⟨hlam, hF, ⟨E, hFE⟩⟩
-  rw [penalizedComparisonFamily, dif_pos hcond]
+  rw [penalizedComparisonFamily, dite_eq_left hcond]
   exact (measurable_onePointRealExtension
     (A.measurable_analyticPenalizedResolventReal hV n ⟨lam, hlam⟩
       (hF.comp OnePoint.continuous_coe.measurable) _)).add

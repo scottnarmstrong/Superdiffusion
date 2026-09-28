@@ -213,18 +213,18 @@ theorem exists_part_truncation [NeZero d]
     by_cases hx : φ.toFun x ≤ K * ZeroTraceSobolev.toL2 u x
     · have hdiff : ¬ 0 < φ.toFun x - K * ZeroTraceSobolev.toL2 u x :=
         not_lt_of_ge (sub_nonpos.mpr hx)
-      rw [if_pos hx, if_neg hdiff]
+      rw [ite_eq_left hx, ite_eq_right hdiff]
       by_cases hφpos : 0 < φ.toFun x
-      · rw [if_pos hφpos]
+      · rw [ite_eq_left hφpos]
         simp only [sub_zero]
       · have hφeq : φ.toFun x = 0 := le_antisymm (le_of_not_gt hφpos) hφx
-        rw [if_neg hφpos, hφzero hφeq]
+        rw [ite_eq_right hφpos, hφzero hφeq]
         simp only [sub_zero]
     · have hx' : K * ZeroTraceSobolev.toL2 u x < φ.toFun x := lt_of_not_ge hx
       have hKu : 0 ≤ K * ZeroTraceSobolev.toL2 u x := mul_nonneg hK hux
       have hφpos : 0 < φ.toFun x := hKu.trans_lt hx'
       have hdiff : 0 < φ.toFun x - K * ZeroTraceSobolev.toL2 u x := sub_pos.mpr hx'
-      rw [if_neg hx, if_pos hφpos, if_pos hdiff]
+      rw [ite_eq_right hx, ite_eq_left hφpos, ite_eq_left hdiff]
       rw [sub_sub_cancel, ← hwgradx]
       rfl
 
@@ -287,9 +287,9 @@ theorem part_solution_test_inequality [NeZero d]
       rw [← hφcoe]
       by_cases hx : K * ZeroTraceSobolev.toL2 u x < φ.toScalarL2 x
       · have hxS : x ∈ S := hx
-        rw [if_pos hxS, min_eq_right hx.le]
+        rw [ite_eq_left hxS, min_eq_right hx.le]
       · have hxS : x ∉ S := hx
-        rw [if_neg hxS, min_eq_left (le_of_not_gt hx), sub_self]
+        rw [ite_eq_right hxS, min_eq_left (le_of_not_gt hx), sub_self]
     have hRGradient : ∀ᵐ x ∂volumeMeasureOn V,
         R x = S.indicator
           (fun y => φ.gradToHilbertVectorL2 y -
@@ -305,9 +305,9 @@ theorem part_solution_test_inequality [NeZero d]
       rw [← hφcoe]
       by_cases hx : K * ZeroTraceSobolev.toL2 u x < φ.toScalarL2 x
       · have hxS : x ∈ S := hx
-        rw [if_pos hxS, if_neg (not_le_of_gt hx)]
+        rw [ite_eq_left hxS, ite_eq_right (not_le_of_gt hx)]
       · have hxS : x ∉ S := hx
-        rw [if_neg hxS, if_pos (le_of_not_gt hx), ← hφgrad', sub_self]
+        rw [ite_eq_right hxS, ite_eq_left (le_of_not_gt hx), ← hφgrad', sub_self]
     have hrNonneg : ∀ᵐ x ∂volumeMeasureOn V, 0 ≤ r x := by
       filter_upwards [hrValue] with x hx
       rw [hx, Set.indicator_apply]
@@ -343,7 +343,7 @@ theorem part_solution_test_inequality [NeZero d]
       rw [hr, Set.indicator_apply]
       by_cases hx : K * ZeroTraceSobolev.toL2 u x < φ.toScalarL2 x
       · have hxS : x ∈ S := hx
-        rw [if_pos hxS]
+        rw [ite_eq_left hxS]
         change ZeroTraceSobolev.toL2 u x *
             (φ.toScalarL2 x - K * ZeroTraceSobolev.toL2 u x) ≤
           (1 / (2 * K)) * (φ.toScalarL2 x * φ.toScalarL2 x)
@@ -351,7 +351,7 @@ theorem part_solution_test_inequality [NeZero d]
           (y := φ.toScalarL2 x) hK using 1
         all_goals ring
       · have hxS : x ∉ S := hx
-        rw [if_neg hxS, mul_zero]
+        rw [ite_eq_right hxS, mul_zero]
         exact mul_nonneg (by positivity) (mul_self_nonneg _)
     have hmass : α * inner ℝ (ZeroTraceSobolev.toL2 u) r ≤
         α * (1 / (2 * K)) * inner ℝ φ.toScalarL2 φ.toScalarL2 := by
@@ -376,14 +376,14 @@ theorem part_solution_test_inequality [NeZero d]
         with x hAx hRx hxV
       rw [hAx, hRx, Set.indicator_apply]
       by_cases hx : x ∈ S
-      · rw [if_pos hx]
+      · rw [ite_eq_left hx]
         rw [real_inner_self_eq_norm_sq]
         convert
           coefficient_truncation_error_le (d := d) (K := K) (n := nR)
             rfl hnR hlam hM hLamM (hEll.2 x hxV)
             (ZeroTraceSobolev.gradient u x) (φ.gradToHilbertVectorL2 x) using 1
         all_goals first | rfl | ring
-      · rw [if_neg hx, inner_zero_right]
+      · rw [ite_eq_right hx, inner_zero_right]
         exact mul_nonneg (div_nonneg (sq_nonneg _) (by norm_num)) real_inner_self_nonneg
     have hpre : D ≤
         α * (1 / (2 * K)) * inner ℝ φ.toScalarL2 φ.toScalarL2 +

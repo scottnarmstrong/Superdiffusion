@@ -213,7 +213,16 @@ theorem normalizedEuclideanLpENorm_gridDualDepthTest (Q : TriadicCube d) (j : â„
   simp only [BoundedMeasurableDomain.normalizedEuclideanLpENorm,
     BoundedMeasurableDomain.normalizedLpENorm,
     cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (ne_of_gt (lt_trans zero_lt_one q.one_lt)) q.lt_top.ne,
+  have hmeas : Measurable (gridDualDepthTest Q j v) := by
+    classical
+    refine Finset.measurable_sum _ fun R _ => ?_
+    exact measurable_const.indicator (measurableSet_cubeSet R)
+  have hnorm : AEStronglyMeasurable (fun x => euclideanNorm (gridDualDepthTest Q j v x))
+      (normalizedCubeMeasure Q) := by
+    simp only [euclideanNorm_eq_norm_ofVec]
+    exact ((HilbertVec.ofVecL d).continuous.measurable.comp hmeas).norm.aestronglyMeasurable
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (ne_of_gt (lt_trans zero_lt_one q.one_lt)) q.lt_top.ne
+      hnorm,
     lintegral_enorm_euclideanNorm_gridDualDepthTest_rpow Q j v (finiteLpExponent_toReal_pos q)]
 
 /-- The Euclidean size of a dual-test coefficient: the `vecSupDual` factor is a

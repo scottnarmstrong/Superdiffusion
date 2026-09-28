@@ -32,7 +32,7 @@ theorem memVectorL2_matVecMul_of_lInfMatrixFieldOn
     refine memLp_finsetSum (s := Finset.univ)
       (f := fun j => fun x : Vec d => h.1 x i j * f x j) ?_
     intro j _
-    exact ((memLp_pi_iff.mp hf) j).mul' (h.2 i j)
+    exact (h.2 i j).fun_mul (r := 2) ((memLp_pi_iff.mp hf) j)
   simpa [matVecMul] using hsum
 
 end

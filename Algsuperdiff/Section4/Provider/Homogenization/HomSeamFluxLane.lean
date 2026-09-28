@@ -293,7 +293,7 @@ theorem cgDualBoundConstFlux_eq (d : ℕ) (hd : 2 ≤ d) (p : FiniteLpExponent)
     cgDualBoundConstFlux d p =
       Classical.choose (exists_weakNegDualBounds_of_fluxPair d hd p hp) := by
   unfold cgDualBoundConstFlux
-  rw [dif_pos (⟨hd, hp⟩ : 2 ≤ d ∧ (2 : ℝ≥0∞) ≤ p.exponent)]
+  rw [dite_eq_left (⟨hd, hp⟩ : 2 ≤ d ∧ (2 : ℝ≥0∞) ≤ p.exponent)]
 
 theorem cgDualBoundConstFlux_lt_top (d : ℕ) (hd : 2 ≤ d) (p : FiniteLpExponent)
     (hp : (2 : ℝ≥0∞) ≤ p.exponent) : cgDualBoundConstFlux d p < ∞ := by
@@ -414,7 +414,7 @@ theorem stepFourEnergyFlux_of_dualBounds_uniform (dimension : 2 ≤ d) {s : ℝ}
     Classical.choose_spec (exists_comparator_schauder_package_uniform (d := d) dimension)
   rw [← show stepFourSchauderConstU d =
       Classical.choose (exists_comparator_schauder_package_uniform (d := d) dimension) by
-    rw [stepFourSchauderConstU, dif_pos dimension]] at hspec
+    rw [stepFourSchauderConstU, dite_eq_left dimension]] at hspec
   obtain ⟨_hCschPos, hpack⟩ := hspec
   obtain ⟨v, hcomp, Ksup, KHol, hsup, hhol, hb, hH, hgauge⟩ :=
     hpack s s_pos s_le m sigmaBarM hsig g h Kg KhInf Kh hKg hKhInf hKh

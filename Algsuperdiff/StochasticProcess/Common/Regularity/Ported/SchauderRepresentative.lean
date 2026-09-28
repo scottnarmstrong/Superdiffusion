@@ -27,7 +27,7 @@ theorem smallContrastSchauderRepresentative_of_mem
     (hx : x ∈ smallContrastBall d (1 / 2)) :
     smallContrastSchauderRepresentative u x =
       smallContrastCampanatoRepresentative (d := d) u.toFun x := by
-  simp only [smallContrastSchauderRepresentative, if_pos hx]
+  simp only [smallContrastSchauderRepresentative, ite_eq_left hx]
 
 theorem smallContrastSchauderRepresentative_ae_eq [NeZero d]
     {alpha K : ℝ} {u : H1Function (smallContrastUnitBall d)}
@@ -43,7 +43,7 @@ theorem smallContrastSchauderRepresentative_ae_eq [NeZero d]
   filter_upwards [hhalfGlobal] with x hx hunit
   by_cases hxin : x ∈ smallContrastBall d (1 / 2)
   · rw [smallContrastSchauderRepresentative_of_mem hxin, hx hxin]
-  · simp only [smallContrastSchauderRepresentative, if_neg hxin]
+  · simp only [smallContrastSchauderRepresentative, ite_eq_right hxin]
 
 theorem continuousOn_smallContrastSchauderRepresentative [NeZero d]
     {alpha K : ℝ} {u : H1Function (smallContrastUnitBall d)}

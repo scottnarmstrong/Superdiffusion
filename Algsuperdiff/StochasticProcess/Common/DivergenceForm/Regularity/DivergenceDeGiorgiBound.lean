@@ -115,7 +115,7 @@ theorem exists_deGiorgi_bound_constant {d : ℕ} (hd : 2 ≤ d) :
           (isOpenBoundedConvexDomain_axisCube z L) hlam hEll hsolv hvMeas hq hM hk hqBound
       simpa only [zero_add, H1Function.zero_toFun, Pi.zero_apply,
         H1Function.zero_grad, Pi.zero_apply, hk.not_gt, and_false, Set.ofPred_false,
-        Set.indicator_zero, eLpNorm_zero', ENNReal.toReal_zero,
+        Set.indicator_zero, eLpNorm_fun_zero, ENNReal.toReal_zero,
         Finset.sum_const_zero, measure_empty, add_zero] using hlevel
     simpa only [zero_add] using hbound hE hmedian henergy
   intro z L hL a lam Lam hlam hEll u g hsol huMeas hg M hM hgBound

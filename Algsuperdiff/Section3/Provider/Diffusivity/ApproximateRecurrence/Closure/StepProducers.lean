@@ -188,7 +188,7 @@ private theorem restrict_cubeSet_inter_openCubeSet {Q R : TriadicCube d} {j : �
   have hsub : cubeSet R ⊆ cubeSet Q := cubeSet_subset_of_mem_descendantsAtDepth hR
   have hinter : ((cubeSet R ∩ openCubeSet Q : Set (Vec d))) =ᵐ[volume]
       ((cubeSet R ∩ cubeSet Q : Set (Vec d))) :=
-    (Filter.EventuallyEq.refl _ (cubeSet R)).inter (cubeSet_ae_eq_openCubeSet Q).symm
+    (Filter.EventuallyEqSet.refl _ (cubeSet R)).inter (cubeSet_ae_eq_openCubeSet Q).symm
   rw [Set.inter_eq_self_of_subset_left hsub] at hinter
   exact Measure.restrict_congr_set hinter
 

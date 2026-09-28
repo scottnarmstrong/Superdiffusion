@@ -274,11 +274,11 @@ private theorem laneCoarse_isBigOWith (M : ABKModel d) (L m : ℤ)
         ∑ ell ∈ Finset.range (Int.toNat (m - L)), X ell omega := by
       refine tsum_eq_sum (s := Finset.range (Int.toNat (m - L))) fun ell hell => ?_
       rw [Finset.mem_range, not_lt] at hell
-      simp only [X, if_neg (not_lt.mpr hell)]
+      simp only [X, ite_eq_right (not_lt.mpr hell)]
     rw [hfinite]
     unfold laneCoarse
     refine Finset.sum_congr rfl fun ell hell => ?_
-    simp only [X, if_pos (Finset.mem_range.mp hell)]
+    simp only [X, ite_eq_left (Finset.mem_range.mp hell)]
   have hscaleEq : (∑' ell, scale ell) =
       (∑' ell, laneDepthScale d σ ell) * K := tsum_mul_right
   simpa only [hfun, hscaleEq] using hsumTail

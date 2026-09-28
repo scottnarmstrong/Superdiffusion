@@ -48,7 +48,7 @@ theorem integrable_memScalarL2_mul_of_bounded {U : Set (Vec d)}
     memLp_top_of_bound hgc.aestronglyMeasurable C
       (Filter.Eventually.of_forall fun x => by
         simpa [Real.norm_eq_abs] using hgb x)
-  have h2 : MemLp (fun x => g x * f x) 2 (volumeMeasureOn U) := hf.mul' hg_top
+  have h2 : MemLp (fun x => g x * f x) 2 (volumeMeasureOn U) := hg_top.fun_mul (r := 2) hf
   have h1 : Integrable (fun x => g x * f x) (volumeMeasureOn U) :=
     h2.integrable (by norm_num)
   simpa [mul_comm] using h1
@@ -62,7 +62,7 @@ theorem memScalarL2_bounded_mul {U : Set (Vec d)}
     memLp_top_of_bound hgc.aestronglyMeasurable C
       (Filter.Eventually.of_forall fun x => by
         simpa [Real.norm_eq_abs] using hgb x)
-  exact hf.mul' hg_top
+  exact hg_top.fun_mul (r := 2) hf
 
 /-- Global bound for a continuous compactly supported function. -/
 theorem exists_abs_bound_of_continuous_of_hasCompactSupport

@@ -349,7 +349,6 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
       calc
         P m ≤ ((Q + 1) / den) * t ^ 2 * B + C2 * t ^ 2 * B := by
           convert add_le_add hfirst hsecond using 1
-          all_goals try rfl
           dsimp only [P, localizedInteriorDecayConstant, X, e, V, Lm, Ceta]
           simp only [one_mul, mul_one]
         _ = ((Q + 1) / den + C2) * t ^ 2 * B := by ring

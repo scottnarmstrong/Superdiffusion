@@ -91,10 +91,10 @@ theorem skewPart_coefficientCutoff (nu : ℝ) (m : ℤ) (omega : CutoffSample d)
   rw [hskew_entry]
   by_cases hij : i = j
   · subst j
-    simp only [Matrix.one_apply, if_pos]
+    simp only [Matrix.one_apply, ite_eq_left]
     ring
   · have hji : j ≠ i := Ne.symm hij
-    simp only [Matrix.one_apply, if_neg hij, if_neg hji]
+    simp only [Matrix.one_apply, ite_eq_right hij, ite_eq_right hji]
     ring
 
 /-- The pointwise inverse symmetric part of the cutoff coefficient is

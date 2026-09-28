@@ -105,10 +105,10 @@ theorem partialReflectedWindow_empty (x : Vec d) (m k : ℤ) :
   rw [truncatedWindow_eq_coordBox, partialReflectedWindow]
   have hlo : partialReflectedLo x m k ∅ = windowLo x m k := by
     funext i
-    rw [partialReflectedLo, if_neg (Finset.notMem_empty i)]
+    rw [partialReflectedLo, ite_eq_right (Finset.notMem_empty i)]
   have hhi : partialReflectedHi x m k ∅ = windowHi x m k := by
     funext i
-    rw [partialReflectedHi, if_neg (Finset.notMem_empty i)]
+    rw [partialReflectedHi, ite_eq_right (Finset.notMem_empty i)]
   rw [hlo, hhi]
 
 /-- As soon as `T` contains every met coordinate, the intermediate box is the
@@ -122,13 +122,13 @@ theorem partialReflectedWindow_eq_reflectedWindow {x : Vec d} {m k : ℤ}
   · funext i
     rw [partialReflectedLo]
     by_cases h : i ∈ S
-    · rw [if_pos h]
-    · rw [if_neg h, reflectedLo_of_not_meetsLowerFace (hS i h).2]
+    · rw [ite_eq_left h]
+    · rw [ite_eq_right h, reflectedLo_of_not_meetsLowerFace (hS i h).2]
   · funext i
     rw [partialReflectedHi]
     by_cases h : i ∈ S
-    · rw [if_pos h]
-    · rw [if_neg h, reflectedHi_of_not_meetsUpperFace (hS i h).1]
+    · rw [ite_eq_left h]
+    · rw [ite_eq_right h, reflectedHi_of_not_meetsUpperFace (hS i h).1]
 
 /-! ## 2. The intermediate boxes are open bounded convex domains -/
 
@@ -150,13 +150,13 @@ theorem isBoundedDomain_partialReflectedWindow (x : Vec d) (m k : ℤ)
   have h2 := (hy i).2
   rw [abs_le]
   by_cases h : i ∈ T
-  · rw [partialReflectedLo, if_pos h] at h1
-    rw [partialReflectedHi, if_pos h] at h2
+  · rw [partialReflectedLo, ite_eq_left h] at h1
+    rw [partialReflectedHi, ite_eq_left h] at h2
     have hlo := le_reflectedLo x m k i
     have hhi := reflectedHi_le x m k i
     exact ⟨by linarith only [h1, hlo], by linarith only [h2, hhi]⟩
-  · rw [partialReflectedLo, if_neg h] at h1
-    rw [partialReflectedHi, if_neg h] at h2
+  · rw [partialReflectedLo, ite_eq_right h] at h1
+    rw [partialReflectedHi, ite_eq_right h] at h2
     have hlo := neg_half_zpow_le_windowLo x m k i
     have hhi := windowHi_le_half_zpow x m k i
     exact ⟨by linarith only [h1, hlo, hpos], by linarith only [h2, hhi, hpos]⟩
@@ -176,7 +176,7 @@ theorem mem_partialReflectedWindow_coordFaceReflection_iff_upper {x : Vec d} {m 
       y ∈ partialReflectedWindow x m k T := by
   have hlow : ¬ MeetsLowerFace x m k i := not_meetsLowerFace_of_meetsUpperFace hkm hup
   have hsum : partialReflectedLo x m k T i + partialReflectedHi x m k T i = (3 : ℝ) ^ m := by
-    rw [partialReflectedLo, partialReflectedHi, if_pos hiT, if_pos hiT,
+    rw [partialReflectedLo, partialReflectedHi, ite_eq_left hiT, ite_eq_left hiT,
       reflectedLo_of_not_meetsLowerFace hlow, reflectedHi_of_meetsUpperFace hup]
     ring
   rw [mem_partialReflectedWindow_iff, mem_partialReflectedWindow_iff]
@@ -185,17 +185,17 @@ theorem mem_partialReflectedWindow_coordFaceReflection_iff_upper {x : Vec d} {m 
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl] at h
+      rw [coordFaceReflection_apply, ite_eq_left rfl] at h
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
     · have h := hy j
-      rwa [coordFaceReflection_apply, if_neg hj] at h
+      rwa [coordFaceReflection_apply, ite_eq_right hj] at h
   · intro hy j
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl]
+      rw [coordFaceReflection_apply, ite_eq_left rfl]
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
-    · rw [coordFaceReflection_apply, if_neg hj]
+    · rw [coordFaceReflection_apply, ite_eq_right hj]
       exact hy j
 
 /-- **Reflection invariance at an already unfolded met lower face.** -/
@@ -208,7 +208,7 @@ theorem mem_partialReflectedWindow_coordFaceReflection_iff_lower {x : Vec d} {m 
     not_meetsLowerFace_of_meetsUpperFace hkm h hlow
   have hsum : partialReflectedLo x m k T i + partialReflectedHi x m k T i
       = -(3 : ℝ) ^ m := by
-    rw [partialReflectedLo, partialReflectedHi, if_pos hiT, if_pos hiT,
+    rw [partialReflectedLo, partialReflectedHi, ite_eq_left hiT, ite_eq_left hiT,
       reflectedLo_of_meetsLowerFace hlow, reflectedHi_of_not_meetsUpperFace hup]
     ring
   rw [mem_partialReflectedWindow_iff, mem_partialReflectedWindow_iff]
@@ -217,17 +217,17 @@ theorem mem_partialReflectedWindow_coordFaceReflection_iff_lower {x : Vec d} {m 
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl] at h
+      rw [coordFaceReflection_apply, ite_eq_left rfl] at h
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
     · have h := hy j
-      rwa [coordFaceReflection_apply, if_neg hj] at h
+      rwa [coordFaceReflection_apply, ite_eq_right hj] at h
   · intro hy j
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl]
+      rw [coordFaceReflection_apply, ite_eq_left rfl]
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
-    · rw [coordFaceReflection_apply, if_neg hj]
+    · rw [coordFaceReflection_apply, ite_eq_right hj]
       exact hy j
 
 /-- **The previous box is the half of the next one**, upper met face.  No
@@ -240,16 +240,16 @@ theorem faceHalf_partialReflectedWindow_insert_upper {x : Vec d} {m k : ℤ}
       = partialReflectedWindow x m k T := by
   have hlow : ¬ MeetsLowerFace x m k i := not_meetsLowerFace_of_meetsUpperFace hkm hup
   have hloi : partialReflectedLo x m k (insert i T) i = windowLo x m k i := by
-    rw [partialReflectedLo, if_pos (Finset.mem_insert_self i T),
+    rw [partialReflectedLo, ite_eq_left (Finset.mem_insert_self i T),
       reflectedLo_of_not_meetsLowerFace hlow]
   have hhii : partialReflectedHi x m k (insert i T) i
       = (3 : ℝ) ^ m - windowLo x m k i := by
-    rw [partialReflectedHi, if_pos (Finset.mem_insert_self i T),
+    rw [partialReflectedHi, ite_eq_left (Finset.mem_insert_self i T),
       reflectedHi_of_meetsUpperFace hup]
   have hloT : partialReflectedLo x m k T i = windowLo x m k i := by
-    rw [partialReflectedLo, if_neg hiT]
+    rw [partialReflectedLo, ite_eq_right hiT]
   have hhiT : partialReflectedHi x m k T i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-    rw [partialReflectedHi, if_neg hiT, windowHi_of_meetsUpperFace hup]
+    rw [partialReflectedHi, ite_eq_right hiT, windowHi_of_meetsUpperFace hup]
   ext y
   rw [mem_faceHalf_iff, mem_partialReflectedWindow_iff, mem_partialReflectedWindow_iff]
   constructor
@@ -288,15 +288,15 @@ theorem faceHalf_partialReflectedWindow_insert_lower {x : Vec d} {m k : ℤ}
     not_meetsLowerFace_of_meetsUpperFace hkm h hlow
   have hloi : partialReflectedLo x m k (insert i T) i
       = -(3 : ℝ) ^ m - windowHi x m k i := by
-    rw [partialReflectedLo, if_pos (Finset.mem_insert_self i T),
+    rw [partialReflectedLo, ite_eq_left (Finset.mem_insert_self i T),
       reflectedLo_of_meetsLowerFace hlow]
   have hhii : partialReflectedHi x m k (insert i T) i = windowHi x m k i := by
-    rw [partialReflectedHi, if_pos (Finset.mem_insert_self i T),
+    rw [partialReflectedHi, ite_eq_left (Finset.mem_insert_self i T),
       reflectedHi_of_not_meetsUpperFace hup]
   have hloT : partialReflectedLo x m k T i = -(1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-    rw [partialReflectedLo, if_neg hiT, windowLo_of_meetsLowerFace hlow]
+    rw [partialReflectedLo, ite_eq_right hiT, windowLo_of_meetsLowerFace hlow]
   have hhiT : partialReflectedHi x m k T i = windowHi x m k i := by
-    rw [partialReflectedHi, if_neg hiT]
+    rw [partialReflectedHi, ite_eq_right hiT]
   ext y
   rw [mem_faceHalf_iff, mem_partialReflectedWindow_iff, mem_partialReflectedWindow_iff]
   constructor

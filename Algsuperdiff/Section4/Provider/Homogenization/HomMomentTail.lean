@@ -181,7 +181,10 @@ theorem homMinimalScaleFactor_le_trunc_add_tsum {c : ℝ} (hc : 0 ≤ c) (N0 : �
               (fun _ => ENNReal.ofReal
                 ((3 : ℝ) ^ (c * ((N0 + 1 + (k - (N0 + 1)) : ℕ) : ℝ)))) omega := by
             rw [Set.indicator_of_mem hmem, hkeq]
-        _ ≤ _ := ENNReal.le_tsum (k - (N0 + 1))
+        _ ≤ _ := ENNReal.le_tsum (f := fun N : ℕ =>
+            Set.indicator {w : Omega | ((N0 + 1 + N : ℕ) : ℕ∞) ≤ X w}
+              (fun _ => ENNReal.ofReal ((3 : ℝ) ^ (c * ((N0 + 1 + N : ℕ) : ℝ)))) omega)
+            (k - (N0 + 1))
 
 /-! ## 3. Integration -/
 

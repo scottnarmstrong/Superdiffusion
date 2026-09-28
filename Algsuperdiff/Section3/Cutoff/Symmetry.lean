@@ -550,7 +550,7 @@ private theorem matVecMul_mem_openCubeSet_originCube
     rw [Finset.sum_eq_single (σ.symm i)]
     · rw [hRdef]
       have hi : i = σ (σ.symm i) := by simp
-      rw [if_pos hi]
+      rw [ite_eq_left hi]
     · intro j _ hj
       rw [hRdef]
       have hij : i ≠ σ j := by

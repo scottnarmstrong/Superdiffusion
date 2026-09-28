@@ -228,9 +228,9 @@ theorem cornerFaceSlabLo_lt_hi {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}
     cornerFaceSlabLo x m k i delta l < cornerFaceSlabHi x m k i l := by
   rw [cornerFaceSlabLo, cornerFaceSlabHi]
   by_cases hli : l = i
-  · rw [if_pos hli, if_pos hli]
+  · rw [ite_eq_left hli, ite_eq_left hli]
     linarith only [hdelta]
-  · rw [if_neg hli, if_neg hli]
+  · rw [ite_eq_right hli, ite_eq_right hli]
     exact hugLo_lt_hugHi hx hkm l
 
 theorem cornerPairSlabLo_lt_hi {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ}
@@ -239,9 +239,9 @@ theorem cornerPairSlabLo_lt_hi {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : �
     cornerPairSlabLo x m k i j delta l < cornerPairSlabHi x m k i j l := by
   rw [cornerPairSlabLo, cornerPairSlabHi]
   by_cases hlij : l = i ∨ l = j
-  · rw [if_pos hlij, if_pos hlij]
+  · rw [ite_eq_left hlij, ite_eq_left hlij]
     linarith only [hdelta]
-  · rw [if_neg hlij, if_neg hlij]
+  · rw [ite_eq_right hlij, ite_eq_right hlij]
     exact hugLo_lt_hugHi hx hkm l
 
 /-! ## 5. The slabs sit inside the window -/
@@ -263,16 +263,16 @@ theorem coordBox_cornerFaceSlab_subset_truncatedWindow {x : Vec d} {m k : ℤ}
   refine coordBox_subset_coordBox (fun l => ?_) (fun l => ?_)
   · rw [cornerFaceSlabLo]
     by_cases hli : l = i
-    · rw [if_pos hli, hli]
+    · rw [ite_eq_left hli, hli]
       have hedge := half_zpow_lt_window_edge hx hkm i
       rw [windowHi_of_meetsUpperFace hup] at hedge
       linarith only [hedge, hdelta16, hw]
-    · rw [if_neg hli]
+    · rw [ite_eq_right hli]
       exact (hug_subset_window hx hkm l).1
   · rw [cornerFaceSlabHi]
     by_cases hli : l = i
-    · rw [if_pos hli, hli, windowHi_of_meetsUpperFace hup]
-    · rw [if_neg hli]
+    · rw [ite_eq_left hli, hli, windowHi_of_meetsUpperFace hup]
+    · rw [ite_eq_right hli]
       exact (hug_subset_window hx hkm l).2
 
 /-- **The pushed face slab is inside the window.**  The inward translate by
@@ -290,17 +290,17 @@ theorem coordBox_cornerFaceSlab_pushed_subset_truncatedWindow {x : Vec d}
   refine coordBox_subset_coordBox (fun l => ?_) (fun l => ?_)
   · rw [cornerFaceSlabLo, smul_basisVec_apply]
     by_cases hli : l = i
-    · rw [if_pos hli, if_pos hli, hli]
+    · rw [ite_eq_left hli, ite_eq_left hli, hli]
       have hedge := half_zpow_lt_window_edge hx hkm i
       rw [windowHi_of_meetsUpperFace hup] at hedge
       linarith only [hedge, hdelta16, hw]
-    · rw [if_neg hli, if_neg hli, sub_zero]
+    · rw [ite_eq_right hli, ite_eq_right hli, sub_zero]
       exact (hug_subset_window hx hkm l).1
   · rw [cornerFaceSlabHi, smul_basisVec_apply]
     by_cases hli : l = i
-    · rw [if_pos hli, if_pos hli, hli, windowHi_of_meetsUpperFace hup]
+    · rw [ite_eq_left hli, ite_eq_left hli, hli, windowHi_of_meetsUpperFace hup]
       linarith only [hdelta]
-    · rw [if_neg hli, if_neg hli, sub_zero]
+    · rw [ite_eq_right hli, ite_eq_right hli, sub_zero]
       exact (hug_subset_window hx hkm l).2
 
 /-- **The corner slab is inside the window.** -/
@@ -315,7 +315,7 @@ theorem coordBox_cornerPairSlab_subset_truncatedWindow {x : Vec d} {m k : ℤ}
   refine coordBox_subset_coordBox (fun l => ?_) (fun l => ?_)
   · rw [cornerPairSlabLo]
     by_cases hlij : l = i ∨ l = j
-    · rw [if_pos hlij]
+    · rw [ite_eq_left hlij]
       have hupl : MeetsUpperFace x m k l := by
         rcases hlij with h | h
         · rw [h]; exact hupi
@@ -323,17 +323,17 @@ theorem coordBox_cornerPairSlab_subset_truncatedWindow {x : Vec d} {m k : ℤ}
       have hedge := half_zpow_lt_window_edge hx hkm l
       rw [windowHi_of_meetsUpperFace hupl] at hedge
       linarith only [hedge, hdelta16, hw]
-    · rw [if_neg hlij]
+    · rw [ite_eq_right hlij]
       exact (hug_subset_window hx hkm l).1
   · rw [cornerPairSlabHi]
     by_cases hlij : l = i ∨ l = j
-    · rw [if_pos hlij]
+    · rw [ite_eq_left hlij]
       have hupl : MeetsUpperFace x m k l := by
         rcases hlij with h | h
         · rw [h]; exact hupi
         · rw [h]; exact hupj
       rw [windowHi_of_meetsUpperFace hupl]
-    · rw [if_neg hlij]
+    · rw [ite_eq_right hlij]
       exact (hug_subset_window hx hkm l).2
 
 /-- **The pushed corner slab is inside the window.**  The inward translate by
@@ -351,7 +351,7 @@ theorem coordBox_cornerPairSlab_pushed_subset_truncatedWindow {x : Vec d}
   refine coordBox_subset_coordBox (fun l => ?_) (fun l => ?_)
   · rw [cornerPairSlabLo, smul_basisVec_apply]
     by_cases hlij : l = i ∨ l = j
-    · rw [if_pos hlij]
+    · rw [ite_eq_left hlij]
       have hupl : MeetsUpperFace x m k l := by
         rcases hlij with h | h
         · rw [h]; exact hupi
@@ -359,27 +359,27 @@ theorem coordBox_cornerPairSlab_pushed_subset_truncatedWindow {x : Vec d}
       have hedge := half_zpow_lt_window_edge hx hkm l
       rw [windowHi_of_meetsUpperFace hupl] at hedge
       by_cases hlj : l = j
-      · rw [if_pos hlj]
+      · rw [ite_eq_left hlj]
         linarith only [hedge, hdelta16, hw]
-      · rw [if_neg hlj, sub_zero]
+      · rw [ite_eq_right hlj, sub_zero]
         linarith only [hedge, hdelta16, hw]
     · have hlj : ¬ l = j := fun h => hlij (Or.inr h)
-      rw [if_neg hlij, if_neg hlj, sub_zero]
+      rw [ite_eq_right hlij, ite_eq_right hlj, sub_zero]
       exact (hug_subset_window hx hkm l).1
   · rw [cornerPairSlabHi, smul_basisVec_apply]
     by_cases hlij : l = i ∨ l = j
-    · rw [if_pos hlij]
+    · rw [ite_eq_left hlij]
       have hupl : MeetsUpperFace x m k l := by
         rcases hlij with h | h
         · rw [h]; exact hupi
         · rw [h]; exact hupj
       rw [windowHi_of_meetsUpperFace hupl]
       by_cases hlj : l = j
-      · rw [if_pos hlj]
+      · rw [ite_eq_left hlj]
         linarith only [hdelta]
-      · rw [if_neg hlj, sub_zero]
+      · rw [ite_eq_right hlj, sub_zero]
     · have hlj : ¬ l = j := fun h => hlij (Or.inr h)
-      rw [if_neg hlij, if_neg hlj, sub_zero]
+      rw [ite_eq_right hlij, ite_eq_right hlj, sub_zero]
       exact (hug_subset_window hx hkm l).2
 
 /-! ## 6. Memberships in the Taylor boxes -/
@@ -393,14 +393,14 @@ theorem coordBox_cornerFaceSlab_subset_taylor {x : Vec d} {m k : ℤ} {i : Fin d
   refine coordBox_subset_coordBox (fun l => ?_) (fun l => ?_)
   · rw [cornerFaceTaylorLo, cornerFaceSlabLo]
     by_cases hli : l = i
-    · rw [if_pos hli, if_pos hli]
+    · rw [ite_eq_left hli, ite_eq_left hli]
       linarith only [hdelta]
-    · rw [if_neg hli, if_neg hli]
+    · rw [ite_eq_right hli, ite_eq_right hli]
   · rw [cornerFaceTaylorHi, cornerFaceSlabHi]
     by_cases hli : l = i
-    · rw [if_pos hli, if_pos hli]
+    · rw [ite_eq_left hli, ite_eq_left hli]
       linarith only [hdelta]
-    · rw [if_neg hli, if_neg hli]
+    · rw [ite_eq_right hli, ite_eq_right hli]
 
 /-- The reflected face slab is inside the Taylor box. -/
 theorem reflection_cornerFaceSlab_mem_taylor {x : Vec d} {m k : ℤ} {i : Fin d}
@@ -416,13 +416,13 @@ theorem reflection_cornerFaceSlab_mem_taylor {x : Vec d} {m k : ℤ} {i : Fin d}
   rw [cornerFaceTaylorLo, cornerFaceTaylorHi]
   by_cases hli : l = i
   · rw [hli] at hyl ⊢
-    rw [cornerFaceSlabLo, if_pos rfl] at hyl
-    rw [cornerFaceSlabHi, if_pos rfl] at hyl
-    rw [if_pos rfl, if_pos rfl, Homogenization.coordFaceReflection_apply_self]
+    rw [cornerFaceSlabLo, ite_eq_left rfl] at hyl
+    rw [cornerFaceSlabHi, ite_eq_left rfl] at hyl
+    rw [ite_eq_left rfl, ite_eq_left rfl, Homogenization.coordFaceReflection_apply_self]
     exact ⟨by linarith only [hyl.2, hdelta], by linarith only [hyl.1]⟩
-  · rw [cornerFaceSlabLo, if_neg hli] at hyl
-    rw [cornerFaceSlabHi, if_neg hli] at hyl
-    rw [if_neg hli, if_neg hli,
+  · rw [cornerFaceSlabLo, ite_eq_right hli] at hyl
+    rw [cornerFaceSlabHi, ite_eq_right hli] at hyl
+    rw [ite_eq_right hli, ite_eq_right hli,
       Homogenization.coordFaceReflection_apply_ne _ i l y hli]
     exact hyl
 
@@ -442,13 +442,13 @@ theorem pushed_cornerFaceSlab_mem_taylor {x : Vec d} {m k : ℤ} {i : Fin d}
   rw [cornerFaceTaylorLo, cornerFaceTaylorHi, happ, smul_basisVec_apply]
   by_cases hli : l = i
   · rw [hli] at hyl ⊢
-    rw [cornerFaceSlabLo, if_pos rfl] at hyl
-    rw [cornerFaceSlabHi, if_pos rfl] at hyl
-    rw [if_pos rfl, if_pos rfl, if_pos rfl]
+    rw [cornerFaceSlabLo, ite_eq_left rfl] at hyl
+    rw [cornerFaceSlabHi, ite_eq_left rfl] at hyl
+    rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_left rfl]
     exact ⟨by linarith only [hyl.1], by linarith only [hyl.2, hdelta]⟩
-  · rw [cornerFaceSlabLo, if_neg hli] at hyl
-    rw [cornerFaceSlabHi, if_neg hli] at hyl
-    rw [if_neg hli, if_neg hli, if_neg hli, sub_zero]
+  · rw [cornerFaceSlabLo, ite_eq_right hli] at hyl
+    rw [cornerFaceSlabHi, ite_eq_right hli] at hyl
+    rw [ite_eq_right hli, ite_eq_right hli, ite_eq_right hli, sub_zero]
     exact hyl
 
 /-- The corner slab is inside the pair Taylor box. -/
@@ -460,18 +460,18 @@ theorem coordBox_cornerPairSlab_subset_taylor {x : Vec d} {m k : ℤ} {i j : Fin
   refine coordBox_subset_coordBox (fun l => ?_) (fun l => ?_)
   · rw [cornerPairTaylorLo, cornerPairSlabLo]
     by_cases hli : l = i
-    · rw [if_pos hli, if_pos (Or.inl hli)]
+    · rw [ite_eq_left hli, ite_eq_left (Or.inl hli)]
     · by_cases hlj : l = j
-      · rw [if_neg hli, if_pos hlj, if_pos (Or.inr hlj)]
+      · rw [ite_eq_right hli, ite_eq_left hlj, ite_eq_left (Or.inr hlj)]
         linarith only [hdelta]
-      · rw [if_neg hli, if_neg hlj, if_neg (fun h => h.elim hli hlj)]
+      · rw [ite_eq_right hli, ite_eq_right hlj, ite_eq_right (fun h => h.elim hli hlj)]
   · rw [cornerPairTaylorHi, cornerPairSlabHi]
     by_cases hli : l = i
-    · rw [if_pos hli, if_pos (Or.inl hli)]
+    · rw [ite_eq_left hli, ite_eq_left (Or.inl hli)]
     · by_cases hlj : l = j
-      · rw [if_neg hli, if_pos hlj, if_pos (Or.inr hlj)]
+      · rw [ite_eq_right hli, ite_eq_left hlj, ite_eq_left (Or.inr hlj)]
         linarith only [hdelta]
-      · rw [if_neg hli, if_neg hlj, if_neg (fun h => h.elim hli hlj)]
+      · rw [ite_eq_right hli, ite_eq_right hlj, ite_eq_right (fun h => h.elim hli hlj)]
 
 /-- The `j`-reflected corner slab is inside the pair Taylor box. -/
 theorem reflection_cornerPairSlab_mem_taylor {x : Vec d} {m k : ℤ} {i j : Fin d}
@@ -489,22 +489,22 @@ theorem reflection_cornerPairSlab_mem_taylor {x : Vec d} {m k : ℤ} {i j : Fin 
   by_cases hlj : l = j
   · have hli : ¬ l = i := fun h => hij (h.symm.trans hlj)
     rw [hlj] at hyl ⊢
-    rw [cornerPairSlabLo, if_pos (Or.inr rfl)] at hyl
-    rw [cornerPairSlabHi, if_pos (Or.inr rfl)] at hyl
+    rw [cornerPairSlabLo, ite_eq_left (Or.inr rfl)] at hyl
+    rw [cornerPairSlabHi, ite_eq_left (Or.inr rfl)] at hyl
     have hji : ¬ j = i := fun h => hij h.symm
-    rw [if_neg hji, if_pos rfl, if_neg hji, if_pos rfl,
+    rw [ite_eq_right hji, ite_eq_left rfl, ite_eq_right hji, ite_eq_left rfl,
       Homogenization.coordFaceReflection_apply_self]
     exact ⟨by linarith only [hyl.2, hdelta], by linarith only [hyl.1]⟩
   · rw [Homogenization.coordFaceReflection_apply_ne _ j l y hlj]
     by_cases hli : l = i
     · rw [hli] at hyl ⊢
-      rw [cornerPairSlabLo, if_pos (Or.inl rfl)] at hyl
-      rw [cornerPairSlabHi, if_pos (Or.inl rfl)] at hyl
-      rw [if_pos rfl, if_pos rfl]
+      rw [cornerPairSlabLo, ite_eq_left (Or.inl rfl)] at hyl
+      rw [cornerPairSlabHi, ite_eq_left (Or.inl rfl)] at hyl
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       exact hyl
-    · rw [cornerPairSlabLo, if_neg (fun h => h.elim hli hlj)] at hyl
-      rw [cornerPairSlabHi, if_neg (fun h => h.elim hli hlj)] at hyl
-      rw [if_neg hli, if_neg hlj, if_neg hli, if_neg hlj]
+    · rw [cornerPairSlabLo, ite_eq_right (fun h => h.elim hli hlj)] at hyl
+      rw [cornerPairSlabHi, ite_eq_right (fun h => h.elim hli hlj)] at hyl
+      rw [ite_eq_right hli, ite_eq_right hlj, ite_eq_right hli, ite_eq_right hlj]
       exact hyl
 
 /-- The `j`-pushed corner slab is inside the pair Taylor box. -/
@@ -525,21 +525,21 @@ theorem pushed_cornerPairSlab_mem_taylor {x : Vec d} {m k : ℤ} {i j : Fin d}
   by_cases hlj : l = j
   · have hji : ¬ l = i := fun h => hij (h.symm.trans hlj)
     rw [hlj] at hyl ⊢
-    rw [cornerPairSlabLo, if_pos (Or.inr rfl)] at hyl
-    rw [cornerPairSlabHi, if_pos (Or.inr rfl)] at hyl
+    rw [cornerPairSlabLo, ite_eq_left (Or.inr rfl)] at hyl
+    rw [cornerPairSlabHi, ite_eq_left (Or.inr rfl)] at hyl
     have hji' : ¬ j = i := fun h => hij h.symm
-    rw [if_neg hji', if_pos rfl, if_neg hji', if_pos rfl, if_pos rfl]
+    rw [ite_eq_right hji', ite_eq_left rfl, ite_eq_right hji', ite_eq_left rfl, ite_eq_left rfl]
     exact ⟨by linarith only [hyl.1], by linarith only [hyl.2, hdelta]⟩
   · by_cases hli : l = i
     · rw [hli] at hyl ⊢
-      rw [cornerPairSlabLo, if_pos (Or.inl rfl)] at hyl
-      rw [cornerPairSlabHi, if_pos (Or.inl rfl)] at hyl
+      rw [cornerPairSlabLo, ite_eq_left (Or.inl rfl)] at hyl
+      rw [cornerPairSlabHi, ite_eq_left (Or.inl rfl)] at hyl
       have hij' : ¬ i = j := hij
-      rw [if_pos rfl, if_pos rfl, if_neg hij', sub_zero]
+      rw [ite_eq_left rfl, ite_eq_left rfl, ite_eq_right hij', sub_zero]
       exact hyl
-    · rw [cornerPairSlabLo, if_neg (fun h => h.elim hli hlj)] at hyl
-      rw [cornerPairSlabHi, if_neg (fun h => h.elim hli hlj)] at hyl
-      rw [if_neg hli, if_neg hlj, if_neg hli, if_neg hlj, if_neg hlj, sub_zero]
+    · rw [cornerPairSlabLo, ite_eq_right (fun h => h.elim hli hlj)] at hyl
+      rw [cornerPairSlabHi, ite_eq_right (fun h => h.elim hli hlj)] at hyl
+      rw [ite_eq_right hli, ite_eq_right hlj, ite_eq_right hli, ite_eq_right hlj, ite_eq_right hlj, sub_zero]
       exact hyl
 
 /-! ## 7. Sup-balls around the Taylor boxes inside the doubled window -/
@@ -586,9 +586,9 @@ theorem metricBall_subset_reflectedWindow_of_mem_cornerFaceTaylor {x : Vec d}
   have hpl := hp l
   rw [cornerFaceTaylorLo, cornerFaceTaylorHi] at hpl
   by_cases hli : l = i
-  · rw [if_pos hli] at hpl
+  · rw [ite_eq_left hli] at hpl
     obtain ⟨hplo, hphi⟩ := hpl
-    rw [if_pos hli] at hphi
+    rw [ite_eq_left hli] at hphi
     have hedge := half_zpow_lt_window_edge hx hkm l
     rw [hli] at hql' hedge hplo hphi ⊢
     rw [windowHi_of_meetsUpperFace hup] at hedge
@@ -600,9 +600,9 @@ theorem metricBall_subset_reflectedWindow_of_mem_cornerFaceTaylor {x : Vec d}
       linarith only [hql'.1, hplo, hedge, hdelta16, hw]
     · rw [hRhi]
       linarith only [hql'.2, hphi, hedge, hdelta16, hw]
-  · rw [if_neg hli] at hpl
+  · rw [ite_eq_right hli] at hpl
     obtain ⟨hplo, hphi⟩ := hpl
-    rw [if_neg hli] at hphi
+    rw [ite_eq_right hli] at hphi
     have h := taylor_reach_bounds hx hkm (l := l)
       (t := q l) (by linarith only [hql'.1, hplo])
       (by linarith only [hql'.2, hphi])
@@ -632,9 +632,9 @@ theorem metricBall_subset_reflectedWindow_of_mem_cornerPairTaylor {x : Vec d}
   have hpl := hp l
   rw [cornerPairTaylorLo, cornerPairTaylorHi] at hpl
   by_cases hli : l = i
-  · rw [if_pos hli] at hpl
+  · rw [ite_eq_left hli] at hpl
     obtain ⟨hplo, hphi⟩ := hpl
-    rw [if_pos hli] at hphi
+    rw [ite_eq_left hli] at hphi
     have hedge := half_zpow_lt_window_edge hx hkm l
     rw [hli] at hql' hedge hplo hphi ⊢
     rw [windowHi_of_meetsUpperFace hupi] at hedge
@@ -646,11 +646,11 @@ theorem metricBall_subset_reflectedWindow_of_mem_cornerPairTaylor {x : Vec d}
       linarith only [hql'.1, hplo, hedge, hdelta16, hw]
     · rw [hRhi]
       linarith only [hql'.2, hphi, hedge, hdelta16, hw]
-  · rw [if_neg hli] at hpl
+  · rw [ite_eq_right hli] at hpl
     obtain ⟨hplo, hphi⟩ := hpl
-    rw [if_neg hli] at hphi
+    rw [ite_eq_right hli] at hphi
     by_cases hlj : l = j
-    · rw [if_pos hlj] at hplo hphi
+    · rw [ite_eq_left hlj] at hplo hphi
       have hedge := half_zpow_lt_window_edge hx hkm l
       rw [hlj] at hql' hedge hplo hphi ⊢
       rw [windowHi_of_meetsUpperFace hupj] at hedge
@@ -662,7 +662,7 @@ theorem metricBall_subset_reflectedWindow_of_mem_cornerPairTaylor {x : Vec d}
         linarith only [hql'.1, hplo, hedge, hdelta16, hw]
       · rw [hRhi]
         linarith only [hql'.2, hphi, hedge, hdelta16, hw]
-    · rw [if_neg hlj] at hplo hphi
+    · rw [ite_eq_right hlj] at hplo hphi
       exact taylor_reach_bounds hx hkm (l := l)
         (t := q l) (by linarith only [hql'.1, hplo])
         (by linarith only [hql'.2, hphi])

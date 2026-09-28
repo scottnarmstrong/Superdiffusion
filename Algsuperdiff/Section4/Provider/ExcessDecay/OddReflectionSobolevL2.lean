@@ -96,9 +96,9 @@ theorem cellMap_involutive (x : Vec d) (m k : ℤ) (S : Finset (Fin d)) (y : Vec
     cellMap x m k S (cellMap x m k S y) = y := by
   funext i
   by_cases hi : i ∈ S
-  · simp only [cellMap_apply, if_pos hi, realFaceReflection]
+  · simp only [cellMap_apply, ite_eq_left hi, realFaceReflection]
     ring
-  · simp only [cellMap_apply, if_neg hi]
+  · simp only [cellMap_apply, ite_eq_right hi]
 
 theorem cellMap_injective (x : Vec d) (m k : ℤ) (S : Finset (Fin d)) :
     Function.Injective (cellMap x m k S) := by
@@ -110,9 +110,9 @@ theorem continuous_cellMap (x : Vec d) (m k : ℤ) (S : Finset (Fin d)) :
     Continuous (cellMap x m k S) := by
   refine continuous_pi fun i => ?_
   by_cases hi : i ∈ S
-  · simp only [cellMap_apply, if_pos hi, realFaceReflection]
+  · simp only [cellMap_apply, ite_eq_left hi, realFaceReflection]
     exact continuous_const.sub (continuous_apply i)
-  · simp only [cellMap_apply, if_neg hi]
+  · simp only [cellMap_apply, ite_eq_right hi]
     exact continuous_apply i
 
 theorem measurableEmbedding_cellMap (x : Vec d) (m k : ℤ) (S : Finset (Fin d)) :
@@ -142,14 +142,14 @@ theorem foldCoord_eq_or (x : Vec d) (m k : ℤ) (i : Fin d) (t : ℝ) :
     foldCoord x m k i t = t ∨
       foldCoord x m k i t = realFaceReflection (foldPivot x m k i) t := by
   by_cases hup : MeetsUpperFace x m k i
-  · have hpiv : foldPivot x m k i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := if_pos hup
+  · have hpiv : foldPivot x m k i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := ite_eq_left hup
     rw [foldCoord_of_meetsUpperFace hup, hpiv, realFaceReflection]
     rcases min_choice t ((3 : ℝ) ^ m - t) with h | h
     · exact Or.inl h
     · exact Or.inr (by rw [h]; ring)
   · by_cases hlow : MeetsLowerFace x m k i
     · have hpiv : foldPivot x m k i = -(1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-        rw [foldPivot, if_neg hup, if_pos hlow]
+        rw [foldPivot, ite_eq_right hup, ite_eq_left hlow]
       rw [foldCoord_of_meetsLowerFace hup hlow, hpiv, realFaceReflection]
       rcases max_choice t (-(3 : ℝ) ^ m - t) with h | h
       · exact Or.inl h
@@ -179,11 +179,11 @@ theorem exists_cellMap_eq (x : Vec d) (m k : ℤ) (y : Vec d) :
       foldCoord x m k i (y i) ≠ y i := by simp
   rw [windowFold_apply, cellMap_apply]
   by_cases hi : i ∈ Finset.univ.filter fun j => foldCoord x m k j (y j) ≠ y j
-  · rw [if_pos hi]
+  · rw [ite_eq_left hi]
     rcases foldCoord_eq_or x m k i (y i) with he | he
     · exact absurd he (hmem.mp hi)
     · exact he
-  · rw [if_neg hi]
+  · rw [ite_eq_right hi]
     exact not_not.mp fun hne => hi (hmem.mpr hne)
 
 /-! ## 3. The interface hyperplanes are null -/
@@ -310,7 +310,7 @@ theorem setLIntegral_comp_windowFold_le (x : Vec d) {m k : ℤ} (hkm : k < m)
         y i ≠ (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
       intro i hi
       have hpiv : foldPivot x m k i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-        rw [foldPivot, if_pos hi]
+        rw [foldPivot, ite_eq_left hi]
       have := notMem_foldInterface_apply (x := x) (m := m) (k := k) hyN i
       rwa [hpiv] at this
     have hlow : ∀ i, MeetsLowerFace x m k i →
@@ -319,7 +319,7 @@ theorem setLIntegral_comp_windowFold_le (x : Vec d) {m k : ℤ} (hkm : k < m)
       have hnu : ¬ MeetsUpperFace x m k i := fun hu =>
         not_meetsLowerFace_of_meetsUpperFace hkm hu hi
       have hpiv : foldPivot x m k i = -(1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-        rw [foldPivot, if_neg hnu, if_pos hi]
+        rw [foldPivot, ite_eq_right hnu, ite_eq_left hi]
       have := notMem_foldInterface_apply (x := x) (m := m) (k := k) hyN i
       rwa [hpiv] at this
     have := windowFold_mem_truncatedWindow hkm hyA hup hlow
@@ -363,20 +363,60 @@ theorem setLIntegral_enorm_rpow_oddExtend_le (x : Vec d) {m k : ℤ} (hkm : k < 
   rw [hcongr]
   exact setLIntegral_comp_windowFold_le x hkm (fun z => ‖f z‖ₑ ^ q)
 
+private theorem measurable_foldSignCoord (x : Vec d) (m k : ℤ) (i : Fin d) :
+    Measurable (foldSignCoord x m k i) :=
+  Measurable.ite (MeasurableSet.const _)
+    (Measurable.ite measurableSet_Ioi measurable_const measurable_const)
+    (Measurable.ite (MeasurableSet.const _)
+      (Measurable.ite measurableSet_Iio measurable_const measurable_const) measurable_const)
+
+private theorem measurable_windowFoldSign (x : Vec d) (m k : ℤ) :
+    Measurable (windowFoldSign x m k) :=
+  Finset.measurable_prod _ fun i _ =>
+    (measurable_foldSignCoord x m k i).comp (measurable_pi_apply i)
+
+/-- The fold does not charge null sets of the window: it is quasi measure
+preserving from the reflected window to the window. -/
+private theorem quasiMeasurePreserving_windowFold (x : Vec d) {m k : ℤ} (hkm : k < m) :
+    Measure.QuasiMeasurePreserving (windowFold x m k)
+      (volume.restrict (reflectedWindow x m k))
+      (volume.restrict (truncatedWindow x m k)) := by
+  have hmeas : Measurable (windowFold x m k) := (continuous_windowFold x m k).measurable
+  refine ⟨hmeas, Measure.AbsolutelyContinuous.mk ?_⟩
+  intro T hT hT0
+  rw [Measure.map_apply hmeas hT]
+  have h := setLIntegral_comp_windowFold_le x hkm (T.indicator 1)
+  rw [lintegral_indicator_one hT, hT0, mul_zero] at h
+  have hpre : ∫⁻ y in reflectedWindow x m k, T.indicator 1 (windowFold x m k y) =
+      volume.restrict (reflectedWindow x m k) (windowFold x m k ⁻¹' T) := by
+    rw [← lintegral_indicator_one (hmeas hT)]
+    rfl
+  rw [← hpre]
+  exact nonpos_iff_eq_zero.mp h
+
 /-- **: the odd extension costs at most `C(d) = 2^d` in `L²`.** -/
 theorem eLpNorm_oddExtend_le (x : Vec d) {m k : ℤ} (hkm : k < m) (f : Vec d → ℝ) :
     eLpNorm (oddExtend x m k f) 2 (volume.restrict (reflectedWindow x m k)) ≤
       2 ^ d * eLpNorm f 2 (volume.restrict (truncatedWindow x m k)) := by
+  by_cases hf : AEStronglyMeasurable f (volume.restrict (truncatedWindow x m k))
+  swap
+  · rw [eLpNorm_of_not_aestronglyMeasurable hf,
+      ENNReal.mul_top (pow_ne_zero d (by norm_num))]
+    exact le_top
+  have hodd : AEStronglyMeasurable (oddExtend x m k f)
+      (volume.restrict (reflectedWindow x m k)) :=
+    (measurable_windowFoldSign x m k).aestronglyMeasurable.mul
+      (hf.comp_quasiMeasurePreserving (quasiMeasurePreserving_windowFold x hkm))
   have htoReal : ((2 : ℝ≥0∞)).toReal = (2 : ℝ) := by norm_num
   have hA : eLpNorm (oddExtend x m k f) 2
       (volume.restrict (reflectedWindow x m k)) =
       (∫⁻ y in reflectedWindow x m k, ‖oddExtend x m k f y‖ₑ ^ (2 : ℝ)) ^
         ((1 : ℝ) / 2) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num),
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hodd,
       htoReal]
   have hV : eLpNorm f 2 (volume.restrict (truncatedWindow x m k)) =
       (∫⁻ y in truncatedWindow x m k, ‖f y‖ₑ ^ (2 : ℝ)) ^ ((1 : ℝ) / 2) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num),
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
       htoReal]
   rw [hA, hV]
   have hle := setLIntegral_enorm_rpow_oddExtend_le x hkm f (2 : ℝ)

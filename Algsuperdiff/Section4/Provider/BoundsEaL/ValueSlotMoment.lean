@@ -62,8 +62,8 @@ private theorem tailLayerTerm_le_deepGradTerm (m : ℤ) (omega : Cutoff.CutoffSa
     (i : ℤ) :
     tailLayerTerm m m (0 : Fin d → ℤ) omega i ≤ deepGradTerm m (0 : Fin d → ℤ) omega i := by
   rcases lt_or_ge m i with hmi | hmi
-  · rw [tailLayerTerm, if_pos hmi, deepGradTerm, if_pos (by omega : m ≤ i), gradLayerGauge]
-  · rw [tailLayerTerm, if_neg (by omega : ¬ m < i)]
+  · rw [tailLayerTerm, ite_eq_left hmi, deepGradTerm, ite_eq_left (by omega : m ≤ i), gradLayerGauge]
+  · rw [tailLayerTerm, ite_eq_right (by omega : ¬ m < i)]
     exact deepGradTerm_nonneg _ _ _ _
 
 /-- The two `ℤ`-indexed families differ by the single layer `i = m`, hence are
@@ -74,7 +74,7 @@ private theorem summable_deepGradTerm_iff (m : ℤ) (omega : Cutoff.CutoffSample
   have hmid : Summable fun i : ℤ =>
       (if m ≤ i ∧ i ≤ m then gradLayerGauge m (0 : Fin d → ℤ) omega i else 0) := by
     refine summable_of_ne_finset_zero (s := Finset.Icc m m) fun i hi => ?_
-    rw [if_neg (fun h => hi (Finset.mem_Icc.mpr h))]
+    rw [ite_eq_right (fun h => hi (Finset.mem_Icc.mpr h))]
   have hsplit := deepGradTerm_eq_add m m (0 : Fin d → ℤ) omega le_rfl
   constructor
   · intro hdeep

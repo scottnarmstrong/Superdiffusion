@@ -169,17 +169,17 @@ theorem mem_reflectedWindow_coordFaceReflection_iff {x : Vec d} {m k : ℤ} (hkm
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl] at h
+      rw [coordFaceReflection_apply, ite_eq_left rfl] at h
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
     · have h := hy j
-      rwa [coordFaceReflection_apply, if_neg hj] at h
+      rwa [coordFaceReflection_apply, ite_eq_right hj] at h
   · intro hy j
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl]
+      rw [coordFaceReflection_apply, ite_eq_left rfl]
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
-    · rw [coordFaceReflection_apply, if_neg hj]
+    · rw [coordFaceReflection_apply, ite_eq_right hj]
       exact hy j
 
 /-- The lower-face twin of `mem_reflectedWindow_coordFaceReflection_iff`. -/
@@ -198,17 +198,17 @@ theorem mem_reflectedWindow_coordFaceReflection_iff_lower {x : Vec d} {m k : ℤ
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl] at h
+      rw [coordFaceReflection_apply, ite_eq_left rfl] at h
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
     · have h := hy j
-      rwa [coordFaceReflection_apply, if_neg hj] at h
+      rwa [coordFaceReflection_apply, ite_eq_right hj] at h
   · intro hy j
     by_cases hj : j = i
     · subst hj
       have h := hy j
-      rw [coordFaceReflection_apply, if_pos rfl]
+      rw [coordFaceReflection_apply, ite_eq_left rfl]
       exact ⟨by linarith only [h.2, hsum], by linarith only [h.1, hsum]⟩
-    · rw [coordFaceReflection_apply, if_neg hj]
+    · rw [coordFaceReflection_apply, ite_eq_right hj]
       exact hy j
 
 /-! ## 3. The one-met-face harmonicity transfer on the windows -/

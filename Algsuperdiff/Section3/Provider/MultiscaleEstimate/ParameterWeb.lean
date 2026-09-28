@@ -547,7 +547,7 @@ theorem exists_witnesses_ae_eq_of_ae_le
   · intro ω
     by_cases hω : ω ∈ N
     · simp [hω]
-    · simp only [hω, if_false]
+    · simp only [hω, ite_false]
       exact not_lt.1 (by simpa [hN] using hω)
   · exact Provider.Tail.isBigOWith_of_ae_eq hYae.symm hYt
   · exact Provider.Tail.isBigOWith_of_ae_eq hZae.symm hZt

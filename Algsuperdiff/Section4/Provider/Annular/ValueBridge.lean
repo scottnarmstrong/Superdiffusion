@@ -180,7 +180,7 @@ private theorem abs_cubeAverage_sub_le_of_openCubeSet (R : TriadicCube d)
   have haeeq : (fun x : Vec d => if x ∈ openCubeSet R then g x else c)
       =ᵐ[volume.restrict (cubeSet R)] g := by
     filter_upwards [hmem] with x hx
-    rw [if_pos hx]
+    rw [ite_eq_left hx]
   have hint : IntegrableOn (fun x : Vec d => if x ∈ openCubeSet R then g x else c)
       (cubeSet R) volume := hg.congr haeeq.symm
   have havg : cubeAverage R (fun x : Vec d => if x ∈ openCubeSet R then g x else c)
@@ -189,9 +189,9 @@ private theorem abs_cubeAverage_sub_le_of_openCubeSet (R : TriadicCube d)
   refine Provider.Stream.abs_cubeAverage_sub_le R hint ?_
   intro x _
   by_cases hxo : x ∈ openCubeSet R
-  · rw [if_pos hxo]
+  · rw [ite_eq_left hxo]
     exact hb x hxo
-  · rw [if_neg hxo, sub_self, abs_zero]
+  · rw [ite_eq_right hxo, sub_self, abs_zero]
     exact heps
 
 /-- Continuity of the entries of a shell field, and their integrability on a

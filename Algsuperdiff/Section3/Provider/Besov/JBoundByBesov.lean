@@ -192,7 +192,7 @@ private theorem circNormEntry_one_two_one (Q : TriadicCube d) (u : Vec d → ℝ
     intro j
     rw [ENNReal.toReal_one, Real.rpow_one, cubeBesovCircDepthSeminorm, Real.sqrt_eq_rpow]
     norm_num
-  rw [cubeBesovCircNormEntry, if_neg (by simp : (1 : ℝ≥0∞) ≠ ∞), cubeBesovCircPartialNorm,
+  rw [cubeBesovCircNormEntry, ite_eq_right (by simp : (1 : ℝ≥0∞) ≠ ∞), cubeBesovCircPartialNorm,
     cubeBesovCircPartialSeminorm, Finset.sum_congr rfl (fun j _ => hterm j), ENNReal.toReal_one]
   norm_num
 

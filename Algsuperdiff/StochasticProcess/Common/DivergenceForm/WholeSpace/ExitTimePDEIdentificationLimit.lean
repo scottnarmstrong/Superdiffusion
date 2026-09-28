@@ -113,7 +113,7 @@ theorem continuousOn_cubeTorsionRepresentative (v : ℕ) :
 
 theorem cubeTorsionRepresentative_of_notMem (v : ℕ) {x : Vec d}
     (hx : x ∉ wholeSpaceCube d v) : A.cubeTorsionRepresentative v x = 0 := by
-  rw [cubeTorsionRepresentative, analyticCubeResolvent, dif_neg hx]
+  rw [cubeTorsionRepresentative, analyticCubeResolvent, dite_eq_right hx]
 
 /-- The continuous representative agrees almost everywhere on the cube with the
 `L²` class of the torsion function. -/
@@ -156,7 +156,7 @@ theorem analyticCubeResolvent_cubeOneDatum_ae (v : ℕ) (lam : PositiveShift) :
 theorem analyticCubeResolvent_of_notMem (lam : PositiveShift) {f : Vec d → ℝ}
     (hf : Measurable f) {D : ℝ} (hfD : ∀ x, |f x| ≤ D) (m : ℕ) {x : Vec d}
     (hx : x ∉ wholeSpaceCube d m) : A.analyticCubeResolvent lam f hf hfD m x = 0 := by
-  rw [analyticCubeResolvent, dif_neg hx]
+  rw [analyticCubeResolvent, dite_eq_right hx]
 
 /-- **The Dirichlet resolvent of the constant datum is below the continuous
 representative of the torsion function at every point of the cube.** -/

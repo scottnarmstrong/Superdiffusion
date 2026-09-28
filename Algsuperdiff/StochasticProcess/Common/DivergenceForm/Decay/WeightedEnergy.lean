@@ -40,7 +40,7 @@ theorem integrable_sq_mul_memLpTop {u : H1Function U} {F : Vec d → ℝ}
     (hF : MemLp F ∞ (volumeMeasureOn U)) :
     Integrable (fun x => u.toFun x ^ 2 * F x) (volumeMeasureOn U) := by
   have hFu : MemScalarL2 U (fun x => u.toFun x * F x) := by
-    simpa only [MemScalarL2, volumeMeasureOn, mul_comm] using u.memL2.mul' hF
+    simpa only [MemScalarL2, volumeMeasureOn, mul_comm] using u.memL2.fun_mul hF
   apply (hFu.integrable_mul u.memL2).congr
   filter_upwards with x
   simp only [Pi.mul_apply]

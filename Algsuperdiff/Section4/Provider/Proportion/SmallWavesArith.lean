@@ -115,9 +115,9 @@ theorem finsetIcc_sum_eq_tsum (g : ℤ → ℝ≥0∞) (a b : ℤ) :
   classical
   rw [tsum_eq_sum (s := Finset.Icc a b) (f := fun k => if a ≤ k ∧ k ≤ b then g k else 0)]
   · refine (Finset.sum_congr rfl fun k hk => ?_).symm
-    rw [if_pos (Finset.mem_Icc.1 hk)]
+    rw [ite_eq_left (Finset.mem_Icc.1 hk)]
   · intro k hk
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hc
     exact hk (Finset.mem_Icc.2 hc)
 
@@ -135,37 +135,37 @@ theorem tsum_block_comm (w g : ℤ → ℝ≥0∞) (m : ℤ) :
         = ∑' k : ℤ, (if n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m then w n * g k else 0) := by
     intro n
     by_cases hn : n ≤ m
-    · rw [if_pos hn, finsetIcc_sum_eq_tsum, ← ENNReal.tsum_mul_left]
+    · rw [ite_eq_left hn, finsetIcc_sum_eq_tsum, ← ENNReal.tsum_mul_left]
       refine tsum_congr fun k => ?_
       by_cases hk : n - 1 ≤ k ∧ k ≤ m
-      · rw [if_pos hk, if_pos ⟨hn, hk.1, hk.2⟩]
-      · rw [if_neg hk, if_neg (fun hc : n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m => hk ⟨hc.2.1, hc.2.2⟩),
+      · rw [ite_eq_left hk, ite_eq_left ⟨hn, hk.1, hk.2⟩]
+      · rw [ite_eq_right hk, ite_eq_right (fun hc : n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m => hk ⟨hc.2.1, hc.2.2⟩),
           mul_zero]
     · have hz : ∀ k : ℤ, (if n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m then w n * g k else 0)
-          = (0 : ℝ≥0∞) := fun k => if_neg (fun hc => hn hc.1)
-      rw [if_neg hn, tsum_congr hz, tsum_zero]
+          = (0 : ℝ≥0∞) := fun k => ite_eq_right (fun hc => hn hc.1)
+      rw [ite_eq_right hn, tsum_congr hz, tsum_zero]
   rw [tsum_congr hstep, ENNReal.tsum_comm]
   refine tsum_congr fun k => ?_
   by_cases hk : k ≤ m
-  · rw [if_pos hk, ← ENNReal.tsum_mul_right]
+  · rw [ite_eq_left hk, ← ENNReal.tsum_mul_right]
     refine tsum_congr fun n => ?_
     by_cases hn : n ≤ min (k + 1) m
     · have h1 : n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m := by
         refine ⟨le_trans hn (min_le_right _ _), ?_, hk⟩
         have := le_trans hn (min_le_left _ _)
         omega
-      rw [if_pos h1, if_pos hn]
+      rw [ite_eq_left h1, ite_eq_left hn]
     · have h1 : ¬ (n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m) := by
         rintro ⟨ha, hb, _⟩
         exact hn (le_min (by omega) ha)
-      rw [if_neg h1, if_neg hn, zero_mul]
+      rw [ite_eq_right h1, ite_eq_right hn, zero_mul]
   · have hz : ∀ n : ℤ, (if n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m then w n * g k else 0)
         = (0 : ℝ≥0∞) := by
       intro n
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨_, _, hc⟩
       exact hk hc
-    rw [if_neg hk, tsum_congr hz, tsum_zero]
+    rw [ite_eq_right hk, tsum_congr hz, tsum_zero]
 
 /-! ## 3. The geometric partial weight -/
 
@@ -205,7 +205,7 @@ theorem tsum_partialWeight_le {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (m k : ℤ
     intro n
     by_cases hn : n ≤ min (k + 1) m
     · have hnk : n ≤ k + 1 := le_trans hn (min_le_left _ _)
-      rw [if_pos hn, gwG1b, gwG1b_split s m k n,
+      rw [ite_eq_left hn, gwG1b, gwG1b_split s m k n,
         ENNReal.ofReal_mul
           (rpow_nonneg_three (-(1 / 4 : ℝ) * s * ((k - n : ℤ) : ℝ)))]
       refine mul_le_mul' (ENNReal.ofReal_le_ofReal ?_) le_rfl
@@ -232,7 +232,7 @@ theorem tsum_partialWeight_le {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (m k : ℤ
         _ = Real.rpow (3 : ℝ) (s / 2) * wt (s / 4) k n := by
             rw [rpow_add_three]
             rfl
-    · rw [if_neg hn]
+    · rw [ite_eq_right hn]
       exact zero_le
   refine le_trans (ENNReal.tsum_le_tsum hterm) ?_
   rw [ENNReal.tsum_mul_right]

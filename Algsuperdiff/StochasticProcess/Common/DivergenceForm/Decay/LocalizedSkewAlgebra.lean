@@ -127,7 +127,7 @@ theorem symmPart_scalar_add_skew {nu : ℝ} {A K : Mat d}
   rcases eq_or_ne i j with h | h
   · subst h
     linarith only [hentry]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
     rw [show K j i = -K i j from hentry]
     ring
 

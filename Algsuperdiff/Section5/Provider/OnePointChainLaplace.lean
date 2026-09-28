@@ -131,7 +131,7 @@ theorem one_step_laplace_hone_of_partition_cubes_image {d r : ℕ} {alpha : Type
   unfold enumeratedOpenEnlargementFamily
   split
   next hi =>
-    rw [dif_pos hi] at hz
+    rw [dite_eq_left hi] at hz
     have hz' : z ∈ closure (cubeSetAt (rescaleSite n (sites ⟨i, hi⟩)) n) := by
       simpa only [closedPartitionCube, closure_cubeSetAt] using hz
     have hopen : openEnlargedPartitionCube n (sites ⟨i, hi⟩) =
@@ -143,7 +143,7 @@ theorem one_step_laplace_hone_of_partition_cubes_image {d r : ℕ} {alpha : Type
     rw [hopen]
     exact hstep ⟨i, hi⟩ z hz'
   next hi =>
-    rw [dif_neg hi] at hz
+    rw [dite_eq_right hi] at hz
     exact False.elim hz
 
 end

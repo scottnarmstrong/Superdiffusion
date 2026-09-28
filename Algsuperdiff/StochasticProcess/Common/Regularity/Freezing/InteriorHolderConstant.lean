@@ -94,7 +94,7 @@ private theorem exists_holder_of_frozenContrast [NeZero d] (hd : 2 ≤ d)
       (smallContrastThreshold d (1 / 2 : ℝ)) := by
     filter_upwards [hsmall, ae_restrict_mem (isOpen_euclideanBall z s).measurableSet]
       with x hx hxb
-    simpa only [aLocal, hxb, if_true] using hx
+    simpa only [aLocal, hxb, ite_true] using hx
   have hnormalizedLocal : IsMatrixDivFormWeakSolutionZerothOrderOn
       aLocal (euclideanBall z s) u (fun x ↦ nu⁻¹ * g x) 0 := by
     intro phi
@@ -108,7 +108,7 @@ private theorem exists_holder_of_frozenContrast [NeZero d] (hd : 2 ≤ d)
       apply integral_congr_ae
       filter_upwards [ae_restrict_mem (isOpen_euclideanBall z s).measurableSet]
         with x hx
-      simp only [aLocal, hx, if_true]
+      simp only [aLocal, hx, ite_true]
     rw [hlhs]
     exact h
   obtain ⟨v, hvcont, hvae, hvholder⟩ :=

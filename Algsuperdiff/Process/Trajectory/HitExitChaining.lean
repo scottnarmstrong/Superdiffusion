@@ -89,12 +89,12 @@ theorem measurable_familyIndex (V : ℕ → Set alpha) (hV : ∀ i, MeasurableSe
     funext a
     rw [familyIndex]
     by_cases ha : ∃ i, a ∈ V i
-    · rw [dif_pos ha]
+    · rw [dite_eq_left ha]
       have haUnion : a ∈ ⋃ i, V i := by simpa only [Set.mem_iUnion] using ha
       apply Nat.find_congr'
       intro i
       simp only [p, haUnion, not_true_eq_false, false_and, or_false]
-    · rw [dif_neg ha]
+    · rw [dite_eq_right ha]
       symm
       apply (Nat.find_eq_zero (hp a)).mpr
       exact Or.inr ⟨by simpa only [Set.mem_iUnion, not_exists] using ha, rfl⟩
@@ -107,7 +107,7 @@ theorem familyIndex_mem_of_mem_iUnion (V : ℕ → Set alpha) {a : alpha}
     (ha : a ∈ ⋃ i, V i) : a ∈ V (familyIndex V a) := by
   classical
   have hex : ∃ i, a ∈ V i := by simpa only [Set.mem_iUnion] using ha
-  rw [familyIndex, dif_pos hex]
+  rw [familyIndex, dite_eq_left hex]
   exact Nat.find_spec hex
 
 omit [MeasurableSpace alpha] in

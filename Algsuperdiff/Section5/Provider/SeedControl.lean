@@ -83,14 +83,15 @@ theorem exists_seedControl (d : ℕ) (hdim : 2 ≤ d) :
         hU0 hUtop huNorm.aestronglyMeasurable 0)
   have hl2top : eLpNorm u.toFun 2 (normalizedVolumeMeasureOn U) ≤
       eLpNorm u.toFun ⊤ (normalizedVolumeMeasureOn U) :=
-    eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) huNorm.aestronglyMeasurable
+    eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
   have htop : eLpNorm u.toFun ⊤ (volume.restrict U) ≤
       eLpNorm (fun x => u.toFun x - v.toFun x) ⊤ (volume.restrict U) +
         eLpNorm v.toFun ⊤ (volume.restrict U) := by
-    have hsum := eLpNorm_add_le
-      (u.memL2.aestronglyMeasurable.sub v.memL2.aestronglyMeasurable)
-      v.memL2.aestronglyMeasurable (show (1 : ℝ≥0∞) ≤ ⊤ by simp)
-    simpa only [Pi.add_apply, Pi.sub_apply, sub_add_cancel] using! hsum
+    have hsplit : (fun x => u.toFun x - v.toFun x) + v.toFun = u.toFun :=
+      funext fun x => sub_add_cancel (u.toFun x) (v.toFun x)
+    have hsum := eLpNorm_add_le (f := fun x => u.toFun x - v.toFun x) (g := v.toFun)
+      (μ := volume.restrict U) (p := ⊤) (show (1 : ℝ≥0∞) ≤ ⊤ by simp)
+    rwa [hsplit] at hsum
   have hmeanTop : eLpNorm
         (fun x => u.toFun x - volumeAverage U u.toFun) 2
         (normalizedVolumeMeasureOn U) ≤

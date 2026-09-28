@@ -131,7 +131,7 @@ theorem stronglyMeasurable_mollifyGrad {κ : Vec d → ℝ} (hκ : ContDiff ℝ 
   have hcomp : ∀ i : Fin d, StronglyMeasurable (mollify (Ω := Ω) (kernelDeriv κ i) φ) :=
     fun i => stronglyMeasurable_mollify (continuous_kernelDeriv hκ i) hφm
   have hvec : Measurable fun ω : Ω => (fun i => mollify (kernelDeriv κ i) φ ω : Vec d) :=
-    measurable_pi_lambda _ fun i => (hcomp i).measurable
+    Measurable.of_eval fun i => (hcomp i).measurable
   exact ((HilbertVec.continuousLinearEquivVec d).symm.continuous).comp_stronglyMeasurable
     hvec.stronglyMeasurable
 

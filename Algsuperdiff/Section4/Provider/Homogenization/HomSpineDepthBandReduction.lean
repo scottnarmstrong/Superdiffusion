@@ -366,7 +366,9 @@ theorem cubeEuclideanWspESeminorm_gridDualDepthTest_rpow_le (Q : TriadicCube d)
       ENNReal.ofReal ((cubeVolume Q)⁻¹) *
         ∫⁻ x, ∫⁻ y, ‖cubeEuclideanWspKernel s q (gridDualDepthTest Q j v) (x, y)‖ₑ ^
           q.exponent.toReal ∂(cubeMeasure Q) ∂(cubeMeasure Q) := by
-    rw [cubeEuclideanWspESeminorm_eq_lintegral, one_div, ENNReal.rpow_inv_rpow hr.ne',
+    rw [cubeEuclideanWspESeminorm_eq_lintegral Q s q _ (measurable_cubeEuclideanWspKernel s q
+        (measurable_gridDualDepthTest Q j v)).aestronglyMeasurable,
+      one_div, ENNReal.rpow_inv_rpow hr.ne',
       Gagliardo.gagliardoCubeMeasure, lintegral_prod _ hmeasW.aemeasurable,
       normalizedCubeMeasure, lintegral_smul_measure, smul_eq_mul]
   have hnorm : (∫⁻ x, ‖euclideanNorm (gridDualDepthTest Q j v x)‖ₑ ^ q.exponent.toReal

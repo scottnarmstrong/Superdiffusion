@@ -359,10 +359,10 @@ theorem tsum_natShift_gradLayerGauge_eq_deepGradSeries (k : ℤ) (v : Fin d → 
     intro x hx
     have hkx : k ≤ x := by
       by_contra hcon
-      exact hx (by rw [deepGradTerm, if_neg hcon])
+      exact hx (by rw [deepGradTerm, ite_eq_right hcon])
     exact ⟨(x - k).toNat, by show k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
   refine Eq.trans (tsum_congr fun n => ?_) (hinj.tsum_eq hsupp)
-  rw [deepGradTerm, if_pos (by omega : k ≤ k + (n : ℤ))]
+  rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
 
 /-- Where the deep block is summable, the full series really is the bottom layer
 plus the deep block. -/
@@ -377,7 +377,7 @@ theorem fullGradSeries_eq_of_summable (k : ℤ) (v : Fin d → ℤ)
       omega
     refine (hsum.comp_injective hinj).congr fun n => ?_
     show deepGradTerm k v omega (k + (n : ℤ)) = gradLayerGauge k v omega (k + (n : ℤ))
-    rw [deepGradTerm, if_pos (by omega : k ≤ k + (n : ℤ))]
+    rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
   have hshift : Summable fun n : ℕ => gradLayerGauge k v omega (k - 1 + (n : ℤ)) := by
     refine (summable_nat_add_iff (f := fun n : ℕ =>
       gradLayerGauge k v omega (k - 1 + (n : ℤ))) 1).mp ?_
@@ -408,7 +408,7 @@ theorem ae_lFreeGradSlot_eq_weighted_fullGradSeries (M : ABKModel d) (m : ℤ)
   have hmid : Summable fun i : ℤ =>
       (if R.scale ≤ i ∧ i ≤ m then gradLayerGauge R.scale R.index omega i else 0) := by
     refine summable_of_ne_finset_zero (s := Finset.Icc R.scale m) fun i hi => ?_
-    rw [if_neg (fun h => hi (Finset.mem_Icc.mpr h))]
+    rw [ite_eq_right (fun h => hi (Finset.mem_Icc.mpr h))]
   have hdeep : Summable (deepGradTerm R.scale R.index omega) :=
     ((hsum R.scale R.index).add hmid).congr fun i =>
       (deepGradTerm_eq_add m R.scale R.index omega hkm i).symm

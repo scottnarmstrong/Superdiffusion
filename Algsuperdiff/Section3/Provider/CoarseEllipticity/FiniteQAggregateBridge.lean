@@ -38,7 +38,7 @@ theorem lambdaSqCoeffField_inv_eq_rpow [NeZero d] (Q : TriadicCube d)
   classical
   by_cases ha : Book.Ch04.AELocallyUniformlyEllipticField a
   · simp only [Book.Ch04.lambdaSqCoeffField,
-      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, ha, dif_pos]
+      Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, ha, dite_eq_left]
     exact lambdaSqFinite_inv_eq_rpow Q hsq
       (Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha)
   · simp [Book.Ch04.lambdaSqCoeffField,

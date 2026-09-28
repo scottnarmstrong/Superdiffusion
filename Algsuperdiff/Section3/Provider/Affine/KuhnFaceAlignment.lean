@@ -161,7 +161,7 @@ private theorem kuhnLevel_zero (T : KuhnCell d) (x : Vec d) : kuhnLevel T x 0 = 
 private theorem kuhnLevel_succ_fin (T : KuhnCell d) (x : Vec d) (r : Fin d) :
     kuhnLevel T x (r.val + 1) = normCoord T.supportCube (T.order r) x := by
   simp only [kuhnLevel]
-  rw [dif_neg (by omega), dif_pos (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_left (by omega)]
   congr 2
 
 private theorem kuhnLevel_d_succ (T : KuhnCell d) (x : Vec d) :
@@ -259,11 +259,11 @@ private theorem sum_kuhnWeight_raised (T : KuhnCell d) (x : Vec d) (r : Fin d) :
           refine (Finset.sum_subset hsub ?_).symm
           intro j _ hjr
           simp only [Finset.mem_range] at hjr
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
       _ = _ := by
           refine Finset.sum_congr rfl fun j hj => ?_
           simp only [Finset.mem_range] at hj
-          rw [if_pos (by omega)]
+          rw [ite_eq_left (by omega)]
   rw [hfilter, Finset.sum_range_sub, kuhnLevel_succ_fin, kuhnLevel_zero]
   norm_num
 
@@ -508,13 +508,13 @@ private theorem vertex_mem_second_closedBall (T U : KuhnCell d) {x : Vec d}
   intro i _
   rcases supportIndex_trichotomy hscale hxT.1 hxU.1 i with hleft | hsame | hright
   · have hnraised := not_raised_of_left_neighbor T U hscale hxT hxU hk i hleft
-    simp only [KuhnCell.vertex, hnraised, if_false, cubeCenter, cubeRadius, hfac, hleft]
+    simp only [KuhnCell.vertex, hnraised, ite_false, cubeCenter, cubeRadius, hfac, hleft]
     push_cast
     constructor <;> nlinarith
   · simp only [KuhnCell.vertex, cubeCenter, cubeRadius, hfac, hsame]
     split_ifs <;> constructor <;> nlinarith
   · have hraised := raised_of_right_neighbor T U hscale hxT hxU hk i hright
-    simp only [KuhnCell.vertex, hraised, if_true, cubeCenter, cubeRadius, hfac, hright]
+    simp only [KuhnCell.vertex, hraised, ite_true, cubeCenter, cubeRadius, hfac, hright]
     push_cast
     constructor <;> nlinarith
 
@@ -526,7 +526,7 @@ private theorem normCoord_vertex_eq_one_of_left_of_not_raised (T U : KuhnCell d)
   have hfac : cubeScaleFactor U.supportCube = cubeScaleFactor T.supportCube := by
     simp only [cubeScaleFactor, hscale]
   have hs : cubeScaleFactor T.supportCube ≠ 0 := (zpow_pos (by norm_num) _).ne'
-  simp only [normCoord, KuhnCell.vertex, hi, if_false, hfac, hindex]
+  simp only [normCoord, KuhnCell.vertex, hi, ite_false, hfac, hindex]
   push_cast
   field_simp
   ring
@@ -539,7 +539,7 @@ private theorem normCoord_vertex_eq_zero_of_same_of_not_raised (T U : KuhnCell d
   have hfac : cubeScaleFactor U.supportCube = cubeScaleFactor T.supportCube := by
     simp only [cubeScaleFactor, hscale]
   have hs : cubeScaleFactor T.supportCube ≠ 0 := (zpow_pos (by norm_num) _).ne'
-  simp only [normCoord, KuhnCell.vertex, hi, if_false, hfac, hindex]
+  simp only [normCoord, KuhnCell.vertex, hi, ite_false, hfac, hindex]
   field_simp
   ring
 
@@ -551,7 +551,7 @@ private theorem normCoord_vertex_eq_one_of_same_of_raised (T U : KuhnCell d)
   have hfac : cubeScaleFactor U.supportCube = cubeScaleFactor T.supportCube := by
     simp only [cubeScaleFactor, hscale]
   have hs : cubeScaleFactor T.supportCube ≠ 0 := (zpow_pos (by norm_num) _).ne'
-  simp only [normCoord, KuhnCell.vertex, hi, if_true, hfac, hindex]
+  simp only [normCoord, KuhnCell.vertex, hi, ite_true, hfac, hindex]
   field_simp
   ring
 
@@ -563,7 +563,7 @@ private theorem normCoord_vertex_eq_zero_of_right_of_raised (T U : KuhnCell d)
   have hfac : cubeScaleFactor U.supportCube = cubeScaleFactor T.supportCube := by
     simp only [cubeScaleFactor, hscale]
   have hs : cubeScaleFactor T.supportCube ≠ 0 := (zpow_pos (by norm_num) _).ne'
-  simp only [normCoord, KuhnCell.vertex, hi, if_true, hfac, hindex]
+  simp only [normCoord, KuhnCell.vertex, hi, ite_true, hfac, hindex]
   push_cast
   field_simp
   ring
@@ -684,13 +684,13 @@ private theorem vertex_mem_second_vertexSet (T U : KuhnCell d) {x : Vec d}
   by_cases hi : d ≤ (U.order.symm i).val + l.val
   · have hpos := normCoord_pos_of_kuhnWeight_pos_of_raised U hvU hl i hi
     have huv := normCoord_vertex U l (U.order.symm i)
-    rw [U.order.apply_symm_apply, if_pos hi] at huv
+    rw [U.order.apply_symm_apply, ite_eq_left hi] at huv
     rcases normCoord_vertex_eq_zero_or_one T U hscale hxT hxU hk i with hzero | hone
     · exact absurd hpos (by rw [hzero]; norm_num)
     · rw [hone, huv]
   · have hlt := normCoord_lt_one_of_kuhnWeight_pos_of_not_raised U hvU hl i hi
     have huv := normCoord_vertex U l (U.order.symm i)
-    rw [U.order.apply_symm_apply, if_neg hi] at huv
+    rw [U.order.apply_symm_apply, ite_eq_right hi] at huv
     rcases normCoord_vertex_eq_zero_or_one T U hscale hxT hxU hk i with hzero | hone
     · rw [hzero, huv]
     · exact absurd hlt (by rw [hone]; norm_num)

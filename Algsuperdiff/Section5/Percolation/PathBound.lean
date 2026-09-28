@@ -188,7 +188,7 @@ private theorem lightPathEvent_subset_fixedLength_union
       cases Γ with
       | nil => exact False.elim hΓ.1
       | cons x xs => exact hΓ.1.1
-    rw [if_pos hΓpath]
+    rw [ite_eq_left hΓpath]
     simpa only [Nat.cast_add, Nat.cast_pow, Nat.cast_ofNat] using hweightedSmall
 
 /-- The path clause of the general percolation estimate, as stated in the

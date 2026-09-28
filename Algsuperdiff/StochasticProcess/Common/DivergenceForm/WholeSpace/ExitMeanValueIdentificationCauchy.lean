@@ -92,7 +92,7 @@ private theorem integrable_mul_vecNormSq_grad {U : Set (Vec d)} (u : H1Function 
   have hq : MemVectorL2 U (fun x ↦ phi x • u.grad x) := by
     simpa only [MemVectorL2, volumeMeasureOn, Pi.smul_apply, smul_eq_mul, mul_comm] using!
       (MemLp.of_eval fun i : Fin d ↦
-        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).mul' hphiTop)
+        (memScalarL2_coord_of_memVectorL2 u.grad_memVectorL2 i).fun_mul hphiTop)
   refine (integrableOn_vecDot_of_memVectorL2 u.grad_memVectorL2 hq).congr ?_
   filter_upwards with x
   simp only [vecNormSq, vecDot, Pi.smul_apply, smul_eq_mul]

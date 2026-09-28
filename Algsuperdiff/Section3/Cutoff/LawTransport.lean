@@ -33,7 +33,7 @@ theorem map_shellObservable_eq_zero_triadicScale (M : ABKModel d)
         (Measure.map_map hF (ShellField.measurable_shellCoordinate k)).symm
     _ = Measure.map F
         ((ShellField.zeroShellLaw M.P).map
-          (ShellField.measurable_triadicScale M.gamma k).aemeasurable).toMeasure := by
+          (ShellField.triadicScale M.gamma k)).toMeasure := by
       rw [M.shellPrefix.marginal_scaling k]
     _ = Measure.map (fun j => F (ShellField.triadicScale M.gamma k j))
         (ShellField.zeroShellLaw M.P).toMeasure := by

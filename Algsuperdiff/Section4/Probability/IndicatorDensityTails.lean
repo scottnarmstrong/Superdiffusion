@@ -84,8 +84,8 @@ theorem measure_badProp_le_of_concEvent (P : Measure Ω) (X : ℤ → ℤ → Ω
   refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun m hm => ?_)) hnn
   by_cases hmem : ω ∈ (Ev m)ᶜ
   · have hm' := Finset.mem_Icc.1 hm
-    simp only [if_pos hmem, if_pos (hreduce m hm'.1 hm'.2 ω hmem), le_refl]
-  · rw [if_neg hmem]; split_ifs <;> norm_num
+    simp only [ite_eq_left hmem, ite_eq_left (hreduce m hm'.1 hm'.2 ω hmem), le_refl]
+  · rw [ite_eq_right hmem]; split_ifs <;> norm_num
 
 /-- **A single bad scale inside a length-`r` window is already a `θ`-density event.**
 If the level satisfies `θ(r+1) < 1` then, for any scale `k ∈ {0,…,r}`, the bad event
@@ -118,7 +118,7 @@ theorem measure_compl_le_of_concEvent (P : Measure Ω) (X : ℤ → ℤ → Ω �
       Finset.single_le_sum (f := fun j =>
         (if 9 * s'⁻¹ * C ^ (1 / p) * θ ^ (-1 / p) < Yk X s' j ω then (1 : ℝ) else 0))
         (fun j _ => by split_ifs <;> norm_num) hmemk
-    rw [if_pos hexc] at hterm
+    rw [ite_eq_left hexc] at hterm
     exact hterm
   calc θ < 1 / ((r : ℝ) + 1) := hθlt
     _ = (1 / ((r : ℝ) + 1)) * 1 := by ring
@@ -239,7 +239,7 @@ theorem ratioTail_of_concentration (P : Measure Ω) (X : ℤ → ℤ → Ω → 
       simp only [Set.mem_iUnion, not_exists] at hc
       have hzero : scaleProp (fun k => (Ev k)ᶜ) n ω = 0 := by
         simp only [scaleProp]
-        exact mul_eq_zero_of_right _ (Finset.sum_eq_zero (fun k hk => if_neg (hc k hk)))
+        exact mul_eq_zero_of_right _ (Finset.sum_eq_zero (fun k hk => ite_eq_right (hc k hk)))
       rw [Set.mem_ofPred_eq, hzero] at hω
       exact absurd hω (not_lt.2 hθ0.le)
     have hcard : (Finset.Icc (0 : ℤ) (n : ℤ)).card = n + 1 := by

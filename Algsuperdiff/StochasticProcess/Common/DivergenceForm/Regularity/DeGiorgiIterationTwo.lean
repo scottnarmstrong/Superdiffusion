@@ -223,12 +223,6 @@ theorem deGiorgi_levelRecursion_two :
   intro k l hk hkl
   obtain ⟨fk, gk, hfk, hgk, hs⟩ := htrunc k hk
   have hε : 0 ≤ l - k := sub_nonneg.mpr hkl.le
-  have hfkmeas : Measurable fk.toFun := by
-    rw [hfk]
-    exact (hw₁meas.sub measurable_const).max measurable_const
-  have hgkmeas : Measurable gk.toFun := by
-    rw [hgk]
-    exact (hw₂meas.sub measurable_const).max measurable_const
   have hsub1 : ∀ x ∈ {x | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun x},
       l - k ≤ fk.toFun x := by
     rintro x ⟨_, hx⟩
@@ -240,9 +234,9 @@ theorem deGiorgi_levelRecursion_two :
     rw [hgk, le_max_iff]
     exact Or.inl (by linarith only [hx])
   have hcheb1 := real_chebyshev_level (p := (4 : ℝ≥0∞)) (by norm_num)
-    (by norm_num) hfkmeas.aestronglyMeasurable (hfin_four fk) hε hsub1
+    (by norm_num) (hfin_four fk) hε hsub1
   have hcheb2 := real_chebyshev_level (p := (4 : ℝ≥0∞)) (by norm_num)
-    (by norm_num) hgkmeas.aestronglyMeasurable (hfin_four gk) hε hsub2
+    (by norm_num) (hfin_four gk) hε hsub2
   rw [hμvol _ (fun x hx => hx.1)] at hcheb1
   rw [hμvol _ (fun x hx => hx.1)] at hcheb2
   have hkey := sq_level_recursion_of_le (ε := l - k) (r := (1 / 4 : ℝ))

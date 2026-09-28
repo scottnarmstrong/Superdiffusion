@@ -67,7 +67,7 @@ proved measurable map above and therefore has no totalized-map fallback. -/
 noncomputable def zeroShellRegLaw
     (P : MeasureTheory.ProbabilityMeasure (ℤ → ShellField d)) :
     MeasureTheory.ProbabilityMeasure (RegCoeffField d) :=
-  P.map (measurable_zeroShellRegMap (d := d)).aemeasurable
+  P.map (forgetShell (d := d) ∘ fun F : ℤ → ShellField d ↦ F 0)
 
 /-- The direct regular-field zero-shell law is exactly the measurable
 `forgetShell` pushforward of the literal zero-coordinate shell law. -/

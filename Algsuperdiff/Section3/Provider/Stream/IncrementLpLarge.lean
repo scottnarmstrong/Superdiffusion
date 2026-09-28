@@ -555,13 +555,13 @@ theorem streamIncrementLpMass_head_tail_gain (M : ABKModel d) {p : ℝ} (hp : 1 
             ∫ w, streamIncrementLpMass p (m + (incrementPartitionShift d : ℤ)) n m w
               ∂M.P.toMeasure| := by
         funext omega
-        rw [streamIncrementLpTail, if_pos hsl]
+        rw [streamIncrementLpTail, ite_eq_left hsl]
       rw [htail]
       exact hgain.2.2.2.mono_scale
         (partitionScale_le_streamIncrementLpGainScale M hp hnm hsl)
     · have htail : streamIncrementLpTail M p l n m = streamIncrementLpMass p l n m := by
         funext omega
-        rw [streamIncrementLpTail, if_neg hsl]
+        rw [streamIncrementLpTail, ite_eq_right hsl]
       rw [htail]
       exact (isBigOWith_gammaSigma_streamIncrementLpMass M hp hnm l).mono_scale
         (massScale_le_streamIncrementLpGainScale M hp hnm hsl)

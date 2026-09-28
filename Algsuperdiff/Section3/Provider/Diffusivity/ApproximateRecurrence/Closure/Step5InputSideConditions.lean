@@ -52,7 +52,7 @@ theorem measurable_matVecMul_of_measurable {Omega : Type*} [MeasurableSpace Omeg
     {A : Omega → Mat d} {v : Omega → Vec d} (hA : Measurable A) (hv : Measurable v) :
     Measurable fun omega => matVecMul (A omega) (v omega) := by
   classical
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   have hEq : (fun omega => matVecMul (A omega) (v omega) i) =
       fun omega => ∑ j, A omega i j * v omega j := rfl
   rw [hEq]

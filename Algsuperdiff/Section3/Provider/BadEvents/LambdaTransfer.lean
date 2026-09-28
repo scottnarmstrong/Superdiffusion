@@ -102,7 +102,7 @@ theorem cubeLowerEllipticityInvLiteral_inv_eq_lambdaSq (M : ABKModel d)
         (coefficientCutoffTriadicCoeffFamily M cutoffScale omega) := by
   let : NeZero d := neZero_of_model_lambdaTransfer M
   rw [cubeLowerEllipticityInvLiteral_inv_eq, Ch04.lambdaSqCoeffField]
-  simp only [dif_pos
+  simp only [dite_eq_left
     (coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
   exact Ch02.lambdaSq_eq_ofAEEq (fun _ => Filter.EventuallyEq.rfl) Q s q.1
 

@@ -138,15 +138,15 @@ theorem abs_flushSubCentre_sub_le {n m : ℤ} (hnm : n + 2 ≤ m) {z : Vec d}
   have hx := flushSubCentre_apply z m n i σ r
   have h9 := three_zpow_add_two n
   refine abs_le.mpr ⟨?_, ?_⟩ <;> by_cases hr : r = i
-  · rw [if_pos hr] at hx
+  · rw [ite_eq_left hr] at hx
     rcases hσ with h | h <;> subst h <;>
       linarith only [hx, hclamp.1, hclamp.2, h92, h9]
-  · rw [if_neg hr, add_zero] at hx
+  · rw [ite_eq_right hr, add_zero] at hx
     linarith only [hx, hclamp.1, hclamp.2, h92]
-  · rw [if_pos hr] at hx
+  · rw [ite_eq_left hr] at hx
     rcases hσ with h | h <;> subst h <;>
       linarith only [hx, hclamp.1, hclamp.2, h92, h9]
-  · rw [if_neg hr, add_zero] at hx
+  · rw [ite_eq_right hr, add_zero] at hx
     linarith only [hx, hclamp.1, hclamp.2, h92]
 
 /-- **The flush sub-centre lies in `□_m`.** -/

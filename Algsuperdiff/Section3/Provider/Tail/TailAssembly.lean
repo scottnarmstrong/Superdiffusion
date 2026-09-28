@@ -150,7 +150,7 @@ theorem cutoffUpperEllipticityLiteral_eq (M : ABKModel d) (m : ℤ) {s : ℝ}
   change Ch04.LambdaSqCoeffField (originCube d m) s q.1
       (Cutoff.coefficientCutoff M.nu m omega) = _
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
   exact (Ch02.LambdaSq_eq_ofAEEq (coefficientCutoffFamily_aeeq M m omega)
     (originCube d m) s q.1).symm
 
@@ -164,7 +164,7 @@ theorem cutoffLowerEllipticityInvLiteral_eq (M : ABKModel d) (m : ℤ) {s : ℝ}
   change (Ch04.lambdaSqCoeffField (originCube d m) s q.1
       (Cutoff.coefficientCutoff M.nu m omega))⁻¹ = _
   rw [Ch04.lambdaSqCoeffField]
-  simp only [dif_pos (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
   exact congrArg Inv.inv
     (Ch02.lambdaSq_eq_ofAEEq (coefficientCutoffFamily_aeeq M m omega)
       (originCube d m) s q.1).symm
@@ -431,7 +431,7 @@ theorem lowerEllipticityProfile_exponentTwo (C gamma s : ℝ) :
     lowerEllipticityProfile C gamma s exponentTwo = C * s * (2 * s - gamma)⁻¹ := by
   show (if (2 : ℝ) < 2 then C * Real.rpow (s / (2 * s - gamma)) (2 / 2)
       else C * s * (2 * s - gamma)⁻¹) = C * s * (2 * s - gamma)⁻¹
-  rw [if_neg (by norm_num : ¬((2 : ℝ) < 2))]
+  rw [ite_eq_right (by norm_num : ¬((2 : ℝ) < 2))]
 
 /-- The merge constant of `isBigOWith_gammaSigma_add_of_nonneg` at
 `sigma = 1/4`. -/

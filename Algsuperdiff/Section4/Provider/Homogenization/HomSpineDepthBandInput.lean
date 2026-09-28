@@ -277,9 +277,7 @@ theorem gridDepthGagliardoBandInput_holds (d : ℕ) (p : FiniteLpExponent) :
       · exact lt_top_iff_ne_top.mpr (gridDepthGagliardoConst_ne_top d p)
       · exact lt_top_iff_ne_top.mpr hEtop
     exact (ENNReal.rpow_lt_top_iff_of_pos hr).mp htop
-  refine ⟨⟨⟨⟨g, memLp_ofVec_gridDualDepthTest Q j v q.exponent⟩,
-    ⟨(measurable_cubeEuclideanWspKernel s q
-      (measurable_gridDualDepthTest Q j v)).aestronglyMeasurable, hfinite⟩⟩,
+  refine ⟨⟨⟨⟨g, memLp_ofVec_gridDualDepthTest Q j v q.exponent⟩, hfinite⟩,
     memLp_ofVec_gridDualDepthTest Q j v 2⟩, rfl, ?_⟩
   exact hchain
 

@@ -170,10 +170,9 @@ theorem memH10_of_forall_eq_zero {Ω : Set (Vec d)} (hΩ : MeasurableSet Ω)
     filter_upwards [MeasureTheory.ae_restrict_mem hΩ] with y hy
     exact hf y hy
   have hzeroLp : MemLp (fun _ : Vec d => (0 : ℝ)) 2 (volume.restrict Ω) := by
-    refine ⟨aestronglyMeasurable_const, ?_⟩
     have hz : eLpNorm (fun _ : Vec d => (0 : ℝ)) 2 (volume.restrict Ω) = 0 := by
-      exact eLpNorm_zero'
-    rw [hz]
+      exact eLpNorm_fun_zero
+    rw [memLp_iff, hz]
     exact ENNReal.zero_lt_top
   have hmemL2 : MemL2On Ω f := hzeroLp.ae_eq hae.symm
   have htsupp0 : tsupport (fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d)) := by
@@ -188,7 +187,7 @@ theorem memH10_of_forall_eq_zero {Ω : Set (Vec d)} (hΩ : MeasurableSet Ω)
       filter_upwards [hae] with y hy
       rw [hy, sub_self]
     rw [eLpNorm_congr_ae hcongr]
-    exact eLpNorm_zero'
+    exact eLpNorm_fun_zero
   have hgradL2 : GradMemL2On Ω (fun _ : Vec d => (0 : Vec d)) := fun i => hzeroLp
   have hweak : HasWeakGradientOn Ω f (fun _ : Vec d => (0 : Vec d)) := by
     intro i φ hφ hφc hφΩ
@@ -230,7 +229,7 @@ theorem memH10_of_forall_eq_zero {Ω : Set (Vec d)} (hΩ : MeasurableSet Ω)
       rw [show (fun x : Vec d => (fderiv ℝ (fun _ : Vec d => (0 : ℝ)) x)
           (basisVec i) - (fun _ : Vec d => (0 : Vec d)) x i)
           = fun _ : Vec d => (0 : ℝ) from funext fun x => hgradzero i x]
-      exact eLpNorm_zero'
+      exact eLpNorm_fun_zero
     rw [show (fun _ : ℕ => eLpNorm
         (fun x => (fderiv ℝ (fun _ : Vec d => (0 : ℝ)) x) (basisVec i)
           - (fun _ : Vec d => (0 : Vec d)) x i) 2 (volume.restrict Ω))

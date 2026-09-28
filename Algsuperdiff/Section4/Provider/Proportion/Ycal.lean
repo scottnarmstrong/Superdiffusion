@@ -226,7 +226,7 @@ theorem le_YcalE (M : ABKModel d) (Ccg sprime : ℝ) (n : ℤ)
     (omega : Cutoff.CutoffSample d) (j : ℕ) :
     ENNReal.ofReal (weightThird sprime j * annMax M Ccg n (n - (j : ℤ)) omega)
       ≤ YcalE M Ccg sprime n omega :=
-  le_wsumE _ _ omega j
+  le_wsumE (fun j omega => annMax M Ccg n (n - (j : ℤ)) omega) (weightThird sprime) omega j
 
 /-- **The `𝒴`-tail.**
 

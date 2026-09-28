@@ -84,15 +84,15 @@ private theorem exists_axisCubeFaceClearance_radius [NeZero d]
     intro i
     refine lt_min ?_ ?_
     · by_cases hi : x₀ i = z i
-      · rw [if_pos hi]
+      · rw [ite_eq_left hi]
         exact hL
-      · rw [if_neg hi]
+      · rw [ite_eq_right hi]
         have hle := (hx₀ i).1
         exact sub_pos.2 (lt_of_le_of_ne hle (Ne.symm hi))
     · by_cases hi : x₀ i = z i + L
-      · rw [if_pos hi]
+      · rw [ite_eq_left hi]
         exact hL
-      · rw [if_neg hi]
+      · rw [ite_eq_right hi]
         have hle := (hx₀ i).2
         exact sub_pos.2 (lt_of_le_of_ne hle hi)
   have hne : (Finset.univ : Finset (Fin d)).Nonempty := Finset.univ_nonempty
@@ -103,14 +103,14 @@ private theorem exists_axisCubeFaceClearance_radius [NeZero d]
       Finset.inf'_le gap (Finset.mem_univ i)
     have hstep : gap i ≤ x₀ i - z i := by
       refine le_trans (min_le_left _ _) ?_
-      rw [if_neg hi]
+      rw [ite_eq_right hi]
     exact hle.trans hstep
   · intro i hi
     have hle : Finset.univ.inf' hne gap ≤ gap i :=
       Finset.inf'_le gap (Finset.mem_univ i)
     have hstep : gap i ≤ z i + L - x₀ i := by
       refine le_trans (min_le_right _ _) ?_
-      rw [if_neg hi]
+      rw [ite_eq_right hi]
     exact hle.trans hstep
 
 /-- A radius at a point of the closed cube on which no unincident face is met

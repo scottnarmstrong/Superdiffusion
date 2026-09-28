@@ -98,7 +98,12 @@ theorem cubeGagliardoESeminorm_coord_le (Q : TriadicCube d) (s : ℝ)
       Gagliardo.cubeGagliardoESeminorm Q s 2 g := by
   rw [Gagliardo.Internal.cubeGagliardoESeminorm_def,
     Gagliardo.Internal.cubeGagliardoESeminorm_def, gagliardoKernel_coord s g i]
-  exact eLpNorm_mono fun w => norm_le_pi_norm (Gagliardo.gagliardoKernel s 2 g w) i
+  by_cases hK : AEStronglyMeasurable (Gagliardo.gagliardoKernel s 2 g)
+      (Gagliardo.gagliardoCubeMeasure Q)
+  · exact eLpNorm_mono ((continuous_apply i).comp_aestronglyMeasurable hK)
+      fun w => norm_le_pi_norm (Gagliardo.gagliardoKernel s 2 g w) i
+  · rw [eLpNorm_of_not_aestronglyMeasurable hK]
+    exact le_top
 
 /-- The sum of the `d` coordinate seminorms is at most `d` times the vector
 seminorm.  Finiteness of the vector seminorm is what makes the `toReal`

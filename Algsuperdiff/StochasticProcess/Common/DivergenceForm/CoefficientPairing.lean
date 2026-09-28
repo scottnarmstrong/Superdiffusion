@@ -55,11 +55,11 @@ theorem coefficientPairing_nonneg_of_ae_eq_indicator
         S.indicator (hilbertVectorL2ToVectorL2 (U := U) F) x := by
     rw [hxGcoe, Set.indicator_apply]
     by_cases hxS : x ∈ S
-    · rw [if_pos hxS, hxF]
-      rw [Set.indicator_apply, if_pos hxS] at hxG
+    · rw [ite_eq_left hxS, hxF]
+      rw [Set.indicator_apply, ite_eq_left hxS] at hxG
       exact congrArg HilbertVec.toVec hxG
-    · rw [if_neg hxS]
-      rw [Set.indicator_apply, if_neg hxS] at hxG
+    · rw [ite_eq_right hxS]
+      rw [Set.indicator_apply, ite_eq_right hxS] at hxG
       simpa only [map_zero] using! congrArg HilbertVec.toVec hxG
   rw [hxGvec, Set.indicator_apply]
   split_ifs
@@ -99,11 +99,11 @@ theorem coefficientPairing_nonpos_of_ae_eq_neg_indicator
         S.indicator (fun y => -(hilbertVectorL2ToVectorL2 (U := U) F) y) x := by
     rw [hxGcoe, Set.indicator_apply]
     by_cases hxS : x ∈ S
-    · rw [if_pos hxS, hxF]
-      rw [Set.indicator_apply, if_pos hxS] at hxG
+    · rw [ite_eq_left hxS, hxF]
+      rw [Set.indicator_apply, ite_eq_left hxS] at hxG
       simpa only [map_neg] using! congrArg HilbertVec.toVec hxG
-    · rw [if_neg hxS]
-      rw [Set.indicator_apply, if_neg hxS] at hxG
+    · rw [ite_eq_right hxS]
+      rw [Set.indicator_apply, ite_eq_right hxS] at hxG
       simpa only [map_zero] using! congrArg HilbertVec.toVec hxG
   rw [hxGvec, Set.indicator_apply]
   split_ifs

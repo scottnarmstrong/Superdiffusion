@@ -194,7 +194,7 @@ theorem vecCoordSum_basisVec (i : Fin d) : vecCoordSum (basisVec i : Vec d) = 1 
     exact absurd (Finset.mem_univ i) h
 
 theorem vecDot_basisVec_self (i : Fin d) : vecDot (basisVec i : Vec d) (basisVec i) = 1 := by
-  rw [vecDot_basisVec_left, basisVec_apply, if_pos rfl]
+  rw [vecDot_basisVec_left, basisVec_apply, ite_eq_left rfl]
 
 theorem affineObservable_zero (e : Vec d) : affineObservable e 0 = 0 := by
   simp [affineObservable, vecDot]

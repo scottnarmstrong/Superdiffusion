@@ -215,7 +215,7 @@ theorem exists_blockVecDot_self_eq_one :
   rw [Finset.sum_eq_single (⟨0, hi⟩ : Fin d)]
   · simp
   · intro b _ hb
-    simp only [if_neg hb, mul_zero]
+    simp only [ite_eq_right hb, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 

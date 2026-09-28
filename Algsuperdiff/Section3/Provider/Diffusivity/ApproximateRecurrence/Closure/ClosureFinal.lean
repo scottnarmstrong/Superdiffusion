@@ -96,7 +96,7 @@ theorem vecNormSq_closureUnitVec (d : ℕ) [NeZero d] :
   rw [Finset.sum_eq_single (⟨0, hi⟩ : Fin d)]
   · simp
   · intro b _ hb
-    simp only [if_neg hb]
+    simp only [ite_eq_right hb]
   · intro h
     exact absurd (Finset.mem_univ _) h
 

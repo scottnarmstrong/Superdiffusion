@@ -134,7 +134,7 @@ theorem memLp_ofRealTwo_mul_of_memLp_four {mu : Measure Omega} {f g : Omega → 
     MemLp (fun w => f w * g w) (ENNReal.ofReal 2) mu := by
   have := holderTriple_four_four_two
   rw [gammaTenMoments_ofReal_two]
-  exact hgm.mul' hfm
+  exact hfm.fun_mul (r := 2) hgm
 
 /-- **The product of three `L^4` functions is integrable** on a finite measure:
 Hoelder twice, `L^4 x L^4 -> L^2` and then `L^2 x L^2 -> L^1`. -/
@@ -142,7 +142,7 @@ theorem integrable_mul_mul_of_memLp_four {mu : Measure Omega} [IsFiniteMeasure m
     {f g h : Omega → ℝ} (hfm : MemLp f 4 mu) (hgm : MemLp g 4 mu) (hhm : MemLp h 4 mu) :
     Integrable (fun w => f w * g w * h w) mu := by
   have := holderTriple_four_four_two
-  have hfg : MemLp (fun w => f w * g w) 2 mu := hgm.mul' hfm
+  have hfg : MemLp (fun w => f w * g w) 2 mu := hfm.fun_mul (r := 2) hgm
   have hh2 : MemLp h 2 mu := hhm.mono_exponent (by norm_num)
   exact hfg.integrable_mul hh2
 

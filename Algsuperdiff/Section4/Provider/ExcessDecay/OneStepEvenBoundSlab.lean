@@ -159,40 +159,40 @@ def taylorHi (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :
 /-! ### The six corners, coordinate by coordinate -/
 
 theorem slabLo_self {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ} :
-    slabLo x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta := if_pos rfl
+    slabLo x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta := ite_eq_left rfl
 
 theorem slabLo_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ} (hji : j ≠ i) :
-    slabLo x m k i delta j = x j - (3 : ℝ) ^ k / 4 := if_neg hji
+    slabLo x m k i delta j = x j - (3 : ℝ) ^ k / 4 := ite_eq_right hji
 
 theorem slabHi_self {x : Vec d} {m k : ℤ} {i : Fin d} :
-    slabHi x m k i i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := if_pos rfl
+    slabHi x m k i i = (1 / 2 : ℝ) * (3 : ℝ) ^ m := ite_eq_left rfl
 
 theorem slabHi_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} (hji : j ≠ i) :
-    slabHi x m k i j = x j + (3 : ℝ) ^ k / 4 := if_neg hji
+    slabHi x m k i j = x j + (3 : ℝ) ^ k / 4 := ite_eq_right hji
 
 theorem deepLo_self {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ} :
-    deepLo x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta := if_pos rfl
+    deepLo x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta := ite_eq_left rfl
 
 theorem deepLo_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ} (hji : j ≠ i) :
-    deepLo x m k i delta j = x j - (3 : ℝ) ^ k / 4 := if_neg hji
+    deepLo x m k i delta j = x j - (3 : ℝ) ^ k / 4 := ite_eq_right hji
 
 theorem deepHi_self {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ} :
-    deepHi x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta := if_pos rfl
+    deepHi x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta := ite_eq_left rfl
 
 theorem deepHi_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ} (hji : j ≠ i) :
-    deepHi x m k i delta j = x j + (3 : ℝ) ^ k / 4 := if_neg hji
+    deepHi x m k i delta j = x j + (3 : ℝ) ^ k / 4 := ite_eq_right hji
 
 theorem taylorLo_self {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ} :
-    taylorLo x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta := if_pos rfl
+    taylorLo x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta := ite_eq_left rfl
 
 theorem taylorLo_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ} (hji : j ≠ i) :
-    taylorLo x m k i delta j = x j - (3 : ℝ) ^ k / 4 := if_neg hji
+    taylorLo x m k i delta j = x j - (3 : ℝ) ^ k / 4 := ite_eq_right hji
 
 theorem taylorHi_self {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ} :
-    taylorHi x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m + delta := if_pos rfl
+    taylorHi x m k i delta i = (1 / 2 : ℝ) * (3 : ℝ) ^ m + delta := ite_eq_left rfl
 
 theorem taylorHi_of_ne {x : Vec d} {m k : ℤ} {i j : Fin d} {delta : ℝ} (hji : j ≠ i) :
-    taylorHi x m k i delta j = x j + (3 : ℝ) ^ k / 4 := if_neg hji
+    taylorHi x m k i delta j = x j + (3 : ℝ) ^ k / 4 := ite_eq_right hji
 
 /-! ## 3. Nondegeneracy -/
 
@@ -431,7 +431,7 @@ theorem volume_coordBox_slab_ge {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ
   calc (ENNReal.ofReal delta) ^ d = ∏ _j : Fin d, ENNReal.ofReal delta := by
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ ∏ j : Fin d, ENNReal.ofReal (slabHi x m k i j - slabLo x m k i delta j) :=
-        Finset.prod_le_prod' fun j _ => ENNReal.ofReal_le_ofReal (hedge j)
+        Finset.prod_le_prod fun j _ => ENNReal.ofReal_le_ofReal (hedge j)
 
 /-- The `toReal` form of the core slab's volume bound. -/
 theorem volume_toReal_coordBox_slab_ge {x : Vec d} {m k : ℤ} {i : Fin d} {delta : ℝ}

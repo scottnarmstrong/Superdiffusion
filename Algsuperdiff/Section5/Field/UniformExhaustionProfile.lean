@@ -142,7 +142,7 @@ theorem one_le_streamUniformExhaustionProfile_of_le_cutoff
     (hs : s ≤ streamUniformExhaustionCutoff M omega lam) :
     1 ≤ streamUniformExhaustionProfile M omega lam s := by
   unfold streamUniformExhaustionProfile
-  rw [if_neg (not_lt_of_ge hs)]
+  rw [ite_eq_right (not_lt_of_ge hs)]
 
 private theorem rpow_one_third_cube {s : ℝ} (hs : 0 ≤ s) :
     (s ^ (1 / 3 : ℝ)) ^ 3 = s := by
@@ -479,7 +479,7 @@ theorem streamLocalizedTailProfile_amp_le_uniform
   have hprofile : streamUniformExhaustionProfile M omega lam s =
       streamUniformExhaustionEnvelope M omega s := by
     unfold streamUniformExhaustionProfile
-    rw [if_pos (by simpa only [s] using hs)]
+    rw [ite_eq_left (by simpa only [s] using hs)]
   rw [show Real.sqrt lam * r = s by rfl, hprofile]
   unfold streamExhaustionAmp
   split_ifs with hamp

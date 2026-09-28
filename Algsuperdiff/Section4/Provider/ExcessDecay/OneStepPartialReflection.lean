@@ -81,12 +81,12 @@ theorem partialReflectedWindow_subset_of_subset (x : Vec d) (m k : ℤ)
   have hj := hy j
   by_cases hjT : j ∈ T
   · have hjT' : j ∈ T' := hTT' hjT
-    rw [partialReflectedLo, if_pos hjT, partialReflectedHi, if_pos hjT] at hj
-    rw [partialReflectedLo, if_pos hjT', partialReflectedHi, if_pos hjT']
+    rw [partialReflectedLo, ite_eq_left hjT, partialReflectedHi, ite_eq_left hjT] at hj
+    rw [partialReflectedLo, ite_eq_left hjT', partialReflectedHi, ite_eq_left hjT']
     exact hj
-  · rw [partialReflectedLo, if_neg hjT, partialReflectedHi, if_neg hjT] at hj
+  · rw [partialReflectedLo, ite_eq_right hjT, partialReflectedHi, ite_eq_right hjT] at hj
     by_cases hjT' : j ∈ T'
-    · rw [partialReflectedLo, if_pos hjT', partialReflectedHi, if_pos hjT']
+    · rw [partialReflectedLo, ite_eq_left hjT', partialReflectedHi, ite_eq_left hjT']
       have hlo := hj.1
       have hhi := hj.2
       have hlo' : -(1 / 2 : ℝ) * (3 : ℝ) ^ m < y j :=
@@ -104,7 +104,7 @@ theorem partialReflectedWindow_subset_of_subset (x : Vec d) (m k : ℤ)
           linarith only [hlo, hhi']
         · rw [reflectedHi_of_not_meetsUpperFace h]
           exact hhi
-    · rw [partialReflectedLo, if_neg hjT', partialReflectedHi, if_neg hjT']
+    · rw [partialReflectedLo, ite_eq_right hjT', partialReflectedHi, ite_eq_right hjT']
       exact hj
 
 /-- The window sits inside every intermediate box. -/

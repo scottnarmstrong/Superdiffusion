@@ -398,7 +398,7 @@ private theorem lambdaSqCoeffField_finite_inv_eq (R : TriadicCube d) {s q : ℝ}
         Real.rpow (Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
           R (R.scale - (n : ℤ)) a) (q / 2)) (2 / q) := by
   simp only [Ch04.lambdaSqCoeffField, Ch02.lambdaSq_finite, Ch02.lambdaSqFinite,
-    Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_pos ha]
+    Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_left ha]
   set F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha with hF
   set S : ℝ := ∑' n : ℕ, Ch02.geometricWeight s q n *
     Real.rpow (Ch02.maxDescendantSigmaStarInvMatrixNormAtScale
@@ -426,7 +426,7 @@ private theorem lambdaSqCoeffField_infinity_inv_eq (R : TriadicCube d) (s : ℝ)
       ⨆ n : ℕ, Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
         Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale R (R.scale - (n : ℤ)) a := by
   simp only [Ch04.lambdaSqCoeffField, Ch02.lambdaSq_infinity, Ch02.lambdaSqInfinity,
-    Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dif_pos ha, iSup, inv_inv]
+    Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, dite_eq_left ha, iSup, inv_inv]
   congr 1
   ext x
   constructor <;> rintro ⟨n, hn⟩ <;> exact ⟨n, hn.symm⟩
@@ -437,7 +437,7 @@ private theorem LambdaSqCoeffField_infinity_eq (R : TriadicCube d) (s : ℝ)
       ⨆ n : ℕ, Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
         Ch04.maxDescendantBMatrixNormCoeffFieldAtScale R (R.scale - (n : ℤ)) a := by
   simp only [Ch04.LambdaSqCoeffField, Ch02.LambdaSq_infinity, Ch02.LambdaSqInfinity,
-    Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dif_pos ha, iSup]
+    Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, dite_eq_left ha, iSup]
   congr 1
   ext x
   constructor <;> rintro ⟨n, hn⟩ <;> exact ⟨n, hn.symm⟩

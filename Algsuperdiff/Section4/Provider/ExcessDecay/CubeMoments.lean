@@ -188,7 +188,7 @@ private theorem prod_ite_single (i : Fin d) (A B : ℝ) :
     · rfl
     · rw [one_mul]
   rw [Finset.prod_congr rfl (fun k _ => h k), Finset.prod_mul_distrib,
-    Finset.prod_ite_eq' Finset.univ i (fun _ => A), if_pos (Finset.mem_univ i),
+    Finset.prod_ite_eq' Finset.univ i (fun _ => A), ite_eq_left (Finset.mem_univ i),
     Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
 /-! ### The cube moments -/
@@ -200,11 +200,11 @@ theorem setIntegral_axisCube_centered (z : Vec d) {L : ℝ} (hL : 0 < L) (i : Fi
       = fun x : Vec d => ∏ k, (if k = i then x k - (z k + L / 2) else 1) := by
     funext x
     rw [Finset.prod_ite_eq' Finset.univ i (fun k => x k - (z k + L / 2)),
-      if_pos (Finset.mem_univ i), axisCubeCenter_apply]
+      ite_eq_left (Finset.mem_univ i), axisCubeCenter_apply]
   have hbody : (fun t : ℝ => if i = i then t - (z i + L / 2) else (1 : ℝ))
       = fun t : ℝ => t - (z i + L / 2) := by
     funext t
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   rw [hpt, setIntegral_axisCube_prod z L (fun k t => if k = i then t - (z k + L / 2) else 1)]
   refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
   show (∫ t in Set.Ioo (z i) (z i + L), if i = i then t - (z i + L / 2) else (1 : ℝ)) = 0
@@ -222,14 +222,14 @@ theorem setIntegral_axisCube_centered_mul (z : Vec d) {L : ℝ} (hL : 0 < L) (i 
     rw [Finset.prod_mul_distrib,
       Finset.prod_ite_eq' Finset.univ i (fun k => x k - (z k + L / 2)),
       Finset.prod_ite_eq' Finset.univ j (fun k => x k - (z k + L / 2)),
-      if_pos (Finset.mem_univ i), if_pos (Finset.mem_univ j), axisCubeCenter_apply,
+      ite_eq_left (Finset.mem_univ i), ite_eq_left (Finset.mem_univ j), axisCubeCenter_apply,
       axisCubeCenter_apply]
   rw [hpt, setIntegral_axisCube_prod z L
     (fun k t => (if k = i then t - (z k + L / 2) else 1)
       * (if k = j then t - (z k + L / 2) else 1))]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hfac : ∀ k : Fin d,
         (∫ t in Set.Ioo (z k) (z k + L),
             (if k = i then t - (z k + L / 2) else 1) * (if k = i then t - (z k + L / 2) else 1))
@@ -240,27 +240,27 @@ theorem setIntegral_axisCube_centered_mul (z : Vec d) {L : ℝ} (hL : 0 < L) (i 
             (if k = i then t - (z k + L / 2) else 1) * (if k = i then t - (z k + L / 2) else 1)
               = (t - (z k + L / 2)) ^ 2 := by
           intro t
-          rw [if_pos hk]
+          rw [ite_eq_left hk]
           ring
         simp only [hbody]
-        rw [if_pos hk, integral_Ioo_sub_center_sq (z k) hL.le]
+        rw [ite_eq_left hk, integral_Ioo_sub_center_sq (z k) hL.le]
         ring
       · have hbody : ∀ t : ℝ,
             (if k = i then t - (z k + L / 2) else 1) * (if k = i then t - (z k + L / 2) else 1)
               = (1 : ℝ) := by
           intro t
-          rw [if_neg hk]
+          rw [ite_eq_right hk]
           ring
         simp only [hbody]
-        rw [if_neg hk, integral_Ioo_one (z k) hL.le]
+        rw [ite_eq_right hk, integral_Ioo_one (z k) hL.le]
     rw [Finset.prod_congr rfl (fun k _ => hfac k), prod_ite_single i (L ^ 2 / 12) L]
     ring
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     have hbody : (fun t : ℝ =>
         (if i = i then t - (z i + L / 2) else 1) * (if i = j then t - (z i + L / 2) else (1 : ℝ)))
           = fun t : ℝ => t - (z i + L / 2) := by
       funext t
-      rw [if_pos rfl, if_neg hij, mul_one]
+      rw [ite_eq_left rfl, ite_eq_right hij, mul_one]
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
     show (∫ t in Set.Ioo (z i) (z i + L),
         (if i = i then t - (z i + L / 2) else 1)
@@ -336,11 +336,11 @@ theorem setIntegral_axisCube_coordQuad (z : Vec d) {L : ℝ} (hL : 0 < L) (g : V
       rw [MeasureTheory.integral_const_mul, setIntegral_axisCube_centered_mul z hL i j]
       by_cases hji : j = i
       · subst hji
-        rw [if_pos rfl, if_pos rfl]
-      · rw [if_neg hji, if_neg (fun h : i = j => hji h.symm), mul_zero]
+        rw [ite_eq_left rfl, ite_eq_left rfl]
+      · rw [ite_eq_right hji, ite_eq_right (fun h : i = j => hji h.symm), mul_zero]
     rw [Finset.sum_congr rfl (fun j _ => hj j),
       Finset.sum_ite_eq' Finset.univ i (fun _ => g i * g i * (L ^ d * (L ^ 2 / 12))),
-      if_pos (Finset.mem_univ i)]
+      ite_eq_left (Finset.mem_univ i)]
   rw [Finset.sum_congr rfl (fun i _ => hstep i), ← Finset.sum_mul, vecNormSq, vecDot]
   ring
 

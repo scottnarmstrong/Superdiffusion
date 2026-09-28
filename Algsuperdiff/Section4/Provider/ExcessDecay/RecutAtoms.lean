@@ -93,12 +93,17 @@ theorem eLpNorm_le_of_volume_le {A B : Set (Vec d)} {K : ℝ≥0∞}
     (hvol : volume A ≤ K * volume B) (f : Vec d → E) :
     eLpNorm f 2 (Support.normalizedVolumeMeasureOn B) ≤
       K ^ (1 / 2 : ℝ) * eLpNorm f 2 (Support.normalizedVolumeMeasureOn A) := by
+  by_cases hf : AEStronglyMeasurable f (Support.normalizedVolumeMeasureOn A)
+  swap
+  · rw [eLpNorm_of_not_aestronglyMeasurable hf,
+      ENNReal.mul_top (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hK0) hKtop).ne']
+    exact le_top
   have hmono : eLpNorm f 2 (Support.normalizedVolumeMeasureOn B) ≤
       eLpNorm f 2 (K • Support.normalizedVolumeMeasureOn A) :=
     eLpNorm_mono_measure _ (normalizedVolumeMeasureOn_le_smul hAB hK0 hKtop hvol)
   have hsmul : eLpNorm f 2 (K • Support.normalizedVolumeMeasureOn A) =
       K ^ (1 / 2 : ℝ) * eLpNorm f 2 (Support.normalizedVolumeMeasureOn A) := by
-    rw [eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)]
+    rw [eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) f K hf]
     norm_num
   rwa [hsmul] at hmono
 
@@ -149,7 +154,7 @@ theorem eLpNorm_sub_volumeAverage_le_two_mul {A : Set (Vec d)} (h0 : volume A �
   have hgmeas : AEStronglyMeasurable (fun y => f y - c) mu :=
     hf.sub aestronglyMeasurable_const
   have hg : MemLp (fun y => f y - c) 2 mu :=
-    ⟨hgmeas, lt_top_iff_ne_top.mpr hinf⟩
+    (lt_top_iff_ne_top.mpr hinf)
   have hgint : Integrable (fun y => f y - c) mu := hg.integrable (by norm_num)
   have hfint : Integrable f mu := by
     have hsum := hgint.add (integrable_const c)
@@ -176,9 +181,9 @@ theorem eLpNorm_sub_volumeAverage_le_two_mul {A : Set (Vec d)} (h0 : volume A �
         ENNReal.one_rpow, mul_one]
     rw [hc]
     refine le_trans (enorm_integral_le_lintegral_enorm _) ?_
-    rw [← eLpNorm_one_eq_lintegral_enorm]
-    exact eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) hgmeas
-  refine le_trans (eLpNorm_sub_le hgmeas aestronglyMeasurable_const (by norm_num)) ?_
+    rw [← eLpNorm_one_eq_lintegral_enorm hgmeas]
+    exact eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
+  refine le_trans (eLpNorm_sub_le (by norm_num)) ?_
   have hstep : eLpNorm (fun y => f y - c) 2 mu +
       eLpNorm (fun _ : Vec d => (∫ y, (f y - c) ∂mu)) 2 mu ≤
       eLpNorm (fun y => f y - c) 2 mu + eLpNorm (fun y => f y - c) 2 mu :=

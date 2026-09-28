@@ -165,7 +165,7 @@ theorem columnsIndep_colArray {P : Measure Ω} (Y : ℤ → Ω → ℝ) (r : ℕ
     ColumnsIndep P (colArray Y) r := by
   intro b
   have hcomp := (h b).comp (g := fun (_ : ℤ) (x : ℝ) => (fun (_ : ℤ) => x))
-    (fun _ => measurable_pi_lambda _ (fun _ => measurable_id))
+    (fun _ => Measurable.of_eval (fun _ => measurable_id))
   exact hcomp
 
 end

@@ -106,17 +106,17 @@ def mixedTime (a b y : ℝ) : ℝ :=
 
 theorem mixedProfile_mixedTime {a b y : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hy : 0 ≤ y) : mixedProfile a b (mixedTime a b y) = y := by
-  rw [mixedTime, if_pos hy]
+  rw [mixedTime, ite_eq_left hy]
   exact Function.invFunOn_eq (exists_mixedProfile_eq ha hb hy)
 
 theorem mixedTime_nonneg {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (y : ℝ) :
     0 ≤ mixedTime a b y := by
   by_cases hy : 0 ≤ y
-  · rw [mixedTime, if_pos hy]
+  · rw [mixedTime, ite_eq_left hy]
     obtain ⟨t, ht, hft⟩ := exists_mixedProfile_eq (y := y) ha hb hy
     rw [← hft]
     exact Function.invFunOn_apply_mem ht
-  · rw [mixedTime, if_neg hy]
+  · rw [mixedTime, ite_eq_right hy]
 
 theorem monotone_mixedTime {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Monotone (mixedTime a b) := by
@@ -129,10 +129,10 @@ theorem monotone_mixedTime {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
         (mixedTime_nonneg ha hb z) (mixedTime_nonneg ha hb y) hlt
       rw [mixedProfile_mixedTime ha hb hz, mixedProfile_mixedTime ha hb hy] at hstrict
       exact absurd hyz (not_le_of_gt hstrict)
-    · rw [mixedTime, if_neg hy]
+    · rw [mixedTime, ite_eq_right hy]
       exact mixedTime_nonneg ha hb z
   · have hy' : ¬ 0 ≤ y := fun h => hz (h.trans hyz)
-    rw [mixedTime, if_neg hy', mixedTime, if_neg hz]
+    rw [mixedTime, ite_eq_right hy', mixedTime, ite_eq_right hz]
 
 theorem measurable_mixedTime {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Measurable (mixedTime a b) :=

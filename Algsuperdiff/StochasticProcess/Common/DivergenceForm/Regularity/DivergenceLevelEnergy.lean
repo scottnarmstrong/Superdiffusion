@@ -97,7 +97,7 @@ theorem levelEnergy_sumCoordNorm_le
     rw [hwx, hvx]
     by_cases hx : k < u.toH1Function.toFun x <;>
       simp only [Set.indicator_apply, Set.mem_ofPred_eq, A, hx, hxU,
-        and_self, and_false, if_true, if_false]
+        and_self, and_false, ite_true, ite_false]
   have hfluxInt : IntegrableOn
       (fun x => vecDot (matVecMul (a x) (u.toH1Function.grad x))
         (u.toH1Function.grad x)) U :=

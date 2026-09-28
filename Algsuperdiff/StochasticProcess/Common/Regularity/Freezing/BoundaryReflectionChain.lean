@@ -527,7 +527,7 @@ theorem exists_oddReflection_weakSolution_ball
   refine ⟨h1FunctionOfSetEq hself w, b, h, hbmeas, ?_, ?_, ?_, ?_, ?_⟩
   · rw [← hself]
     exact hbcontrast
-  · refine memLp_top_of_bound ((hhL2.restrict (euclideanBall x₀ r)).1)
+  · refine memLp_top_of_bound ((hhL2.restrict (euclideanBall x₀ r)).aestronglyMeasurable)
       (2 ^ S.card * M) ?_
     exact ae_restrict_of_ae (by
       filter_upwards [hhM] with y hy

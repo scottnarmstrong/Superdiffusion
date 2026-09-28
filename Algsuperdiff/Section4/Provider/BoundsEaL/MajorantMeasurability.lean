@@ -96,7 +96,7 @@ theorem measurable_tailLayerTerm (m k : ℤ) (v : Fin d → ℤ) (i : ℤ) :
           Support.shellW1InfGradNorm k
             (ShellField.translate (Support.triadicLatticePoint k v) (omega.1 i)) := by
       funext omega
-      rw [tailLayerTerm, if_pos h]
+      rw [tailLayerTerm, ite_eq_left h]
     rw [hfun]
     exact ((Support.measurable_shellW1InfGradNorm k).comp
       (ShellField.measurable_translate (Support.triadicLatticePoint k v))).comp
@@ -104,7 +104,7 @@ theorem measurable_tailLayerTerm (m k : ℤ) (v : Fin d → ℤ) (i : ℤ) :
   · have hfun : (fun omega : Cutoff.CutoffSample d => tailLayerTerm m k v omega i) =
         fun _ : Cutoff.CutoffSample d => (0 : ℝ) := by
       funext omega
-      rw [tailLayerTerm, if_neg h]
+      rw [tailLayerTerm, ite_eq_right h]
     rw [hfun]
     exact measurable_const
 

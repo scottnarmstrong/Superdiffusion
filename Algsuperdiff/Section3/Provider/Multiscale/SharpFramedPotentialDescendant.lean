@@ -34,8 +34,8 @@ theorem cutoffBBlockFamily_translateCutoffSample_sharp_framed_probe [NeZero d]
   classical
   rw [cutoffBBlockFamily, cutoffBBlockFamily,
     coarseBNormCoeffField, coarseBNormCoeffField,
-    dif_pos (coefficientCutoff_aelocallyUniformlyElliptic M L omega),
-    dif_pos (coefficientCutoff_aelocallyUniformlyElliptic M L
+    dite_eq_left (coefficientCutoff_aelocallyUniformlyElliptic M L omega),
+    dite_eq_left (coefficientCutoff_aelocallyUniformlyElliptic M L
       (translateCutoffSample (triadicCubeShift R) omega)),
     Ch02.coarseBMatrixNorm_eq_ofAEEq
       (coefficientCutoff_canonicalFamily_aeeq M L omega) R,

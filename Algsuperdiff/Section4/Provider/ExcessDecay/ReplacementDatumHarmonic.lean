@@ -89,7 +89,7 @@ theorem cubeLpNorm_two_sub_le (Q : TriadicCube d) {f g h : Vec d → ℝ}
       MeasureTheory.eLpNorm g 2 (normalizedCubeMeasure Q) +
         MeasureTheory.eLpNorm h 2 (normalizedCubeMeasure Q) := by
     rw [hfun]
-    exact MeasureTheory.eLpNorm_sub_le hg.aestronglyMeasurable hh.aestronglyMeasurable
+    exact MeasureTheory.eLpNorm_sub_le
       (by norm_num)
   have hfin : MeasureTheory.eLpNorm g 2 (normalizedCubeMeasure Q) +
       MeasureTheory.eLpNorm h 2 (normalizedCubeMeasure Q) ≠ ⊤ :=

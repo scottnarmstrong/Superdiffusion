@@ -119,7 +119,7 @@ theorem aestronglyMeasurable_matrixNormField_carrier (h : UnitCubeSkewW2Infinity
   have hent : ∀ i j : Fin d,
       AEStronglyMeasurable (fun x => h.toLInfSkewMatrixFieldOn.1.1 x i j)
         (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :=
-    fun i j => (h.toLInfSkewMatrixFieldOn.1.2 i j).1
+    fun i j => (h.toLInfSkewMatrixFieldOn.1.2 i j).aestronglyMeasurable
   exact continuous_matrixNorm.comp_aestronglyMeasurable
     (aestronglyMeasurable_of_entries hent)
 

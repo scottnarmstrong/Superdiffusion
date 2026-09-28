@@ -118,7 +118,7 @@ theorem map_ballChart_volume_restrict (x₀ : Vec d) {r : ℝ} (hr : 0 < r) :
       (r • smallContrastUnitBall d)).map_eq
   have hball : translateSet x₀ (r • smallContrastUnitBall d) = euclideanBall x₀ r :=
     (euclideanBall_eq_translateSet_smul_unit_of_pos x₀ hr).symm
-  rw [hcomp, hdil, Measure.map_smul, htrans, hball]
+  rw [hcomp, hdil, Measure.map_smul _ hadd.aemeasurable, htrans, hball]
 
 /-- Change of variables for a set integral over the chart. -/
 theorem setIntegral_comp_ballChart (x₀ : Vec d) {r : ℝ} (hr : 0 < r)

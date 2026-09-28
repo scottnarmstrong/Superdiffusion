@@ -83,10 +83,11 @@ theorem coefficientEnergyDensity_coefficientCutoff (M : ABKModel d) (L : ℤ)
     matVecMul_scalarMatrix, vecDot_smul_right, vecNormSq]
 
 /-- The `p = 2` `eLpNorm` of `|∇u|` against a measure, as a lower integral. -/
-theorem eLpNorm_two_sqrt_vecNormSq (mu : Measure (Vec d)) (f : Vec d → Vec d) :
+theorem eLpNorm_two_sqrt_vecNormSq (mu : Measure (Vec d)) (f : Vec d → Vec d)
+    (hf : AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (f y))) mu) :
     eLpNorm (fun y => Real.sqrt (vecNormSq (f y))) 2 mu =
       (∫⁻ x, ENNReal.ofReal (vecNormSq (f x)) ∂mu) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   congr 1
   refine lintegral_congr fun x => ?_
@@ -96,6 +97,20 @@ theorem eLpNorm_two_sqrt_vecNormSq (mu : Measure (Vec d)) (f : Vec d → Vec d) 
   congr 1
   rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
   exact Real.sq_sqrt (vecNormSq_nonneg _)
+
+/-- The Euclidean magnitude of an `H¹` gradient is a.e. strongly measurable for the
+normalized volume measure of any subwindow of the domain. -/
+theorem aestronglyMeasurable_sqrt_vecNormSq_grad {U A : Set (Vec d)} (u : H1Function U)
+    (hAU : A ⊆ U) :
+    AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (u.grad y)))
+      (normalizedVolumeMeasureOn A) := by
+  have hcont : Continuous fun v : Vec d => Real.sqrt (vecNormSq v) := by
+    refine Real.continuous_sqrt.comp ?_
+    show Continuous fun v : Vec d => ∑ i, v i * v i
+    exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
+  rw [normalizedVolumeMeasureOn_def]
+  exact ((hcont.comp_aestronglyMeasurable u.grad_memVectorL2.aestronglyMeasurable).mono_measure
+    (Measure.restrict_mono hAU le_rfl)).smul_measure _
 
 /-- **THE CARRIER IDENTITY.**
 
@@ -123,7 +138,7 @@ theorem ofReal_printedLocalEnergy_coefficientCutoff {Q R : TriadicCube d}
       localSymmetricEnergyENorm R
         ((Cutoff.coefficientCutoffCoeffOn M L omega Q).restrictToSubcube hRQ)
         (restrictH1ToSubcube u hRQ) := by
-    rw [printedLocalEnergy, dif_pos hRQ,
+    rw [printedLocalEnergy, dite_eq_left hRQ,
       ENNReal.ofReal_toReal (localSymmetricEnergyENorm_ne_top _ _ _)]
   have hdensity : ∀ x : Vec d,
       ENNReal.ofReal
@@ -156,7 +171,8 @@ theorem ofReal_printedLocalEnergy_coefficientCutoff {Q R : TriadicCube d}
     rw [ENNReal.ofReal_rpow_of_nonneg hnu (by norm_num), ← Real.sqrt_eq_rpow]
   rw [hlocal, localSymmetricEnergyENorm, hint,
     ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 1 / 2), hsqrt,
-    eLpNorm_two_sqrt_vecNormSq, normalizedVolumeMeasureOn_openCubeSet]
+    eLpNorm_two_sqrt_vecNormSq _ _ (aestronglyMeasurable_sqrt_vecNormSq_grad u hRQ),
+    normalizedVolumeMeasureOn_openCubeSet]
 
 /-! ## 2. The display, sliced at one sample -/
 
@@ -247,7 +263,10 @@ theorem printedLocalEnergy_le_of_shallow {M : ABKModel d} {m : ℤ} {X : ℕ}
           ∂normalizedCubeMeasure S := by
     intro S hS
     rw [ofReal_printedLocalEnergy_coefficientCutoff M L omega u hS,
-      normalizedVolumeMeasureOn_openCubeSet, eLpNorm_two_sqrt_vecNormSq,
+      normalizedVolumeMeasureOn_openCubeSet,
+      eLpNorm_two_sqrt_vecNormSq _ _ (by
+        rw [← normalizedVolumeMeasureOn_openCubeSet]
+        exact aestronglyMeasurable_sqrt_vecNormSq_grad u hS),
       ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 2), hnu2, ← ENNReal.rpow_mul,
       show (1 / 2 : ℝ) * 2 = 1 by norm_num, ENNReal.rpow_one,
       lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]

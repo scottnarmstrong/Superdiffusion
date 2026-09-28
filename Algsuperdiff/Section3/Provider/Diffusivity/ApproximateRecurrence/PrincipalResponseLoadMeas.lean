@@ -203,7 +203,7 @@ variable {d : ℕ}
 private theorem measurable_const_smul_vec {Omega : Type*} {mOmega : MeasurableSpace Omega}
     {f : Omega → Vec d} (hf : Measurable f) (c : ℝ) :
     Measurable fun omega => c • f omega := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   exact ((measurable_pi_apply i).comp hf).const_mul c
 
 /-- Internal.  The matrix-vector product of a measurable matrix-valued map and a
@@ -211,7 +211,7 @@ measurable vector-valued map is measurable. -/
 private theorem measurable_matVecMul {Omega : Type*} {mOmega : MeasurableSpace Omega}
     {A : Omega → Mat d} {x : Omega → Vec d} (hA : Measurable A) (hx : Measurable x) :
     Measurable fun omega => matVecMul (A omega) (x omega) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   show Measurable fun omega => ∑ j, A omega i j * x omega j
   exact Finset.measurable_sum _ fun j _ =>
     (((measurable_pi_apply j).comp ((measurable_pi_apply i).comp hA)).mul
@@ -249,8 +249,8 @@ private theorem restrict_openCubeSet_restrict_cubeSet {Q R : TriadicCube d} {jd 
       volume.restrict (cubeSet R) := by
   rw [Measure.restrict_restrict (measurableSet_cubeSet R)]
   refine Measure.restrict_congr_set ?_
-  rw [Filter.eventuallyEq_set]
-  filter_upwards [Filter.eventuallyEq_set.1 (cubeSet_ae_eq_openCubeSet R)] with x hx
+  rw [Filter.eventuallyEqSet_iff]
+  filter_upwards [Filter.eventuallyEqSet_iff.1 (cubeSet_ae_eq_openCubeSet R)] with x hx
   constructor
   · exact fun h => h.1
   · exact fun h => ⟨h, openCubeSet_subset_of_mem_descendantsAtDepth hR (hx.1 h)⟩
@@ -331,7 +331,7 @@ private theorem measurable_shellIndexSigma_cubeAverageVec_of_class
     exact (hilbertVectorL2CoordSetIntegralCLM_apply (U := openCubeSet Q)
       (cubeSet R) (measurableSet_cubeSet R) i (G omega)).symm
   rw [hEq]
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   exact Measurable.const_mul
     (((hilbertVectorL2CoordSetIntegralCLM (U := openCubeSet Q) (cubeSet R)
       (measurableSet_cubeSet R) i).continuous.measurable).comp hGmeas) _
@@ -349,7 +349,7 @@ theorem measurable_shellIndexSigma_freshShellCubeAverage
     Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       fun omega : Cutoff.ShellSeq d => freshShellCubeAverage R omega n m := by
   let : MeasurableSpace (Cutoff.ShellSeq d) := Cutoff.shellIndexSigma (Set.Ioc n m)
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j0 => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j0 => ?_
   have hbase : Measurable[Cutoff.shellIndexSigma (Set.Ioc n m)]
       fun omega : Cutoff.ShellSeq d =>
         cubeAverageVec R

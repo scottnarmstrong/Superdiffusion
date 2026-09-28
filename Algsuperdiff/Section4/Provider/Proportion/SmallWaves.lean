@@ -245,7 +245,7 @@ private theorem wt_mul_arrayG1b (M : ABKModel d) (s : ℝ) {m k : ℤ} (hk : k �
   have hwt : wt (s / 8) m k = Real.rpow (3 : ℝ) (-(s / 8 * ((m - k : ℤ) : ℝ))) := by
     rw [wt, hid]
     rfl
-  rw [arrayG1b, if_pos hk, hwt, gwG1b,
+  rw [arrayG1b, ite_eq_left hk, hwt, gwG1b,
     ← ENNReal.ofReal_mul (rpow_nonneg_three _),
     show Real.rpow (3 : ℝ) (-(s / 8 * ((m - k : ℤ) : ℝ))) *
         (Real.rpow (3 : ℝ) (-(s / 8) * ((m - k : ℤ) : ℝ)) *
@@ -288,7 +288,7 @@ theorem eventG1b_lhs_le_rowGE (M : ABKModel d) {s : ℝ} (hs0 : 0 < s) (hs1 : s 
                     (omega.1 k))) ^ 2) ≤ ∑' n : {n : ℤ // n ≤ m}, F n.1 := by
     refine ENNReal.tsum_le_tsum fun n => ?_
     rw [hF]
-    simp only [if_pos n.2, hw, hg, gwG1b]
+    simp only [ite_eq_left n.2, hw, hg, gwG1b]
     refine mul_le_mul' le_rfl (Finset.sum_le_sum fun k hk => ?_)
     exact eventG1b_inner_le M (Finset.mem_Icc.1 hk).2 omega
   have hstep2 : (∑' n : {n : ℤ // n ≤ m}, F n.1) ≤ ∑' n : ℤ, F n :=
@@ -303,10 +303,10 @@ theorem eventG1b_lhs_le_rowGE (M : ABKModel d) {s : ℝ} (hs0 : 0 < s) (hs1 : s 
           ENNReal.ofReal (wt (s / 8) m k * arrayG1b M s m k omega) := by
     intro k
     by_cases hk : k ≤ m
-    · rw [if_pos hk, wt_mul_arrayG1b M s hk omega, hw]
+    · rw [ite_eq_left hk, wt_mul_arrayG1b M s hk omega, hw]
       refine le_trans (mul_le_mul' (tsum_partialWeight_le hs0 hs1 m k) le_rfl) ?_
       rw [mul_assoc]
-    · rw [if_neg hk]
+    · rw [ite_eq_right hk]
       exact zero_le
   calc (∑' n : {n : ℤ // n ≤ m},
         ENNReal.ofReal

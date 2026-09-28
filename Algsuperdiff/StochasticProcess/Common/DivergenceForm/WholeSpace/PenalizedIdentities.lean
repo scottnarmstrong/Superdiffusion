@@ -204,7 +204,7 @@ private theorem tendsto_analyticCubeResolvent_penalizedLoad
       (A.analyticCubeResolvent_ae mu
         (A.measurable_analyticPenalizedLoad hV n mu hf hfD)
         (A.abs_analyticPenalizedLoad_le hV n mu hf hf0 hD hfD) outer) hx
-  · simp only [analyticCubeResolvent, dif_neg hx]
+  · simp only [analyticCubeResolvent, dite_eq_right hx]
     exact tendsto_const_nhds
 
 /-- The diagonal of the domain exhaustion and the increasing penalized-load
@@ -426,8 +426,8 @@ theorem analyticPenalizedCubeResolvent_perturbation {V : Set (Vec d)}
           (A.measurable_analyticPenalizedCubeLoad hV n mu hf hfD m)
           (A.abs_analyticPenalizedCubeLoad_le hV n mu hf hD hfD m) m))
       (A.continuousOn_analyticCubeResolvent mu hf hfD m) hae hx
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticCubeResolvent, dif_neg hx, analyticCubeResolvent, dif_neg hx,
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticCubeResolvent, dite_eq_right hx, analyticCubeResolvent, dite_eq_right hx,
       zero_add]
 
 /-- The subtraction-free perturbation identity passes to the whole-space
@@ -602,9 +602,9 @@ theorem analyticPenalizedCubeResolvent_resolventIdentity {V : Set (Vec d)}
             (A.measurable_analyticPenalizedCubeResolvent hV n mu hf hfD m)
             (A.abs_analyticPenalizedCubeResolvent_le hV n mu hf hD hfD m) m)))
       hae hx
-  · rw [analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx,
-      analyticPenalizedCubeResolvent, dif_neg hx, mul_zero, add_zero]
+  · rw [analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx,
+      analyticPenalizedCubeResolvent, dite_eq_right hx, mul_zero, add_zero]
 
 end WholeSpaceAnalyticData
 

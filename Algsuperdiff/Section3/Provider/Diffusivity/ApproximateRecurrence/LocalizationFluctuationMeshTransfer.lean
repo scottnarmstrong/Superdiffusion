@@ -238,7 +238,7 @@ theorem indexBoxGrid_subset_mesoCubeGrid (d : ℕ) {K n r : ℤ} (hnK : n ≤ K)
   obtain ⟨hsc, hidx⟩ := mem_indexBoxGrid_iff.mp hR
   have hos : (originCube d K).scale = K := rfl
   have hsK : n ≤ (originCube d K).scale := by rw [hos]; exact hnK
-  rw [mesoCubeGrid, descendantsAtScale, dif_pos hsK, hos]
+  rw [mesoCubeGrid, descendantsAtScale, dite_eq_left hsK, hos]
   refine Gagliardo.mem_descendantsAtDepth_of_index_range ?_ ?_
   · rw [hsc, hos]
     omega
